@@ -5,6 +5,7 @@
 <link rel='import' href='services/state-manager.html'>
 <link rel='import' href='components/video-stream.html'>
 <link rel='import' href='components/user-controls.html'>
+<link rel='import' href='components/progress-bar.html'>
 
 
 <dom-module id='video-player'>
@@ -14,6 +15,7 @@
         <video-stream state-manager='{{stateManager}}' url='{{item}}' master='{{equals(index, 0)}}'></video-stream>
       </template>
     </div>
+    <progress-bar state-manager='{{stateManager}}'></progress-bar>
     <user-controls state-manager='{{stateManager}}'></user-controls>
   </template>
 

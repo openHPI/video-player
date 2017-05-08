@@ -6,6 +6,16 @@
 
 First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `polymer serve` to serve your element locally.
 
+
+
+## Install Dependencies from bower.json
+
+$ bower install bower.json
+
+Version of Webcomponents: 1.0.0-rc.5
+Version of Polymer: 2.0.0-rc.7
+
+
 ## Viewing Your Element
 
 ```

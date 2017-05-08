@@ -39,6 +39,13 @@
               this.stateManager.position = this.$.video.currentTime;
             }
           });
+
+          // load metadata for extraction of the video's duration
+          this.$.video.addEventListener('loadedmetadata', () => {
+            if(this.master) {
+              this.stateManager.duration = this.$.video.duration;
+            }
+          });
         }
 
         _updateStateBindings() {

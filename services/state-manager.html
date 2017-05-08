@@ -9,6 +9,7 @@
         playbackRate: 1,
         volume: 1,
         muted: false,
+        duration: 0,
       })
     }
 
@@ -44,6 +45,10 @@
       if(volume >= 0 || volume <= 100) {
         this.volume = volume;
       }
+    }
+
+    setDuration(duration) {
+      this.duration=duration;
     }
   }
 </script>
