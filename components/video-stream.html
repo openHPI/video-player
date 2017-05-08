@@ -1,0 +1,78 @@
+<link rel='import' href='../../polymer/polymer-element.html'>
+<link rel='import' href='../3rd/mobx.html'>
+
+<dom-module id='video-stream'>
+
+  <template>
+    <video id='video' src$='[[url]]'></video>
+  </template>
+
+  <script>
+    (function() {
+      const {reaction} = mobx;
+
+      class VideoStream extends Polymer.Element {
+        static get is() { return 'video-stream'; }
+
+        static get properties() {
+          return {
+            url: {
+              type: String
+            },
+            master: {
+              type: Boolean,
+              value: true
+            },
+            stateManager: {
+              type: Object,
+              observer: '_updateStateBindings'
+            }
+          };
+        }
+
+        ready() {
+          super.ready();
+
+          // Add event listeners
+          this.$.video.addEventListener('timeupdate', () => {
+            if(this.master) {
+              this.stateManager.position = this.$.video.currentTime;
+            }
+          });
+        }
+
+        _updateStateBindings() {
+          // Dispose old reactions
+          if(this.reactionDisposers)
+            this.reactionDisposers.forEach(disposer => disposer());
+
+          // Register new reactions
+          this.reactionDisposers = [
+            reaction(() => this.stateManager.playState, this._playStateChanged.bind(this)),
+            reaction(() => this.stateManager.position, this._positionChanged.bind(this)),
+            reaction(() => this.stateManager.playbackRate, this._playbackRateChanged.bind(this))
+          ];
+        }
+
+        _playStateChanged(playState) {
+          if (playState == 'PLAYING')
+            this.$.video.play();
+          else
+            this.$.video.pause();
+        }
+
+        _positionChanged(position) {
+          if(Math.abs(this.$.video.currentTime - position) > 1)
+            this.$.video.currentTime = position;
+        }
+
+        _playbackRateChanged(playbackRate) {
+          this.$.video.playbackRate = playbackRate;
+        }
+      }
+
+      window.customElements.define(VideoStream.is, VideoStream);
+    })();
+  </script>
+
+</dom-module>

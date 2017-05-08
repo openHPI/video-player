@@ -1,0 +1,58 @@
+<link rel='import' href='../polymer/polymer-element.html'>
+<link rel='import' href='../polymer/lib/elements/dom-repeat.html'>
+<link rel='import' href='3rd/mobx.html'>
+
+<link rel='import' href='services/state-manager.html'>
+<link rel='import' href='components/video-stream.html'>
+<link rel='import' href='components/user-controls.html'>
+
+
+<dom-module id='video-player'>
+  <template>
+    <div id='streams-container'>
+      <template is='dom-repeat' items='{{streams}}'>
+        <video-stream state-manager='{{stateManager}}' url='{{item}}' master='{{equals(index, 0)}}'></video-stream>
+      </template>
+    </div>
+    <user-controls state-manager='{{stateManager}}'></user-controls>
+  </template>
+
+  <script>
+    (function() {
+      class VideoPlayer extends Polymer.Element {
+        static get is() { return 'video-player'; }
+        
+        static get properties() {
+          return {
+            streams: {
+              type: Array,
+              value: []
+            },
+            stateManager: {
+              type: Object,
+              readOnly: true,
+              value: new StateManager()
+            }
+          };
+        }
+
+        ready() {
+          super.ready();
+          // When possible, use afterNextRender to defer non-critical
+          // work until after first paint.
+          Polymer.RenderStatus.afterNextRender(this, function() {
+            this.stateManager.play();
+            this.stateManager.position = 45;
+            //this.stateManager.playbackRate = 2;
+          });
+        }
+
+        equals(a, b) {
+          return a === b;
+        }
+      }
+
+      window.customElements.define(VideoPlayer.is, VideoPlayer);
+    })();
+  </script>
+</dom-module>

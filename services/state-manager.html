@@ -1,0 +1,49 @@
+<script>
+  const {extendObservable} = mobx;
+
+  class StateManager {
+    constructor() {
+      extendObservable(this, {
+        playState: 'PAUSED',
+        position: 0,
+        playbackRate: 1,
+        volume: 1,
+        muted: false,
+      })
+    }
+
+    play() {
+      this.playState = 'PLAYING';
+    }
+
+    pause() {
+      this.playState = 'PAUSED';
+    }
+
+    togglePlayPause() {
+      if(this.playState == 'PLAYING') {
+        this.pause()
+      } else {
+        this.play();
+      }
+    }
+
+    seek(seconds) {
+      this.position = seconds;
+    }
+
+    setPlaybackRate(playbackRate) {
+      this.playbackRate = playbackRate;
+    }
+
+    mute() {
+      this.mute = true;
+    }
+
+    setVolume(volume) {
+      if(volume >= 0 || volume <= 100) {
+        this.volume = volume;
+      }
+    }
+  }
+</script>

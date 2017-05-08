@@ -1,0 +1,62 @@
+<link rel='import' href='../../polymer/polymer-element.html'>
+<link rel='import' href='../3rd/mobx.html'>
+
+<dom-module id='user-controls'>
+
+  <template>
+    <button id='btnPlayPause'>Play</button>
+    <span id='spanCurrentTime'>{{currentTime}}</span>
+  </template>
+
+  <script>
+    (function() {
+      const {reaction} = mobx;
+
+      class UserControls extends Polymer.Element {
+        static get is() { return 'user-controls'; }
+
+        static get properties() {
+          return {
+            stateManager: {
+              type: Object,
+              observer: '_updateStateBindings'
+            },
+            currentTime: {
+                type: String
+            }
+          };
+        }
+
+        ready() {
+          super.ready();
+
+          // Add event listeners
+          this.$.btnPlayPause.addEventListener('click', () => this.stateManager.togglePlayPause());
+        }
+
+        _updateStateBindings() {
+          // Dispose old reactions
+          if(this.reactionDisposers)
+            this.reactionDisposers.forEach(disposer => disposer());
+
+          // Register new reactions
+          this.reactionDisposers = [
+            reaction(() => this.stateManager.playState, this._playStateChanged.bind(this)),
+            reaction(() => this.stateManager.position, this._positionChanged.bind(this))
+          ];
+        }
+
+        _playStateChanged(playState) {
+          this.$.btnPlayPause.innerHTML = playState == 'PLAYING' ? 'Pause' : 'Play';
+        }
+
+        _positionChanged(position) {
+          this.currentTime = position.toFixed(0);
+        }
+      }
+
+      window.customElements.define(UserControls.is, UserControls);
+    })();
+  </script>
+
+</dom-module>
