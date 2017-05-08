@@ -21,7 +21,7 @@
     (function() {
       class VideoPlayer extends Polymer.Element {
         static get is() { return 'video-player'; }
-        
+
         static get properties() {
           return {
             streams: {
@@ -34,17 +34,6 @@
               value: new StateManager()
             }
           };
-        }
-
-        ready() {
-          super.ready();
-          // When possible, use afterNextRender to defer non-critical
-          // work until after first paint.
-          Polymer.RenderStatus.afterNextRender(this, function() {
-            this.stateManager.play();
-            this.stateManager.position = 45;
-            //this.stateManager.playbackRate = 2;
-          });
         }
 
         equals(a, b) {
