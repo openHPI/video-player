@@ -1,11 +1,13 @@
 <link rel='import' href='../../polymer/polymer-element.html'>
 <link rel='import' href='../3rd/mobx.html'>
+<link rel='import' href='playpause-control.html'>
+<link rel='import' href='videotime-display.html'>
 
 <dom-module id='user-controls'>
 
   <template>
-    <button id='btnPlayPause'>Play</button>
-    <span id='spanCurrentTime'>{{currentTime}}</span>
+    <playpause-control state-manager='{{stateManager}}'></playpause-control>
+    <videotime-display state-manager='{{stateManager}}'></videotime-display>
   </template>
 
   <script>
@@ -18,12 +20,7 @@
         static get properties() {
           return {
             stateManager: {
-              type: Object,
-              observer: '_updateStateBindings'
-            },
-            currentTime: {
-                type: String,
-                value: '0'
+              type: Object
             }
           };
         }
@@ -31,28 +28,6 @@
         ready() {
           super.ready();
 
-          // Add event listeners
-          this.$.btnPlayPause.addEventListener('click', () => this.stateManager.togglePlayPause());
-        }
-
-        _updateStateBindings() {
-          // Dispose old reactions
-          if(this.reactionDisposers)
-            this.reactionDisposers.forEach(disposer => disposer());
-
-          // Register new reactions
-          this.reactionDisposers = [
-            reaction(() => this.stateManager.playState, this._playStateChanged.bind(this)),
-            reaction(() => this.stateManager.position, this._positionChanged.bind(this))
-          ];
-        }
-
-        _playStateChanged(playState) {
-          this.$.btnPlayPause.innerHTML = playState == 'PLAYING' ? 'Pause' : 'Play';
-        }
-
-        _positionChanged(position) {
-          this.currentTime = position.toFixed(0);
         }
       }
 
