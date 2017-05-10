@@ -37,6 +37,11 @@
           this.$.video.addEventListener('timeupdate', () => {
             if(this.master) {
               this.stateManager.position = this.$.video.currentTime;
+              console.log("0: " + this.$.video.buffered.start(0) + "-" + this.$.video.buffered.start(0));
+              console.log("1: " + this.$.video.buffered.start(1) + "-" + this.$.video.buffered.start(1));
+              console.log("2: " + this.$.video.buffered.start(2) + "-" + this.$.video.buffered.start(2));
+              console.log("3: " + this.$.video.buffered.start(3) + "-" + this.$.video.buffered.start(3));
+
             }
           });
 
@@ -69,8 +74,9 @@
         }
 
         _positionChanged(position) {
-          if(Math.abs(this.$.video.currentTime - position) > 1)
+          if( Math.abs(this.$.video.currentTime - position) > 1 ) {
             this.$.video.currentTime = position;
+          }
         }
 
         _playbackRateChanged(playbackRate) {

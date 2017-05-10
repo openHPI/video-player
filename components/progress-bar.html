@@ -50,7 +50,7 @@
           this.$.progressBar.addEventListener('click', e => this._progressBarClickListener(e));
         }
 
-        _progressBarClickListener(e){
+        _progressBarClickListener(e) {
           // get x-axies value of event location
           var x = e.pageX - this.offsetLeft;
           // calculate value that will be between 0 and the duration of video -> exact moment of video
@@ -59,10 +59,9 @@
           var isClicked = clickedValue <= this.$.progressBar.max;
           if(isClicked){
             //alert(clickedValue.toFixed(0));
-            //this.stateManager.seek(clickedValue.toFixed(0));
+            this.stateManager.seek(clickedValue);
           }
         }
-
 
         //functions that are called when the state of the stateManagers properties change
         _updateStateBindings() {
