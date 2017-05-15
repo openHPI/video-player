@@ -1,0 +1,56 @@
+<link rel='import' href='../../polymer/polymer-element.html'>
+<link rel='import' href='../3rd/mobx.html'>
+<link rel="stylesheet" href="../font-awesome-4.7.0/css/font-awesome.min.css">
+
+<dom-module id='playpause-control'>
+  <template>
+  
+    <style type="text/css">
+    </style>
+
+    <button id='btnPlayPause'></button>
+    </template>
+
+  <script>
+    (function() {
+      const {reaction} = mobx;
+
+      class PlayPauseControl extends Polymer.Element {
+        static get is() { return 'playpause-control'; }
+
+        static get properties() {
+          return {
+            stateManager: {
+              type: Object,
+              observer: '_updateStateBindings'
+            },
+          };
+        }
+
+        ready() {
+          super.ready();
+          // Add event listeners
+          this.$.btnPlayPause.addEventListener('click', () => this.stateManager.togglePlayPause());
+        }
+
+        _updateStateBindings() {
+          // Dispose old reactions
+          if(this.reactionDisposers)
+            this.reactionDisposers.forEach(disposer => disposer());
+
+          // Register new reactions
+          this.reactionDisposers = [
+            reaction(() => this.stateManager.playState, this._playStateChanged.bind(this))
+          ];
+        }
+
+        _playStateChanged(playState) {
+          this.$.btnPlayPause.innerHTML = playState == 'PLAYING' ? '<i class="fa fa-pause">' : '<i class="fa fa-play">';
+        }
+      }
+
+      window.customElements.define(PlayPauseControl.is, PlayPauseControl);
+    })();
+  </script>
+
+</dom-module>

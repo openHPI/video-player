@@ -1,0 +1,69 @@
+<link rel='import' href='../../polymer/polymer-element.html'>
+<link rel='import' href='../3rd/mobx.html'>
+
+<dom-module id='videotime-display'>
+
+  <template>
+    <span id='spanCurrentTime'>{{currentTime}}</span>
+  </template>
+
+  <script>
+    (function() {
+      const {reaction} = mobx;
+
+      class VideoTimeDisplay extends Polymer.Element {
+        static get is() { return 'videotime-display'; }
+
+        static get properties() {
+          return {
+            stateManager: {
+              type: Object,
+              observer: '_updateStateBindings'
+            },
+            currentTime: {
+                type: String,
+                value: '0'
+            }
+          };
+        }
+
+        ready() {
+          super.ready();
+
+        }
+
+        _updateStateBindings() {
+          // Dispose old reactions
+          if(this.reactionDisposers)
+            this.reactionDisposers.forEach(disposer => disposer());
+
+          // Register new reactions
+          this.reactionDisposers = [
+            reaction(() => this.stateManager.position, this._positionChanged.bind(this))
+          ];
+        }
+
+        _positionChanged(position) {
+          this.currentTime = this.secondsToHms(position.toFixed(0));
+        }
+
+        secondsToHms(position){
+          var seconds   = Number(position);
+          var hours     = Math.floor(seconds / 3600);
+          var minutes   = Math.floor(seconds % 3600 / 60);
+          var seconds2  = Math.floor(seconds % 3600 % 60);
+
+          if(hours < 10){hours = "0" + hours;}
+          if(minutes < 10){minutes = "0" + minutes;}
+          if(seconds2 < 10){seconds2 = "0" + seconds2;}
+
+          return hours + ":" + minutes + ":" + seconds2;
+        }
+
+      }
+
+      window.customElements.define(VideoTimeDisplay.is, VideoTimeDisplay);
+    })();
+  </script>
+
+</dom-module>
