@@ -1,4 +1,13 @@
 {
+  "entrypoint": "video-player.html",
+  "sources": [
+    "src/**/*",
+    "bower.json"
+  ],
+  "extraDependencies": [
+      "bower_components/webcomponentsjs/webcomponents-lite.js",
+      "bower_components/webcomponentsjs/custom-elements-es5-adapter.js"
+  ],
   "lint": {
     "rules": [
       "polymer-2-hybrid"

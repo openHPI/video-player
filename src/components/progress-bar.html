@@ -1,5 +1,5 @@
-<link rel='import' href='../../polymer/polymer-element.html'>
-<link rel='import' href='../3rd/mobx.html'>
+<link rel='import' href='../../../polymer/polymer-element.html'>
+<link rel='import' href='../3rd-imports/mobx.html'>
 
 <dom-module id='progress-bar'>
   <template>
@@ -24,7 +24,7 @@
 
   <script>
     (function() {
-      
+
       const {reaction} = mobx;
 
       class ProgressBar extends Polymer.Element {
@@ -76,7 +76,7 @@
           ];
         }
 
-        // reaction when 
+        // reaction when
         _positionChanged(position) {
           this.currentTime = position.toFixed(0);
         }

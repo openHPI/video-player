@@ -1,0 +1,59 @@
+{
+  "name": "video-player",
+  "version": "1.0.0",
+  "description": "Universal tele-TASK and openHPI player",
+  "contributors": [
+    {
+      "name": "Henriette Dinger"
+    },
+    {
+      "name": "Jonathan Herdt"
+    },
+    {
+      "name": "Marcus Konrad"
+    },
+    {
+      "name": "Sebastian Kliem"
+    },
+    {
+      "name": "Sören Oldag"
+    }
+  ],
+  "keywords": [
+    "video",
+    "player",
+    "multi-stream",
+    "tele-TASK",
+    "openHPI"
+  ],
+  "main": "video-player.html",
+  "homepage": "https://github.com/openHPI/videoplayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openHPI/videoplayer.git"
+  },
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/openHPI/videoplayer/issues"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-clean": "^0.3.2",
+    "gulp-if": "^2.0.2",
+    "gulp-ignore": "^2.0.2",
+    "polymer-build": "^1.2.2",
+    "run-sequence": "^1.2.2"
+  },
+  "scripts": {
+    "test": "polymer test",
+    "lint": "polymer lint",
+    "postinstall": "bower install && npm install --prefix bower_components/mobx && npm run --prefix bower_components/mobx small-build",
+    "serve": "polymer serve",
+    "bundle": "gulp bundle"
+  }
+}
