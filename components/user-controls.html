@@ -5,6 +5,8 @@
 
   <template>
     <button id='btnPlayPause'>Play</button>
+    <button id='btnFastRewind'><<</button>
+    <button id='btnFastForward'>>></button>
     <span id='spanCurrentTime'>{{currentTime}}</span>
   </template>
 
@@ -33,6 +35,8 @@
 
           // Add event listeners
           this.$.btnPlayPause.addEventListener('click', () => this.stateManager.togglePlayPause());
+          this.$.btnFastRewind.addEventListener('click', () => this.stateManager.seek(this.stateManager.position - 15));
+          this.$.btnFastForward.addEventListener('click', () => this.stateManager.seek(this.stateManager.position + 15));
         }
 
         _updateStateBindings() {
