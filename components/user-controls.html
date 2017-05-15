@@ -33,10 +33,35 @@
         ready() {
           super.ready();
 
+          // Self is necessary so that variables can be accessed from inside other
+          // contexts as well, like the keyboard interaction function
+          var self = this;
+
           // Add event listeners
           this.$.btnPlayPause.addEventListener('click', () => this.stateManager.togglePlayPause());
           this.$.btnFastRewind.addEventListener('click', () => this.stateManager.seek(this.stateManager.position - 15));
           this.$.btnFastForward.addEventListener('click', () => this.stateManager.seek(this.stateManager.position + 15));
+
+          // Add keyboard interaction
+          window.onkeydown = function(e) {
+            // Make sure the user doesn't trigger anything else with their 
+            // keyboard interaction, like scrolling the page
+            e.preventDefault();
+
+            var key = e.keyCode ? e.keyCode : e.which;
+
+
+            // 39 = user pressed right arrow key
+            if(key === 39) {
+              self.stateManager.seek(self.stateManager.position + 15);
+            // 37 = user pressed left arrow key
+            } else if (key === 37) {
+              self.stateManager.seek(self.stateManager.position - 15);
+            // 32 = user pressed space
+            } else if (key === 32) {
+              self.stateManager.togglePlayPause();
+            }
+          }
         }
 
         _updateStateBindings() {
