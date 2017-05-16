@@ -9,6 +9,7 @@
     "Sebastian Kliem",
     "Sören Oldag"
   ],
+  "license": "LICENSE",
   "homepage": "https://github.com/openHPI/videoplayer#readme",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0-rc.2",
