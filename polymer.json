@@ -6,7 +6,8 @@
   ],
   "extraDependencies": [
       "bower_components/webcomponentsjs/webcomponents-lite.js",
-      "bower_components/webcomponentsjs/custom-elements-es5-adapter.js"
+      "bower_components/webcomponentsjs/custom-elements-es5-adapter.js",
+      "bower_components/components-font-awesome/fonts/*"
   ],
   "lint": {
     "rules": [
