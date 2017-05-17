@@ -32,14 +32,12 @@
 
         ready() {
           super.ready();
-
           // Add event listeners
           this.$.video.addEventListener('timeupdate', () => {
             if(this.master) {
               this.stateManager.position = this.$.video.currentTime;
             }
           });
-
           // load metadata for extraction of the video's duration
           this.$.video.addEventListener('loadedmetadata', () => {
             if(this.master) {
@@ -48,16 +46,19 @@
           });
         }
 
+        // functions that are called when the state of the stateManagers properties change
         _updateStateBindings() {
           // Dispose old reactions
-          if(this.reactionDisposers)
+          if(this.reactionDisposers) {
             this.reactionDisposers.forEach(disposer => disposer());
-
+          }
           // Register new reactions
           this.reactionDisposers = [
             reaction(() => this.stateManager.playState, this._playStateChanged.bind(this)),
             reaction(() => this.stateManager.position, this._positionChanged.bind(this)),
-            reaction(() => this.stateManager.playbackRate, this._playbackRateChanged.bind(this))
+            reaction(() => this.stateManager.playbackRate, this._playbackRateChanged.bind(this)),
+            reaction(() => this.stateManager.volume, this._volumeChanged.bind(this)),
+            reaction(() => this.stateManager.muted, this._mutedChanged.bind(this))
           ];
         }
 
@@ -76,6 +77,14 @@
 
         _playbackRateChanged(playbackRate) {
           this.$.video.playbackRate = playbackRate;
+        }
+
+        _volumeChanged(volume) {
+          this.$.video.volume = volume / 100;
+        }
+
+        _mutedChanged(muted) {
+          this.$.video.muted = muted;
         }
       }
 

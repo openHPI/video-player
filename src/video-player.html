@@ -42,8 +42,10 @@
           // When possible, use afterNextRender to defer non-critical
           // work until after first paint.
           Polymer.RenderStatus.afterNextRender(this, function() {
-            this.stateManager.play();
+            this.stateManager.pause();
             this.stateManager.seek(0);
+            this.stateManager.toggleMute(); //just for testing
+            this.stateManager.setVolume(75);
             //this.stateManager.playbackRate = 2;
           });
         }

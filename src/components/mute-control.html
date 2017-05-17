@@ -1,22 +1,23 @@
-<link rel='import' href='../../../polymer/polymer-element.html'>
-<link rel='import' href='../3rd-imports/mobx.html'>
+<link rel='import' href='../../polymer/polymer-element.html'>
+<link rel='import' href='../3rd/mobx.html'>
 
-<dom-module id='playpause-control'>
+<dom-module id='mute-control'>
   <link rel='import' type='css' href='../../../components-font-awesome/css/font-awesome.min.css'>
-  
+
   <template>
-    <style type='text/css'>
+  
+    <style type="text/css">
     </style>
 
-    <button id='btn__Play_Pause'></button>
+    <button id='btn__Mute'></button>
     </template>
 
   <script>
     (function() {
       const {reaction} = mobx;
 
-      class PlayPauseControl extends Polymer.Element {
-        static get is() { return 'playpause-control'; }
+      class MuteControl extends Polymer.Element {
+        static get is() { return 'mute-control'; }
 
         static get properties() {
           return {
@@ -30,11 +31,11 @@
         ready() {
           super.ready();
           // initial loading of icon
-          this.$.btn__Play_Pause.innerHTML = this.stateManager.playState == 'PLAYING' ? '<i class="fa fa-pause">' : '<i class="fa fa-play">';
+          this.$.btn__Mute.innerHTML = this.stateManager.muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
           // Add event listeners
-          this.$.btn__Play_Pause.addEventListener('click', () => this.stateManager.togglePlayPause());
+          this.$.btn__Mute.addEventListener('click', () => this.stateManager.toggleMute());
         }
-        
+
         // functions that are called when the state of the stateManagers properties change
         _updateStateBindings() {
           // Dispose old reactions
@@ -43,16 +44,16 @@
           }
           // Register new reactions
           this.reactionDisposers = [
-            reaction(() => this.stateManager.playState, this._playStateChanged.bind(this))
+            reaction(() => this.stateManager.muted, this._mutedChanged.bind(this))
           ];
         }
 
-        _playStateChanged(playState) {
-          this.$.btn__Play_Pause.innerHTML = playState == 'PLAYING' ? '<i class="fa fa-pause">' : '<i class="fa fa-play">';
+        _mutedChanged(muted) {
+          this.$.btn__Mute.innerHTML = muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
         }
       }
 
-      window.customElements.define(PlayPauseControl.is, PlayPauseControl);
+      window.customElements.define(MuteControl.is, MuteControl);
     })();
   </script>
 

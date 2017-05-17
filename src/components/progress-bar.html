@@ -5,20 +5,17 @@
   <template>
     <style type="text/css">
       progress[value] {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
+
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
         display: block;
         margin: 0px;
         height: 10px;
         width: 100%;
-        background-color: eee;
         border: none;
       }
     </style>
     <div>
-      <progress id="progressBar" min='0' max='{{maxValue}}' value='{{currentTime}}'></progress>
+      <progress id="progress__Bar" min='0' max='{{maxValue}}' value='{{currentTime}}'></progress>
     </div>
   </template>
 
@@ -37,7 +34,8 @@
               observer: '_updateStateBindings'
             },
             currentTime: {
-                type: String
+              value: '0',
+              type: String
             },
             maxValue: {
               type: String
@@ -47,28 +45,28 @@
 
         ready() {
           super.ready();
-          this.$.progressBar.addEventListener('click', e => this._progressBarClickListener(e));
+          // Add event listeners
+          this.$.progress__Bar.addEventListener('click', e => this._progressBarClickListener(e));
         }
 
         _progressBarClickListener(e) {
           // get x-axies value of event location
           var x = e.pageX - this.offsetLeft;
-          // calculate value that will be between 0 and the duration of video -> exact moment of video
-          var clickedValue = x * this.$.progressBar.max / this.$.progressBar.offsetWidth;
+          // calculate value that will be between 0 and the max value (duration of video) -> exact moment of video
+          var clickedValue = x * this.$.progress__Bar.max / this.$.progress__Bar.offsetWidth;
           // check if still within borders
-          var isClicked = clickedValue <= this.$.progressBar.max;
+          var isClicked = clickedValue <= this.$.progress__Bar.max;
           if(isClicked){
-            //alert(clickedValue.toFixed(0));
             this.stateManager.seek(clickedValue);
           }
         }
 
-        //functions that are called when the state of the stateManagers properties change
+        // functions that are called when the state of the stateManagers properties change
         _updateStateBindings() {
           // Dispose old reactions
-          if(this.reactionDisposers)
+          if(this.reactionDisposers) {
             this.reactionDisposers.forEach(disposer => disposer());
-
+          }
           // Register new reactions
           this.reactionDisposers = [
             reaction(() => this.stateManager.position, this._positionChanged.bind(this)),

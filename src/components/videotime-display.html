@@ -4,7 +4,7 @@
 <dom-module id='videotime-display'>
 
   <template>
-    <span id='spanCurrentTime'>{{currentTime}}</span>
+    <span id='span__Current_Time'>{{currentTime}}</span>
   </template>
 
   <script>
@@ -22,21 +22,21 @@
             },
             currentTime: {
                 type: String,
-                value: '0'
+                value: '00:00:00'
             }
           };
         }
 
         ready() {
           super.ready();
-
         }
 
+        // functions that are called when the state of the stateManagers properties change
         _updateStateBindings() {
           // Dispose old reactions
-          if(this.reactionDisposers)
+          if(this.reactionDisposers) {
             this.reactionDisposers.forEach(disposer => disposer());
-
+          }
           // Register new reactions
           this.reactionDisposers = [
             reaction(() => this.stateManager.position, this._positionChanged.bind(this))
@@ -59,7 +59,6 @@
 
           return hours + ":" + minutes + ":" + seconds2;
         }
-
       }
 
       window.customElements.define(VideoTimeDisplay.is, VideoTimeDisplay);

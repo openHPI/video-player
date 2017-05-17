@@ -1,8 +1,10 @@
 <link rel='import' href='../../../polymer/polymer-element.html'>
 <link rel='import' href='../3rd-imports/mobx.html'>
-<link rel='import' href='playpause-control.html'>
-<link rel='import' href='videotime-display.html'>
 <link rel='import' href='progress-bar.html'>
+<link rel='import' href='playpause-control.html'>
+<link rel='import' href='sound-control.html'>
+<link rel='import' href='videotime-display.html'>
+<link rel='import' href='mute-control.html'>
 
 <dom-module id='user-controls'>
 
@@ -10,6 +12,8 @@
     <progress-bar state-manager='{{stateManager}}'></progress-bar>
     <playpause-control state-manager='{{stateManager}}'></playpause-control>
     <videotime-display state-manager='{{stateManager}}'></videotime-display>
+    <sound-control state-manager='{{stateManager}}'></sound-control>
+    <mute-control state-manager='{{stateManager}}'></mute-control>
   </template>
 
   <script>
