@@ -10,6 +10,12 @@
 
 <dom-module id='video-player'>
   <template>
+    <style type="text/css">
+      :host {
+        display: inline-block;
+      }
+    </style>
+
     <div id='streams-container'>
       <template is='dom-repeat' items='{{streams}}'>
         <video-stream state-manager='{{stateManager}}' url='{{item}}' master='{{equals(index, 0)}}'></video-stream>
