@@ -1,22 +1,18 @@
-<link rel='import' href='../../../polymer/polymer-element.html'>
-<link rel='import' href='../3rd-imports/mobx.html'>
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='../../3rd-imports/mobx.html'>
+<link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='sound-control'>
   <template>
-  
-    <style type="text/css">
-      progress[value] {
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
-        display: block;
-        margin: 0px;
-        height: 10px;
-        width: 100px;
-        background-color: eee;
-        border: none;
+    <style type="text/css" include="control-bar--style-module">
+      :host {
+        flex-basis: 5%;
       }
     </style>
     
-    <progress id="progress__sound_control" min='0' max='100' value='{{volume}}'></progress>
+    <div id="container__sound_control" class="user_controls">
+      <progress id="progress__sound_control" min='0' max='100' value='{{volume}}'></progress>
+    </div>
 
   </template>
 

@@ -1,21 +1,17 @@
-<link rel='import' href='../../../polymer/polymer-element.html'>
-<link rel='import' href='../3rd-imports/mobx.html'>
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='../../3rd-imports/mobx.html'>
+<link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='progress-bar'>
   <template>
-    <style type="text/css">
-      progress[value] {
-
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
-        display: block;
-        margin: 0px;
-        height: 10px;
-        width: 100%;
-        border: none;
+    <style type="text/css" include="control-bar--style-module">
+      :host {
+        flex-basis: 100%;
       }
     </style>
-    <div>
-      <progress id="progress__Bar" min='0' max='{{maxValue}}' value='{{currentTime}}'></progress>
+
+    <div id="container__progress_bar" class="user_controls">
+      <progress id="progress__bar" min='0' max='{{maxValue}}' value='{{currentTime}}'></progress>
     </div>
   </template>
 
@@ -46,16 +42,16 @@
         ready() {
           super.ready();
           // Add event listeners
-          this.$.progress__Bar.addEventListener('click', e => this._progressBarClickListener(e));
+          this.$.progress__bar.addEventListener('click', e => this._progressBarClickListener(e));
         }
 
         _progressBarClickListener(e) {
           // get x-axies value of event location
           var x = e.pageX - this.offsetLeft;
           // calculate value that will be between 0 and the max value (duration of video) -> exact moment of video
-          var clickedValue = x * this.$.progress__Bar.max / this.$.progress__Bar.offsetWidth;
+          var clickedValue = x * this.$.progress__bar.max / this.$.progress__bar.offsetWidth;
           // check if still within borders
-          var isClicked = clickedValue <= this.$.progress__Bar.max;
+          var isClicked = clickedValue <= this.$.progress__bar.max;
           if(isClicked){
             this.stateManager.seek(clickedValue);
           }

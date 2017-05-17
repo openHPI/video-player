@@ -1,0 +1,51 @@
+<dom-module id='control-bar--style-module'>
+  <template>
+    <style type="text/css">
+      /* ------
+      * The styles defined here are heritated by many classes.
+      * Thus be careful when changing rules here.
+       ------ */
+
+      :host {
+        /* Necessary to ensure that the height is correct in Safari */ 
+        display: flex;
+      }
+
+      /* ------ Styling of the control bar elements ------ */
+      .user_controls {
+        /* ------ Alignment of the elements ------ */
+        display: flex;
+        flex-grow: 1;
+        align-items: center;
+        justify-content: center;
+
+        /* ------ General styling of the control section ------ */
+        padding: 10px;
+        background-color: #424242;
+        border-right: 2px solid white;
+        color: white;
+      }
+
+      /* ------ Styling of the progress bars within the control bar ------*/
+      progress[value] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        width: 100%;
+        border: 1px solid #5a6065;
+      }
+      progress::-webkit-progress-value {
+        background-color: #dd6112;
+      } 
+      progress::-moz-progress-bar {
+        background-color: #dd6112;
+      }
+
+    </style>
+
+    </div>
+  </template>
+
+  <script>
+  </script>
+</dom-module>

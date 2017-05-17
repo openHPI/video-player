@@ -1,14 +1,25 @@
-<link rel='import' href='../../../polymer/polymer-element.html'>
-<link rel='import' href='../3rd-imports/mobx.html'>
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='../../3rd-imports/mobx.html'>
+<link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='playpause-control'>
-  <link rel='import' type='css' href='../../../components-font-awesome/css/font-awesome.min.css'>
+  <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
   
   <template>
-    <style type='text/css'>
+    <style type='text/css' include="control-bar--style-module">
+      :host {
+        /* Avoid flickering with changing icons */
+        /* It should be about twice the icon size */
+        min-width: 3rem;
+      } 
+      #button__play_pause i {
+        font-size: 1.5rem;
+      }   
     </style>
-
-    <button id='btn__Play_Pause'></button>
+    
+    <div id="container__play_pause_control" class="user_controls">
+      <a id='button__play_pause'></a>
+    </div>
     </template>
 
   <script>
@@ -30,9 +41,9 @@
         ready() {
           super.ready();
           // initial loading of icon
-          this.$.btn__Play_Pause.innerHTML = this.stateManager.playState == 'PLAYING' ? '<i class="fa fa-pause">' : '<i class="fa fa-play">';
+          this.$.button__play_pause.innerHTML = this.stateManager.playState == 'PLAYING' ? '<i class="fa fa-pause">' : '<i class="fa fa-play">';
           // Add event listeners
-          this.$.btn__Play_Pause.addEventListener('click', () => this.stateManager.togglePlayPause());
+          this.$.button__play_pause.addEventListener('click', () => this.stateManager.togglePlayPause());
         }
         
         // functions that are called when the state of the stateManagers properties change
@@ -48,7 +59,7 @@
         }
 
         _playStateChanged(playState) {
-          this.$.btn__Play_Pause.innerHTML = playState == 'PLAYING' ? '<i class="fa fa-pause">' : '<i class="fa fa-play">';
+          this.$.button__play_pause.innerHTML = playState == 'PLAYING' ? '<i class="fa fa-pause">' : '<i class="fa fa-play">';
         }
       }
 
