@@ -6,11 +6,15 @@
       extendObservable(this, {
         playState: 'PAUSED',
         position: 0,
-        playbackRate: 1,
+        playbackRate: 1.0,
         volume: 1,
         muted: false,
         duration: 0,
       })
+    }
+
+    static get PLAYBACK_RATES() {
+      return [0.7, 1.0, 1.3, 1.5, 1.8, 2.0];
     }
 
     play() {
@@ -35,6 +39,11 @@
 
     setPlaybackRate(playbackRate) {
       this.playbackRate = playbackRate;
+    }
+    
+    switchPlaybackRate() {
+      let newIndex = (StateManager.PLAYBACK_RATES.indexOf(this.playbackRate) + 1) % StateManager.PLAYBACK_RATES.length;
+      this.setPlaybackRate(StateManager.PLAYBACK_RATES[newIndex]);
     }
 
     toggleMute() {

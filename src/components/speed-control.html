@@ -1,0 +1,64 @@
+<link rel='import' href='../../../polymer/polymer-element.html'>
+<link rel='import' href='../3rd-imports/mobx.html'>
+
+<dom-module id='speed-control'>
+  <link rel='import' type='css' href='../../../components-font-awesome/css/font-awesome.min.css'>
+  
+  <template>
+    <style type='text/css'>
+        #speed__container {
+            display: inline-block;
+        }
+    </style>
+
+    <div id="speed__container">
+        <button id="speed__button">
+            <i class="fa fa-tachometer"></i>
+            <span id="speed__display">1.0</span>x
+        </button>
+    </div>
+    </template>
+
+  <script>
+    (function() {
+      const {reaction} = mobx;
+
+      class SpeedControl extends Polymer.Element {
+        static get is() { return 'speed-control'; }
+
+        static get properties() {
+          return {
+            stateManager: {
+              type: Object,
+              observer: '_updateStateBindings'
+            },
+          };
+        }
+
+        ready() {
+          super.ready();
+          // Add event listeners
+          this.$.speed__button.addEventListener('click', () => this.stateManager.switchPlaybackRate());
+        }
+
+        _updateStateBindings() {
+          // Dispose old reactions
+          if(this.reactionDisposers)
+            this.reactionDisposers.forEach(disposer => disposer());
+
+          // Register new reactions
+          this.reactionDisposers = [
+            reaction(() => this.stateManager.playbackRate, this._playbackRateChanged.bind(this))
+          ];
+        }
+
+        _playbackRateChanged(playbackRate) {
+          this.$.speed__display.innerHTML = playbackRate.toFixed(1);
+        }
+      }
+
+      window.customElements.define(SpeedControl.is, SpeedControl);
+    })();
+  </script>
+
+</dom-module>
