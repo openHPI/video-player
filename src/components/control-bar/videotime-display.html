@@ -1,10 +1,16 @@
-<link rel='import' href='../../../polymer/polymer-element.html'>
-<link rel='import' href='../3rd-imports/mobx.html'>
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='../../3rd-imports/mobx.html'>
+<link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='videotime-display'>
 
   <template>
-    <span id='span__Current_Time'>{{currentTime}}</span>
+    <style type='text/css' include="control-bar--style-module">
+    </style>
+
+    <div id="container__videotime_display" class="user_controls">
+      <span id='span__current_time'>{{currentTime}}</span>
+    </div>
   </template>
 
   <script>

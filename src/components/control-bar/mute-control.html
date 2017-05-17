@@ -1,15 +1,28 @@
-<link rel='import' href='../../../polymer/polymer-element.html'>
-<link rel='import' href='../3rd-imports/mobx.html'>
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='../../3rd-imports/mobx.html'>
+<link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='mute-control'>
-  <link rel='import' type='css' href='../../../components-font-awesome/css/font-awesome.min.css'>
+  <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
 
   <template>
-  
-    <style type="text/css">
+    <style type="text/css" include="control-bar--style-module">
+      #container__mute_control {
+        border-right: none;
+      }  
+      :host {
+        /* Avoid flickering with changing icons */
+        /* It should be about twice the icon size */
+        min-width: 3rem;
+      } 
+      #button__mute i {
+        font-size: 1.5rem;
+      }  
     </style>
 
-    <button id='btn__Mute'></button>
+    <div id="container__mute_control" class="user_controls">
+      <a id='button__mute'></a>
+    </div>
     </template>
 
   <script>
@@ -31,9 +44,9 @@
         ready() {
           super.ready();
           // initial loading of icon
-          this.$.btn__Mute.innerHTML = this.stateManager.muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
+          this.$.button__mute.innerHTML = this.stateManager.muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
           // Add event listeners
-          this.$.btn__Mute.addEventListener('click', () => this.stateManager.toggleMute());
+          this.$.button__mute.addEventListener('click', () => this.stateManager.toggleMute());
         }
 
         // functions that are called when the state of the stateManagers properties change
@@ -49,7 +62,7 @@
         }
 
         _mutedChanged(muted) {
-          this.$.btn__Mute.innerHTML = muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
+          this.$.button__mute.innerHTML = muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
         }
       }
 
