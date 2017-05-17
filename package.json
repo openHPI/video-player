@@ -44,8 +44,11 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-clean": "^0.3.2",
+    "gulp-clean-css": "^3.3.1",
+    "gulp-htmlmin": "^3.0.0",
     "gulp-if": "^2.0.2",
     "gulp-ignore": "^2.0.2",
+    "gulp-uglify": "^2.1.2",
     "polymer-build": "^1.2.2",
     "run-sequence": "^1.2.2"
   },

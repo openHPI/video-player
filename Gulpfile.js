@@ -4,6 +4,9 @@ const gulpif = require('gulp-if');
 const babel = require('gulp-babel');
 const clean = require('gulp-clean');
 const ignore = require('gulp-ignore');
+const uglify = require('gulp-uglify');
+const htmlmin = require('gulp-htmlmin');
+const cleanCSS = require('gulp-clean-css');
 const runSequence = require('run-sequence');
 const mergeStream = require('merge-stream');
 const Bundler = require('polymer-build').Bundler;
@@ -31,9 +34,7 @@ gulp.task('transpile-es5', ['prepare-transpile'], () => {
   const polymerHtmlSplitter = new HtmlSplitter();
   let polymer = gulp.src('.tmp/bower_components/polymer/**/*', { base: '.tmp' })
     .pipe(polymerHtmlSplitter.split())
-		.pipe(gulpif( /\.js$/, babel({
-      presets: [babelPresetES2015NoModules]
-    })))
+		.pipe(gulpif( /\.js$/, babel({presets: [babelPresetES2015NoModules]})))
 		.pipe(polymerHtmlSplitter.rejoin());
 
   const componentHtmlSplitter = new HtmlSplitter();
@@ -42,9 +43,8 @@ gulp.task('transpile-es5', ['prepare-transpile'], () => {
     .pipe(ignore.exclude('bower_components/webcomponentsjs/**/*'))
     .pipe(ignore.exclude('bower_components/polymer/**/*'))
     .pipe(componentHtmlSplitter.split())
-		.pipe(gulpif( /\.js$/, babel({
-      presets: [babelPresetES2015]
-    })))
+		.pipe(gulpif( /\.js$/, babel({presets: [babelPresetES2015]})))
+		.pipe(gulpif( /\.js$/, uglify()))
 		.pipe(componentHtmlSplitter.rejoin());
 
   return mergeStream(polymer, component)
@@ -54,9 +54,14 @@ gulp.task('transpile-es5', ['prepare-transpile'], () => {
 const bundle = (baseDir, outputDir) => {
   let cwd = process.cwd();
   process.chdir(baseDir); // Change working directory so that project file paths are correct
+  const htmlSplitter = new HtmlSplitter();
   const project = new PolymerProject(require('./polymer.json'));
 
   return mergeStream(project.sources(), project.dependencies())
+    .pipe(htmlSplitter.split())
+    .pipe(gulpif( /\.css$/, cleanCSS()))
+    .pipe(gulpif( /\.html$/, htmlmin({collapseWhitespace: true})))
+    .pipe(htmlSplitter.rejoin())
     .pipe(project.bundler())
     .pipe(gulp.dest(path.join(cwd, outputDir)))
     .on('end', () => {
