@@ -44,6 +44,8 @@
               this.stateManager.duration = this.$.video.duration;
             }
           });
+          // start/stop both streams when they get clicked on
+          this.$.video.addEventListener('click', () => this.stateManager.togglePlayPause());
         }
 
         // functions that are called when the state of the stateManagers properties change
