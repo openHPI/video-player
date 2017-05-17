@@ -46,8 +46,8 @@
         }
 
         _progressBarClickListener(e) {
-          // get x-axies value of event location
-          var x = e.pageX - this.offsetLeft;
+          // get x value by substracting offsetleft of progress-bar
+          var x = e.pageX - this.$.progress__bar.offsetLeft;
           // calculate value that will be between 0 and the max value (duration of video) -> exact moment of video
           var clickedValue = x * this.$.progress__bar.max / this.$.progress__bar.offsetWidth;
           // check if still within borders
