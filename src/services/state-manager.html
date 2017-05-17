@@ -65,7 +65,7 @@
 
 
     setVolume(volume) {
-      // always unmuted first to avoid potential inconsistent states between e.g. mute button icon and sound-control-bar
+      // always unmute first to avoid potential inconsistent states between e.g. mute button icon and sound-control-bar
       this.unmute();
       if(volume >= 0 || volume <= 100) {
         this.volume = volume;
