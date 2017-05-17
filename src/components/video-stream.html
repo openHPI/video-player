@@ -1,5 +1,4 @@
 <link rel='import' href='../../../polymer/polymer-element.html'>
-<link rel='import' href='../3rd-imports/mobx.html'>
 
 <dom-module id='video-stream'>
 
@@ -10,90 +9,82 @@
   </template>
 
   <script>
-    (function() {
-      const {reaction} = mobx;
+    class VideoStream extends Polymer.Element {
+      static get is() { return 'video-stream'; }
 
-      class VideoStream extends Polymer.Element {
-        static get is() { return 'video-stream'; }
-
-        static get properties() {
-          return {
-            url: {
-              type: String
-            },
-            master: {
-              type: Boolean,
-              value: true
-            },
-            stateManager: {
-              type: Object,
-              observer: '_updateStateBindings'
-            }
-          };
-        }
-
-        ready() {
-          super.ready();
-          // Add event listeners
-          this.$.video.addEventListener('timeupdate', () => {
-            if(this.master) {
-              this.stateManager.position = this.$.video.currentTime;
-            }
-          });
-          // load metadata for extraction of the video's duration
-          this.$.video.addEventListener('loadedmetadata', () => {
-            if(this.master) {
-              this.stateManager.duration = this.$.video.duration;
-            }
-          });
-          // start/stop both streams when they get clicked on
-          this.$.video.addEventListener('click', () => this.stateManager.togglePlayPause());
-        }
-
-        // functions that are called when the state of the stateManagers properties change
-        _updateStateBindings() {
-          // Dispose old reactions
-          if(this.reactionDisposers) {
-            this.reactionDisposers.forEach(disposer => disposer());
+      static get properties() {
+        return {
+          url: {
+            type: String
+          },
+          master: {
+            type: Boolean,
+            value: true
+          },
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
           }
-          // Register new reactions
-          this.reactionDisposers = [
-            reaction(() => this.stateManager.playState, this._playStateChanged.bind(this)),
-            reaction(() => this.stateManager.position, this._positionChanged.bind(this)),
-            reaction(() => this.stateManager.playbackRate, this._playbackRateChanged.bind(this)),
-            reaction(() => this.stateManager.volume, this._volumeChanged.bind(this)),
-            reaction(() => this.stateManager.muted, this._mutedChanged.bind(this))
-          ];
-        }
+        };
+      }
 
-        _playStateChanged(playState) {
-          if (playState == 'PLAYING')
-            this.$.video.play();
-          else
-            this.$.video.pause();
-        }
+      static get observers() {
+        return [
+          '_playStateChanged(state.playState)',
+          '_positionChanged(state.position)',
+          '_playbackRateChanged(state.playbackRate)',
+          '_volumeChanged(state.volume)',
+          '_mutedChanged(state.muted)'
+        ]
+      }
 
-        _positionChanged(position) {
-          if( Math.abs(this.$.video.currentTime - position) > 1 ) {
-            this.$.video.currentTime = position;
+      ready() {
+        super.ready();
+        // Add event listeners
+        this.$.video.addEventListener('timeupdate', () => {
+          if(this.master) {
+            this.stateManager.seek(this.$.video.currentTime);
           }
-        }
+        });
+        // load metadata for extraction of the video's duration
+        this.$.video.addEventListener('loadedmetadata', () => {
+          if(this.master) {
+            this.stateManager.setDuration(this.$.video.duration);
+          }
+        });
+        // start/stop both streams when they get clicked on
+        this.$.video.addEventListener('click', () => this.stateManager.togglePlayPause());
+      }
 
-        _playbackRateChanged(playbackRate) {
-          this.$.video.playbackRate = playbackRate;
-        }
+      _playStateChanged(playState) {
+        if (playState == 'PLAYING')
+          this.$.video.play();
+        else
+          this.$.video.pause();
+      }
 
-        _volumeChanged(volume) {
-          this.$.video.volume = volume / 100;
-        }
-
-        _mutedChanged(muted) {
-          this.$.video.muted = muted;
+      _positionChanged(position) {
+        if( Math.abs(this.$.video.currentTime - position) > 1 ) {
+          this.$.video.currentTime = position;
         }
       }
 
-      window.customElements.define(VideoStream.is, VideoStream);
-    })();
+      _playbackRateChanged(playbackRate) {
+        this.$.video.playbackRate = playbackRate;
+      }
+
+      _volumeChanged(volume) {
+        this.$.video.volume = volume;
+      }
+
+      _mutedChanged(muted) {
+        this.$.video.muted = muted;
+      }
+    }
+
+    window.customElements.define(VideoStream.is, VideoStream);
   </script>
 
 </dom-module>

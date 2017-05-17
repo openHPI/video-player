@@ -55,7 +55,7 @@
   "scripts": {
     "test": "polymer test",
     "lint": "polymer lint --root src --input video-player.html",
-    "postinstall": "bower install && npm install --prefix bower_components/mobx && npm run --prefix bower_components/mobx small-build",
+    "postinstall": "bower install",
     "serve": "polymer serve",
     "bundle": "gulp bundle"
   }

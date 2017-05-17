@@ -1,5 +1,4 @@
 <link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../../3rd-imports/mobx.html'>
 <link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='mute-control'>
@@ -9,65 +8,53 @@
     <style type="text/css" include="control-bar--style-module">
       #container__mute_control {
         border-right: none;
-      }  
+      }
       :host {
         /* Avoid flickering with changing icons */
         /* It should be about twice the icon size */
         min-width: 3rem;
-      } 
+      }
       #button__mute i {
         font-size: 1.5rem;
-      }  
+      }
     </style>
 
     <div id="container__mute_control" class="user_controls">
-      <a id='button__mute' class="button"></a>
+      <a id='button__mute' class="button">
+        <template is="dom-if" if="[[state.muted]]">
+          <i class="fa fa-volume-off">
+        </template>
+        <template is="dom-if" if="[[!state.muted]]">
+          <i class="fa fa-volume-up">
+        </template>
+      </a>
     </div>
-    </template>
+  </template>
 
   <script>
-    (function() {
-      const {reaction} = mobx;
+    class MuteControl extends Polymer.Element {
+      static get is() { return 'mute-control'; }
 
-      class MuteControl extends Polymer.Element {
-        static get is() { return 'mute-control'; }
-
-        static get properties() {
-          return {
-            stateManager: {
-              type: Object,
-              observer: '_updateStateBindings'
-            }
-          };
-        }
-
-        ready() {
-          super.ready();
-          // initial loading of icon
-          this.$.button__mute.innerHTML = this.stateManager.muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
-          // Add event listeners
-          this.$.button__mute.addEventListener('click', () => this.stateManager.toggleMute());
-        }
-
-        // functions that are called when the state of the stateManagers properties change
-        _updateStateBindings() {
-          // Dispose old reactions
-          if(this.reactionDisposers) {
-            this.reactionDisposers.forEach(disposer => disposer());
+      static get properties() {
+        return {
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
           }
-          // Register new reactions
-          this.reactionDisposers = [
-            reaction(() => this.stateManager.muted, this._mutedChanged.bind(this))
-          ];
-        }
-
-        _mutedChanged(muted) {
-          this.$.button__mute.innerHTML = muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
-        }
+        };
       }
 
-      window.customElements.define(MuteControl.is, MuteControl);
-    })();
+      ready() {
+        super.ready();
+
+        // Add event listeners
+        this.$.button__mute.addEventListener('click', () => this.stateManager.toggleMute());
+      }
+    }
+
+    window.customElements.define(MuteControl.is, MuteControl);
   </script>
 
 </dom-module>

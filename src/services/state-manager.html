@@ -1,32 +1,32 @@
 <script>
-  const {extendObservable} = mobx;
-
   class StateManager {
-    constructor() {
-      extendObservable(this, {
-        playState: 'PAUSED',
-        position: 0,
-        playbackRate: 1.0,
-        volume: 1,
-        muted: false,
-        duration: 0,
-      })
+    constructor(videoPlayer, statePath) {
+      this.videoPlayer = videoPlayer;
+      this.statePath = statePath;
     }
 
     static get PLAYBACK_RATES() {
       return [0.7, 1.0, 1.3, 1.5, 1.8, 2.0];
     }
 
+    get state() {
+      return this.videoPlayer[this.statePath];
+    }
+
+    setState(path, value) {
+      this.videoPlayer.set(this.statePath + '.' + path, value);
+    }
+
     play() {
-      this.playState = 'PLAYING';
+      this.setState('playState', 'PLAYING');
     }
 
     pause() {
-      this.playState = 'PAUSED';
+      this.setState('playState', 'PAUSED');
     }
 
     togglePlayPause() {
-      if(this.playState == 'PLAYING') {
+      if(this.state.playState == 'PLAYING') {
         this.pause()
       } else {
         this.play();
@@ -34,20 +34,24 @@
     }
 
     seek(seconds) {
-      this.position = seconds;
+      this.setState('position', seconds);
+    }
+
+    setDuration(duration) {
+      this.setState('duration', duration);
     }
 
     setPlaybackRate(playbackRate) {
-      this.playbackRate = playbackRate;
+      this.setState('playbackRate', playbackRate);
     }
-    
+
     switchPlaybackRate() {
-      let newIndex = (StateManager.PLAYBACK_RATES.indexOf(this.playbackRate) + 1) % StateManager.PLAYBACK_RATES.length;
+      let newIndex = (StateManager.PLAYBACK_RATES.indexOf(this.state.playbackRate) + 1) % StateManager.PLAYBACK_RATES.length;
       this.setPlaybackRate(StateManager.PLAYBACK_RATES[newIndex]);
     }
 
     toggleMute() {
-      if(this.muted) {
+      if(this.state.muted) {
         this.unmute()
       } else {
         this.mute();
@@ -55,25 +59,23 @@
     }
 
     mute() {
-        this.muted = true;
+        this.setState('muted', true);
     }
 
     unmute() {
-        this.muted = false;
+        this.setState('muted', false);
     }
-
-
 
     setVolume(volume) {
       // always unmuted first to avoid potential inconsistent states between e.g. mute button icon and sound-control-bar
       this.unmute();
       if(volume >= 0 || volume <= 100) {
-        this.volume = volume;
+        this.setState('volume', volume);
       }
     }
 
     setDuration(duration) {
-      this.duration=duration;
+      this.setState('duration', duration);
     }
   }
 </script>

@@ -1,5 +1,4 @@
 <link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../../3rd-imports/mobx.html'>
 <link rel='import' href='progress-bar.html'>
 <link rel='import' href='playpause-control.html'>
 <link rel='import' href='sound-control.html'>
@@ -18,64 +17,63 @@
     </style>
 
     <div id="container__user_controls">
-      <playpause-control state-manager='{{stateManager}}'></playpause-control>
-      <progress-bar state-manager='{{stateManager}}'></progress-bar>
-      <videotime-display state-manager='{{stateManager}}'></videotime-display>
-      <speed-control state-manager='{{stateManager}}'></speed-control>
-      <mute-control state-manager='{{stateManager}}'></mute-control>
-      <sound-control state-manager='{{stateManager}}'></sound-control>
+      <playpause-control state='{{state}}' state-manager='{{stateManager}}'></playpause-control>
+      <progress-bar state='{{state}}' state-manager='{{stateManager}}'></progress-bar>
+      <videotime-display state='{{state}}' state-manager='{{stateManager}}'></videotime-display>
+      <speed-control state='{{state}}' state-manager='{{stateManager}}'></speed-control>
+      <mute-control state='{{state}}' state-manager='{{stateManager}}'></mute-control>
+      <sound-control state='{{state}}' state-manager='{{stateManager}}'></sound-control>
     </div>
   </template>
 
   <script>
-    (function() {
-      const {reaction} = mobx;
+    class UserControls extends Polymer.Element {
+      static get is() { return 'user-controls'; }
 
-      class UserControls extends Polymer.Element {
-        static get is() { return 'user-controls'; }
-
-        static get properties() {
-          return {
-            stateManager: {
-              type: Object
-            }
-          };
-        }
-
-        ready() {
-          super.ready();
-
-          // Self is necessary so that variables can be accessed from inside other
-          // contexts as well, like the keyboard interaction function
-          let self = this;
-
-          // Add keyboard interaction
-          window.onkeydown = (e) => {
-            let key = e.keyCode ? e.keyCode : e.which;
-
-            // 39 = user pressed right arrow key
-            if(key === 39) {
-              self.stateManager.seek(self.stateManager.position + 15);
-            // 37 = user pressed left arrow key
-            } else if (key === 37) {
-              self.stateManager.seek(self.stateManager.position - 15);
-            // 32 = user pressed space
-            } else if (key === 32) {
-              self.stateManager.togglePlayPause();
-            }
-            else {
-              return;
-            }
-
-            // Make sure the user doesn't trigger anything else with their
-            // keyboard interaction, like scrolling the page
-            e.preventDefault();
-          };
-        }
+      static get properties() {
+        return {
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
+          }
+        };
       }
 
-      window.customElements.define(UserControls.is, UserControls);
-    })();
+      ready() {
+        super.ready();
+
+        // Self is necessary so that variables can be accessed from inside other
+        // contexts as well, like the keyboard interaction function
+        let self = this;
+
+        // Add keyboard interaction
+        window.onkeydown = (e) => {
+          let key = e.keyCode ? e.keyCode : e.which;
+
+          // 39 = user pressed right arrow key
+          if(key === 39) {
+            self.stateManager.seek(self.stateManager.position + 15);
+          // 37 = user pressed left arrow key
+          } else if (key === 37) {
+            self.stateManager.seek(self.stateManager.position - 15);
+          // 32 = user pressed space
+          } else if (key === 32) {
+            self.stateManager.togglePlayPause();
+          }
+          else {
+            return;
+          }
+
+          // Make sure the user doesn't trigger anything else with their
+          // keyboard interaction, like scrolling the page
+          e.preventDefault();
+        };
+      }
+    }
+
+    window.customElements.define(UserControls.is, UserControls);
   </script>
 
 </dom-module>

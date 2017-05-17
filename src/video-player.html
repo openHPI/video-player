@@ -1,6 +1,5 @@
 <link rel='import' href='../../polymer/polymer-element.html'>
 <link rel='import' href='../../polymer/lib/elements/dom-repeat.html'>
-<link rel='import' href='3rd-imports/mobx.html'>
 <link rel='import' href='3rd-imports/font-awesome.html'>
 
 <link rel='import' href='services/state-manager.html'>
@@ -18,50 +17,49 @@
 
     <div id='streams-container'>
       <template is='dom-repeat' items='{{streams}}'>
-        <video-stream state-manager='{{stateManager}}' url='{{item}}' master='{{equals(index, 0)}}'></video-stream>
+        <video-stream state='{{state}}' state-manager='{{stateManager}}' url='{{item}}' master='[[_equals(index, 0)]]'></video-stream>
       </template>
     </div>
-    <user-controls state-manager='{{stateManager}}'></user-controls>
+    <user-controls state='{{state}}' state-manager='{{stateManager}}'></user-controls>
   </template>
 
   <script>
-    (function() {
-      class VideoPlayer extends Polymer.Element {
-        static get is() { return 'video-player'; }
+    class VideoPlayer extends Polymer.Element {
+      static get is() { return 'video-player'; }
 
-        static get properties() {
-          return {
-            streams: {
-              type: Array,
-              value: []
-            },
-            stateManager: {
-              type: Object,
-              readOnly: true,
-              value: new StateManager()
+      static get properties() {
+        return {
+          streams: {
+            type: Array,
+            value: []
+          },
+          state: {
+            type: Object,
+            value: {
+              playState: 'PAUSED',
+              position: 0,
+              duration: 0,
+              playbackRate: 1.0,
+              volume: 0.75,
+              muted: false
             }
-          };
-        }
-
-        ready() {
-          super.ready();
-          // When possible, use afterNextRender to defer non-critical
-          // work until after first paint.
-          Polymer.RenderStatus.afterNextRender(this, function() {
-            this.stateManager.pause();
-            this.stateManager.seek(0);
-            this.stateManager.toggleMute(); //just for testing
-            this.stateManager.setVolume(75);
-            //this.stateManager.playbackRate = 2;
-          });
-        }
-
-        equals(a, b) {
-          return a === b;
-        }
+          },
+          stateManager: {
+            type: Object
+          }
+        };
       }
 
-      window.customElements.define(VideoPlayer.is, VideoPlayer);
-    })();
+      ready() {
+        super.ready();
+        this.stateManager = new StateManager(this, 'state');
+      }
+
+      _equals(a, b) {
+        return a === b;
+      }
+    }
+
+    window.customElements.define(VideoPlayer.is, VideoPlayer);
   </script>
 </dom-module>

@@ -1,5 +1,4 @@
 <link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../../3rd-imports/mobx.html'>
 <link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='sound-control'>
@@ -10,76 +9,53 @@
         min-width: 60px;
       }
     </style>
-    
+
     <div id="container__sound_control" class="user_controls">
-      <progress id="progress__sound_control" min='0' max='100' value='{{volume}}'></progress>
+      <progress id="progress__sound_control" min='0' max='1' value='[[_displayVolume(state.volume, state.muted)]]'></progress>
     </div>
 
   </template>
 
   <script>
-    (function() {
-      const {reaction} = mobx;
+    class SoundControl extends Polymer.Element {
+      static get is() { return 'sound-control'; }
 
-      class SoundControl extends Polymer.Element {
-        static get is() { return 'sound-control'; }
-
-        static get properties() {
-          return {
-            stateManager: {
-              type: Object,
-              observer: '_updateStateBindings'
-            },
-            volume: {
-              type: Number
-            }
-          };
-        }
-
-        ready() {
-          super.ready();
-          // Add event listeners
-          this.$.progress__sound_control.addEventListener('click', e => this._volumeControlListener(e));
-        }
-
-        _volumeControlListener(e) {
-          // get x-axies value of event location
-          var x = e.pageX - this.$.progress__sound_control.offsetLeft;
-          // calculate value that will be between 0 and max value of progress bar
-          var clickedValue = x * this.$.progress__sound_control.max / this.$.progress__sound_control.offsetWidth;
-          // check if still within borders
-          var isClicked = clickedValue <= this.$.progress__sound_control.max;
-          if(isClicked){
-            this.stateManager.unmute();
-            this.stateManager.setVolume(clickedValue);
+      static get properties() {
+        return {
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
           }
-        }
-
-        // functions that are called when the state of the stateManagers properties change
-        _updateStateBindings() {
-          // Dispose old reactions
-          if(this.reactionDisposers) {
-            this.reactionDisposers.forEach(disposer => disposer());
-          }
-          // Register new reactions
-          this.reactionDisposers = [
-            reaction(() => this.stateManager.volume, this._volumeChanged.bind(this)),
-            reaction(() => this.stateManager.muted, this._mutedChanged.bind(this))
-          ];
-        }
-
-        _volumeChanged(volume) {
-          this.volume = volume;
-        }
-
-        _mutedChanged(muted) {
-          this.volume = muted == true ? '0' : this.stateManager.volume;
-        }
-
+        };
       }
 
-      window.customElements.define(SoundControl.is, SoundControl);
-    })();
+      ready() {
+        super.ready();
+        // Add event listeners
+        this.$.progress__sound_control.addEventListener('click', this._progressBarClicked.bind(this));
+      }
+
+      _progressBarClicked(e) {
+        // get x-axies value of event location
+        var x = e.pageX - this.$.progress__sound_control.offsetLeft;
+        // calculate value that will be between 0 and max value of progress bar
+        var clickedValue = x * this.$.progress__sound_control.max / this.$.progress__sound_control.offsetWidth;
+        // check if still within borders
+        var isClicked = clickedValue <= this.$.progress__sound_control.max;
+        if(isClicked){
+          this.stateManager.unmute();
+          this.stateManager.setVolume(clickedValue);
+        }
+      }
+
+      _displayVolume(volume, muted) {
+        return muted ? '0' : volume.toString();
+      }
+    }
+
+    window.customElements.define(SoundControl.is, SoundControl);
   </script>
 
 </dom-module>
