@@ -47,6 +47,7 @@
           // work until after first paint.
           Polymer.RenderStatus.afterNextRender(this, function() {
             // configure state manager based on input configuration
+            this.streams = this.configuration.streams;
             this.stateManager.playState = this.configuration.playState;
             this.stateManager.seek(this.configuration.startPosition);
             this.stateManager.setVolume(this.configuration.volume);
