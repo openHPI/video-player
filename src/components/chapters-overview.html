@@ -1,0 +1,79 @@
+<link rel='import' href='../../../polymer/polymer-element.html'>
+<link rel='import' href='../3rd-imports/mobx.html'>
+<link rel='import' href='styling/control-bar--style-module.html'>
+
+<dom-module id='chapters-overview'>
+  <template>
+    <style type='text/css' include='control-bar--style-module'> 
+    </style>
+
+    <div id='container__chapters_overview' class='_user_controls'>
+      <h1>Chapters</h1>
+      <ul>
+          <template is='dom-repeat' items='{{outline.outlines}}'>
+            <li><a on-click='handleClick' class="link__chapter_bookmark" data-time$='{{getTotalSeconds(item.title.time)}}'>{{item.title.text}}</a></li>
+          </template>
+      </ul>
+    </div>
+    </template>
+
+  <script>
+    (function() {
+      const {reaction} = mobx;
+
+      class ChaptersOverview extends Polymer.Element {
+        static get is() { return 'chapters-overview'; }
+
+        static get properties() {
+          return {
+            outline: {
+                type: Object,
+                value: {
+                    outlines: []
+                }
+            },
+            stateManager: {
+              type: Object,
+              observer: '_updateStateBindings'
+            }
+          };
+        }
+
+        ready() {
+          super.ready();
+          
+          // initial loading of icon
+          // this.$.button__mute.innerHTML = this.stateManager.muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
+        }
+
+        getTotalSeconds(time) {
+          let splitTime = time.split(':');
+          return splitTime[0] * 3600 + splitTime[1] * 60 + splitTime[2];
+        }
+
+        handleClick(e) {
+          
+        }
+
+        // functions that are called when the state of the stateManagers properties change
+        // _updateStateBindings() {
+        //   // Dispose old reactions
+        //   if(this.reactionDisposers) {
+        //     this.reactionDisposers.forEach(disposer => disposer());
+        //   }
+        //   // Register new reactions
+        //   this.reactionDisposers = [
+        //     reaction(() => this.stateManager.muted, this._mutedChanged.bind(this))
+        //   ];
+        // }
+
+        // _mutedChanged(muted) {
+        //   this.$.button__mute.innerHTML = muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
+        // }
+      }
+
+      window.customElements.define(ChaptersOverview.is, ChaptersOverview);
+    })();
+  </script>
+
+</dom-module>

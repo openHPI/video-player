@@ -6,6 +6,7 @@
 <link rel='import' href='services/state-manager.html'>
 <link rel='import' href='components/video-stream.html'>
 <link rel='import' href='components/control-bar/user-controls.html'>
+<link rel='import' href='components/chapters-overview.html'>
 
 
 <dom-module id='video-player'>
@@ -16,6 +17,7 @@
       </template>
     </div>
     <user-controls state-manager='{{stateManager}}'></user-controls>
+    <chapters-overview outline='{{outline}}'></chapters-overview>
   </template>
 
   <script>
@@ -28,6 +30,12 @@
             streams: {
               type: Array,
               value: []
+            },
+            outline: {
+                type: Object,
+                value: {
+                    outlines: []
+                }
             },
             stateManager: {
               type: Object,
