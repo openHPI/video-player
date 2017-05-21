@@ -63,6 +63,17 @@
         this.muted = false;
     }
 
+    toggleFullScreen() {
+      // This shit don't work right. When the user exits full screen mode
+      // with the 'Esc' button, we can detect it only separately from the keyboard 
+      // event right now. Therefore, we don't know how to handle this properly.
+      // Workaround: Just do a toggle and risk confusing the user a little.
+      // let newFullScreenValue = !(document.fullScreen || document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement || document.fullscreenElement);
+      // if(newFullScreenValue !== this.fullScreen) {
+        this.fullScreen = !this.fullScreen;
+      // }
+    }
+
     enterFullScreen() {
       this.fullScreen = true;
     }
