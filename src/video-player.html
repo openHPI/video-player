@@ -13,14 +13,31 @@
       :host {
         display: inline-block;
       }
+      /* For some reason, just chaining those fullscreen selectors into one big
+         selector doesn't work so we're stupid-duplicating all the rules. */
+      #video-player-container:-webkit-full-screen #streams-container{
+        display: flex;
+        align-items: center;
+      }
+      #video-player-container:-moz-full-screen #streams-container{
+        display: flex;
+        align-items: center;
+      }
+      #video-player-container:-ms-fullscreen #streams-container{
+        display: flex;
+        align-items: center;
+      }
     </style>
 
-    <div id='streams-container'>
-      <template is='dom-repeat' items='{{streams}}'>
-        <video-stream state-manager='{{stateManager}}' url='{{item}}' master='{{equals(index, 0)}}'></video-stream>
-      </template>
+    <div id='video-player-container'>
+      <div id='streams-container'>
+        <template is='dom-repeat' items='{{streams}}'>
+          <video-stream state-manager='{{stateManager}}' url='{{item}}' master='{{equals(index, 0)}}'></video-stream>
+        </template>
+      </div>
+      <user-controls state-manager='{{stateManager}}'></user-controls>
     </div>
-    <user-controls state-manager='{{stateManager}}'></user-controls>
+
   </template>
 
   <script>
@@ -58,6 +75,44 @@
             this.stateManager.setVolume(this.configuration.volume);
             this.stateManager.playbackRate = this.configuration.playbackRate;
           });
+
+          this.stateManager.$mobx.observe(function(observable){
+            console.log('observe!');
+            if (observable.name === 'fullScreen'){
+              var fullScreen = observable.newValue;
+              if (fullScreen) {
+                if (videoPlayerInstance.$['video-player-container'].requestFullscreen) videoPlayerInstance.$['video-player-container'].requestFullscreen();
+                else if (videoPlayerInstance.$['video-player-container'].mozRequestFullScreen) videoPlayerInstance.$['video-player-container'].mozRequestFullScreen();
+                else if (videoPlayerInstance.$['video-player-container'].webkitRequestFullScreen) videoPlayerInstance.$['video-player-container'].webkitRequestFullScreen();
+                else if (videoPlayerInstance.$['video-player-container'].msRequestFullscreen) videoPlayerInstance.$['video-player-container'].msRequestFullscreen();
+              } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+                else if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
+                else if (document.msExitFullscreen) document.msExitFullscreen();
+              }
+            }
+          });
+
+          var videoPlayerInstance = this;
+          
+          window.addEventListener('keydown', function(event){
+            let key = event.keyCode ? event.keyCode : event.which;
+
+            // 70 = user pressed the 'f' button
+            if (key === 70) {
+              var fullScreen = !!(document.fullScreen || document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement || document.fullscreenElement);
+              if(!fullScreen) {
+                videoPlayerInstance.stateManager.enterFullScreen();
+              } else {
+                videoPlayerInstance.stateManager.exitFullScreen();
+              }
+              event.preventDefault();
+            }
+          }, 
+          // This 'true' value makes sure that this listener will work even if 
+          // other listeners invoke event.preventDefault()
+          true);
         }
 
         equals(a, b) {

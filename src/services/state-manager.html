@@ -10,6 +10,7 @@
         volume: 1,
         muted: false,
         duration: 0,
+        fullScreen: false
       })
     }
 
@@ -62,7 +63,13 @@
         this.muted = false;
     }
 
+    enterFullScreen() {
+      this.fullScreen = true;
+    }
 
+    exitFullScreen() {
+      this.fullScreen = false;
+    }
 
     setVolume(volume) {
       // always unmute first to avoid potential inconsistent states between e.g. mute button icon and sound-control-bar
