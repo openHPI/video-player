@@ -48,7 +48,7 @@
 
         getTotalSeconds(time) {
           let splitTime = time.split(':');
-          return splitTime[0] * 3600 + splitTime[1] * 60 + splitTime[2];
+          return parseInt(splitTime[0]) * 3600 + parseInt(splitTime[1]) * 60 + parseInt(splitTime[2]);
         }
 
         handleClick(e) {
