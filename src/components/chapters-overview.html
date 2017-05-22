@@ -52,7 +52,8 @@
         }
 
         handleClick(e) {
-          
+          let time = parseInt(e.path[0].attributes.getNamedItem('data-time').value);
+          this.stateManager.seek(time);
         }
 
         // functions that are called when the state of the stateManagers properties change
