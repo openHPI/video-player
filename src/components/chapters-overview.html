@@ -8,7 +8,6 @@
     </style>
 
     <div id='container__chapters_overview' class='_user_controls'>
-      <h1>Chapters</h1>
       <ul>
           <template is='dom-repeat' items='{{outline.outlines}}'>
             <li><a on-click='handleClick' class="link__chapter_bookmark" data-time$='{{getTotalSeconds(item.title.time)}}'>{{item.title.text}}</a></li>
