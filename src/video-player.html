@@ -13,18 +13,37 @@
       :host {
         display: inline-block;
       }
+      /* For some reason, just chaining those fullscreen selectors into one big
+         selector doesn't work so we're stupid-duplicating all the rules. */
+      #video-player-container:-webkit-full-screen #streams-container{
+        display: flex;
+        align-items: center;
+      }
+      #video-player-container:-moz-full-screen #streams-container{
+        display: flex;
+        align-items: center;
+      }
+      #video-player-container:-ms-fullscreen #streams-container{
+        display: flex;
+        align-items: center;
+      }
     </style>
 
-    <div id='streams-container'>
-      <template is='dom-repeat' items='{{streams}}'>
-        <video-stream state-manager='{{stateManager}}' url='{{item}}' master='{{equals(index, 0)}}'></video-stream>
-      </template>
+    <div id='video-player-container'>
+      <div id='streams-container'>
+        <template is='dom-repeat' items='{{streams}}'>
+          <video-stream state-manager='{{stateManager}}' url='{{item}}' master='{{equals(index, 0)}}'></video-stream>
+        </template>
+      </div>
+      <user-controls state-manager='{{stateManager}}'></user-controls>
     </div>
-    <user-controls state-manager='{{stateManager}}'></user-controls>
+
   </template>
 
   <script>
     (function() {
+      const {reaction} = mobx;
+
       class VideoPlayer extends Polymer.Element {
         static get is() { return 'video-player'; }
 
@@ -37,7 +56,8 @@
             stateManager: {
               type: Object,
               readOnly: true,
-              value: new StateManager()
+              value: new StateManager(),
+              observer: '_updateStateBindings'
             },
             configuration: {
               type: Array,
@@ -58,6 +78,47 @@
             this.stateManager.setVolume(this.configuration.volume);
             this.stateManager.playbackRate = this.configuration.playbackRate;
           });
+
+          let videoPlayerInstance = this;
+
+          this.$['video-player-container'].addEventListener('fullscreenchange', function(event) {
+            videoPlayerInstance.stateManager.toggleFullScreen(false);
+          });
+          this.$['video-player-container'].addEventListener('webkitfullscreenchange', function(event) {
+            videoPlayerInstance.stateManager.toggleFullScreen(false);
+          });
+          this.$['video-player-container'].addEventListener('mozfullscreenchange', function(event) {
+            videoPlayerInstance.stateManager.toggleFullScreen(false);
+          });
+          this.$['video-player-container'].addEventListener('msfullscreenchange', function(event) {
+            videoPlayerInstance.stateManager.toggleFullScreen(false);
+          });
+
+        }
+
+        _updateStateBindings(){
+          // Dispose old reactions
+          if(this.reactionDisposers) {
+            this.reactionDisposers.forEach(disposer => disposer());
+          }
+          // Register new reactions
+          this.reactionDisposers = [
+            reaction(() => this.stateManager.fullScreen, this._fullScreenChanged.bind(this))
+          ];
+        };
+
+        _fullScreenChanged(fullScreen) {
+          if (fullScreen) {
+            if (this.$['video-player-container'].requestFullscreen) this.$['video-player-container'].requestFullscreen();
+            else if (this.$['video-player-container'].mozRequestFullScreen) this.$['video-player-container'].mozRequestFullScreen();
+            else if (this.$['video-player-container'].webkitRequestFullScreen) this.$['video-player-container'].webkitRequestFullScreen();
+            else if (this.$['video-player-container'].msRequestFullscreen) this.$['video-player-container'].msRequestFullscreen();
+          } else {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+            else if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
+            else if (document.msExitFullscreen) document.msExitFullscreen();
+          }
         }
 
         equals(a, b) {
