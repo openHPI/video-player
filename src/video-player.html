@@ -12,6 +12,7 @@
     <style type="text/css">
       :host {
         display: inline-block;
+        --primary-color: [[configuration.primaryColor]];
       }
       /* For some reason, just chaining those fullscreen selectors into one big
          selector doesn't work so we're stupid-duplicating all the rules. */
@@ -77,6 +78,7 @@
             this.stateManager.seek(this.configuration.startPosition);
             this.stateManager.setVolume(this.configuration.volume);
             this.stateManager.playbackRate = this.configuration.playbackRate;
+            this.primaryColor = this.configuration.primaryColor;
           });
 
           let videoPlayerInstance = this;
