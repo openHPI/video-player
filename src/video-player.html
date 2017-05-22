@@ -82,16 +82,16 @@
           let videoPlayerInstance = this;
 
           this.$['video-player-container'].addEventListener('fullscreenchange', function(event) {
-            // videoPlayerInstance.stateManager.toggleFullScreen();
+            videoPlayerInstance.stateManager.toggleFullScreen(false);
           });
           this.$['video-player-container'].addEventListener('webkitfullscreenchange', function(event) {
-            // videoPlayerInstance.stateManager.toggleFullScreen();
+            videoPlayerInstance.stateManager.toggleFullScreen(false);
           });
           this.$['video-player-container'].addEventListener('mozfullscreenchange', function(event) {
-            // videoPlayerInstance.stateManager.toggleFullScreen();
+            videoPlayerInstance.stateManager.toggleFullScreen(false);
           });
           this.$['video-player-container'].addEventListener('msfullscreenchange', function(event) {
-            // videoPlayerInstance.stateManager.toggleFullScreen();
+            videoPlayerInstance.stateManager.toggleFullScreen(false);
           });
 
         }

@@ -46,7 +46,7 @@
           // initial loading of icon
           this.$.button__full_screen.innerHTML = this.stateManager.fullScreen? '<i class="fa fa-compress">' : '<i class="fa fa-expand">';
           // Add event listeners
-          this.$.button__full_screen.addEventListener('click', () => this.stateManager.toggleFullScreen());
+          this.$.button__full_screen.addEventListener('click', () => this.stateManager.toggleFullScreen(true));
         }
 
         // functions that are called when the state of the stateManagers properties change
