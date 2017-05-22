@@ -6,21 +6,37 @@
 <link rel='import' href='components/video-stream.html'>
 <link rel='import' href='components/control-bar/user-controls.html'>
 
-
 <dom-module id='video-player'>
   <template>
     <style type="text/css">
       :host {
         display: inline-block;
       }
+      /* For some reason, just chaining those fullscreen selectors into one big
+         selector doesn't work so we're stupid-duplicating all the rules. */
+      #video-player-container:-webkit-full-screen #streams-container{
+        display: flex;
+        align-items: center;
+      }
+      #video-player-container:-moz-full-screen #streams-container{
+        display: flex;
+        align-items: center;
+      }
+      #video-player-container:-ms-fullscreen #streams-container{
+        display: flex;
+        align-items: center;
+      }
     </style>
 
-    <div id='streams-container'>
-      <template is='dom-repeat' items='{{streams}}'>
-        <video-stream state='{{state}}' state-manager='{{stateManager}}' url='{{item}}' master='[[_equals(index, 0)]]'></video-stream>
-      </template>
+    <div id='video-player-container'>
+      <div id='streams-container'>
+        <template is='dom-repeat' items='{{configuration.streams}}'>
+          <video-stream state='{{state}}' state-manager='{{stateManager}}' url='{{item}}' master='{{_equals(index, 0)}}'></video-stream>
+        </template>
+      </div>
+      <user-controls state='{{state}}' state-manager='{{stateManager}}'></user-controls>
     </div>
-    <user-controls state='{{state}}' state-manager='{{stateManager}}'></user-controls>
+
   </template>
 
   <script>
@@ -29,10 +45,6 @@
 
       static get properties() {
         return {
-          streams: {
-            type: Array,
-            value: []
-          },
           state: {
             type: Object,
             value: {
@@ -41,18 +53,63 @@
               duration: 0,
               playbackRate: 1.0,
               volume: 0.75,
-              muted: false
+              muted: false,
+              fullScreen: false
             }
           },
           stateManager: {
             type: Object
+          },
+          configuration: {
+            type: Object,
+            value: {}
           }
         };
+      }
+
+      static get observers() {
+        return [
+          '_configurationChanged(configuration)',
+          '_fullScreenChanged(state.fullScreen)'
+        ]
       }
 
       ready() {
         super.ready();
         this.stateManager = new StateManager(this, 'state');
+
+        let videoPlayerInstance = this;
+
+        this.$['video-player-container'].addEventListener('fullscreenchange', function(event) {
+          videoPlayerInstance.stateManager.setFullScreen(document.fullscreen);
+        });
+        this.$['video-player-container'].addEventListener('webkitfullscreenchange', function(event) {
+          videoPlayerInstance.stateManager.setFullScreen(document.webkitIsFullScreen);
+        });
+        this.$['video-player-container'].addEventListener('mozfullscreenchange', function(event) {
+          videoPlayerInstance.stateManager.setFullScreen(document.mozFullScreenwebkitIsFullScreen);
+        });
+        this.$['video-player-container'].addEventListener('msfullscreenchange', function(event) {
+          videoPlayerInstance.stateManager.setFullScreen(document.msFullscreenElement);
+        });
+      }
+
+      _configurationChanged(configuration) {
+          this.set('state', Object.assign(this.state, this.configuration));
+      }
+
+      _fullScreenChanged(fullScreen) {
+        if (fullScreen) {
+          if (this.$['video-player-container'].requestFullscreen) this.$['video-player-container'].requestFullscreen();
+          else if (this.$['video-player-container'].mozRequestFullScreen) this.$['video-player-container'].mozRequestFullScreen();
+          else if (this.$['video-player-container'].webkitRequestFullScreen) this.$['video-player-container'].webkitRequestFullScreen();
+          else if (this.$['video-player-container'].msRequestFullscreen) this.$['video-player-container'].msRequestFullscreen();
+        } else {
+          if (document.exitFullscreen) document.exitFullscreen();
+          else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+          else if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
+          else if (document.msExitFullscreen) document.msExitFullscreen();
+        }
       }
 
       _equals(a, b) {

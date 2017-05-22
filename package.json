@@ -50,7 +50,8 @@
     "gulp-ignore": "^2.0.2",
     "gulp-uglify": "^2.1.2",
     "polymer-build": "^1.2.2",
-    "run-sequence": "^1.2.2"
+    "run-sequence": "^1.2.2",
+    "web-component-tester": "^6.0.0"
   },
   "scripts": {
     "test": "polymer test",

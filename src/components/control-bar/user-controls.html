@@ -5,7 +5,7 @@
 <link rel='import' href='videotime-display.html'>
 <link rel="import" href="speed-control.html">
 <link rel='import' href='mute-control.html'>
-<link rel='import' href='progress-bar.html'>
+<link rel='import' href='full-screen-control.html'>
 
 <dom-module id='user-controls'>
   <template>
@@ -23,6 +23,7 @@
       <speed-control state='{{state}}' state-manager='{{stateManager}}'></speed-control>
       <mute-control state='{{state}}' state-manager='{{stateManager}}'></mute-control>
       <sound-control state='{{state}}' state-manager='{{stateManager}}'></sound-control>
+      <full-screen-control state='{{state}}' state-manager='{{stateManager}}'></full-screen-control>
     </div>
   </template>
 
@@ -44,32 +45,31 @@
       ready() {
         super.ready();
 
-        // Self is necessary so that variables can be accessed from inside other
-        // contexts as well, like the keyboard interaction function
-        let self = this;
+        window.addEventListener('keydown', this._onkeydown.bind(this));
+      }
 
-        // Add keyboard interaction
-        window.onkeydown = (e) => {
-          let key = e.keyCode ? e.keyCode : e.which;
+      _onkeydown(e) {
+        let key = e.keyCode ? e.keyCode : e.which;
 
-          // 39 = user pressed right arrow key
-          if(key === 39) {
-            self.stateManager.seek(self.stateManager.position + 15);
-          // 37 = user pressed left arrow key
-          } else if (key === 37) {
-            self.stateManager.seek(self.stateManager.position - 15);
-          // 32 = user pressed space
-          } else if (key === 32) {
-            self.stateManager.togglePlayPause();
-          }
-          else {
-            return;
-          }
+        // 39 = user pressed right arrow key
+        if(key === 39) {
+          this.stateManager.seek(this.stateManager.position + 15);
+        // 37 = user pressed left arrow key
+        } else if (key === 37) {
+          this.stateManager.seek(this.stateManager.position - 15);
+        // 32 = user pressed space
+        } else if (key === 32) {
+          this.stateManager.togglePlayPause();
+        // 70 = user pressed the 'f' button
+        } else if (key === 70) {
+          this.stateManager.toggleFullScreen(true);
+        } else {
+          return;
+        }
 
-          // Make sure the user doesn't trigger anything else with their
-          // keyboard interaction, like scrolling the page
-          e.preventDefault();
-        };
+        // Make sure the user doesn't trigger anything else with their
+        // keyboard interaction, like scrolling the page
+        e.preventDefault();
       }
     }
 

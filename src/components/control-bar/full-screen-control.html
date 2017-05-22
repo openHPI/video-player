@@ -1,0 +1,60 @@
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='../styling/control-bar--style-module.html'>
+
+<dom-module id='full-screen-control'>
+  <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
+
+  <template>
+    <style type="text/css" include="control-bar--style-module">
+      #container__full_screen_control {
+        border-right: none;
+      }
+      :host {
+        /* Avoid flickering with changing icons */
+        /* It should be about twice the icon size */
+        min-width: 3rem;
+      }
+      #button__full_screen i {
+        font-size: 1.5rem;
+      }
+    </style>
+
+    <div id="container__full_screen_control" class="user_controls">
+      <a id='button__full_screen' class="button">
+        <template is="dom-if" if="[[state.fullScreen]]">
+          <i class="fa fa-compress">
+        </template>
+        <template is="dom-if" if="[[!state.fullScreen]]">
+          <i class="fa fa-expand">
+        </template>
+      </a>
+    </div>
+    </template>
+
+  <script>
+    class FullScreenControl extends Polymer.Element {
+      static get is() { return 'full-screen-control'; }
+
+      static get properties() {
+        return {
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+
+        // Add event listeners
+        this.$.button__full_screen.addEventListener('click', () => this.stateManager.toggleFullScreen());
+      }
+    }
+
+    window.customElements.define(FullScreenControl.is, FullScreenControl);
+  </script>
+
+</dom-module>
