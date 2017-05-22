@@ -5,6 +5,9 @@
 <dom-module id='chapters-overview'>
   <template>
     <style type='text/css' include='control-bar--style-module'> 
+      .active {
+        font-weight: bold;
+      }
     </style>
 
     <div id='container__chapters_overview' class='_user_controls'>
@@ -40,9 +43,9 @@
 
         ready() {
           super.ready();
-          
-          // initial loading of icon
-          // this.$.button__mute.innerHTML = this.stateManager.muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
+          Polymer.RenderStatus.afterNextRender(this, function() {
+            this.highlightChapter(this.stateManager.position);
+          });
         }
 
         getTotalSeconds(time) {
@@ -52,24 +55,49 @@
 
         handleClick(e) {
           let time = parseInt(e.path[0].attributes.getNamedItem('data-time').value);
+          
           this.stateManager.seek(time);
+          this.highlightChapter(time);
         }
 
-        // functions that are called when the state of the stateManagers properties change
-        // _updateStateBindings() {
-        //   // Dispose old reactions
-        //   if(this.reactionDisposers) {
-        //     this.reactionDisposers.forEach(disposer => disposer());
-        //   }
-        //   // Register new reactions
-        //   this.reactionDisposers = [
-        //     reaction(() => this.stateManager.muted, this._mutedChanged.bind(this))
-        //   ];
-        // }
+        _updateStateBindings() {
+          // Dispose old reactions
+          if(this.reactionDisposers) {
+            this.reactionDisposers.forEach(disposer => disposer());
+          }
+          // Register new reactions
+          this.reactionDisposers = [
+            reaction(() => this.stateManager.position, this._positionChanged.bind(this))
+          ];
+        }
 
-        // _mutedChanged(muted) {
-        //   this.$.button__mute.innerHTML = muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
-        // }
+        _positionChanged(position) {
+          this.highlightChapter(position);
+        }
+
+        highlightChapter(position) {
+          if (this.shadowRoot.querySelector('.active')) {
+            this.shadowRoot.querySelector('.active').classList.remove('active');
+          }
+          this.shadowRoot.querySelector('[data-time="' + this.closestChapterPosition(position) + '"]').classList.add('active');
+        }
+
+        closestChapterPosition(position) {
+          let positions = this.outline.outlines.map(function(chapter) {
+            return this.getTotalSeconds(chapter.title.time);
+          }, this);
+          let closestPosition = positions[0];
+          if (position > positions[0]) {
+            for(let i = 1; i < positions.length; i++) {
+              if (positions[i] > position) {
+                break;
+              }
+              closestPosition = positions[i];
+            }
+          }
+          console.log(closestPosition);
+          return closestPosition;
+        }
       }
 
       window.customElements.define(ChaptersOverview.is, ChaptersOverview);
