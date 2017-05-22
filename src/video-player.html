@@ -48,11 +48,11 @@
           state: {
             type: Object,
             value: {
-              playState: 'PAUSED',
+              playState: StateManager.PLAY_STATES.PAUSED,
               position: 0,
               duration: 0,
               playbackRate: 1.0,
-              volume: 0.75,
+              volume: 1.0,
               muted: false,
               fullScreen: false
             }
@@ -69,33 +69,33 @@
 
       static get observers() {
         return [
-          '_configurationChanged(configuration)',
           '_fullScreenChanged(state.fullScreen)'
         ]
       }
 
       ready() {
         super.ready();
+
+        // Initialize state and StateManager
+        if(this.configuration.initialState) {
+          this.state = Object.assign(this.state, this.configuration.initialState);
+        }
         this.stateManager = new StateManager(this, 'state');
 
-        let videoPlayerInstance = this;
-
-        this.$['video-player-container'].addEventListener('fullscreenchange', function(event) {
-          videoPlayerInstance.stateManager.setFullScreen(document.fullscreen);
+        // Add event listeners for fullscreen
+        let self = this;
+        this.$['video-player-container'].addEventListener('fullscreenchange', e => {
+          self.stateManager.setFullScreen(document.fullscreen);
         });
-        this.$['video-player-container'].addEventListener('webkitfullscreenchange', function(event) {
-          videoPlayerInstance.stateManager.setFullScreen(document.webkitIsFullScreen);
+        this.$['video-player-container'].addEventListener('webkitfullscreenchange', e => {
+          self.stateManager.setFullScreen(document.webkitIsFullScreen);
         });
-        this.$['video-player-container'].addEventListener('mozfullscreenchange', function(event) {
-          videoPlayerInstance.stateManager.setFullScreen(document.mozFullScreenwebkitIsFullScreen);
+        this.$['video-player-container'].addEventListener('mozfullscreenchange', e => {
+          self.stateManager.setFullScreen(document.mozFullScreenwebkitIsFullScreen);
         });
-        this.$['video-player-container'].addEventListener('msfullscreenchange', function(event) {
-          videoPlayerInstance.stateManager.setFullScreen(document.msFullscreenElement);
+        this.$['video-player-container'].addEventListener('msfullscreenchange', e => {
+          self.stateManager.setFullScreen(document.msFullscreenElement);
         });
-      }
-
-      _configurationChanged(configuration) {
-          this.set('state', Object.assign(this.state, this.configuration));
       }
 
       _fullScreenChanged(fullScreen) {
