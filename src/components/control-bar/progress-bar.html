@@ -48,7 +48,7 @@
         // check if still within borders
         var isClicked = clickedValue <= this.$.progress__bar.max;
         if(isClicked){
-          this.stateManager.seek(clickedValue);
+          this.stateManager.setPosition(clickedValue);
         }
       }
     }

@@ -45,6 +45,10 @@
 
       static get properties() {
         return {
+          configuration: {
+            type: Object,
+            value: {}
+          },
           state: {
             type: Object,
             value: {
@@ -59,10 +63,6 @@
           },
           stateManager: {
             type: Object
-          },
-          configuration: {
-            type: Object,
-            value: {}
           }
         };
       }

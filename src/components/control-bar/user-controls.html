@@ -53,10 +53,10 @@
 
         // 39 = user pressed right arrow key
         if(key === 39) {
-          this.stateManager.seek(this.stateManager.position + 15);
+          this.stateManager.setPosition(this.stateManager.position + 15);
         // 37 = user pressed left arrow key
         } else if (key === 37) {
-          this.stateManager.seek(this.stateManager.position - 15);
+          this.stateManager.setPosition(this.stateManager.position - 15);
         // 32 = user pressed space
         } else if (key === 32) {
           this.stateManager.togglePlayPause();

@@ -45,7 +45,7 @@
         // Add event listeners
         this.$.video.addEventListener('timeupdate', () => {
           if(this.master) {
-            this.stateManager.seek(this.$.video.currentTime);
+            this.stateManager.setPosition(this.$.video.currentTime);
           }
         });
         // load metadata for extraction of the video's duration
