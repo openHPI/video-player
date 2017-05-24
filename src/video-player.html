@@ -5,7 +5,7 @@
 
 <link rel='import' href='services/state-manager.html'>
 <link rel='import' href='components/video-stream.html'>
-<link rel='import' href='components/control-bar/user-controls.html'>
+<link rel='import' href='components/control-bar/control-bar.html'>
 
 <dom-module id='video-player'>
   <template>
@@ -38,7 +38,7 @@
           <video-stream state='{{state}}' state-manager='{{stateManager}}' url='{{item}}' master='{{_equals(index, 0)}}'></video-stream>
         </template>
       </div>
-      <user-controls state='{{state}}' state-manager='{{stateManager}}'></user-controls>
+      <control-bar state='{{state}}' state-manager='{{stateManager}}'></control-bar>
     </div>
 
   </template>
