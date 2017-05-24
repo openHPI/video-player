@@ -95,8 +95,9 @@
           this.$['video-player-container'].addEventListener('webkitfullscreenchange', e => {
             self.stateManager.setFullScreen(document.webkitIsFullScreen);
           });
-          this.$['video-player-container'].addEventListener('mozfullscreenchange', e => {
-            self.stateManager.setFullScreen(document.mozFullScreenwebkitIsFullScreen);
+          // Firefox for some reason needs to attach the event to document
+          document.addEventListener('mozfullscreenchange', e => {
+            self.stateManager.setFullScreen(document.mozFullScreen);
           });
           this.$['video-player-container'].addEventListener('msfullscreenchange', e => {
             self.stateManager.setFullScreen(document.msFullscreenElement);
