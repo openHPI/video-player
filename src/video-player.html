@@ -71,14 +71,50 @@
           // When possible, use afterNextRender to defer non-critical
           // work until after first paint.
           Polymer.RenderStatus.afterNextRender(this, function() {
+
             // configure state manager based on input configuration
-            this.streams = this.configuration.streams;
-            this.stateManager.playState = this.configuration.playState;
-            this.stateManager.seek(this.configuration.startPosition);
-            this.stateManager.setVolume(this.configuration.volume);
-            this.stateManager.playbackRate = this.configuration.playbackRate;
+            // otherwise set defaults
+
+            //streams
+            if(this.configuration.streams){
+              this.streams = this.configuration.streams;
+            } else {
+              console.warn("No streams contained within configuration of videoplayer!!!");
+            }
+
+            //playState
+            if(this.configuration.playState){
+              this.stateManager.playState = this.configuration.playState;
+            } else {
+              this.stateManager.playState = "PAUSE";
+            }
+
+            //startPosition
+            if(this.configuration.startPosition){
+              this.stateManager.seek(this.configuration.startPosition);
+            } else {
+              this.stateManager.seek(0);
+            }
+
+            //volume
+            if(this.configuration.volume){
+              this.stateManager.setVolume(this.configuration.volume);
+            } else {
+              this.stateManager.setVolume(75);
+            }
+
+            // playbackRate
+            if(this.configuration.playbackRate){
+              this.stateManager.playbackRate = this.configuration.playbackRate;
+            } else {
+              this.stateManager.playbackRate = 1.0;
+            }          
+            
           });
 
+
+
+          // TODO: comments 
           let videoPlayerInstance = this;
 
           this.$['video-player-container'].addEventListener('fullscreenchange', function(event) {
