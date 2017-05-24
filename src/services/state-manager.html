@@ -107,7 +107,7 @@
        * @param {number} playbackRate The new playback rate.
        */
       setPlaybackRate(playbackRate) {
-        if(!playbackRate in StateManager.PLAYBACK_RATES) {
+        if(!StateManager.PLAYBACK_RATES.includes(playbackRate)) {
           throw new RangeError(`Value must be in [${StateManager.PLAYBACK_RATES.toString()}].`)
         }
 
