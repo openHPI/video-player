@@ -17,11 +17,13 @@
       </template>
     </div>
     <user-controls state-manager='{{stateManager}}'></user-controls>
-    <chapters-overview state-manager='{{stateManager}}' outline='{{outline}}'></chapters-overview>
+    <chapters-overview class="invisible" state-manager='{{stateManager}}' outline='{{outline}}'></chapters-overview>
   </template>
 
   <script>
     (function() {
+      const {reaction} = mobx;
+
       class VideoPlayer extends Polymer.Element {
         static get is() { return 'video-player'; }
 
@@ -40,7 +42,8 @@
             stateManager: {
               type: Object,
               readOnly: true,
-              value: new StateManager()
+              value: new StateManager(),
+              observer: '_updateStateBindings'
             }
           };
         }
@@ -60,6 +63,29 @@
 
         equals(a, b) {
           return a === b;
+        }
+
+        // functions that are called when the state of the stateManagers properties change
+        _updateStateBindings() {
+          // Dispose old reactions
+          if(this.reactionDisposers) {
+            this.reactionDisposers.forEach(disposer => disposer());
+          }
+          // Register new reactions
+          this.reactionDisposers = [
+            reaction(() => this.stateManager.displayChaptersOverview, this._displayChaptersOverviewChanged.bind(this))
+          ];
+        }
+
+        _displayChaptersOverviewChanged(displayState) {
+          let chaptersOverview = this.shadowRoot.querySelector('chapters-overview');
+          if (displayState) {
+            chaptersOverview.classList.remove('invisible');
+          }
+          else {
+            chaptersOverview.classList.add('invisible');
+          }
+          
         }
       }
 

@@ -10,6 +10,7 @@
         volume: 1,
         muted: false,
         duration: 0,
+        displayChaptersOverview: false
       })
     }
 
@@ -74,6 +75,10 @@
 
     setDuration(duration) {
       this.duration=duration;
+    }
+
+    toggleDisplayChaptersOverview() {
+      this.displayChaptersOverview = !this.displayChaptersOverview;
     }
   }
 </script>
