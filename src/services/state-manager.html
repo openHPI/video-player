@@ -1,110 +1,188 @@
 <script>
-  const {extendObservable} = mobx;
-
-  class StateManager {
-    constructor() {
-      extendObservable(this, {
-        playState: 'PAUSED',
-        position: 0,
-        playbackRate: 1.0,
-        volume: 1,
-        muted: false,
-        duration: 0,
-        displayChaptersOverview: false,
-        fullScreen: false
-      })
-    }
-
-    static get PLAYBACK_RATES() {
-      return [0.7, 1.0, 1.3, 1.5, 1.8, 2.0];
-    }
-
-    play() {
-      this.playState = 'PLAYING';
-    }
-
-    pause() {
-      this.playState = 'PAUSED';
-    }
-
-    togglePlayPause() {
-      if(this.playState == 'PLAYING') {
-        this.pause()
-      } else {
-        this.play();
+  define('state-manager', () => {
+    class StateManager {
+      /**
+       * Initializes a new StateManager instance.
+       * @param {VideoPlayer} videoPlayer  The VideoPlayer, whose state should be controlled.
+       * @param {string} statePath  The path of the state property on the VideoPlayer.
+       * @return {StateManager}  The new StateManager instance.
+       */
+      constructor(videoPlayer, statePath) {
+        this.videoPlayer = videoPlayer;
+        this.statePath = statePath;
       }
-    }
 
-    seek(seconds) {
-      this.position = seconds;
-    }
-
-    setPlaybackRate(playbackRate) {
-      this.playbackRate = playbackRate;
-    }
-    
-    switchPlaybackRate() {
-      let newIndex = (StateManager.PLAYBACK_RATES.indexOf(this.playbackRate) + 1) % StateManager.PLAYBACK_RATES.length;
-      this.setPlaybackRate(StateManager.PLAYBACK_RATES[newIndex]);
-    }
-
-    toggleMute() {
-      if(this.muted) {
-        this.unmute()
-      } else {
-        this.mute();
+      /**
+       * Contains the supported playback rates sorted ascending.
+       * @type {number[]}
+       */
+      static get PLAYBACK_RATES() {
+        return [0.7, 1.0, 1.3, 1.5, 1.8, 2.0];
       }
-    }
 
-    mute() {
-        this.muted = true;
-    }
-
-    unmute() {
-        this.muted = false;
-    }
-
-    toggleFullScreen(originatedFromUserEvent) {
-      // This method is a little tricky because it can be called both because a
-      // user initiated it through the ways our application provides and
-      // because a user pressed 'Esc' during full screen mode. The latter
-      // can't be intercepted by our application and can be only be detected
-      // via an event listener on 'fullscreenchange'. This event will of course
-      // also be fired when we switch to fullscreen from our application which is
-      // why we have to take care of not changing our fullscreen value twice.
-      let newFullScreenValue = !(document.fullScreen || document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement || document.fullscreenElement);
-      // if this didn't originate from a keyboard event, then we'll still
-      // get the old fullscreen value so we have to negate it
-      if(!originatedFromUserEvent) {
-        newFullScreenValue = !newFullScreenValue;
+      /**
+       * Contains the different play states.
+       * @type {Object.<string, string>}
+       */
+      static get PLAY_STATES() {
+        return {
+          PLAYING: 'PLAYING',
+          PAUSED: 'PAUSED'
+        }
       }
-      if(newFullScreenValue !== this.fullScreen) {
-        this.fullScreen = !this.fullScreen;
+
+
+      /**
+       * Gets the state object of the attatched VideoPlayer.
+       * @return {Object} The state object.
+       */
+      get state() {
+        return this.videoPlayer[this.statePath];
       }
-    }
 
-    enterFullScreen() {
-      this.fullScreen = true;
-    }
-
-    exitFullScreen() {
-      this.fullScreen = false;
-    }
-
-    setVolume(volume) {
-      // always unmute first to avoid potential inconsistent states between e.g. mute button icon and sound-control-bar
-      this.unmute();
-      if(volume >= 0 || volume <= 100) {
-        this.volume = volume;
+      /**
+       * Sets a single property of the state.
+       * @param {string} path  [description]
+       * @param {any} value [description]
+       */
+      setState(path, value) {
+        this.videoPlayer.set(this.statePath + '.' + path, value);
       }
-    }
 
-    setDuration(duration) {
-      this.duration=duration;
+
+      /**
+       * Sets the play state to 'playing'.
+       */
+      play() {
+        this.setState('playState', StateManager.PLAY_STATES.PLAYING);
+      }
+
+      /**
+       * Sets the play state to 'paused'.
+       */
+      pause() {
+        this.setState('playState', StateManager.PLAY_STATES.PAUSED);
+      }
+
+      /**
+       * Toggles the current play state.
+       */
+      togglePlayPause() {
+        if(this.state.playState == StateManager.PLAY_STATES.PLAYING) {
+          this.pause()
+        } else {
+          this.play();
+        }
+      }
+
+
+      /**
+       * Sets the current position in the video.
+       * @param {number} seconds The current position in seconds.
+       */
+      setPosition(seconds) {
+        if(seconds < 0 || this.state.duration && seconds > this.state.duration) {
+          throw new RangeError('Value must be between 0 and duration of the video.');
+        }
+
+        this.setState('position', seconds);
+      }
+
+      /**
+       * Sets the duration of the video.
+       * @param {number} seconds The duration of the current video in seconds.
+       */
+      setDuration(seconds) {
+        if(seconds < 0) {
+          throw new RangeError('Value must be positive.')
+        }
+
+        this.setState('duration', seconds);
+      }
+
+
+      /**
+       * Sets the playback rate of the video.
+       * @param {number} playbackRate The new playback rate.
+       */
+      setPlaybackRate(playbackRate) {
+        if(!StateManager.PLAYBACK_RATES.includes(playbackRate)) {
+          throw new RangeError(`Value must be in [${StateManager.PLAYBACK_RATES.toString()}].`)
+        }
+
+        this.setState('playbackRate', playbackRate);
+      }
+
+      /**
+       * Switches playback rate in ascending order.
+       */
+      switchPlaybackRate() {
+        let newIndex = (StateManager.PLAYBACK_RATES.indexOf(this.state.playbackRate) + 1) % StateManager.PLAYBACK_RATES.length;
+        this.setPlaybackRate(StateManager.PLAYBACK_RATES[newIndex]);
+      }
+
+
+      /**
+       * Toggles the muting.
+       */
+      toggleMute() {
+        if(this.state.muted) {
+          this.unmute()
+        } else {
+          this.mute();
+        }
+      }
+
+      /**
+       * Enables muting.
+       */
+      mute() {
+          this.setState('muted', true);
+      }
+
+      /**
+       * Disables muting.
+       */
+      unmute() {
+          this.setState('muted', false);
+      }
+
+      /**
+       * Sets the volume.
+       * @param {number} volume The new volume (0.0-1.0).
+       */
+      setVolume(volume) {
+        if(volume < 0 || volume > 1) {
+          throw new RangeError('Value must be between 0 and 1.')
+        }
+
+        // Always unmute first to avoid potential inconsistent states between
+        // e.g. mute button icon and sound-control-bar
+        this.unmute();
+        this.setState('volume', volume);
+      }
+
+
+      /**
+       * Toggles the full screen mode.
+       */
+      toggleFullScreen() {
+        this.setFullScreen(!this.state.fullScreen);
+      }
+
+      /**
+       * Sets the full screen mode explicitly.
+       * @param {boolean} fullScreen Boolean determining whether the full screen mode is active or not.
+       */
+      setFullScreen(fullScreen) {
+        this.setState('fullScreen', fullScreen);
+      }
     }
 
     toggleDisplayChaptersOverview() {
       this.displayChaptersOverview = !this.displayChaptersOverview;
     }
-  }
+    
+    return StateManager;
+  });
 </script>

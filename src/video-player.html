@@ -1,12 +1,13 @@
+<link rel="import" href="../../imd/imd.html">
 <link rel='import' href='../../polymer/polymer-element.html'>
 <link rel='import' href='../../polymer/lib/elements/dom-repeat.html'>
-<link rel='import' href='3rd-imports/mobx.html'>
 <link rel='import' href='3rd-imports/font-awesome.html'>
 
 <link rel='import' href='services/state-manager.html'>
 <link rel='import' href='components/video-stream.html'>
 <link rel='import' href='components/control-bar/user-controls.html'>
 <link rel='import' href='components/chapters-overview.html'>
+<link rel='import' href='components/control-bar/control-bar.html'>
 
 <dom-module id='video-player'>
   <template>
@@ -17,6 +18,8 @@
         --secondary-color: [[configuration.secondaryColor]];
         --background-color-for-primary: [[configuration.backgoundColorForPrimary]];
       }
+
+
       /* For some reason, just chaining those fullscreen selectors into one big
          selector doesn't work so we're stupid-duplicating all the rules. */
       #video-player-container:-webkit-full-screen #streams-container{
@@ -31,32 +34,45 @@
         display: flex;
         align-items: center;
       }
+
+      #video-player-container {
+        height: 100%;
+      }
+      #streams-container {
+        display: flex;
+        flex-wrap: wrap;
+        overflow: hidden;
+        /* Cancel out the control bar height */
+        height: calc(100% - 45px);
+      }
+      .video-stream {
+        flex: 1 1 50%;
+        height: calc(100% / [[rowCount(streams)]])
+      }
     </style>
 
     <div id='video-player-container'>
       <div id='streams-container'>
-        <template is='dom-repeat' items='{{streams}}'>
-          <video-stream state-manager='{{stateManager}}' url='{{item}}' master='{{equals(index, 0)}}'></video-stream>
+        <template is='dom-repeat' items='{{configuration.streams}}'>
+          <video-stream state='{{state}}' state-manager='{{stateManager}}' url='{{item}}' master='{{_equals(index, 0)}}' class='video-stream'></video-stream>
         </template>
       </div>
-      <user-controls state-manager='{{stateManager}}'></user-controls>
+      <control-bar state='{{state}}' state-manager='{{stateManager}}'></control-bar>
     </div>
     <user-controls state-manager='{{stateManager}}'></user-controls>
     <chapters-overview class="invisible" state-manager='{{stateManager}}' outline='{{outline}}'></chapters-overview>
   </template>
 
   <script>
-    (function() {
-      const {reaction} = mobx;
-
+    define(['state-manager'], (StateManager) => {
       class VideoPlayer extends Polymer.Element {
         static get is() { return 'video-player'; }
 
         static get properties() {
           return {
-            streams: {
-              type: Array,
-              value: []
+            configuration: {
+              type: Object,
+              value: {}
             },
             outline: {
                 type: Object,
@@ -64,62 +80,57 @@
                     outlines: []
                 }
             },
-            stateManager: {
+            state: {
               type: Object,
-              readOnly: true,
-              value: new StateManager(),
-              observer: '_updateStateBindings'
+              value: {
+                playState: StateManager.PLAY_STATES.PAUSED,
+                position: 0,
+                duration: 0,
+                playbackRate: 1.0,
+                volume: 1.0,
+                muted: false,
+                fullScreen: false,
+                displayChaptersOverview: false
+              }
             },
-            configuration: {
-              type: Array,
-              value: function () { return []; } // Default value
+            stateManager: {
+              type: Object
             }
           };
         }
 
-        ready() {
-          super.ready();
-          // When possible, use afterNextRender to defer non-critical
-          // work until after first paint.
-          Polymer.RenderStatus.afterNextRender(this, function() {
-            // configure state manager based on input configuration
-            this.streams = this.configuration.streams;
-            this.stateManager.playState = this.configuration.playState;
-            this.stateManager.seek(this.configuration.startPosition);
-            this.stateManager.setVolume(this.configuration.volume);
-            this.stateManager.playbackRate = this.configuration.playbackRate;
-            this.primaryColor = this.configuration.primaryColor;
-            this.secondaryColor = this.configuration.secondaryColor;
-            this.backgoundColorForPrimary = this.configuration.backgoundColorForPrimary;
-          });
-
-          let videoPlayerInstance = this;
-
-          this.$['video-player-container'].addEventListener('fullscreenchange', function(event) {
-            videoPlayerInstance.stateManager.toggleFullScreen(false);
-          });
-          this.$['video-player-container'].addEventListener('webkitfullscreenchange', function(event) {
-            videoPlayerInstance.stateManager.toggleFullScreen(false);
-          });
-          this.$['video-player-container'].addEventListener('mozfullscreenchange', function(event) {
-            videoPlayerInstance.stateManager.toggleFullScreen(false);
-          });
-          this.$['video-player-container'].addEventListener('msfullscreenchange', function(event) {
-            videoPlayerInstance.stateManager.toggleFullScreen(false);
-          });
-
+        static get observers() {
+          return [
+            '_fullScreenChanged(state.fullScreen)',
+            '_displayChaptersOverviewChanged(state.displayChaptersOverview)'
+          ];
         }
 
-        _updateStateBindings(){
-          // Dispose old reactions
-          if(this.reactionDisposers) {
-            this.reactionDisposers.forEach(disposer => disposer());
+        ready() {
+          super.ready();
+
+          // Initialize state and StateManager
+          if(this.configuration.initialState) {
+            this.state = Object.assign(this.state, this.configuration.initialState);
           }
-          // Register new reactions
-          this.reactionDisposers = [
-            reaction(() => this.stateManager.fullScreen, this._fullScreenChanged.bind(this))
-          ];
-        };
+          this.stateManager = new StateManager(this, 'state');
+
+          // Add event listeners for fullscreen
+          let self = this;
+          this.$['video-player-container'].addEventListener('fullscreenchange', e => {
+            self.stateManager.setFullScreen(document.fullscreen);
+          });
+          this.$['video-player-container'].addEventListener('webkitfullscreenchange', e => {
+            self.stateManager.setFullScreen(document.webkitIsFullScreen);
+          });
+          // Firefox for some reason needs to attach the event to document
+          document.addEventListener('mozfullscreenchange', e => {
+            self.stateManager.setFullScreen(document.mozFullScreen);
+          });
+          this.$['video-player-container'].addEventListener('msfullscreenchange', e => {
+            self.stateManager.setFullScreen(document.msFullscreenElement);
+          });
+        }
 
         _fullScreenChanged(fullScreen) {
           if (fullScreen) {
@@ -135,20 +146,8 @@
           }
         }
 
-        equals(a, b) {
+        _equals(a, b) {
           return a === b;
-        }
-
-        // functions that are called when the state of the stateManagers properties change
-        _updateStateBindings() {
-          // Dispose old reactions
-          if(this.reactionDisposers) {
-            this.reactionDisposers.forEach(disposer => disposer());
-          }
-          // Register new reactions
-          this.reactionDisposers = [
-            reaction(() => this.stateManager.displayChaptersOverview, this._displayChaptersOverviewChanged.bind(this))
-          ];
         }
 
         _displayChaptersOverviewChanged(displayState) {
@@ -160,10 +159,12 @@
             chaptersOverview.classList.add('invisible');
           }
           
+        rowCount(streams) {
+          return Math.ceil(streams.length/2);
         }
       }
 
       window.customElements.define(VideoPlayer.is, VideoPlayer);
-    })();
+    });
   </script>
 </dom-module>
