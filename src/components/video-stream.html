@@ -3,6 +3,17 @@
 <dom-module id='video-stream'>
 
   <template>
+    <style type="text/css">
+      #container__video_stream {
+        width: 100%;
+        height: 100%;
+      }
+      video {
+        width: inherit;
+        height: inherit;
+      }
+    </style>
+
     <div id="container__video_stream">
       <video id='video' src$='[[url]]' preload="auto"></video>
     </div>

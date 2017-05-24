@@ -16,6 +16,8 @@
         --secondary-color: [[configuration.secondaryColor]];
         --background-color-for-primary: [[configuration.backgoundColorForPrimary]];
       }
+
+
       /* For some reason, just chaining those fullscreen selectors into one big
          selector doesn't work so we're stupid-duplicating all the rules. */
       #video-player-container:-webkit-full-screen #streams-container{
@@ -30,12 +32,27 @@
         display: flex;
         align-items: center;
       }
+
+      #video-player-container {
+        height: 100%;
+      }
+      #streams-container {
+        display: flex;
+        flex-wrap: wrap;
+        overflow: hidden;
+        /* Cancel out the control bar height */
+        height: calc(100% - 45px);
+      }
+      .video-stream {
+        flex: 1 1 50%;
+        height: calc(100% / [[rowCount(streams)]])
+      }
     </style>
 
     <div id='video-player-container'>
       <div id='streams-container'>
         <template is='dom-repeat' items='{{configuration.streams}}'>
-          <video-stream state='{{state}}' state-manager='{{stateManager}}' url='{{item}}' master='{{_equals(index, 0)}}'></video-stream>
+          <video-stream state='{{state}}' state-manager='{{stateManager}}' url='{{item}}' master='{{_equals(index, 0)}}' class='video-stream'></video-stream>
         </template>
       </div>
       <control-bar state='{{state}}' state-manager='{{stateManager}}'></control-bar>
@@ -120,6 +137,9 @@
 
         _equals(a, b) {
           return a === b;
+        }
+        rowCount(streams) {
+          return Math.ceil(streams.length/2);
         }
       }
 
