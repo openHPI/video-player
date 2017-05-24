@@ -2,12 +2,12 @@
 <link rel='import' href='../../3rd-imports/mobx.html'>
 <link rel='import' href='../styling/control-bar--style-module.html'>
 
-<dom-module id='mute-control'>
+<dom-module id='full-screen-control'>
   <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
 
   <template>
     <style type="text/css" include="control-bar--style-module">
-      #container__mute_control {
+      #container__full_screen_control {
         border-right: none;
       }  
       :host {
@@ -15,13 +15,13 @@
         /* It should be about twice the icon size */
         min-width: 3rem;
       } 
-      #button__mute i {
+      #button__full_screen i {
         font-size: 1.5rem;
-      }  
+      }
     </style>
 
-    <div id="container__mute_control" class="user_controls">
-      <a id='button__mute' class="button"></a>
+    <div id="container__full_screen_control" class="user_controls">
+      <a id='button__full_screen' class="button"></a>
     </div>
     </template>
 
@@ -29,8 +29,8 @@
     (function() {
       const {reaction} = mobx;
 
-      class MuteControl extends Polymer.Element {
-        static get is() { return 'mute-control'; }
+      class FullScreenControl extends Polymer.Element {
+        static get is() { return 'full-screen-control'; }
 
         static get properties() {
           return {
@@ -44,9 +44,9 @@
         ready() {
           super.ready();
           // initial loading of icon
-          this.$.button__mute.innerHTML = this.stateManager.muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
+          this.$.button__full_screen.innerHTML = this.stateManager.fullScreen? '<i class="fa fa-compress">' : '<i class="fa fa-expand">';
           // Add event listeners
-          this.$.button__mute.addEventListener('click', () => this.stateManager.toggleMute());
+          this.$.button__full_screen.addEventListener('click', () => this.stateManager.toggleFullScreen(true));
         }
 
         // functions that are called when the state of the stateManagers properties change
@@ -57,16 +57,16 @@
           }
           // Register new reactions
           this.reactionDisposers = [
-            reaction(() => this.stateManager.muted, this._mutedChanged.bind(this))
+            reaction(() => this.stateManager.fullScreen, this._fullScreenChanged.bind(this))
           ];
         }
 
-        _mutedChanged(muted) {
-          this.$.button__mute.innerHTML = muted == true ? '<i class="fa fa-volume-off">' : '<i class="fa fa-volume-up">';
+        _fullScreenChanged(fullScreen) {
+          this.$.button__full_screen.innerHTML = this.stateManager.fullScreen? '<i class="fa fa-compress">' : '<i class="fa fa-expand">';
         }
       }
 
-      window.customElements.define(MuteControl.is, MuteControl);
+      window.customElements.define(FullScreenControl.is, FullScreenControl);
     })();
   </script>
 

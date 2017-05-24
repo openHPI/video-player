@@ -10,7 +10,8 @@
         volume: 1,
         muted: false,
         duration: 0,
-        displayChaptersOverview: false
+        displayChaptersOverview: false,
+        fullScreen: false
       })
     }
 
@@ -63,10 +64,35 @@
         this.muted = false;
     }
 
+    toggleFullScreen(originatedFromUserEvent) {
+      // This method is a little tricky because it can be called both because a
+      // user initiated it through the ways our application provides and
+      // because a user pressed 'Esc' during full screen mode. The latter
+      // can't be intercepted by our application and can be only be detected
+      // via an event listener on 'fullscreenchange'. This event will of course
+      // also be fired when we switch to fullscreen from our application which is
+      // why we have to take care of not changing our fullscreen value twice.
+      let newFullScreenValue = !(document.fullScreen || document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement || document.fullscreenElement);
+      // if this didn't originate from a keyboard event, then we'll still
+      // get the old fullscreen value so we have to negate it
+      if(!originatedFromUserEvent) {
+        newFullScreenValue = !newFullScreenValue;
+      }
+      if(newFullScreenValue !== this.fullScreen) {
+        this.fullScreen = !this.fullScreen;
+      }
+    }
 
+    enterFullScreen() {
+      this.fullScreen = true;
+    }
+
+    exitFullScreen() {
+      this.fullScreen = false;
+    }
 
     setVolume(volume) {
-      // always unmuted first to avoid potential inconsistent states between e.g. mute button icon and sound-control-bar
+      // always unmute first to avoid potential inconsistent states between e.g. mute button icon and sound-control-bar
       this.unmute();
       if(volume >= 0 || volume <= 100) {
         this.volume = volume;
