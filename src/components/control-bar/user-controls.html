@@ -49,20 +49,19 @@
       }
 
       _onkeydown(e) {
-        let key = e.keyCode ? e.keyCode : e.which;
+        if (e.defaultPrevented) {
+          // Do nothing if the event was already processed
+          return;
+        }
 
-        // 39 = user pressed right arrow key
-        if(key === 39) {
-          this.stateManager.setPosition(this.stateManager.position + 15);
-        // 37 = user pressed left arrow key
-        } else if (key === 37) {
-          this.stateManager.setPosition(this.stateManager.position - 15);
-        // 32 = user pressed space
-        } else if (key === 32) {
+        if(e.key === 'ArrowRight') {
+          this.stateManager.setPosition(this.state.position + 15);
+        } else if (e.key === 'ArrowLeft') {
+          this.stateManager.setPosition(this.state.position - 15);
+        } else if (e.key === ' ') {
           this.stateManager.togglePlayPause();
-        // 70 = user pressed the 'f' button
-        } else if (key === 70) {
-          this.stateManager.toggleFullScreen(true);
+        } else if (e.key === 'f') {
+          this.stateManager.toggleFullScreen();
         } else {
           return;
         }
