@@ -1,5 +1,4 @@
 <link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../../3rd-imports/mobx.html'>
 <link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='full-screen-control'>
@@ -9,65 +8,53 @@
     <style type="text/css" include="control-bar--style-module">
       #container__full_screen_control {
         border-right: none;
-      }  
+      }
       :host {
         /* Avoid flickering with changing icons */
         /* It should be about twice the icon size */
         min-width: 3rem;
-      } 
+      }
       #button__full_screen i {
         font-size: 1.5rem;
       }
     </style>
 
     <div id="container__full_screen_control" class="user_controls">
-      <a id='button__full_screen' class="button"></a>
+      <a id='button__full_screen' class="button">
+        <template is="dom-if" if="[[state.fullScreen]]">
+          <i class="fa fa-compress">
+        </template>
+        <template is="dom-if" if="[[!state.fullScreen]]">
+          <i class="fa fa-expand">
+        </template>
+      </a>
     </div>
     </template>
 
   <script>
-    (function() {
-      const {reaction} = mobx;
+    class FullScreenControl extends Polymer.Element {
+      static get is() { return 'full-screen-control'; }
 
-      class FullScreenControl extends Polymer.Element {
-        static get is() { return 'full-screen-control'; }
-
-        static get properties() {
-          return {
-            stateManager: {
-              type: Object,
-              observer: '_updateStateBindings'
-            }
-          };
-        }
-
-        ready() {
-          super.ready();
-          // initial loading of icon
-          this.$.button__full_screen.innerHTML = this.stateManager.fullScreen? '<i class="fa fa-compress">' : '<i class="fa fa-expand">';
-          // Add event listeners
-          this.$.button__full_screen.addEventListener('click', () => this.stateManager.toggleFullScreen(true));
-        }
-
-        // functions that are called when the state of the stateManagers properties change
-        _updateStateBindings() {
-          // Dispose old reactions
-          if(this.reactionDisposers) {
-            this.reactionDisposers.forEach(disposer => disposer());
+      static get properties() {
+        return {
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
           }
-          // Register new reactions
-          this.reactionDisposers = [
-            reaction(() => this.stateManager.fullScreen, this._fullScreenChanged.bind(this))
-          ];
-        }
-
-        _fullScreenChanged(fullScreen) {
-          this.$.button__full_screen.innerHTML = this.stateManager.fullScreen? '<i class="fa fa-compress">' : '<i class="fa fa-expand">';
-        }
+        };
       }
 
-      window.customElements.define(FullScreenControl.is, FullScreenControl);
-    })();
+      ready() {
+        super.ready();
+
+        // Add event listeners
+        this.$.button__full_screen.addEventListener('click', () => this.stateManager.toggleFullScreen());
+      }
+    }
+
+    window.customElements.define(FullScreenControl.is, FullScreenControl);
   </script>
 
 </dom-module>

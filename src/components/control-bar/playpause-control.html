@@ -1,70 +1,61 @@
 <link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../../3rd-imports/mobx.html'>
 <link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='playpause-control'>
   <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
-  
+
   <template>
     <style type='text/css' include="control-bar--style-module">
       :host {
         /* Avoid flickering with changing icons */
         /* It should be about twice the icon size */
         min-width: 3rem;
-      } 
+      }
       #button__play_pause i {
         font-size: 1.5rem;
-      }   
+      }
     </style>
-    
+
     <div id="container__play_pause_control" class="user_controls">
-      <a id='button__play_pause' class="button"></a>
+      <a id='button__play_pause' class="button">
+        <template is="dom-if" if="[[_equals(state.playState, 'PLAYING')]]">
+          <i class="fa fa-pause">
+        </template>
+        <template is="dom-if" if="[[!_equals(state.playState, 'PLAYING')]]">
+          <i class="fa fa-play">
+        </template>
+      </a>
     </div>
-    </template>
+  </template>
 
   <script>
-    (function() {
-      const {reaction} = mobx;
+    class PlayPauseControl extends Polymer.Element {
+      static get is() { return 'playpause-control'; }
 
-      class PlayPauseControl extends Polymer.Element {
-        static get is() { return 'playpause-control'; }
-
-        static get properties() {
-          return {
-            stateManager: {
-              type: Object,
-              observer: '_updateStateBindings'
-            }
-          };
-        }
-
-        ready() {
-          super.ready();
-          // initial loading of icon
-          this.$.button__play_pause.innerHTML = this.stateManager.playState == 'PLAYING' ? '<i class="fa fa-pause">' : '<i class="fa fa-play">';
-          // Add event listeners
-          this.$.button__play_pause.addEventListener('click', () => this.stateManager.togglePlayPause());
-        }
-        
-        // functions that are called when the state of the stateManagers properties change
-        _updateStateBindings() {
-          // Dispose old reactions
-          if(this.reactionDisposers) {
-            this.reactionDisposers.forEach(disposer => disposer());
+      static get properties() {
+        return {
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
           }
-          // Register new reactions
-          this.reactionDisposers = [
-            reaction(() => this.stateManager.playState, this._playStateChanged.bind(this))
-          ];
-        }
-
-        _playStateChanged(playState) {
-          this.$.button__play_pause.innerHTML = playState == 'PLAYING' ? '<i class="fa fa-pause">' : '<i class="fa fa-play">';
-        }
+        };
       }
 
-      window.customElements.define(PlayPauseControl.is, PlayPauseControl);
-    })();
+      ready() {
+        super.ready();
+
+        // Add event listeners
+        this.$.button__play_pause.addEventListener('click', () => this.stateManager.togglePlayPause());
+      }
+
+      _equals(a, b) {
+        return a === b;
+      }
+    }
+
+    window.customElements.define(PlayPauseControl.is, PlayPauseControl);
   </script>
 
 </dom-module>

@@ -1,5 +1,4 @@
 <link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../../3rd-imports/mobx.html'>
 <link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='videotime-display'>
@@ -9,66 +8,44 @@
     </style>
 
     <div id="container__videotime_display" class="user_controls">
-      <span id='span__current_time'>{{currentTime}}</span>
+      [[_secondsToHms(state.position)]]
     </div>
   </template>
 
   <script>
-    (function() {
-      const {reaction} = mobx;
+    class VideoTimeDisplay extends Polymer.Element {
+      static get is() { return 'videotime-display'; }
 
-      class VideoTimeDisplay extends Polymer.Element {
-        static get is() { return 'videotime-display'; }
-
-        static get properties() {
-          return {
-            stateManager: {
-              type: Object,
-              observer: '_updateStateBindings'
-            },
-            currentTime: {
-                type: String,
-                value: '00:00:00'
-            }
-          };
-        }
-
-        ready() {
-          super.ready();
-        }
-
-        // functions that are called when the state of the stateManagers properties change
-        _updateStateBindings() {
-          // Dispose old reactions
-          if(this.reactionDisposers) {
-            this.reactionDisposers.forEach(disposer => disposer());
+      static get properties() {
+        return {
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
           }
-          // Register new reactions
-          this.reactionDisposers = [
-            reaction(() => this.stateManager.position, this._positionChanged.bind(this))
-          ];
-        }
-
-        _positionChanged(position) {
-          this.currentTime = this.secondsToHms(position.toFixed(0));
-        }
-
-        secondsToHms(position){
-          var seconds   = Number(position);
-          var hours     = Math.floor(seconds / 3600);
-          var minutes   = Math.floor(seconds % 3600 / 60);
-          var seconds2  = Math.floor(seconds % 3600 % 60);
-
-          if(hours < 10){hours = "0" + hours;}
-          if(minutes < 10){minutes = "0" + minutes;}
-          if(seconds2 < 10){seconds2 = "0" + seconds2;}
-
-          return hours + ":" + minutes + ":" + seconds2;
-        }
+        };
       }
 
-      window.customElements.define(VideoTimeDisplay.is, VideoTimeDisplay);
-    })();
+      ready() {
+        super.ready();
+      }
+
+      _secondsToHms(position) {
+        var seconds   = Number(position);
+        var hours     = Math.floor(seconds / 3600);
+        var minutes   = Math.floor(seconds % 3600 / 60);
+        var seconds2  = Math.floor(seconds % 3600 % 60);
+
+        if(hours < 10){hours = "0" + hours;}
+        if(minutes < 10){minutes = "0" + minutes;}
+        if(seconds2 < 10){seconds2 = "0" + seconds2;}
+
+        return hours + ":" + minutes + ":" + seconds2;
+      }
+    }
+
+    window.customElements.define(VideoTimeDisplay.is, VideoTimeDisplay);
   </script>
 
 </dom-module>
