@@ -153,7 +153,7 @@
        * @param {number} volume The new volume (0.0-1.0).
        */
       setVolume(volume) {
-        if(volume < 0 || volume > 0) {
+        if(volume < 0 || volume > 1) {
           throw new RangeError('Value must be between 0 and 1.')
         }
 
