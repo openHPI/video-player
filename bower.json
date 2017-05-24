@@ -13,7 +13,8 @@
   "homepage": "https://github.com/openHPI/videoplayer#readme",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0-rc.2",
-    "components-font-awesome": "^4.7.0"
+    "components-font-awesome": "^4.7.0",
+    "imd": "PolymerLabs/IMD#^1.0.0"
   },
   "devDependencies": {
     "web-component-tester": "^6.0.0-prerelease.5",

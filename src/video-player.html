@@ -1,3 +1,4 @@
+<link rel="import" href="../../imd/imd.html">
 <link rel='import' href='../../polymer/polymer-element.html'>
 <link rel='import' href='../../polymer/lib/elements/dom-repeat.html'>
 <link rel='import' href='3rd-imports/font-awesome.html'>
@@ -43,83 +44,85 @@
   </template>
 
   <script>
-    class VideoPlayer extends Polymer.Element {
-      static get is() { return 'video-player'; }
+    define(['state-manager'], (StateManager) => {
+      class VideoPlayer extends Polymer.Element {
+        static get is() { return 'video-player'; }
 
-      static get properties() {
-        return {
-          configuration: {
-            type: Object,
-            value: {}
-          },
-          state: {
-            type: Object,
-            value: {
-              playState: StateManager.PLAY_STATES.PAUSED,
-              position: 0,
-              duration: 0,
-              playbackRate: 1.0,
-              volume: 1.0,
-              muted: false,
-              fullScreen: false
+        static get properties() {
+          return {
+            configuration: {
+              type: Object,
+              value: {}
+            },
+            state: {
+              type: Object,
+              value: {
+                playState: StateManager.PLAY_STATES.PAUSED,
+                position: 0,
+                duration: 0,
+                playbackRate: 1.0,
+                volume: 1.0,
+                muted: false,
+                fullScreen: false
+              }
+            },
+            stateManager: {
+              type: Object
             }
-          },
-          stateManager: {
-            type: Object
+          };
+        }
+
+        static get observers() {
+          return [
+            '_fullScreenChanged(state.fullScreen)'
+          ];
+        }
+
+        ready() {
+          super.ready();
+
+          // Initialize state and StateManager
+          if(this.configuration.initialState) {
+            this.state = Object.assign(this.state, this.configuration.initialState);
           }
-        };
-      }
+          this.stateManager = new StateManager(this, 'state');
 
-      static get observers() {
-        return [
-          '_fullScreenChanged(state.fullScreen)'
-        ]
-      }
-
-      ready() {
-        super.ready();
-
-        // Initialize state and StateManager
-        if(this.configuration.initialState) {
-          this.state = Object.assign(this.state, this.configuration.initialState);
+          // Add event listeners for fullscreen
+          let self = this;
+          this.$['video-player-container'].addEventListener('fullscreenchange', e => {
+            self.stateManager.setFullScreen(document.fullscreen);
+          });
+          this.$['video-player-container'].addEventListener('webkitfullscreenchange', e => {
+            self.stateManager.setFullScreen(document.webkitIsFullScreen);
+          });
+          this.$['video-player-container'].addEventListener('mozfullscreenchange', e => {
+            self.stateManager.setFullScreen(document.mozFullScreenwebkitIsFullScreen);
+          });
+          this.$['video-player-container'].addEventListener('msfullscreenchange', e => {
+            self.stateManager.setFullScreen(document.msFullscreenElement);
+          });
         }
-        this.stateManager = new StateManager(this, 'state');
 
-        // Add event listeners for fullscreen
-        let self = this;
-        this.$['video-player-container'].addEventListener('fullscreenchange', e => {
-          self.stateManager.setFullScreen(document.fullscreen);
-        });
-        this.$['video-player-container'].addEventListener('webkitfullscreenchange', e => {
-          self.stateManager.setFullScreen(document.webkitIsFullScreen);
-        });
-        this.$['video-player-container'].addEventListener('mozfullscreenchange', e => {
-          self.stateManager.setFullScreen(document.mozFullScreenwebkitIsFullScreen);
-        });
-        this.$['video-player-container'].addEventListener('msfullscreenchange', e => {
-          self.stateManager.setFullScreen(document.msFullscreenElement);
-        });
-      }
+        _fullScreenChanged(fullScreen) {
+          if (fullScreen) {
+            if (this.$['video-player-container'].requestFullscreen) this.$['video-player-container'].requestFullscreen();
+            else if (this.$['video-player-container'].mozRequestFullScreen) this.$['video-player-container'].mozRequestFullScreen();
+            else if (this.$['video-player-container'].webkitRequestFullScreen) this.$['video-player-container'].webkitRequestFullScreen();
+            else if (this.$['video-player-container'].msRequestFullscreen) this.$['video-player-container'].msRequestFullscreen();
+          } else {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+            else if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
+            else if (document.msExitFullscreen) document.msExitFullscreen();
+          }
+        }
 
-      _fullScreenChanged(fullScreen) {
-        if (fullScreen) {
-          if (this.$['video-player-container'].requestFullscreen) this.$['video-player-container'].requestFullscreen();
-          else if (this.$['video-player-container'].mozRequestFullScreen) this.$['video-player-container'].mozRequestFullScreen();
-          else if (this.$['video-player-container'].webkitRequestFullScreen) this.$['video-player-container'].webkitRequestFullScreen();
-          else if (this.$['video-player-container'].msRequestFullscreen) this.$['video-player-container'].msRequestFullscreen();
-        } else {
-          if (document.exitFullscreen) document.exitFullscreen();
-          else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-          else if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
-          else if (document.msExitFullscreen) document.msExitFullscreen();
+        _equals(a, b) {
+          return a === b;
         }
       }
 
-      _equals(a, b) {
-        return a === b;
-      }
-    }
-
-    window.customElements.define(VideoPlayer.is, VideoPlayer);
+      window.customElements.define(VideoPlayer.is, VideoPlayer);
+    });
   </script>
 </dom-module>
