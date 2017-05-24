@@ -12,11 +12,7 @@
     <style type="text/css">
       :host {
         display: inline-block;
-        --primary-color: [[configuration.primaryColor]];
-        --secondary-color: [[configuration.secondaryColor]];
-        --background-color-for-primary: [[configuration.backgoundColorForPrimary]];
       }
-
 
       /* For some reason, just chaining those fullscreen selectors into one big
          selector doesn't work so we're stupid-duplicating all the rules. */
@@ -52,7 +48,13 @@
     <div id='video-player-container'>
       <div id='streams-container'>
         <template is='dom-repeat' items='{{configuration.streams}}'>
-          <video-stream state='{{state}}' state-manager='{{stateManager}}' url='{{item}}' master='{{_equals(index, 0)}}' class='video-stream'></video-stream>
+          <video-stream 
+            state='{{state}}' 
+            state-manager='{{stateManager}}' 
+            url='{{item}}' 
+            master='{{_equals(index, 0)}}' 
+            class='video-stream'
+            style="height: calc(100% / [[_rowCount(configuration.streams)]]);"></video-stream>
         </template>
       </div>
       <control-bar state='{{state}}' state-manager='{{stateManager}}'></control-bar>
@@ -119,6 +121,8 @@
           this.$['video-player-container'].addEventListener('msfullscreenchange', e => {
             self.stateManager.setFullScreen(document.msFullscreenElement);
           });
+
+          this._setCssVariables();
         }
 
         _fullScreenChanged(fullScreen) {
@@ -140,6 +144,14 @@
         }
         _rowCount(streams) {
           return Math.ceil(streams.length/2);
+        }
+
+        // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
+        // The poperties is not correctyl evaluated and thus the variable not set.
+        _setCssVariables() {
+          this.style.setProperty('--primary-color', [[this.configuration.primaryColor]]);
+          this.style.setProperty('--secondary-color', [[this.configuration.secondaryColor]]);
+          this.style.setProperty('--background-color-for-primary', [[this.configuration.backgoundColorForPrimary]]);
         }
       }
 
