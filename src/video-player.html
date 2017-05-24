@@ -1,17 +1,21 @@
+<link rel="import" href="../../imd/imd.html">
 <link rel='import' href='../../polymer/polymer-element.html'>
 <link rel='import' href='../../polymer/lib/elements/dom-repeat.html'>
-<link rel='import' href='3rd-imports/mobx.html'>
 <link rel='import' href='3rd-imports/font-awesome.html'>
 
 <link rel='import' href='services/state-manager.html'>
 <link rel='import' href='components/video-stream.html'>
 <link rel='import' href='components/control-bar/user-controls.html'>
+<link rel='import' href='components/playlist/playlist-display.html'>
 
 <dom-module id='video-player'>
   <template>
     <style type="text/css">
       :host {
         display: inline-block;
+        --primary-color: [[configuration.primaryColor]];
+        --secondary-color: [[configuration.secondaryColor]];
+        --background-color-for-primary: [[configuration.backgoundColorForPrimary]];
       }
       /* For some reason, just chaining those fullscreen selectors into one big
          selector doesn't work so we're stupid-duplicating all the rules. */
@@ -31,117 +35,80 @@
 
     <div id='video-player-container'>
       <div id='streams-container'>
-        <template is='dom-repeat' items='{{streams}}'>
-          <video-stream state-manager='{{stateManager}}' url='{{item}}' master='{{equals(index, 0)}}'></video-stream>
+        <template is='dom-repeat' items='{{configuration.streams}}'>
+          <video-stream state='{{state}}' state-manager='{{stateManager}}' url='{{item}}' master='{{_equals(index, 0)}}'></video-stream>
         </template>
       </div>
-      <user-controls state-manager='{{stateManager}}'></user-controls>
+      <user-controls state='{{state}}' state-manager='{{stateManager}}'></user-controls>
+    </div>
+    
+    <div>
+      <template is="dom-if" if="{{configuration.playlist}}">
+        <playlist-display playlist='{{configuration.playlist}}'></playlist-display>
+      </template>
     </div>
 
   </template>
 
   <script>
-    (function() {
-      const {reaction} = mobx;
-
+    define(['state-manager'], (StateManager) => {
       class VideoPlayer extends Polymer.Element {
         static get is() { return 'video-player'; }
 
         static get properties() {
           return {
-            streams: {
-              type: Array,
-              value: []
+            configuration: {
+              type: Object,
+              value: {}
+            },
+            state: {
+              type: Object,
+              value: {
+                playState: StateManager.PLAY_STATES.PAUSED,
+                position: 0,
+                duration: 0,
+                playbackRate: 1.0,
+                volume: 1.0,
+                muted: false,
+                fullScreen: false
+              }
             },
             stateManager: {
-              type: Object,
-              readOnly: true,
-              value: new StateManager(),
-              observer: '_updateStateBindings'
-            },
-            configuration: {
-              type: Array,
-              value: function () { return []; } // Default value
+              type: Object
             }
           };
         }
 
-        ready() {
-          super.ready();
-          // When possible, use afterNextRender to defer non-critical
-          // work until after first paint.
-          Polymer.RenderStatus.afterNextRender(this, function() {
-
-            // configure state manager based on input configuration
-            // otherwise set defaults
-
-            //streams
-            if(this.configuration.streams){
-              this.streams = this.configuration.streams;
-            } else {
-              console.warn("No streams contained within configuration of videoplayer!!!");
-            }
-
-            //playState
-            if(this.configuration.playState){
-              this.stateManager.playState = this.configuration.playState;
-            } else {
-              this.stateManager.playState = "PAUSE";
-            }
-
-            //startPosition
-            if(this.configuration.startPosition){
-              this.stateManager.seek(this.configuration.startPosition);
-            } else {
-              this.stateManager.seek(0);
-            }
-
-            //volume
-            if(this.configuration.volume){
-              this.stateManager.setVolume(this.configuration.volume);
-            } else {
-              this.stateManager.setVolume(75);
-            }
-
-            // playbackRate
-            if(this.configuration.playbackRate){
-              this.stateManager.playbackRate = this.configuration.playbackRate;
-            } else {
-              this.stateManager.playbackRate = 1.0;
-            }          
-            
-          });
-
-
-
-          // TODO: comments 
-          let videoPlayerInstance = this;
-
-          this.$['video-player-container'].addEventListener('fullscreenchange', function(event) {
-            videoPlayerInstance.stateManager.toggleFullScreen(false);
-          });
-          this.$['video-player-container'].addEventListener('webkitfullscreenchange', function(event) {
-            videoPlayerInstance.stateManager.toggleFullScreen(false);
-          });
-          this.$['video-player-container'].addEventListener('mozfullscreenchange', function(event) {
-            videoPlayerInstance.stateManager.toggleFullScreen(false);
-          });
-          this.$['video-player-container'].addEventListener('msfullscreenchange', function(event) {
-            videoPlayerInstance.stateManager.toggleFullScreen(false);
-          });
-
+        static get observers() {
+          return [
+            '_fullScreenChanged(state.fullScreen)'
+          ];
         }
 
-        _updateStateBindings(){
-          // Dispose old reactions
-          if(this.reactionDisposers) {
-            this.reactionDisposers.forEach(disposer => disposer());
+        ready() {
+          super.ready();
+
+          // Initialize state and StateManager
+          if(this.configuration.initialState) {
+            this.state = Object.assign(this.state, this.configuration.initialState);
           }
-          // Register new reactions
-          this.reactionDisposers = [
-            reaction(() => this.stateManager.fullScreen, this._fullScreenChanged.bind(this))
-          ];
-        };
+          this.stateManager = new StateManager(this, 'state');
+
+          // Add event listeners for fullscreen
+          let self = this;
+          this.$['video-player-container'].addEventListener('fullscreenchange', e => {
+            self.stateManager.setFullScreen(document.fullscreen);
+          });
+          this.$['video-player-container'].addEventListener('webkitfullscreenchange', e => {
+            self.stateManager.setFullScreen(document.webkitIsFullScreen);
+          });
+          this.$['video-player-container'].addEventListener('mozfullscreenchange', e => {
+            self.stateManager.setFullScreen(document.mozFullScreenwebkitIsFullScreen);
+          });
+          this.$['video-player-container'].addEventListener('msfullscreenchange', e => {
+            self.stateManager.setFullScreen(document.msFullscreenElement);
+          });
+        }
 
         _fullScreenChanged(fullScreen) {
           if (fullScreen) {
@@ -157,12 +124,12 @@
           }
         }
 
-        equals(a, b) {
+        _equals(a, b) {
           return a === b;
         }
       }
 
       window.customElements.define(VideoPlayer.is, VideoPlayer);
-    })();
+    });
   </script>
 </dom-module>

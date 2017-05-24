@@ -1,0 +1,42 @@
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='playlist-element.html'>
+
+<dom-module id='playlist-display'>
+  <template>
+
+    <style type="text/css">
+    </style>
+
+    <div id='playlist-display-container'>
+      <h3>[[playlist.title]]</h3>
+      <template is='dom-repeat' items='{{playlist.videos}}'>
+        <playlist-element video='{{item}}' current-Video='{{_equals(index, playlist.currentVideoIndex)}}'></playlist-element>
+      </template>
+    </div>
+    
+  </template>
+
+  <script>
+    class PlaylistDisplay extends Polymer.Element {
+      static get is() { return 'playlist-display'; }
+
+      static get properties() {
+        return {
+          playlist: {
+            type: Object
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+      }
+
+      _equals(a, b) {
+        return a === b;
+      }
+    }
+
+    window.customElements.define(PlaylistDisplay.is, PlaylistDisplay);
+  </script>
+</dom-module>

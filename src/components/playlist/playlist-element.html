@@ -1,34 +1,45 @@
 <link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../styling/control-bar--style-module.html'>
 
-<dom-module id='videotime-display'>
-
+<dom-module id='playlist-element'>
   <template>
-    <style type='text/css' include="control-bar--style-module">
+
+    <style type="text/css">
     </style>
 
-    <div id="container__videotime_display" class="user_controls">
-      [[_secondsToHms(state.position)]]
+    <div id="test">
+      <div>[[video.title]]</div>
+      <div>[[video.lecturer]]</div>
+      <div>[[video.url]]</div>
+      <div><img src='[[video.thumbnailUrl]]'></div>
+      <div>[[video.date]]</div>
+      <div>[[video.language]]</div>
+      <div>[[_secondsToHms(video.duration)]]</div>          
     </div>
+    
   </template>
 
   <script>
-    class VideoTimeDisplay extends Polymer.Element {
-      static get is() { return 'videotime-display'; }
+    class PlaylistElement extends Polymer.Element {
+      static get is() { return 'playlist-element'; }
 
       static get properties() {
         return {
-          state: {
+          video: {
             type: Object
           },
-          stateManager: {
-            type: Object
+          currentVideo: {
+            type: Boolean
+
           }
         };
       }
 
       ready() {
         super.ready();
+
+        if(this.currentVideo){
+          // do sth if you want to highlight the current Video of the playlist
+        }
       }
 
       _secondsToHms(position) {
@@ -45,7 +56,6 @@
       }
     }
 
-    window.customElements.define(VideoTimeDisplay.is, VideoTimeDisplay);
+    window.customElements.define(PlaylistElement.is, PlaylistElement);
   </script>
-
 </dom-module>

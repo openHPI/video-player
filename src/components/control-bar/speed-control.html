@@ -1,61 +1,47 @@
 <link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../../3rd-imports/mobx.html'>
 <link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='speed-control'>
   <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
-  
+
   <template>
     <style type='text/css' include="control-bar--style-module">
     </style>
 
     <div id="container__speed_control" class="user_controls">
         <a id="button__speed_control" class="button">
-            <span id="span__speed">1.0</span>x
+            [[_toFixed(state.playbackRate, 1)]]x
         </a>
     </div>
     </template>
 
   <script>
-    (function() {
-      const {reaction} = mobx;
+    class SpeedControl extends Polymer.Element {
+      static get is() { return 'speed-control'; }
 
-      class SpeedControl extends Polymer.Element {
-        static get is() { return 'speed-control'; }
-
-        static get properties() {
-          return {
-            stateManager: {
-              type: Object,
-              observer: '_updateStateBindings'
-            },
-          };
-        }
-
-        ready() {
-          super.ready();
-          // Add event listeners
-          this.$.button__speed_control.addEventListener('click', () => this.stateManager.switchPlaybackRate());
-        }
-
-        _updateStateBindings() {
-          // Dispose old reactions
-          if(this.reactionDisposers)
-            this.reactionDisposers.forEach(disposer => disposer());
-
-          // Register new reactions
-          this.reactionDisposers = [
-            reaction(() => this.stateManager.playbackRate, this._playbackRateChanged.bind(this))
-          ];
-        }
-
-        _playbackRateChanged(playbackRate) {
-          this.$.span__speed.innerHTML = playbackRate.toFixed(1);
-        }
+      static get properties() {
+        return {
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
+          }
+        };
       }
 
-      window.customElements.define(SpeedControl.is, SpeedControl);
-    })();
+      ready() {
+        super.ready();
+        // Add event listeners
+        this.$.button__speed_control.addEventListener('click', () => this.stateManager.switchPlaybackRate());
+      }
+
+      _toFixed(value, digits) {
+        return value.toFixed(digits);
+      }
+    }
+
+    window.customElements.define(SpeedControl.is, SpeedControl);
   </script>
 
 </dom-module>

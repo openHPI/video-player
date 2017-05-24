@@ -10,16 +10,22 @@
     <link rel="import" href="../video-player.html">
   </head>
   <body>
-    <video-player 
-     configuration='{ 
+    <video-player
+      configuration='{
         "streams" : [
           "http://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_13_02/video.mp4",
           "http://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_13_02/desktop.mp4"
         ],
-        "startPosition": 0, 
-        "volume": 75, 
-        "playState" : "PAUSE",
-        "playbackRate" : 1.0 
+        "primaryColor" : "#FFFFFF",
+        "secondaryColor" : "#DD6112",
+        "backgoundColorForPrimary" : "#424242",
+        "initialState": {
+          "startPosition": 0, 
+          "volume": 0.75, 
+          "playState" : "PAUSE",
+          "playbackRate" : 1.0,
+          "fullScreen" : false
+        }
       }'>
       </video-player>
   </body>

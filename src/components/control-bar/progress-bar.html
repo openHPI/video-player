@@ -1,5 +1,4 @@
 <link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../../3rd-imports/mobx.html'>
 <link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='progress-bar'>
@@ -11,78 +10,50 @@
     </style>
 
     <div id="container__progress_bar" class="user_controls">
-      <progress id="progress__bar" min='0' max='{{maxValue}}' value='{{currentTime}}'></progress>
+      <progress id="progress__bar" min='0' max='[[_toString(state.duration)]]' value='[[_toString(state.position)]]'></progress>
     </div>
   </template>
 
   <script>
-    (function() {
+    class ProgressBar extends Polymer.Element {
+      static get is() { return 'progress-bar'; }
 
-      const {reaction} = mobx;
-
-      class ProgressBar extends Polymer.Element {
-        static get is() { return 'progress-bar'; }
-
-        static get properties() {
-          return {
-            stateManager: {
-              type: Object,
-              observer: '_updateStateBindings'
-            },
-            currentTime: {
-              value: '0',
-              type: String
-            },
-            maxValue: {
-              type: String
-            }
-          };
-        }
-
-        ready() {
-          super.ready();
-          // Add event listeners
-          this.$.progress__bar.addEventListener('click', e => this._progressBarClickListener(e));
-        }
-
-        _progressBarClickListener(e) {
-          // get x value by substracting offsetleft of progress-bar
-          var x = e.pageX - this.$.progress__bar.offsetLeft;
-          // calculate value that will be between 0 and the max value (duration of video) -> exact moment of video
-          var clickedValue = x * this.$.progress__bar.max / this.$.progress__bar.offsetWidth;
-          // check if still within borders
-          var isClicked = clickedValue <= this.$.progress__bar.max;
-          if(isClicked){
-            this.stateManager.seek(clickedValue);
+      static get properties() {
+        return {
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
           }
-        }
-
-        // functions that are called when the state of the stateManagers properties change
-        _updateStateBindings() {
-          // Dispose old reactions
-          if(this.reactionDisposers) {
-            this.reactionDisposers.forEach(disposer => disposer());
-          }
-          // Register new reactions
-          this.reactionDisposers = [
-            reaction(() => this.stateManager.position, this._positionChanged.bind(this)),
-            reaction(() => this.stateManager.duration, this._durationChanged.bind(this))
-          ];
-        }
-
-        // reaction when
-        _positionChanged(position) {
-          this.currentTime = position.toFixed(0);
-        }
-
-        // reaction when the video's durration in the stateManager changes (after loading the metadata)
-        _durationChanged(duration) {
-          this.maxValue = duration;
-        }
+        };
       }
 
-      window.customElements.define(ProgressBar.is, ProgressBar);
-    })();
+      _toString(value) {
+        return value.toString();
+      }
+
+      ready() {
+        super.ready();
+
+        // Add event listeners
+        this.$.progress__bar.addEventListener('click', this._progressBarClicked.bind(this));
+      }
+
+      _progressBarClicked(e) {
+        // get x value by substracting offsetleft of progress-bar
+        var x = e.pageX - this.$.progress__bar.offsetLeft;
+        // calculate value that will be between 0 and the max value (duration of video) -> exact moment of video
+        var clickedValue = x * this.$.progress__bar.max / this.$.progress__bar.offsetWidth;
+        // check if still within borders
+        var isClicked = clickedValue <= this.$.progress__bar.max;
+        if(isClicked){
+          this.stateManager.setPosition(clickedValue);
+        }
+      }
+    }
+
+    window.customElements.define(ProgressBar.is, ProgressBar);
   </script>
 
 </dom-module>
