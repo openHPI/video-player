@@ -5,7 +5,6 @@
 
 <link rel='import' href='services/state-manager.html'>
 <link rel='import' href='components/video-stream.html'>
-<link rel='import' href='components/control-bar/user-controls.html'>
 <link rel='import' href='components/chapters-overview.html'>
 <link rel='import' href='components/control-bar/control-bar.html'>
 
@@ -59,7 +58,6 @@
       </div>
       <control-bar state='{{state}}' state-manager='{{stateManager}}'></control-bar>
     </div>
-    <user-controls state-manager='{{stateManager}}'></user-controls>
     <chapters-overview class="invisible" state-manager='{{stateManager}}' outline='{{outline}}'></chapters-overview>
   </template>
 
@@ -158,6 +156,7 @@
           else {
             chaptersOverview.classList.add('invisible');
           }
+        }
           
         rowCount(streams) {
           return Math.ceil(streams.length/2);

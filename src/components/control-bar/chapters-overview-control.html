@@ -1,5 +1,4 @@
 <link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../../3rd-imports/mobx.html'>
 <link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='chapters-overview-control'>
@@ -26,53 +25,46 @@
     </template>
 
   <script>
-    (function() {
-      const {reaction} = mobx;
+    class ChaptersOverviewControl extends Polymer.Element {
+      static get is() { return 'chapters-overview-control'; }
 
-      class ChaptersOverviewControl extends Polymer.Element {
-        static get is() { return 'chapters-overview-control'; }
-
-        static get properties() {
-          return {
-            stateManager: {
-              type: Object,
-              observer: '_updateStateBindings'
-            }
-          };
-        }
-
-        ready() {
-          super.ready();
-          if (this.stateManager.displayChaptersOverview) {
-            this.$.button__chapters_overview.classList.add('active');
+      static get properties() {
+        return {
+          state: {
+              type: Object
+          },
+          stateManager: {
+            type: Object
           }
-          this.$.button__chapters_overview.addEventListener('click', () => this.stateManager.toggleDisplayChaptersOverview());
-        }
-        
-        // functions that are called when the state of the stateManagers properties change
-        _updateStateBindings() {
-          // Dispose old reactions
-          if(this.reactionDisposers) {
-            this.reactionDisposers.forEach(disposer => disposer());
-          }
-          // Register new reactions
-          this.reactionDisposers = [
-            reaction(() => this.stateManager.displayChaptersOverview, this._displayChaptersOverviewChanged.bind(this))
-          ];
-        }
-
-        _displayChaptersOverviewChanged(displayState) {
-          if (displayState) {
-            this.$.button__chapters_overview.classList.add('active');
-          }
-          else {
-            this.$.button__chapters_overview.classList.remove('active');
-          }
-        }
+        };
       }
 
-      window.customElements.define(ChaptersOverviewControl.is, ChaptersOverviewControl);
-    })();
+      static get observers() {
+        return [
+          '_displayChaptersOverviewChanged(state.displayChaptersOverview)'
+        ];
+      }
+
+      ready() {
+        super.ready();
+        if (this.state.displayChaptersOverview) {
+          this.$.button__chapters_overview.classList.add('active');
+        }
+        this.$.button__chapters_overview.addEventListener('click', () => this.stateManager.toggleDisplayChaptersOverview());
+      }
+      
+
+      _displayChaptersOverviewChanged(displayState) {
+        if (displayState) {
+          this.$.button__chapters_overview.classList.add('active');
+        }
+        else {
+          this.$.button__chapters_overview.classList.remove('active');
+        }
+      }
+    }
+
+    window.customElements.define(ChaptersOverviewControl.is, ChaptersOverviewControl);
   </script>
 
 </dom-module>
