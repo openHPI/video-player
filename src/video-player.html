@@ -41,7 +41,6 @@
       }
       .video-stream {
         flex: 1 1 50%;
-        height: calc(100% / [[_rowCount(configuration.streams)]])
       }
     </style>
 
@@ -54,7 +53,7 @@
             url='{{item}}' 
             master='{{_equals(index, 0)}}' 
             class='video-stream'
-            style="height: calc(100% / [[_rowCount(configuration.streams)]]);"></video-stream>
+            style$='height: calc(100% / {{_rowCount(this.configuration.streams)}});'></video-stream>
         </template>
       </div>
       <control-bar state='{{state}}' state-manager='{{stateManager}}'></control-bar>
