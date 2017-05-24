@@ -45,7 +45,7 @@
       }
       .video-stream {
         flex: 1 1 50%;
-        height: calc(100% / [[rowCount(streams)]])
+        height: calc(100% / [[_rowCount(configuration.streams)]])
       }
     </style>
 
@@ -138,7 +138,7 @@
         _equals(a, b) {
           return a === b;
         }
-        rowCount(streams) {
+        _rowCount(streams) {
           return Math.ceil(streams.length/2);
         }
       }
