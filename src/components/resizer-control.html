@@ -1,0 +1,86 @@
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+
+<dom-module id='resizer-control'>
+  <link rel='import' type='css' href='../../../components-font-awesome/css/font-awesome.min.css'>
+
+  <template>
+    <style type="text/css">
+      :host {
+        position: absolute;
+        z-index: 2;
+        left: 50%;
+        top: 50%;
+      }
+    </style>
+
+    <div id="container__resizer_control">
+      <a id="button__resizer" class="button button__resizer" draggable="true">
+        <i class="fa fa-arrows-h"></i>
+      </a>
+    </div>
+  </template>
+
+  <script>
+    class ResizerControl extends Polymer.Element {
+      static get is() { return 'resizer-control'; }
+
+      static get properties() {
+        return {
+        };
+      }
+
+      ready() {
+        super.ready();
+
+        // Add event listeners
+        this.$.button__resizer.addEventListener('drag', this._resizeVideos.bind(this));
+      }
+
+      _resizeVideos(e) {
+        var video1 = document.getElementsByTagName('video-player')[0].shadowRoot.querySelector('#streams-container').children[0];
+        var video2 = document.getElementsByTagName('video-player')[0].shadowRoot.querySelector('#streams-container').children[3];
+        var direction = this._getMouseDirection(e);
+        var video1FlexBasis = parseInt(video1.style.flexBasis, 0) || 50;
+        var video2FlexBasis = parseInt(video2.style.flexBasis, 0) || 50;
+
+        // The flex-basis must be kept between 1 and 50. Otherwise the styling will break.
+        if(direction === "left") {
+          if(video2FlexBasis < 50) {
+            this._changeFlexBasis(video2, 1, video2FlexBasis)
+          }
+          else if (video1FlexBasis > 1) {
+            this._changeFlexBasis(video1, -1, video1FlexBasis)
+          }
+        }
+        else if(direction === "right") {
+          if(video1FlexBasis < 50) {
+            this._changeFlexBasis(video1, 1, video1FlexBasis)
+          }
+          else if(video2FlexBasis > 1) {
+            this._changeFlexBasis(video2, -1, video2FlexBasis)
+          }
+        }
+      }
+
+      _getMouseDirection(e) {
+        var direction = "";
+        if (e.pageX < this._oldX) {
+            direction = "left";
+        } else if (e.pageX > this._oldX) {
+            direction = "right";
+        }
+
+        this._oldX = e.pageX;
+        return direction;
+      }
+
+      _changeFlexBasis(video, factor, oldValue) {
+        var newValue = oldValue + factor;
+        video.style.flexBasis = newValue + "%";
+      }
+    }
+
+    window.customElements.define(ResizerControl.is, ResizerControl);
+  </script>
+
+</dom-module>

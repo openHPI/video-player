@@ -6,6 +6,7 @@
 <link rel='import' href='services/state-manager.html'>
 <link rel='import' href='components/video-stream.html'>
 <link rel='import' href='components/control-bar/control-bar.html'>
+<link rel='import' href='components/resizer-control.html'>
 
 <dom-module id='video-player'>
   <template>
@@ -33,6 +34,7 @@
         height: 100%;
       }
       #streams-container {
+        position: relative;
         display: flex;
         flex-wrap: wrap;
         overflow: hidden;
@@ -54,6 +56,9 @@
             master='{{_equals(index, 0)}}' 
             class='video-stream'
             style$='height: calc(100% / {{_rowCount(configuration.streams)}});'></video-stream>
+          <template is="dom-if" if="{{_showResizer(index)}}">
+            <resizer-control></resizer-control>
+          </template>
         </template>
       </div>
       <control-bar state='{{state}}' state-manager='{{stateManager}}'></control-bar>
@@ -143,6 +148,9 @@
         }
         _rowCount(streams) {
           return Math.ceil(streams.length/2);
+        }
+        _showResizer(index){
+          return index % 2 == 0
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
