@@ -1,0 +1,62 @@
+<script>
+  define('constants', () => {
+    /**
+     * Contains the different play states.
+     * @type {Object.<string, string>}
+     */
+    const PLAY_STATES = {
+      PLAYING: 'PLAYING',
+      PAUSED: 'PAUSED',
+    };
+
+    /**
+     * Contains the supported playback rates sorted ascending.
+     * @type {number[]}
+     */
+    const PLAYBACK_RATES = [0.7, 1.0, 1.3, 1.5, 1.8, 2.0];
+
+    /**
+     * Contains the supported quality modes.
+     * @type {Object.<string, string>}
+     */
+    const QUALITY_MODES = {
+      //HLS: 'hls',
+      HD: 'hd',
+      SD: 'sd',
+    };
+
+    /**
+     * Contains the default state properties.
+     * @type {Object.<string, Object>}
+     */
+    const DEFAULT_STATE = {
+      playState: PLAY_STATES.PAUSED,
+      position: 0,
+      duration: 0,
+      playbackRate: 1.0,
+      volume: 1.0,
+      muted: false,
+      fullScreen: false,
+    };
+
+    /**
+     * Contains the default configuration properties.
+     * @type {Object.<string, Object>}
+     */
+    const DEFAULT_CONFIGURATION = {
+      streams: [],
+      initialState: {},
+      primaryColor: '#FFFFFF',
+      secondaryColor: '#DD6112',
+      backgoundColorForPrimary : '#424242',
+    };
+
+    return {
+      PLAY_STATES,
+      PLAYBACK_RATES,
+      QUALITY_MODES,
+      DEFAULT_STATE,
+      DEFAULT_CONFIGURATION,
+    };
+  });
+</script>

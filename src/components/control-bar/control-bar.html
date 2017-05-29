@@ -4,6 +4,7 @@
 <link rel='import' href='sound-control.html'>
 <link rel='import' href='videotime-display.html'>
 <link rel="import" href="speed-control.html">
+<link rel="import" href="quality-switch.html">
 <link rel='import' href='mute-control.html'>
 <link rel='import' href='full-screen-control.html'>
 
@@ -24,6 +25,9 @@
       <progress-bar state='{{state}}' state-manager='{{stateManager}}'></progress-bar>
       <videotime-display state='{{state}}' state-manager='{{stateManager}}'></videotime-display>
       <speed-control state='{{state}}' state-manager='{{stateManager}}'></speed-control>
+      <template is="dom-if" if="{{hasMultipleQualities}}">
+        <quality-switch state='{{state}}' state-manager='{{stateManager}}' available-qualities='{{availableQualities}}'></quality-switch>
+      </template>
       <mute-control state='{{state}}' state-manager='{{stateManager}}'></mute-control>
       <sound-control state='{{state}}' state-manager='{{stateManager}}'></sound-control>
       <full-screen-control state='{{state}}' state-manager='{{stateManager}}'></full-screen-control>
@@ -36,12 +40,13 @@
 
       static get properties() {
         return {
-          state: {
-            type: Object
+          state: Object,
+          stateManager: Object,
+          availableQualities: Array,
+          hasMultipleQualities: {
+            type: Boolean,
+            computed: '_hasMultipleQualities(availableQualities)',
           },
-          stateManager: {
-            type: Object
-          }
         };
       }
 
@@ -72,6 +77,10 @@
         // Make sure the user doesn't trigger anything else with their
         // keyboard interaction, like scrolling the page
         e.preventDefault();
+      }
+
+      _hasMultipleQualities() {
+        return this.availableQualities.length > 1;
       }
     }
 

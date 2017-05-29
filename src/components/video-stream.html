@@ -15,87 +15,117 @@
     </style>
 
     <div id="container__video_stream">
-      <video id='video' src$='[[url]]' preload="auto"></video>
+      <video id='video' src$='[[qualityUrl]]' preload="auto"></video>
     </div>
   </template>
 
   <script>
-    class VideoStream extends Polymer.Element {
-      static get is() { return 'video-stream'; }
+    define(['constants'], (constants) => {
+      const {PLAY_STATES} = constants;
+      const SYNC_DIFF_THRESHOLD = 1;
 
-      static get properties() {
-        return {
-          url: {
-            type: String
-          },
-          master: {
-            type: Boolean,
-            value: true
-          },
-          state: {
-            type: Object
-          },
-          stateManager: {
-            type: Object
+      class VideoStream extends Polymer.Element {
+        static get is() { return 'video-stream'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            stateManager: Object,
+            urls: Object,
+            master: {
+              type: Boolean,
+              value: true,
+            },
+            qualityUrl: String,
+            initializingVideo: {
+              type: Boolean,
+              value: true,
+            },
+          };
+        }
+
+        static get observers() {
+          return [
+            '_playStateChanged(state.playState)',
+            '_positionChanged(state.position)',
+            '_playbackRateChanged(state.playbackRate)',
+            '_volumeChanged(state.volume)',
+            '_mutedChanged(state.muted)',
+            '_qualityChanged(urls, state.quality)'
+          ]
+        }
+
+        ready() {
+          super.ready();
+
+          // Update position on state, if stream is master
+          this.$.video.addEventListener('timeupdate', () => {
+            if(this.master && !this.initializingVideo) {
+              this.stateManager.setPosition(this.$.video.currentTime);
+            }
+          });
+
+          // Update duration on state from metadata, if stream is master
+          this.$.video.addEventListener('loadedmetadata', () => {
+            if(this.master) {
+              this.stateManager.setDuration(this.$.video.duration);
+            }
+          });
+
+          // When changing the source of the HTML5 video player, its state is resetted.
+          // Therefore, the current state is applied manually after initialization of the video.
+          this.$.video.addEventListener('canplay', () => {
+            if(this.initializingVideo) {
+              this._applyState();
+              this.initializingVideo = false;
+            }
+          });
+
+          // Start/stop playback when the stream is clicked
+          this.$.video.addEventListener('click', () => this.stateManager.togglePlayPause());
+        }
+
+        _applyState() {
+          this._playStateChanged(this.state.playState);
+          this._positionChanged(this.state.position);
+          this._playbackRateChanged(this.state.playbackRate);
+          this._volumeChanged(this.state.volume);
+          this._mutedChanged(this.state.muted);
+        }
+
+        _playStateChanged(playState) {
+          if (playState === PLAY_STATES.PLAYING)
+            this.$.video.play();
+          else
+            this.$.video.pause();
+        }
+
+        _positionChanged(position) {
+          if(Math.abs(this.$.video.currentTime - position) > SYNC_DIFF_THRESHOLD) {
+            this.$.video.currentTime = position;
           }
-        };
-      }
+        }
 
-      static get observers() {
-        return [
-          '_playStateChanged(state.playState)',
-          '_positionChanged(state.position)',
-          '_playbackRateChanged(state.playbackRate)',
-          '_volumeChanged(state.volume)',
-          '_mutedChanged(state.muted)'
-        ]
-      }
+        _playbackRateChanged(playbackRate) {
+          this.$.video.playbackRate = playbackRate;
+        }
 
-      ready() {
-        super.ready();
-        // Add event listeners
-        this.$.video.addEventListener('timeupdate', () => {
-          if(this.master) {
-            this.stateManager.setPosition(this.$.video.currentTime);
-          }
-        });
-        // load metadata for extraction of the video's duration
-        this.$.video.addEventListener('loadedmetadata', () => {
-          if(this.master) {
-            this.stateManager.setDuration(this.$.video.duration);
-          }
-        });
-        // start/stop both streams when they get clicked on
-        this.$.video.addEventListener('click', () => this.stateManager.togglePlayPause());
-      }
+        _volumeChanged(volume) {
+          this.$.video.volume = volume;
+        }
 
-      _playStateChanged(playState) {
-        if (playState == 'PLAYING')
-          this.$.video.play();
-        else
-          this.$.video.pause();
-      }
+        _mutedChanged(muted) {
+          this.$.video.muted = muted;
+        }
 
-      _positionChanged(position) {
-        if( Math.abs(this.$.video.currentTime - position) > 1 ) {
-          this.$.video.currentTime = position;
+        _qualityChanged(urls, quality) {
+          this.initializingVideo = true;
+          this.qualityUrl = urls[quality];
         }
       }
 
-      _playbackRateChanged(playbackRate) {
-        this.$.video.playbackRate = playbackRate;
-      }
-
-      _volumeChanged(volume) {
-        this.$.video.volume = volume;
-      }
-
-      _mutedChanged(muted) {
-        this.$.video.muted = muted;
-      }
-    }
-
-    window.customElements.define(VideoStream.is, VideoStream);
+      window.customElements.define(VideoStream.is, VideoStream);
+    });
   </script>
 
 </dom-module>

@@ -1,0 +1,58 @@
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+
+<dom-module id='quality-switch'>
+  <template>
+    <style type="text/css" include="control-bar--style-module">
+    </style>
+
+    <div id='container__quality_switch' class='user_controls'>
+      <a id="button__switch_quality" class="button">
+        [[_getQualityName(state.quality)]]
+      </a>
+    </div>
+  </template>
+
+  <script>
+    define(['constants'], (constants) => {
+      const {QUALITY_MODES} = constants;
+      const QUALITY_NAMES = {
+        //[QUALITY_MODES.HLS]: 'Auto',
+        [QUALITY_MODES.HD]: 'HD',
+        [QUALITY_MODES.SD]: 'SD',
+      };
+
+      class QualitySwitch extends Polymer.Element {
+        static get is() { return 'quality-switch'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            stateManager: Object,
+            availableQualities: Array,
+          };
+        }
+
+        ready() {
+          super.ready();
+
+          this.$.button__switch_quality.addEventListener('click', this._buttonClicked.bind(this));
+        }
+
+        _buttonClicked() {
+          let currentIndex = this.availableQualities.indexOf(this.state.quality);
+          let newIndex = (currentIndex + 1) % this.availableQualities.length;
+          let newQuality = this.availableQualities[newIndex];
+
+          this.stateManager.setQuality(newQuality);
+        }
+
+        _getQualityName(quality) {
+          return QUALITY_NAMES[quality];
+        }
+      }
+
+      window.customElements.define(QualitySwitch.is, QualitySwitch);
+    });
+  </script>
+
+</dom-module>

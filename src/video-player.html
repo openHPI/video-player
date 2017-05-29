@@ -47,22 +47,29 @@
     <div id='video-player-container'>
       <div id='streams-container'>
         <template is='dom-repeat' items='{{configuration.streams}}'>
-          <video-stream 
-            state='{{state}}' 
-            state-manager='{{stateManager}}' 
-            url='{{item}}' 
-            master='{{_equals(index, 0)}}' 
+          <video-stream
+            state='{{state}}'
+            state-manager='{{stateManager}}'
+            urls='{{item}}'
+            master='{{_equals(index, 0)}}'
             class='video-stream'
             style$='height: calc(100% / {{_rowCount(configuration.streams)}});'></video-stream>
+          </video-stream>
         </template>
       </div>
-      <control-bar state='{{state}}' state-manager='{{stateManager}}'></control-bar>
+      <control-bar
+        state='{{state}}'
+        state-manager='{{stateManager}}'
+        available-qualities='{{availableQualities}}'>
+      </control-bar>
     </div>
 
   </template>
 
   <script>
-    define(['state-manager'], (StateManager) => {
+    define(['constants', 'state-manager'], (constants, StateManager) => {
+      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, QUALITY_MODES} = constants;
+
       class VideoPlayer extends Polymer.Element {
         static get is() { return 'video-player'; }
 
@@ -70,40 +77,42 @@
           return {
             configuration: {
               type: Object,
-              value: {}
+              value: DEFAULT_CONFIGURATION,
             },
             state: {
               type: Object,
-              value: {
-                playState: StateManager.PLAY_STATES.PAUSED,
-                position: 0,
-                duration: 0,
-                playbackRate: 1.0,
-                volume: 1.0,
-                muted: false,
-                fullScreen: false
-              }
+              value: DEFAULT_STATE,
             },
-            stateManager: {
-              type: Object
-            }
+            stateManager: Object,
+            availableQualities: {
+              type: Array,
+              computed: '_availableQualities(configuration.streams)',
+            },
           };
         }
 
         static get observers() {
           return [
-            '_fullScreenChanged(state.fullScreen)'
+            '_fullScreenChanged(state.fullScreen)',
           ];
         }
 
         ready() {
           super.ready();
 
-          // Initialize state and StateManager
-          if(this.configuration.initialState) {
-            this.state = Object.assign(this.state, this.configuration.initialState);
-          }
+          // Fill missing properties in provided state and configuration with default values
+          this.configuration = Object.assign(DEFAULT_CONFIGURATION, this.configuration);
+          this.state = Object.assign(DEFAULT_STATE, this.state, this.configuration.initialState);
+
+          // Initialize StateManager
           this.stateManager = new StateManager(this, 'state');
+
+          // If not all streams are available in the specified quality, use default one that is available for all streams
+          if(!this.availableQualities.includes(this.state.quality)) {
+            let defaultQuality = Object.values(QUALITY_MODES)
+                                       .find(quality => this.availableQualities.includes(quality));
+            this.stateManager.setQuality(defaultQuality);
+          }
 
           // Add event listeners for fullscreen
           let self = this;
@@ -136,6 +145,12 @@
             else if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
             else if (document.msExitFullscreen) document.msExitFullscreen();
           }
+        }
+
+        _availableQualities(streams) {
+          return Object.values(QUALITY_MODES)
+                       .filter(quality => streams.every(stream => Object.keys(stream)
+                                                                        .includes(quality)));
         }
 
         _equals(a, b) {
