@@ -15,14 +15,13 @@
     </style>
 
     <div id="container__video_stream">
-      <video id='video' src$='[[qualityUrl]]' preload="auto"></video>
+      <video id='video' preload="auto"></video>
     </div>
   </template>
 
   <script>
-    define(['constants'], (constants) => {
-      const {PLAY_STATES} = constants;
-      const SYNC_DIFF_THRESHOLD = 1;
+    define(['constants', 'hls-js'], (constants, Hls) => {
+      const {PLAY_STATES, QUALITY_MODES, SYNC_DIFF_THRESHOLD} = constants;
 
       class VideoStream extends Polymer.Element {
         static get is() { return 'video-stream'; }
@@ -41,6 +40,7 @@
               type: Boolean,
               value: true,
             },
+            hlsClient: Object
           };
         }
 
@@ -119,8 +119,26 @@
         }
 
         _qualityChanged(urls, quality) {
+          let url = urls[quality];
           this.initializingVideo = true;
-          this.qualityUrl = urls[quality];
+
+          // Change source depending on quality
+          if(quality !== QUALITY_MODES.HLS) {
+            // Destroy old hls client
+            if(this.hlsClient) {
+              this.hlsClient.destroy();
+            }
+
+            // The src attribute can not be updated using data bindings
+            // since the binding may be overwritten by hls.js
+            this.$.video.setAttribute('src', url);
+          }
+          else {
+            // Create and configure new hls client for existing video element
+            this.hlsClient = new Hls();
+            this.hlsClient.loadSource(url);
+            this.hlsClient.attachMedia(this.$.video);
+          }
         }
       }
 

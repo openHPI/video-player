@@ -1,0 +1,6 @@
+<script src='../../../hls.js/dist/hls.js' type='text/javascript'></script>
+<script>
+  // Out of the box the Hls.js module has no name, but has to be referenced by url
+  // To abstract form the actual location in other than this file, it is wrapped into a new module.
+  define('hls-js', ['../../../hls.js/dist/hls.js'], (Hls) => Hls);
+</script>

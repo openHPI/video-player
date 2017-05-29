@@ -20,10 +20,18 @@
      * @type {Object.<string, string>}
      */
     const QUALITY_MODES = {
-      //HLS: 'hls',
+      HLS: 'hls',
       HD: 'hd',
       SD: 'sd',
     };
+
+    /**
+     * Contains the difference threshold in seconds between position of the
+     * state and position of a single video stream from which the video stream
+     * is synced manually.
+     * @type {Number}
+     */
+    const SYNC_DIFF_THRESHOLD = 0.1;
 
     /**
      * Contains the default state properties.
@@ -55,6 +63,7 @@
       PLAY_STATES,
       PLAYBACK_RATES,
       QUALITY_MODES,
+      SYNC_DIFF_THRESHOLD,
       DEFAULT_STATE,
       DEFAULT_CONFIGURATION,
     };

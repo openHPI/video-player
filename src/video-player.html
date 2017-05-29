@@ -1,6 +1,7 @@
 <link rel="import" href="../../imd/imd.html">
 <link rel='import' href='../../polymer/polymer-element.html'>
 <link rel='import' href='../../polymer/lib/elements/dom-repeat.html'>
+<link rel='import' href='3rd-imports/hls-js.html'>
 <link rel='import' href='3rd-imports/font-awesome.html'>
 
 <link rel='import' href='services/state-manager.html'>
@@ -67,7 +68,7 @@
   </template>
 
   <script>
-    define(['constants', 'state-manager'], (constants, StateManager) => {
+    define(['constants', 'state-manager', 'hls-js'], (constants, StateManager, Hls) => {
       const {DEFAULT_STATE, DEFAULT_CONFIGURATION, QUALITY_MODES} = constants;
 
       class VideoPlayer extends Polymer.Element {
@@ -148,9 +149,14 @@
         }
 
         _availableQualities(streams) {
-          return Object.values(QUALITY_MODES)
-                       .filter(quality => streams.every(stream => Object.keys(stream)
-                                                                        .includes(quality)));
+          let supportedQualities = Object.values(QUALITY_MODES);
+          if(!Hls.isSupported()) {
+            supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
+          }
+
+          return supportedQualities
+                   .filter(quality => streams.every(stream => Object.keys(stream)
+                                                                    .includes(quality)));
         }
 
         _equals(a, b) {
