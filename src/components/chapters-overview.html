@@ -48,7 +48,7 @@
       ready() {
         super.ready();
         Polymer.RenderStatus.afterNextRender(this, function() {
-          this.highlightChapter(this.stateManager.position);
+          this.highlightChapter(this.state.position);
         });
       }
 
@@ -60,7 +60,7 @@
       handleClick(e) {
         let time = parseInt(e.path[0].attributes.getNamedItem('data-time').value);
         
-        this.stateManager.seek(time);
+        this.stateManager.setPosition(time);
         this.highlightChapter(time);
       }
 
@@ -69,10 +69,14 @@
       }
 
       highlightChapter(position) {
-        if (this.shadowRoot.querySelector('.active')) {
-          this.shadowRoot.querySelector('.active').classList.remove('active');
+        let activeElement = this.shadowRoot.querySelector('.active');
+        let highlightElement = this.shadowRoot.querySelector('[data-time="' + this.closestChapterPosition(position) + '"]');
+        if (activeElement) {
+          activeElement.classList.remove('active');
         }
-        this.shadowRoot.querySelector('[data-time="' + this.closestChapterPosition(position) + '"]').classList.add('active');
+        if (highlightElement) {
+          highlightElement.classList.add('active');
+        }
       }
 
       closestChapterPosition(position) {
