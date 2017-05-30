@@ -11,8 +11,8 @@
 
     <div id='container__chapters_overview' class='_user_controls'>
       <ul>
-          <template is='dom-repeat' items='{{outline.outlines}}'>
-            <li><a on-click='handleClick' class="link__chapter_bookmark" data-time$='{{getTotalSeconds(item.title.time)}}'>{{item.title.text}}</a></li>
+          <template is='dom-repeat' items='{{outline.outline}}'>
+            <li><a on-click='handleClick' class="link__chapter_bookmark" data-time$='{{item.seconds}}'>{{item.text}}</a></li>
           </template>
       </ul>
     </div>
@@ -52,11 +52,6 @@
         });
       }
 
-      getTotalSeconds(time) {
-        let splitTime = time.split(':');
-        return parseInt(splitTime[0]) * 3600 + parseInt(splitTime[1]) * 60 + parseInt(splitTime[2]);
-      }
-
       handleClick(e) {
         let time = parseInt(e.path[0].attributes.getNamedItem('data-time').value);
         
@@ -80,8 +75,8 @@
       }
 
       closestChapterPosition(position) {
-        let positions = this.outline.outlines.map(function(chapter) {
-          return this.getTotalSeconds(chapter.title.time);
+        let positions = this.outline.outline.map(function(chapter) {
+          return chapter.seconds;
         }, this);
         let closestPosition = positions[0];
         if (position > positions[0]) {
