@@ -34,7 +34,6 @@
         height: 100%;
       }
       #streams-container {
-        position: relative;
         display: flex;
         flex-wrap: wrap;
         overflow: hidden;
@@ -42,7 +41,8 @@
         height: calc(100% - 45px);
       }
       .video-stream {
-        flex: 1 1 50%;
+        /* 49 to leave a bit space for the resizer */
+        flex: 1 1 49%;
       }
     </style>
 
@@ -56,7 +56,7 @@
             master='{{_equals(index, 0)}}' 
             class='video-stream'
             style$='height: calc(100% / {{_rowCount(configuration.streams)}});'></video-stream>
-          <template is="dom-if" if="{{_showResizer(index)}}">
+          <template is="dom-if" if="{{_isResizer(index)}}">
             <resizer-control></resizer-control>
           </template>
         </template>
@@ -127,6 +127,8 @@
           });
 
           this._setCssVariables();
+          this.$['streams-container'].addEventListener('mouseenter', this._showResizer.bind(this));
+          this.$['streams-container'].addEventListener('mouseleave', this._hideResizer.bind(this));
         }
 
         _fullScreenChanged(fullScreen) {
@@ -149,8 +151,14 @@
         _rowCount(streams) {
           return Math.ceil(streams.length/2);
         }
-        _showResizer(index){
+        _isResizer(index) {
           return index % 2 == 0
+        }
+        _showResizer() {
+          this.shadowRoot.querySelectorAll('resizer-control').forEach(function(currentValue) {currentValue.style.visibility = "visible"; });
+        }
+        _hideResizer() {
+          this.shadowRoot.querySelectorAll('resizer-control').forEach(function(currentValue) {currentValue.style.visibility = "hidden"; });
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
