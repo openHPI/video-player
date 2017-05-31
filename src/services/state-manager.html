@@ -178,8 +178,11 @@
         this.setState('fullScreen', fullScreen);
       }
 
+      /**
+       * Toggles the visibility of the chapters overview.
+       */
       toggleDisplayChaptersOverview() {
-        this.displayChaptersOverview = !this.displayChaptersOverview;
+        this.setState('displayChaptersOverview', !this.state.displayChaptersOverview);
       }
     }
     
