@@ -41,6 +41,8 @@
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.24.1",
+    "eslint": "^3.19.0",
+    "eslint-plugin-html": "^2.0.3",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-clean": "^0.3.2",
@@ -49,12 +51,13 @@
     "gulp-if": "^2.0.2",
     "gulp-ignore": "^2.0.2",
     "gulp-uglify": "^3.0.0",
+    "htmlhint": "^0.9.13",
     "polymer-build": "^1.5.0",
     "run-sequence": "^1.2.2"
   },
   "scripts": {
     "test": "polymer test",
-    "lint": "polymer lint --root src --input video-player.html",
+    "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html",
     "postinstall": "bower install",
     "serve": "polymer serve",
     "bundle": "gulp bundle"

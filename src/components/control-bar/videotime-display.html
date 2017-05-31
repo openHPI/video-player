@@ -1,10 +1,10 @@
-<link rel='import' href='../../../bower_components/polymer/polymer-element.html'>
-<link rel='import' href='../styling/control-bar--style-module.html'>
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../styling/control-bar--style-module.html">
 
-<dom-module id='videotime-display'>
+<dom-module id="videotime-display">
 
   <template>
-    <style type='text/css' include="control-bar--style-module">
+    <style type="text/css" include="control-bar--style-module">
     </style>
 
     <div id="container__videotime_display" class="user_controls">
@@ -18,12 +18,8 @@
 
       static get properties() {
         return {
-          state: {
-            type: Object
-          },
-          stateManager: {
-            type: Object
-          }
+          state: Object,
+          stateManager: Object,
         };
       }
 
@@ -32,16 +28,16 @@
       }
 
       _secondsToHms(position) {
-        var seconds   = Number(position);
-        var hours     = Math.floor(seconds / 3600);
-        var minutes   = Math.floor(seconds % 3600 / 60);
-        var seconds2  = Math.floor(seconds % 3600 % 60);
+        let seconds = Number(position);
+        let hours = Math.floor(seconds / 3600);
+        let minutes = Math.floor(seconds % 3600 / 60);
+        let seconds2 = Math.floor(seconds % 3600 % 60);
 
-        if(hours < 10){hours = "0" + hours;}
-        if(minutes < 10){minutes = "0" + minutes;}
-        if(seconds2 < 10){seconds2 = "0" + seconds2;}
+        if(hours < 10){hours = '0' + hours;}
+        if(minutes < 10){minutes = '0' + minutes;}
+        if(seconds2 < 10){seconds2 = '0' + seconds2;}
 
-        return hours + ":" + minutes + ":" + seconds2;
+        return hours + ':' + minutes + ':' + seconds2;
       }
     }
 

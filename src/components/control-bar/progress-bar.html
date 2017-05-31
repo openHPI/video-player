@@ -1,7 +1,7 @@
-<link rel='import' href='../../../bower_components/polymer/polymer-element.html'>
-<link rel='import' href='../styling/control-bar--style-module.html'>
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../styling/control-bar--style-module.html">
 
-<dom-module id='progress-bar'>
+<dom-module id="progress-bar">
   <template>
     <style type="text/css" include="control-bar--style-module">
       :host {
@@ -10,7 +10,7 @@
     </style>
 
     <div id="container__progress_bar" class="user_controls">
-      <progress id="progress__bar" min='0' max='[[_toString(state.duration)]]' value='[[_toString(state.position)]]'></progress>
+      <progress id="progress__bar" min="0" max="[[_toString(state.duration)]]" value="[[_toString(state.position)]]"></progress>
     </div>
   </template>
 
@@ -20,12 +20,8 @@
 
       static get properties() {
         return {
-          state: {
-            type: Object
-          },
-          stateManager: {
-            type: Object
-          }
+          state: Object,
+          stateManager: Object,
         };
       }
 
@@ -41,12 +37,12 @@
       }
 
       _progressBarClicked(e) {
-        // get x value by substracting offsetleft of progress-bar
-        var x = e.pageX - this.$.progress__bar.offsetLeft;
-        // calculate value that will be between 0 and the max value (duration of video) -> exact moment of video
-        var clickedValue = x * this.$.progress__bar.max / this.$.progress__bar.offsetWidth;
-        // check if still within borders
-        var isClicked = clickedValue <= this.$.progress__bar.max;
+        // Get x value by substracting offsetleft of progress-bar
+        let x = e.pageX - this.$.progress__bar.offsetLeft;
+        // Calculate value that will be between 0 and the max value (duration of video) -> exact moment of video
+        let clickedValue = x * this.$.progress__bar.max / this.$.progress__bar.offsetWidth;
+        // Check if still within borders
+        let isClicked = clickedValue <= this.$.progress__bar.max;
         if(isClicked){
           this.stateManager.setPosition(clickedValue);
         }

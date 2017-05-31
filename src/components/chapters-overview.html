@@ -1,18 +1,18 @@
-<link rel='import' href='../../bower_components/polymer/polymer-element.html'>
-<link rel='import' href='styling/control-bar--style-module.html'>
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="styling/control-bar--style-module.html">
 
-<dom-module id='chapters-overview'>
+<dom-module id="chapters-overview">
   <template>
-    <style type='text/css' include='control-bar--style-module'>
+    <style type="text/css" include="control-bar--style-module">
       .active {
         font-weight: bold;
       }
     </style>
 
-    <div id='container__chapters_overview' class='_user_controls'>
+    <div id="container__chapters_overview" class="_user_controls">
       <ul>
-          <template is='dom-repeat' items='{{outline}}'>
-            <li><a on-click='handleClick' class="link__chapter_bookmark" data-time$='{{item.seconds}}'>{{item.text}}</a></li>
+          <template is="dom-repeat" items="{{outline}}">
+            <li><a on-click="handleClick" class="link__chapter_bookmark" data-time$="{{item.seconds}}">{{item.text}}</a></li>
           </template>
       </ul>
     </div>
@@ -24,22 +24,18 @@
 
       static get properties() {
         return {
+          state: Object,
+          stateManager: Object,
           outline: {
-              type: Object,
-              value: []
+            type: Object,
+            value: [],
           },
-          state: {
-              type: Object
-          },
-          stateManager: {
-            type: Object
-          }
         };
       }
 
       static get observers() {
         return [
-          '_positionChanged(state.position)'
+          '_positionChanged(state.position)',
         ];
       }
 
@@ -73,9 +69,7 @@
       }
 
       closestChapterPosition(position) {
-        let positions = this.outline.map(function(chapter) {
-          return chapter.seconds;
-        }, this);
+        let positions = this.outline.map((chapter) => chapter.seconds, this);
         let closestPosition = positions[0];
         if (position > positions[0]) {
           for(let i = 1; i < positions.length; i++) {

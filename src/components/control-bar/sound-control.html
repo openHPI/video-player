@@ -1,7 +1,7 @@
-<link rel='import' href='../../../bower_components/polymer/polymer-element.html'>
-<link rel='import' href='../styling/control-bar--style-module.html'>
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../styling/control-bar--style-module.html">
 
-<dom-module id='sound-control'>
+<dom-module id="sound-control">
   <template>
     <style type="text/css" include="control-bar--style-module">
       :host {
@@ -11,7 +11,7 @@
     </style>
 
     <div id="container__sound_control" class="user_controls">
-      <progress id="progress__sound_control" min='0' max='1' value='[[_displayVolume(state.volume, state.muted)]]'></progress>
+      <progress id="progress__sound_control" min="0" max="1" value="[[_displayVolume(state.volume, state.muted)]]"></progress>
     </div>
 
   </template>
@@ -22,12 +22,8 @@
 
       static get properties() {
         return {
-          state: {
-            type: Object
-          },
-          stateManager: {
-            type: Object
-          }
+          state: Object,
+          stateManager: Object,
         };
       }
 
@@ -38,12 +34,12 @@
       }
 
       _progressBarClicked(e) {
-        // get x-axies value of event location
-        var x = e.pageX - this.$.progress__sound_control.offsetLeft;
-        // calculate value that will be between 0 and max value of progress bar
-        var clickedValue = x * this.$.progress__sound_control.max / this.$.progress__sound_control.offsetWidth;
-        // check if still within borders
-        var isClicked = clickedValue <= this.$.progress__sound_control.max;
+        // Get x-axies value of event location
+        let x = e.pageX - this.$.progress__sound_control.offsetLeft;
+        // Calculate value that will be between 0 and max value of progress bar
+        let clickedValue = x * this.$.progress__sound_control.max / this.$.progress__sound_control.offsetWidth;
+        // Check if still within borders
+        let isClicked = clickedValue <= this.$.progress__sound_control.max;
         if(isClicked){
           this.stateManager.unmute();
           this.stateManager.setVolume(clickedValue);
