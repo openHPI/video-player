@@ -11,7 +11,7 @@
 
     <div id='container__chapters_overview' class='_user_controls'>
       <ul>
-          <template is='dom-repeat' items='{{outline.outline}}'>
+          <template is='dom-repeat' items='{{outline}}'>
             <li><a on-click='handleClick' class="link__chapter_bookmark" data-time$='{{item.seconds}}'>{{item.text}}</a></li>
           </template>
       </ul>
@@ -26,9 +26,7 @@
         return {
           outline: {
               type: Object,
-              value: {
-                  outline: []
-              }
+              value: []
           },
           state: {
               type: Object
@@ -75,7 +73,7 @@
       }
 
       closestChapterPosition(position) {
-        let positions = this.outline.outline.map(function(chapter) {
+        let positions = this.outline.map(function(chapter) {
           return chapter.seconds;
         }, this);
         let closestPosition = positions[0];
