@@ -53,7 +53,7 @@
       }
 
       handleClick(e) {
-        let time = parseInt(e.path[0].attributes.getNamedItem('data-time').value);
+        let time = parseInt(e.composedPath()[0].attributes.getNamedItem('data-time').value);
         
         this.stateManager.setPosition(time);
         this.highlightChapter(time);
