@@ -56,8 +56,10 @@
           <video-stream state='{{state}}' state-manager='{{stateManager}}' url='{{item}}' master='{{_equals(index, 0)}}' class='video-stream'></video-stream>
         </template>
       </div>
-      <control-bar state='{{state}}' state-manager='{{stateManager}}'></control-bar>
-      <chapters-overview class="invisible" state='{{state}}' state-manager='{{stateManager}}' outline='{{configuration.outline}}'></chapters-overview>
+      <control-bar state='{{state}}' state-manager='{{stateManager}}' has-outline='{{hasOutline()}}'></control-bar>
+      <template is='dom-if' if='{{hasOutline()}}'>
+        <chapters-overview class="invisible" state='{{state}}' state-manager='{{stateManager}}' outline='{{configuration.outline}}'></chapters-overview>
+      </template>
     </div>
   </template>
 
@@ -143,17 +145,25 @@
         }
 
         _displayChaptersOverviewChanged(displayState) {
-          let chaptersOverview = this.shadowRoot.querySelector('chapters-overview');
-          if (displayState) {
-            chaptersOverview.classList.remove('invisible');
-          }
-          else {
-            chaptersOverview.classList.add('invisible');
+          if(this.hasOutline()) {
+            let chaptersOverview = this.shadowRoot.querySelector('chapters-overview');
+            if (chaptersOverview) {
+              if (displayState) {
+                chaptersOverview.classList.remove('invisible');
+              }
+              else {
+                chaptersOverview.classList.add('invisible');
+              }
+            }
           }
         }
           
         rowCount(streams) {
           return Math.ceil(streams.length/2);
+        }
+
+        hasOutline() {
+          return this.configuration.outline && this.configuration.outline.outline && this.configuration.outline.outline.length != 0;
         }
       }
 

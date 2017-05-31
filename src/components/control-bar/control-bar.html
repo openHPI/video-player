@@ -25,7 +25,9 @@
       <progress-bar state='{{state}}' state-manager='{{stateManager}}'></progress-bar>
       <videotime-display state='{{state}}' state-manager='{{stateManager}}'></videotime-display>
       <speed-control state='{{state}}' state-manager='{{stateManager}}'></speed-control>
-      <chapters-overview-control state='{{state}}' state-manager='{{stateManager}}'></chapters-overview-control>
+      <template is='dom-if' if='{{hasOutline}}'>
+        <chapters-overview-control state='{{state}}' state-manager='{{stateManager}}'></chapters-overview-control>
+      </template>
       <mute-control state='{{state}}' state-manager='{{stateManager}}'></mute-control>
       <sound-control state='{{state}}' state-manager='{{stateManager}}'></sound-control>
       <full-screen-control state='{{state}}' state-manager='{{stateManager}}'></full-screen-control>
