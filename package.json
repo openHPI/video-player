@@ -48,8 +48,8 @@
     "gulp-htmlmin": "^3.0.0",
     "gulp-if": "^2.0.2",
     "gulp-ignore": "^2.0.2",
-    "gulp-uglify": "^2.1.2",
-    "polymer-build": "^1.2.2",
+    "gulp-uglify": "^3.0.0",
+    "polymer-build": "^1.5.0",
     "run-sequence": "^1.2.2"
   },
   "scripts": {
