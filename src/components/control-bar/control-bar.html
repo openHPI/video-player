@@ -4,7 +4,7 @@
 <link rel='import' href='sound-control.html'>
 <link rel='import' href='videotime-display.html'>
 <link rel='import' href='chapters-overview-control.html'>
-<link rel="import" href="select-control.html">
+<link rel="import" href="my-select-control.html">
 <link rel='import' href='mute-control.html'>
 <link rel='import' href='full-screen-control.html'>
 
@@ -24,7 +24,7 @@
       <playpause-control state='{{state}}' state-manager='{{stateManager}}'></playpause-control>
       <progress-bar state='{{state}}' state-manager='{{stateManager}}'></progress-bar>
       <videotime-display state='{{state}}' state-manager='{{stateManager}}'></videotime-display>
-      <select-control value="{{state.plackbackrate}}" value-format-dtring="#[]#x" value-range="[[stateManager.PLAYBACK_RATES()]]" change-handler="switchPlaybackRate" state='{{state}}' state-manager='{{stateManager}}'></select-control>
+      <my-select-control value="{{state.playbackRate}}" value-format-string="#[]#x" value-range="[[stateManager.PLAYBACK_RATES()]]" change-handler="switchPlaybackRate" state='{{state}}' state-manager='{{stateManager}}'></my-select-control>
       <template is='dom-if' if='{{hasOutline}}'>
         <chapters-overview-control state='{{state}}' state-manager='{{stateManager}}'></chapters-overview-control>
       </template>

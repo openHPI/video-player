@@ -1,0 +1,72 @@
+<link rel='import' href='../../../bower_components/polymer/polymer-element.html'>
+<link rel='import' href='../styling/control-bar--style-module.html'>
+
+<dom-module id='my-select-control'>
+  <link rel='import' type='css' href='../../../bower_components/components-font-awesome/css/font-awesome.min.css'>
+
+  <template>
+    <style type='text/css' include="control-bar--style-module">
+    </style>
+
+    <div id="container__my_select_control" class="user_controls">
+        <select id="select__my_select_control" class="button">
+            [[_valueStringFromFormat()]]
+        </select>
+    </div>
+    </template>
+
+  <script>
+    class MySelectControl extends Polymer.Element {
+      static get is() { return 'my-select-control'; }
+
+      static get properties() {
+        return {
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
+          },
+          value: { 
+            type: Object
+          },
+          valueFormatString: {
+            type: String,
+            value: '#[]#'
+          },
+          valueRange: {
+            type: Array
+          },
+          changeHandler: {
+            type: String
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+        console.log(this.valueRange);
+        this._initSelect();
+        // Add event listeners
+        this.$.select__my_select_control.addEventListener('click', () => this.stateManager.switchPlaybackRate());
+      }
+
+      _initSelect() {
+        this.valueRange.forEach(function(value) {
+          let option = new Option(this._valueStringFromFormat(), this.value);
+        }, this);
+      }
+
+      _toFixed(value, digits) {
+        return value.toFixed(digits);
+      }
+
+      _valueStringFromFormat() {
+        return this.valueFormatString.replace("#[]#", this.value);
+      }
+    }
+
+    window.customElements.define(MySelectControl.is, MySelectControl);
+  </script>
+
+</dom-module>
