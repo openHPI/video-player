@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>video-player test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../video-player.html">
+    <link rel="import" href="../services/state-manager.html">
+  </head>
+  <body>
+
+    <test-fixture id="BasicTestFixture">
+      <template>
+        <video-player></video-player>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('state-manager', function() {
+
+        let stateManager;
+
+        
+        setup(function() {
+          // Testing state-manager via video-player for now because I can't figure
+          // out how to do this by itself.
+          stateManager = fixture('BasicTestFixture').stateManager;
+          stateManager.setDuration(100);
+        });
+
+        test('testing play and pause', function() {
+          stateManager.togglePlayPause();
+          assert.equal(stateManager.state.playState, 'PLAYING', 'switching to play  works');
+          stateManager.play();
+          assert.equal(stateManager.state.playState, 'PLAYING', 'calling play again makes state manager stay in play mode');
+          stateManager.togglePlayPause();
+          assert.equal(stateManager.state.playState, 'PAUSED', 'switching to pause works');
+          stateManager.pause();
+          assert.equal(stateManager.state.playState, 'PAUSED', 'calling pause again makes state manager stay in play mode');
+        });
+
+        test('testing seek', function() {
+          stateManager.setPosition(30);
+          assert.equal(stateManager.state.position, 30, 'going to position 30 works');
+          stateManager.setDuration(20);
+          let error;
+          // Using throws would be better here but somehow this doesn't work.
+          // assert.throws(stateManager.setPosition(30), RangeError);
+          try{
+            stateManager.setPosition(30);
+          } catch (err) {
+            error = err;
+          }
+          assert.isNotNull(error, 'going to a position beyond the duration is not possible');
+          error = undefined;
+          try{
+            stateManager.setPosition(-1);
+          } catch (err) {
+            error = err;
+          }
+          assert.isNotNull(error, 'going to a position with a negative value is not possible');
+          error = undefined;
+          try{
+            stateManager.setPosition(1.5);
+          } catch (err) {
+            error = err;
+          }
+          assert.isNotNull(error, 'going to a position with a non-integer value is not possible');
+        });
+
+        test('testing setDuration', function() {
+          let error;
+          try{
+            stateManager.setDuration(-1);
+          } catch (err) {
+            error = err;
+          }
+          assert.isNotNull(error, 'going to a position with a negative value is not possible');
+          error = undefined;
+          try{
+            stateManager.setDuration(1.5);
+          } catch (err) {
+            error = err;
+          }
+          assert.isNotNull(error, 'going to a position with a non-integer value is not possible');
+        });
+
+        test('testing playback rate changes', function() {
+          let oldPlaybackRate = stateManager.state.playbackRate;
+          stateManager.switchPlaybackRate();
+          assert.notEqual(oldPlaybackRate, stateManager.state.playbackRate, 'switching playback rates works!')
+        });
+
+        test('testing muting', function() {
+          stateManager.mute();
+          assert.equal(stateManager.state.muted, true, 'setting mute')
+          stateManager.mute();
+          assert.equal(stateManager.state.muted, true, 'setting mute twice');
+          stateManager.unmute();
+          assert.equal(stateManager.state.muted, false, 'setting unmute');
+          stateManager.toggleMute();
+          assert.equal(stateManager.state.muted, true, 'toggling from unmute to mute');
+        });
+
+        test('testing muting', function() {
+          stateManager.mute();
+          assert.equal(stateManager.state.muted, true, 'setting mute')
+          stateManager.mute();
+          assert.equal(stateManager.state.muted, true, 'setting mute twice');
+          stateManager.unmute();
+          assert.equal(stateManager.state.muted, false, 'setting unmute');
+          stateManager.toggleMute();
+          assert.equal(stateManager.state.muted, true, 'toggling from unmute to mute');
+          stateManager.setVolume(1.0);
+          assert.equal(stateManager.state.muted, false, 'setting volume automatically unmutes');
+        });
+
+        test('testing volume setting', function() {
+          stateManager.setVolume(0.5);
+          assert.equal(stateManager.state.volume, 0.5, 'setting volume to 0.5');
+        });
+      });
+    </script>
+
+  </body>
+</html>
