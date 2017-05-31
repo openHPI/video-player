@@ -1,0 +1,49 @@
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='lectureseries-element.html'>
+
+<dom-module id='lectureseries-display'>
+  <template>
+
+    <style type="text/css">
+    </style>
+
+    <div id='lectureseries-display-container'>
+
+      <div>
+        <h3>[[lectureseries.title]] ([[lectureseries.term]])</h3>
+        <h4>[[lectureseries.lecturer]]</h4>
+        <img src='[[lectureseries.lectureUrl]]'>
+      </div>
+
+      <template is='dom-repeat' items='{{lectureseries.lectures}}'>
+        <lectureseries-element lecture='{{item}}' current-Lecture='{{_equals(index, lectureseries.currentLectureIndex)}}'></lectureseries-element>
+      </template>
+
+    </div>
+
+  </template>
+
+  <script>
+    class LectureSeriesDisplay extends Polymer.Element {
+      static get is() { return 'lectureseries-display'; }
+
+      static get properties() {
+        return {
+          lectureseries: {
+            type: Object
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+      }
+
+      _equals(a, b) {
+        return a === b;
+      }
+    }
+
+    window.customElements.define(LectureSeriesDisplay.is, LectureSeriesDisplay);
+  </script>
+</dom-module>

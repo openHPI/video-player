@@ -5,18 +5,16 @@
 
 <link rel='import' href='services/state-manager.html'>
 <link rel='import' href='components/video-stream.html'>
-<link rel='import' href='components/control-bar/user-controls.html'>
-<link rel='import' href='components/playlist/playlist-display.html'>
+<link rel='import' href='components/lectureseries/lectureseries-display.html'>
+<link rel='import' href='components/control-bar/control-bar.html'>
 
 <dom-module id='video-player'>
   <template>
     <style type="text/css">
       :host {
         display: inline-block;
-        --primary-color: [[configuration.primaryColor]];
-        --secondary-color: [[configuration.secondaryColor]];
-        --background-color-for-primary: [[configuration.backgoundColorForPrimary]];
       }
+
       /* For some reason, just chaining those fullscreen selectors into one big
          selector doesn't work so we're stupid-duplicating all the rules. */
       #video-player-container:-webkit-full-screen #streams-container{
@@ -31,20 +29,40 @@
         display: flex;
         align-items: center;
       }
+
+      #video-player-container {
+        height: 100%;
+      }
+      #streams-container {
+        display: flex;
+        flex-wrap: wrap;
+        overflow: hidden;
+        /* Cancel out the control bar height */
+        height: calc(100% - 45px);
+      }
+      .video-stream {
+        flex: 1 1 50%;
+      }
     </style>
 
     <div id='video-player-container'>
       <div id='streams-container'>
         <template is='dom-repeat' items='{{configuration.streams}}'>
-          <video-stream state='{{state}}' state-manager='{{stateManager}}' url='{{item}}' master='{{_equals(index, 0)}}'></video-stream>
+          <video-stream 
+            state='{{state}}' 
+            state-manager='{{stateManager}}' 
+            url='{{item}}' 
+            master='{{_equals(index, 0)}}' 
+            class='video-stream'
+            style$='height: calc(100% / {{_rowCount(configuration.streams)}});'></video-stream>
         </template>
       </div>
-      <user-controls state='{{state}}' state-manager='{{stateManager}}'></user-controls>
+      <control-bar state='{{state}}' state-manager='{{stateManager}}'></control-bar>
     </div>
     
     <div>
-      <template is="dom-if" if="{{configuration.playlist}}">
-        <playlist-display playlist='{{configuration.playlist}}'></playlist-display>
+      <template is="dom-if" if="{{configuration.lectureseries}}">
+        <lectureseries-display lectureseries='{{configuration.lectureseries}}'></lectureseries-display>
       </template>
     </div>
 
@@ -102,12 +120,15 @@
           this.$['video-player-container'].addEventListener('webkitfullscreenchange', e => {
             self.stateManager.setFullScreen(document.webkitIsFullScreen);
           });
-          this.$['video-player-container'].addEventListener('mozfullscreenchange', e => {
-            self.stateManager.setFullScreen(document.mozFullScreenwebkitIsFullScreen);
+          // Firefox for some reason needs to attach the event to document
+          document.addEventListener('mozfullscreenchange', e => {
+            self.stateManager.setFullScreen(document.mozFullScreen);
           });
           this.$['video-player-container'].addEventListener('msfullscreenchange', e => {
             self.stateManager.setFullScreen(document.msFullscreenElement);
           });
+
+          this._setCssVariables();
         }
 
         _fullScreenChanged(fullScreen) {
@@ -126,6 +147,17 @@
 
         _equals(a, b) {
           return a === b;
+        }
+        _rowCount(streams) {
+          return Math.ceil(streams.length/2);
+        }
+
+        // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
+        // The poperties is not correctyl evaluated and thus the variable not set.
+        _setCssVariables() {
+          this.style.setProperty('--primary-color', [[this.configuration.primaryColor]]);
+          this.style.setProperty('--secondary-color', [[this.configuration.secondaryColor]]);
+          this.style.setProperty('--background-color-for-primary', [[this.configuration.backgoundColorForPrimary]]);
         }
       }
 

@@ -1,33 +1,34 @@
 <link rel='import' href='../../../../polymer/polymer-element.html'>
 
-<dom-module id='playlist-element'>
+<dom-module id='lecture-chapter'>
+  <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
+  
   <template>
 
     <style type="text/css">
     </style>
 
-    <div id="test">
-      <div>[[video.title]]</div>
-      <div>[[video.lecturer]]</div>
-      <div>[[video.url]]</div>
-      <div><img src='[[video.thumbnailUrl]]'></div>
-      <div>[[video.date]]</div>
-      <div>[[video.language]]</div>
-      <div>[[_secondsToHms(video.duration)]]</div>          
+    <div id="lecture-chapter-container">
+      <span>[[chapter.name]]</span>
+      <span>[[_secondsToHms(chapter.duration)]]</span>
+      <span><a href='[[url]]#t=[[chapter.startPosition]]'><i class="fa fa-play-circle fa-lg fa-fw"></i></a></span>            
     </div>
     
   </template>
 
   <script>
-    class PlaylistElement extends Polymer.Element {
-      static get is() { return 'playlist-element'; }
+    class LectureChapter extends Polymer.Element {
+      static get is() { return 'lecture-chapter'; }
 
       static get properties() {
         return {
-          video: {
+          chapter: {
             type: Object
           },
-          currentVideo: {
+          url: {
+            type: String
+          },
+          currentChapter: {
             type: Boolean
 
           }
@@ -37,8 +38,8 @@
       ready() {
         super.ready();
 
-        if(this.currentVideo){
-          // do sth if you want to highlight the current Video of the playlist
+        if(this.currentChapter){
+          // do sth if you want to highlight the current Video of the lectureseries
         }
       }
 
@@ -54,8 +55,12 @@
 
         return hours + ":" + minutes + ":" + seconds2;
       }
+
+      _equals(a, b) {
+        return a === b;
+      }
     }
 
-    window.customElements.define(PlaylistElement.is, PlaylistElement);
+    window.customElements.define(LectureChapter.is, LectureChapter);
   </script>
 </dom-module>

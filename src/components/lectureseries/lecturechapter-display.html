@@ -1,0 +1,42 @@
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='lecturechapter-element.html'>
+
+<dom-module id='lecturechapter-display'>
+  <template>
+
+    <style type="text/css">
+    </style>
+
+    <div id='lecturechapter-display-container'>
+      <h3>[[lecturechapter.title]]</h3>
+      <template is='dom-repeat' items='{{lecturechapter.lectures}}'>
+        <lecturechapter-element chapter='{{item}}' current-Chapter='{{_equals(index, lecturechapter.currentChapterIndex)}}'></lecturechapter-element>
+      </template>
+    </div>
+    
+  </template>
+
+  <script>
+    class LectureChapterDisplay extends Polymer.Element {
+      static get is() { return 'lecturechapter-display'; }
+
+      static get properties() {
+        return {
+          chapters: {
+            type: Object
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+      }
+
+      _equals(a, b) {
+        return a === b;
+      }
+    }
+
+    window.customElements.define(LectureChapterDisplay.is, LectureChapterDisplay);
+  </script>
+</dom-module>

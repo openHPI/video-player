@@ -1,0 +1,80 @@
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='lecture-chapter.html'>
+
+<dom-module id='lectureseries-element'>
+  <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
+
+  <template>
+
+    <style type="text/css">
+    </style>
+
+    <div id="lectureseries-element-container">
+      <div>[[lecture.title]]</div>
+      <div>[[lecture.lecturer]]</div>
+      <div><img src='[[lecture.thumbnailUrl]]'></div>
+      <div>[[lecture.date]]</div>
+      <div>[[lecture.language]]</div>
+      <div>[[_secondsToHms(lecture.duration)]]</div>
+      <!--div>[[lecture.url]]</div-->
+    </div>
+
+    <div>
+      <span>[[lecture.title]]</span>
+      <span>[[_secondsToHms(lecture.duration)]]</span>
+      <span><a href='[[lecture.url]]'><i class="fa fa-play-circle fa-lg fa-fw"></i></a></span>
+    </div>
+
+    <div id='lecture-chapter-container'>
+      <template is='dom-repeat' items='{{lecture.chapters}}'>
+        <lecture-chapter chapter='{{item}}' url='{{lecture.url}}' current-Chapter='{{_equals(index, lecture.currentChapterIndex)}}'></lecture-chapter>
+      </template>
+    </div>
+    
+  </template>
+
+  <script>
+    class LectureSeriesElement extends Polymer.Element {
+      static get is() { return 'lectureseries-element'; }
+
+      static get properties() {
+        return {
+          lecture: {
+            type: Object
+          },
+          currentLecture: {
+            type: Boolean
+
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+
+        if(this.currentLecture){
+          // do sth if you want to highlight the current Video of the lectureseries
+        }
+      }
+
+      _secondsToHms(position) {
+        var seconds   = Number(position);
+        var hours     = Math.floor(seconds / 3600);
+        var minutes   = Math.floor(seconds % 3600 / 60);
+        var seconds2  = Math.floor(seconds % 3600 % 60);
+
+        if(hours < 10){hours = "0" + hours;}
+        if(minutes < 10){minutes = "0" + minutes;}
+        if(seconds2 < 10){seconds2 = "0" + seconds2;}
+
+        return hours + ":" + minutes + ":" + seconds2;
+      }
+
+      _equals(a, b) {
+        return a === b;
+      }
+    }
+
+    window.customElements.define(LectureSeriesElement.is, LectureSeriesElement);
+  </script>
+</dom-module>

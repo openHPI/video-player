@@ -7,16 +7,19 @@
 <link rel='import' href='mute-control.html'>
 <link rel='import' href='full-screen-control.html'>
 
-<dom-module id='user-controls'>
+<dom-module id='control-bar'>
   <template>
     <style type="text/css">
-      #container__user_controls {
+      #container__control_bar {
         display: flex;
         align-items: stretch;
+        /* Firefox fullscreen mode has a black background which does not work well
+         with our black font color for the control bar icons. */
+        background-color: white;
       }
     </style>
 
-    <div id="container__user_controls">
+    <div id="container__control_bar">
       <playpause-control state='{{state}}' state-manager='{{stateManager}}'></playpause-control>
       <progress-bar state='{{state}}' state-manager='{{stateManager}}'></progress-bar>
       <videotime-display state='{{state}}' state-manager='{{stateManager}}'></videotime-display>
@@ -28,8 +31,8 @@
   </template>
 
   <script>
-    class UserControls extends Polymer.Element {
-      static get is() { return 'user-controls'; }
+    class ControlBar extends Polymer.Element {
+      static get is() { return 'control-bar'; }
 
       static get properties() {
         return {
@@ -72,7 +75,7 @@
       }
     }
 
-    window.customElements.define(UserControls.is, UserControls);
+    window.customElements.define(ControlBar.is, ControlBar);
   </script>
 
 </dom-module>
