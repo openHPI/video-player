@@ -1,0 +1,64 @@
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='../styling/control-bar--style-module.html'>
+
+<dom-module id='speed-control'>
+  <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
+
+  <template>
+    <style type='text/css' include="control-bar--style-module">
+    </style>
+
+    <div id="container__speed_control" class="user_controls">
+        <select id="select__speed_control" class="button">
+            <!--[[_toFixed(state.playbackRate, 1)]]x-->
+        </select>
+    </div>
+    </template>
+
+  <script>
+    class SelectControl extends Polymer.Element {
+      static get is() { return 'speed-control'; }
+
+      static get properties() {
+        return {
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
+          },
+          value: { 
+            type: Object
+          },
+          valueFormatString: {
+            type: String,
+            value: '#[value]#'
+          },
+          valueRange: {
+            type: Object
+          },
+          changeHandler: {
+            type: String
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+        // Add event listeners
+        this.$.select__speed_control.addEventListener('click', () => this.stateManager.switchPlaybackRate());
+      }
+
+      _initSelect() {
+        
+      }
+
+      _toFixed(value, digits) {
+        return value.toFixed(digits);
+      }
+    }
+
+    window.customElements.define(SelectControl.is, SelectControl);
+  </script>
+
+</dom-module>
