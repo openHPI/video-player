@@ -1,0 +1,49 @@
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='lecture-slide.html'>
+
+<dom-module id='lectureslide-bar'>
+  <template>
+    <style type="text/css">
+      #container__control_bar{
+        position: relative;
+      }
+    </style>
+
+    <div id="container__control_bar">
+        <template is="dom-repeat" items='{{slides}}'>
+          <lecture-slide 
+            state='{{state}}' 
+            state-manager='{{stateManager}}' 
+            slide='{{item}}'></lecture-slide>
+        </template>
+    </div>
+
+  </template>
+
+  <script>
+    class LectureSlideBar extends Polymer.Element {
+      static get is() { return 'lectureslide-bar'; }
+
+      static get properties() {
+        return {
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
+          },
+          slides: {
+            type: Object
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+      }
+    }
+
+    window.customElements.define(LectureSlideBar.is, LectureSlideBar);
+  </script>
+
+</dom-module>

@@ -6,6 +6,7 @@
 <link rel='import' href='services/state-manager.html'>
 <link rel='import' href='components/video-stream.html'>
 <link rel='import' href='components/control-bar/control-bar.html'>
+<link rel='import' href='components/lectureslide-bar/lectureslide-bar.html'>
 
 <dom-module id='video-player'>
   <template>
@@ -56,6 +57,9 @@
             style$='height: calc(100% / {{_rowCount(configuration.streams)}});'></video-stream>
         </template>
       </div>
+
+      <lectureslide-bar state='{{state}}' state-manager='{{stateManager}}' slides='{{configuration.lectureSlides}}'></lectureslide-bar>
+      
       <control-bar state='{{state}}' state-manager='{{stateManager}}'></control-bar>
     </div>
 
