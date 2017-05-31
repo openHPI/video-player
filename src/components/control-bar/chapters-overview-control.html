@@ -1,8 +1,8 @@
-<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='../../../bower_components/polymer/polymer-element.html'>
 <link rel='import' href='../styling/control-bar--style-module.html'>
 
 <dom-module id='chapters-overview-control'>
-  <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
+  <link rel='import' type='css' href='../../../bower_components/components-font-awesome/css/font-awesome.min.css'>
   
   <template>
     <style type='text/css' include="control-bar--style-module">
@@ -10,15 +10,15 @@
         /* Avoid flickering with changing icons */
         /* It should be about twice the icon size */
         min-width: 3rem;
-      } 
+      }
       #button__chapters_overview i {
         font-size: 1.5rem;
       }
       #button__chapters_overview.active {
         border: 1px solid yellow;
-      }   
+      }
     </style>
-    
+
     <div id="container__chapters_overview_control" class="user_controls">
       <a id='button__chapters_overview'><i class='fa fa-list'></i></a>
     </div>
@@ -52,7 +52,7 @@
         }
         this.$.button__chapters_overview.addEventListener('click', () => this.stateManager.toggleDisplayChaptersOverview());
       }
-      
+
 
       _displayChaptersOverviewChanged(displayState) {
         if (displayState) {

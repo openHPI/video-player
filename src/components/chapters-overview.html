@@ -1,9 +1,9 @@
-<link rel='import' href='../../../polymer/polymer-element.html'>
+<link rel='import' href='../../bower_components/polymer/polymer-element.html'>
 <link rel='import' href='styling/control-bar--style-module.html'>
 
 <dom-module id='chapters-overview'>
   <template>
-    <style type='text/css' include='control-bar--style-module'> 
+    <style type='text/css' include='control-bar--style-module'>
       .active {
         font-weight: bold;
       }
@@ -54,7 +54,7 @@
 
       handleClick(e) {
         let time = parseInt(e.composedPath()[0].attributes.getNamedItem('data-time').value);
-        
+
         this.stateManager.setPosition(time);
         this.highlightChapter(time);
       }
