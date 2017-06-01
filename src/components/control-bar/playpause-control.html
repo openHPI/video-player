@@ -1,11 +1,11 @@
-<link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../styling/control-bar--style-module.html'>
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../styling/control-bar--style-module.html">
 
-<dom-module id='playpause-control'>
-  <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
+<dom-module id="playpause-control">
+  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
 
   <template>
-    <style type='text/css' include="control-bar--style-module">
+    <style type="text/css" include="control-bar--style-module">
       :host {
         /* Avoid flickering with changing icons */
         /* It should be about twice the icon size */
@@ -17,12 +17,12 @@
     </style>
 
     <div id="container__play_pause_control" class="user_controls">
-      <a id='button__play_pause' class="button">
+      <a id="button__play_pause" class="button">
         <template is="dom-if" if="[[_equals(state.playState, 'PLAYING')]]">
-          <i class="fa fa-pause">
+          <i class="fa fa-pause" />
         </template>
         <template is="dom-if" if="[[!_equals(state.playState, 'PLAYING')]]">
-          <i class="fa fa-play">
+          <i class="fa fa-play" />
         </template>
       </a>
     </div>
@@ -34,12 +34,8 @@
 
       static get properties() {
         return {
-          state: {
-            type: Object
-          },
-          stateManager: {
-            type: Object
-          }
+          state: Object,
+          stateManager: Object,
         };
       }
 

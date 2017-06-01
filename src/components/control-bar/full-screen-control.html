@@ -1,8 +1,8 @@
-<link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../styling/control-bar--style-module.html'>
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../styling/control-bar--style-module.html">
 
-<dom-module id='full-screen-control'>
-  <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
+<dom-module id="full-screen-control">
+  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
 
   <template>
     <style type="text/css" include="control-bar--style-module">
@@ -20,12 +20,12 @@
     </style>
 
     <div id="container__full_screen_control" class="user_controls">
-      <a id='button__full_screen' class="button">
+      <a id="button__full_screen" class="button">
         <template is="dom-if" if="[[state.fullScreen]]">
-          <i class="fa fa-compress">
+          <i class="fa fa-compress" />
         </template>
         <template is="dom-if" if="[[!state.fullScreen]]">
-          <i class="fa fa-expand">
+          <i class="fa fa-expand" />
         </template>
       </a>
     </div>
@@ -37,12 +37,8 @@
 
       static get properties() {
         return {
-          state: {
-            type: Object
-          },
-          stateManager: {
-            type: Object
-          }
+          state: Object,
+          stateManager: Object,
         };
       }
 

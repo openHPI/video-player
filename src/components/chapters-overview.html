@@ -1,0 +1,89 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="styling/control-bar--style-module.html">
+
+<dom-module id="chapters-overview">
+  <template>
+    <style type="text/css" include="control-bar--style-module">
+      .active {
+        font-weight: bold;
+      }
+    </style>
+
+    <div id="container__chapters_overview" class="_user_controls">
+      <ul>
+          <template is="dom-repeat" items="{{outline}}">
+            <li><a on-click="handleClick" class="link__chapter_bookmark" data-time$="{{item.seconds}}">{{item.text}}</a></li>
+          </template>
+      </ul>
+    </div>
+    </template>
+
+  <script>
+    class ChaptersOverview extends Polymer.Element {
+      static get is() { return 'chapters-overview'; }
+
+      static get properties() {
+        return {
+          state: Object,
+          stateManager: Object,
+          outline: {
+            type: Object,
+            value: [],
+          },
+        };
+      }
+
+      static get observers() {
+        return [
+          '_positionChanged(state.position)',
+        ];
+      }
+
+      ready() {
+        super.ready();
+        Polymer.RenderStatus.afterNextRender(this, function() {
+          this.highlightChapter(this.state.position);
+        });
+      }
+
+      handleClick(e) {
+        let time = parseInt(e.composedPath()[0].attributes.getNamedItem('data-time').value);
+
+        this.stateManager.setPosition(time);
+        this.highlightChapter(time);
+      }
+
+      _positionChanged(position) {
+        this.highlightChapter(position);
+      }
+
+      highlightChapter(position) {
+        let activeElement = this.shadowRoot.querySelector('.active');
+        let highlightElement = this.shadowRoot.querySelector('[data-time="' + this.closestChapterPosition(position) + '"]');
+        if (activeElement) {
+          activeElement.classList.remove('active');
+        }
+        if (highlightElement) {
+          highlightElement.classList.add('active');
+        }
+      }
+
+      closestChapterPosition(position) {
+        let positions = this.outline.map((chapter) => chapter.seconds, this);
+        let closestPosition = positions[0];
+        if (position > positions[0]) {
+          for(let i = 1; i < positions.length; i++) {
+            if (positions[i] > position) {
+              break;
+            }
+            closestPosition = positions[i];
+          }
+        }
+        return closestPosition;
+      }
+    }
+
+    window.customElements.define(ChaptersOverview.is, ChaptersOverview);
+  </script>
+
+</dom-module>

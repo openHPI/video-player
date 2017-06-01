@@ -13,9 +13,23 @@
         background-color: #777;
         height: 10px;
       }
+      .container__lecture_slide_img{
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        bottom: 1px;
+        left: 0px;
+        border: 1px solid #000000;;
+        background-color: #FFF;
+        visibility: hidden;
+      }
     </style>
 
-    <div id="test" class="container__lecture_slide" style="left: [[_stylePercentage(slide.startPosition,state.duration)]]%"></div>
+    <div id="test" class="container__lecture_slide" style="left: [[_stylePercentage(slide.startPosition,state.duration)]]%">
+      
+        <img id="myCanvas" src="[[slide.imageUrl]]" class="container__lecture_slide_img">
+     
+    </div>
 
   </template>
 
@@ -53,13 +67,15 @@
         this.stateManager.setPosition(this.slide.startPosition);
       }
 
-
       _mouseEnterListener(event){
         this.$.test.style.backgroundColor = "white";
+        this.$.myCanvas.style.visibility = "visible";
+        this.$.myCanvas.style.bottom = this.$.test.offsetHeight + 1 + "px";
       }
 
       _mouseLeaveListener(event){
         this.$.test.style.backgroundColor = "#777";
+        this.$.myCanvas.style.visibility = "hidden";
       }
     }
 
