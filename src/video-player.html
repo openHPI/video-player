@@ -58,7 +58,9 @@
         </template>
       </div>
 
-      <lectureslide-bar state='{{state}}' state-manager='{{stateManager}}' slides='{{configuration.lectureSlides}}'></lectureslide-bar>
+      <template is="dom-if" if="{{configuration.lectureSlides}}">
+        <lectureslide-bar state='{{state}}' state-manager='{{stateManager}}' slides='{{configuration.lectureSlides}}'></lectureslide-bar>
+      </template>
 
       <control-bar state="{{state}}" state-manager="{{stateManager}}" has-outline="{{_hasOutline()}}"></control-bar>
       <template is="dom-if" if="{{_hasOutline()}}">
