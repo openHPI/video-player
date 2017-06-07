@@ -1,4 +1,6 @@
-<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/imd/imd.html">
+
+<link rel="import" href="../../base-element.html">
 <link rel="import" href="../styling/control-bar--style-module.html">
 
 <dom-module id="progress-bar">
@@ -10,46 +12,43 @@
     </style>
 
     <div id="container__progress_bar" class="user_controls">
-      <progress id="progress__bar" min="0" max="[[_toString(state.duration)]]" value$="[[_toString(state.position)]]"></progress>
+      <progress
+        id="progress__bar"
+        min="0"
+        max="[[toStringOrEmpty(state.duration)]]"
+        value$="[[toStringOrEmpty(state.position)]]"
+        on-click="handleClick">
+      </progress>
     </div>
   </template>
 
   <script>
-    class ProgressBar extends Polymer.Element {
-      static get is() { return 'progress-bar'; }
+    define('progress-bar', ['base-element'], (BaseElement) => {
+      class ProgressBar extends BaseElement {
+        static get is() { return 'progress-bar'; }
 
-      static get properties() {
-        return {
-          state: Object,
-          stateManager: Object,
-        };
-      }
+        static get properties() {
+          return {
+            state: Object,
+            stateManager: Object,
+          };
+        }
 
-      _toString(value) {
-        return value.toString();
-      }
-
-      ready() {
-        super.ready();
-
-        // Add event listeners
-        this.$.progress__bar.addEventListener('click', this._progressBarClicked.bind(this));
-      }
-
-      _progressBarClicked(e) {
-        // Get x value by substracting offsetleft of progress-bar
-        let x = e.pageX - this.$.progress__bar.offsetLeft;
-        // Calculate value that will be between 0 and the max value (duration of video) -> exact moment of video
-        let clickedValue = x * this.$.progress__bar.max / this.$.progress__bar.offsetWidth;
-        // Check if still within borders
-        let isClicked = clickedValue <= this.$.progress__bar.max;
-        if(isClicked){
-          this.stateManager.setPosition(clickedValue);
+        handleClick(e) {
+          // Get x value by substracting offsetleft of progress-bar
+          let x = e.pageX - this.$.progress__bar.offsetLeft;
+          // Calculate value that will be between 0 and the max value (duration of video) -> exact moment of video
+          let clickedValue = x * this.$.progress__bar.max / this.$.progress__bar.offsetWidth;
+          // Check if still within borders
+          let isClicked = clickedValue <= this.$.progress__bar.max;
+          if(isClicked){
+            this.stateManager.setPosition(clickedValue);
+          }
         }
       }
-    }
 
-    window.customElements.define(ProgressBar.is, ProgressBar);
+      window.customElements.define(ProgressBar.is, ProgressBar);
+    });
   </script>
 
 </dom-module>

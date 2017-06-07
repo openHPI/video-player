@@ -174,28 +174,28 @@
 
 
       /**
-       * Toggles the full screen mode.
+       * Toggles the fullscreen mode.
        * @returns {void}
        */
-      toggleFullScreen() {
-        this.setFullScreen(!this.state.fullScreen);
+      toggleFullscreen() {
+        this.setFullscreen(!this.state.fullscreen);
       }
 
       /**
-       * Sets the full screen mode explicitly.
-       * @param {boolean} fullScreen Boolean determining whether the full screen mode is active or not.
+       * Sets the fullscreen mode explicitly.
+       * @param {boolean} fullscreen Boolean determining whether the full screen mode is active or not.
        * @returns {void}
        */
-      setFullScreen(fullScreen) {
-        this.setState('fullScreen', fullScreen);
+      setFullscreen(fullscreen) {
+        this.setState('fullscreen', fullscreen);
       }
 
       /**
-       * Toggles the visibility of the chapters overview.
+       * Toggles the visibility of the chapter list.
        * @returns {void}
        */
-      toggleDisplayChaptersOverview() {
-        this.setState('displayChaptersOverview', !this.state.displayChaptersOverview);
+      toggleIsChapterListShown() {
+        this.setState('isChapterListShown', !this.state.isChapterListShown);
       }
     }
 

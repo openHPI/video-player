@@ -1,6 +1,11 @@
 <script>
   define('fullscreen-manager', () => {
     class FullscreenManager {
+      /**
+       * Initializes a new FullscreenManager instance.
+       * @param {HTMLElement} fullscreenElement The element that should be displayed full-screen.
+       * @return {FullscreenManager}  The new FullscreenManager instance.
+       */
       constructor(fullscreenElement) {
         this.fullscreenElement = fullscreenElement;
         this.fullscreenChangedCallbacks = new Set();
@@ -21,6 +26,10 @@
         });
       }
 
+      /**
+       * Displays the element in fullscreen.
+       * @return {void}
+       */
       enterFullscreen() {
         if (this.fullscreenElement.requestFullscreen) {
           this.fullscreenElement.requestFullscreen();
@@ -33,6 +42,10 @@
         }
       }
 
+      /**
+       * Exits the fullscreen.
+       * @return {void}
+       */
       exitFullscreen() {
         if (document.exitFullscreen) {
           document.exitFullscreen();
@@ -45,14 +58,30 @@
         }
       }
 
+      /**
+       * Register callback that is called when the browser is switched
+       * to/out-of fullscreen mode.
+       * @param  {Function} callback The callback that should be registered.
+       * @return {void}
+       */
       onFullscreenChanged(callback) {
         this.fullscreenChangedCallbacks.add(callback);
       }
 
+      /**
+       * Unregister callback.
+       * @param  {Function} callback The callback that should be unregistered.
+       * @return {void}
+       */
       offFullscreenChanged(callback) {
         this.fullscreenChangedCallbacks.delete(callback);
       }
 
+      /**
+       * Calls all registered callbacks to notify fullscreen change.
+       * @param  {Boolean} fullscreen A value determining whether the fullscreen is active or not.
+       * @return {void}
+       */
       _fullScreenChanged(fullscreen) {
         for(let callback of this.fullscreenChangedCallbacks) {
           callback(fullscreen);

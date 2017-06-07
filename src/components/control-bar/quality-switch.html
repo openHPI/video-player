@@ -8,14 +8,14 @@
     </style>
 
     <div id="container__quality_switch" class="user_controls">
-      <a id="button__switch_quality" class="button">
-        [[_getQualityName(state.quality)]]
+      <a id="button__switch_quality" class="button" on-click="handleClick">
+        [[getQualityName(state.quality)]]
       </a>
     </div>
   </template>
 
   <script>
-    define(['constants'], (constants) => {
+    define('quality-switch', ['base-element', 'constants'], (BaseElement, constants) => {
       const {QUALITY_MODES} = constants;
       const QUALITY_NAMES = {
         [QUALITY_MODES.HLS]: 'Auto',
@@ -23,7 +23,7 @@
         [QUALITY_MODES.SD]: 'SD',
       };
 
-      class QualitySwitch extends Polymer.Element {
+      class QualitySwitch extends BaseElement {
         static get is() { return 'quality-switch'; }
 
         static get properties() {
@@ -34,13 +34,7 @@
           };
         }
 
-        ready() {
-          super.ready();
-
-          this.$.button__switch_quality.addEventListener('click', this._buttonClicked.bind(this));
-        }
-
-        _buttonClicked() {
+        handleClick() {
           let currentIndex = this.availableQualities.indexOf(this.state.quality);
           let newIndex = (currentIndex + 1) % this.availableQualities.length;
           let newQuality = this.availableQualities[newIndex];
@@ -48,7 +42,7 @@
           this.stateManager.setQuality(newQuality);
         }
 
-        _getQualityName(quality) {
+        getQualityName(quality) {
           return QUALITY_NAMES[quality];
         }
       }
