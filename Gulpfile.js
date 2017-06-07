@@ -42,6 +42,7 @@ gulp.task('transpile-es5', ['prepare-transpile'], () => {
   let component = mergeStream(project.sources(), project.dependencies())
     .pipe(ignore.exclude('bower_components/webcomponentsjs/**/*'))
     .pipe(ignore.exclude('bower_components/polymer/**/*'))
+    .pipe(ignore.exclude('bower_components/imd/**/*'))
     .pipe(componentHtmlSplitter.split())
 		.pipe(gulpif( /\.js$/, babel({presets: [babelPresetES2015]})))
 		.pipe(gulpif( /\.js$/, uglify()))
