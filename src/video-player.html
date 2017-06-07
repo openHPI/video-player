@@ -81,16 +81,7 @@
             },
             state: {
               type: Object,
-              value: () => ({
-                playState: StateManager.PLAY_STATES.PAUSED,
-                position: 0,
-                duration: 0,
-                playbackRate: 1.0,
-                volume: 1.0,
-                muted: false,
-                fullScreen: false,
-                displayChaptersOverview: false,
-              }),
+              value: () => ({}),
             },
             stateManager: Object,
             fullscreenManager: Object,
@@ -109,7 +100,17 @@
 
           // Initialize state and StateManager
           if(this.configuration.initialState) {
-            this.state = Object.assign(this.state, this.configuration.initialState);
+            const defaultState = {
+              playState: StateManager.PLAY_STATES.PAUSED,
+              position: 0,
+              duration: 0,
+              playbackRate: 1.0,
+              volume: 1.0,
+              muted: false,
+              fullScreen: false,
+              displayChaptersOverview: false,
+            };
+            this.state = Object.assign(defaultState, this.configuration.initialState);
           }
           this.stateManager = new StateManager(this, 'state');
 
