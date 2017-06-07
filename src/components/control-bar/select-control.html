@@ -8,15 +8,10 @@
     <style type='text/css' include="control-bar--style-module">
     </style>
 
-    <div id="container__my_select_control" class="user_controls">
-        <select class="button" on-change="changeHandler">
+    <div id="container__select_control" class="user_controls">
+        <select id="select__select" on-change="changeHandler">
           <template is='dom-repeat' items='[[valueRange]]'>
-            <template is='dom-if' if='{{_equal(item, value)}}'>
-              <option value="[[item]]" selected="selected">[[formatValue(item)]]</option>
-            </template>
-            <template is='dom-if' if='{{!_equal(item, value)}}'>
-              <option value="[[item]]">[[formatValue(item)]]</option>
-            </template>
+            <option value="[[item]]">[[formatValue(item)]]</option>
           </template>
         </select>
     </div>
@@ -54,6 +49,9 @@
       ready() {
         super.ready();
         // Add event listeners
+        Polymer.RenderStatus.afterNextRender(this, function() {
+          this.$.select__select.value = this.value;
+        });
       }
 
       _equal(a, b) {
