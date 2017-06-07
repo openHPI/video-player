@@ -1,11 +1,11 @@
-<link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../styling/control-bar--style-module.html'>
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../styling/control-bar--style-module.html">
 
-<dom-module id='speed-control'>
-  <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
+<dom-module id="speed-control">
+  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
 
   <template>
-    <style type='text/css' include="control-bar--style-module">
+    <style type="text/css" include="control-bar--style-module">
     </style>
 
     <div id="container__speed_control" class="user_controls">
@@ -21,12 +21,8 @@
 
       static get properties() {
         return {
-          state: {
-            type: Object
-          },
-          stateManager: {
-            type: Object
-          }
+          state: Object,
+          stateManager: Object,
         };
       }
 

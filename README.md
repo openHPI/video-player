@@ -36,6 +36,12 @@ The component can then be used in any HTML site in the following way:
 
 ## Tests
 
+### Prerequisites
+
+For Safari, you need to install the extension [SafariDriver.safariextz](http://selenium-release.storage.googleapis.com/2.48/SafariDriver.safariextz). Also, you need to have the _Develop_ menu active (toggled on in Preferences) and have toggled on the option _Allow Remote Automation_ underneath the _Develop_ menu.
+
+### Running tests
+
 The component is set up to be tested via [web-component-tester](https://github.com/Polymer/web-component-tester). The test suite can be executed locally by running
 ```
 $ npm test

@@ -1,14 +1,15 @@
-<link rel="import" href="../../imd/imd.html">
-<link rel='import' href='../../polymer/polymer-element.html'>
-<link rel='import' href='../../polymer/lib/elements/dom-repeat.html'>
-<link rel='import' href='3rd-imports/font-awesome.html'>
+<link rel="import" href="../bower_components/imd/imd.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="3rd-imports/font-awesome.html">
 
-<link rel='import' href='services/state-manager.html'>
-<link rel='import' href='components/video-stream.html'>
-<link rel='import' href='components/control-bar/control-bar.html'>
+<link rel="import" href="services/state-manager.html">
+<link rel="import" href="components/video-stream.html">
+<link rel="import" href="components/chapters-overview.html">
+<link rel="import" href="components/control-bar/control-bar.html">
 <link rel='import' href='components/resizer-control.html'>
 
-<dom-module id='video-player'>
+<dom-module id="video-player">
   <template>
     <style type="text/css">
       :host {
@@ -46,24 +47,26 @@
       }
     </style>
 
-    <div id='video-player-container'>
-      <div id='streams-container'>
-        <template is='dom-repeat' items='{{configuration.streams}}'>
-          <video-stream 
-            state='{{state}}' 
-            state-manager='{{stateManager}}' 
-            url='{{item}}' 
-            master='{{_equals(index, 0)}}' 
-            class='video-stream'
-            style$='height: calc(100% / {{_rowCount(configuration.streams)}});'></video-stream>
+    <div id="video-player-container">
+      <div id="streams-container">
+        <template is="dom-repeat" items="{{configuration.streams}}">
+          <video-stream
+            state="{{state}}"
+            state-manager="{{stateManager}}"
+            url="{{item}}"
+            master="{{_equals(index, 0)}}"
+            class="video-stream"
+            style$="height: calc(100% / {{_rowCount(configuration.streams)}});"></video-stream>
           <template is="dom-if" if="{{_isResizer(index)}}">
             <resizer-control></resizer-control>
           </template>
         </template>
       </div>
-      <control-bar state='{{state}}' state-manager='{{stateManager}}'></control-bar>
+      <control-bar state="{{state}}" state-manager="{{stateManager}}" has-outline="{{_hasOutline()}}"></control-bar>
+      <template is="dom-if" if="{{_hasOutline()}}">
+        <chapters-overview class="invisible" state="{{state}}" state-manager="{{stateManager}}" outline="{{configuration.outline}}"></chapters-overview>
+      </template>
     </div>
-
   </template>
 
   <script>
@@ -75,7 +78,7 @@
           return {
             configuration: {
               type: Object,
-              value: {}
+              value: {},
             },
             state: {
               type: Object,
@@ -86,18 +89,18 @@
                 playbackRate: 1.0,
                 volume: 1.0,
                 muted: false,
-                fullScreen: false
-              }
+                fullScreen: false,
+                displayChaptersOverview: false,
+              },
             },
-            stateManager: {
-              type: Object
-            }
+            stateManager: Object,
           };
         }
 
         static get observers() {
           return [
-            '_fullScreenChanged(state.fullScreen)'
+            '_fullScreenChanged(state.fullScreen)',
+            '_displayChaptersOverviewChanged(state.displayChaptersOverview)',
           ];
         }
 
@@ -112,17 +115,17 @@
 
           // Add event listeners for fullscreen
           let self = this;
-          this.$['video-player-container'].addEventListener('fullscreenchange', e => {
+          this.$['video-player-container'].addEventListener('fullscreenchange', () => {
             self.stateManager.setFullScreen(document.fullscreen);
           });
-          this.$['video-player-container'].addEventListener('webkitfullscreenchange', e => {
+          this.$['video-player-container'].addEventListener('webkitfullscreenchange', () => {
             self.stateManager.setFullScreen(document.webkitIsFullScreen);
           });
           // Firefox for some reason needs to attach the event to document
-          document.addEventListener('mozfullscreenchange', e => {
+          document.addEventListener('mozfullscreenchange', () => {
             self.stateManager.setFullScreen(document.mozFullScreen);
           });
-          this.$['video-player-container'].addEventListener('msfullscreenchange', e => {
+          this.$['video-player-container'].addEventListener('msfullscreenchange', () => {
             self.stateManager.setFullScreen(document.msFullscreenElement);
           });
 
@@ -159,6 +162,23 @@
         }
         _hideResizer() {
           this.shadowRoot.querySelectorAll('resizer-control').forEach(function(currentValue) {currentValue.style.visibility = "hidden"; });
+        }
+
+        _displayChaptersOverviewChanged(displayState) {
+          if(this._hasOutline()) {
+            let chaptersOverview = this.shadowRoot.querySelector('chapters-overview');
+            if (chaptersOverview) {
+              if (displayState) {
+                chaptersOverview.classList.remove('invisible');
+              } else {
+                chaptersOverview.classList.add('invisible');
+              }
+            }
+          }
+        }
+
+        _hasOutline() {
+          return this.configuration && this.configuration.outline && this.configuration.outline.length !== 0;
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
