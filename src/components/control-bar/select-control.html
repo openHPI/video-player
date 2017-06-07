@@ -1,7 +1,7 @@
 <link rel='import' href='../../../bower_components/polymer/polymer-element.html'>
 <link rel='import' href='../styling/control-bar--style-module.html'>
 
-<dom-module id='my-select-control'>
+<dom-module id='select-control'>
   <link rel='import' type='css' href='../../../bower_components/components-font-awesome/css/font-awesome.min.css'>
 
   <template>
@@ -9,7 +9,7 @@
     </style>
 
     <div id="container__my_select_control" class="user_controls">
-        <select id="select__my_select_control" class="button" on-change="changeHandler">
+        <select class="button" on-change="changeHandler">
           <template is='dom-repeat' items='[[valueRange]]'>
             <template is='dom-if' if='{{_equal(item, value)}}'>
               <option value="[[item]]" selected="selected">[[formatValue(item)]]</option>
@@ -23,8 +23,8 @@
     </template>
 
   <script>
-    class MySelectControl extends Polymer.Element {
-      static get is() { return 'my-select-control'; }
+    class SelectControl extends Polymer.Element {
+      static get is() { return 'select-control'; }
 
       static get properties() {
         return {
@@ -61,7 +61,7 @@
       }
     }
 
-    window.customElements.define(MySelectControl.is, MySelectControl);
+    window.customElements.define(SelectControl.is, SelectControl);
   </script>
 
 </dom-module>
