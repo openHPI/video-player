@@ -114,15 +114,6 @@
       }
 
       /**
-       * Switches playback rate in ascending order.
-       */
-      switchPlaybackRate() {
-        let newIndex = (StateManager.PLAYBACK_RATES.indexOf(this.state.playbackRate) + 1) % StateManager.PLAYBACK_RATES.length;
-        this.setPlaybackRate(StateManager.PLAYBACK_RATES[newIndex]);
-      }
-
-
-      /**
        * Toggles the muting.
        */
       toggleMute() {

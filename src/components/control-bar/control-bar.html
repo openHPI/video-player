@@ -8,6 +8,7 @@
 <link rel='import' href='mute-control.html'>
 <link rel='import' href='full-screen-control.html'>
 
+
 <dom-module id='control-bar'>
   <template>
     <style type="text/css">
@@ -24,7 +25,7 @@
       <playpause-control state='{{state}}' state-manager='{{stateManager}}'></playpause-control>
       <progress-bar state='{{state}}' state-manager='{{stateManager}}'></progress-bar>
       <videotime-display state='{{state}}' state-manager='{{stateManager}}'></videotime-display>
-      <my-select-control value="{{state.playbackRate}}" value-format-string="#[]#x" value-range="[[stateManager.PLAYBACK_RATES()]]" change-handler="switchPlaybackRate" state='{{state}}' state-manager='{{stateManager}}'></my-select-control>
+      <my-select-control value="{{state.playbackRate}}" format-value="[[_formatPlaybackRate]]" value-range="[[stateManager.constructor.PLAYBACK_RATES]]" change-handler="[[_setPlaybackRate]]" state='{{state}}' state-manager='{{stateManager}}'></my-select-control>
       <template is='dom-if' if='{{hasOutline}}'>
         <chapters-overview-control state='{{state}}' state-manager='{{stateManager}}'></chapters-overview-control>
       </template>
@@ -55,8 +56,15 @@
 
       ready() {
         super.ready();
-
         window.addEventListener('keydown', this._onkeydown.bind(this));
+      }
+
+      _formatPlaybackRate(playbackRate) {
+        return playbackRate.toFixed(1) + 'x';
+      }
+
+      _setPlaybackRate(event) {
+        this.stateManager.setPlaybackRate(Number.parseFloat(event.composedPath()[0].value));
       }
 
       _onkeydown(e) {
