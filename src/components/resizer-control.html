@@ -5,12 +5,16 @@
 
   <template>
     <style type="text/css">
+      /*
+      * The nested flex boxes are unfortunately neccessary to avoid Safaris 100% height bug
+      */
       :host {
+        display: flex;
         z-index: 2;
         visibility: hidden;
       }
       #container__resizer_control {
-        height: 100%;
+        display: flex;
         overflow: hidden;
       }
       #resizer {
