@@ -1,4 +1,4 @@
-<dom-module id='control-bar--style-module'>
+<dom-module id="control-bar--style-module">
   <template>
     <style type="text/css">
       /* ------
@@ -7,7 +7,7 @@
        ------ */
 
       :host {
-        /* Necessary to ensure that the height is correct in Safari */ 
+        /* Necessary to ensure that the height is correct in Safari */
         display: flex;
       }
 
@@ -24,6 +24,8 @@
         background-color: var(--background-color-for-primary);
         border-right: 2px solid var(--primary-color);
         color: var(--primary-color);
+        user-select: none;
+        cursor: default;
       }
 
       .button {
@@ -38,18 +40,19 @@
         width: 100%;
         border: 1px solid #5a6065;
       }
+      progress::-ms-fill {
+        border: none;
+      }
       progress::-webkit-progress-value {
         background-color: var(--secondary-color);
-      } 
+      }
       progress::-moz-progress-bar {
         background-color: var(--secondary-color);
       }
+      progress {
+        color: var(--secondary-color);
+      }
 
     </style>
-
-    </div>
   </template>
-
-  <script>
-  </script>
 </dom-module>

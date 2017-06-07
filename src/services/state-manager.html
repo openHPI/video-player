@@ -1,4 +1,4 @@
-<link rel='import' href='../constants.html'>
+<link rel="import" href="../constants.html">
 
 <script>
   define('state-manager', ['constants'], (constants) => {
@@ -16,7 +16,6 @@
         this.statePath = statePath;
       }
 
-
       /**
        * Gets the state object of the attatched VideoPlayer.
        * @return {Object} The state object.
@@ -27,8 +26,9 @@
 
       /**
        * Sets a single property of the state.
-       * @param {string} path  [description]
-       * @param {any} value [description]
+       * @param {string} path  The state path of the property that shold be set.
+       * @param {any} value The new value of the property.
+       * @returns {void}
        */
       setState(path, value) {
         this.videoPlayer.set(this.statePath + '.' + path, value);
@@ -37,6 +37,7 @@
 
       /**
        * Sets the play state to 'playing'.
+       * @returns {void}
        */
       play() {
         this.setState('playState', PLAY_STATES.PLAYING);
@@ -44,6 +45,7 @@
 
       /**
        * Sets the play state to 'paused'.
+       * @returns {void}
        */
       pause() {
         this.setState('playState', PLAY_STATES.PAUSED);
@@ -51,10 +53,11 @@
 
       /**
        * Toggles the current play state.
+       * @returns {void}
        */
       togglePlayPause() {
-        if(this.state.playState == PLAY_STATES.PLAYING) {
-          this.pause()
+        if(this.state.playState === PLAY_STATES.PLAYING) {
+          this.pause();
         } else {
           this.play();
         }
@@ -64,6 +67,7 @@
       /**
        * Sets the current position in the video.
        * @param {number} seconds The current position in seconds.
+       * @returns {void}
        */
       setPosition(seconds) {
         if(seconds < 0 || this.state.duration && seconds > this.state.duration) {
@@ -76,10 +80,11 @@
       /**
        * Sets the duration of the video.
        * @param {number} seconds The duration of the current video in seconds.
+       * @returns {void}
        */
       setDuration(seconds) {
         if(seconds < 0) {
-          throw new RangeError('Value must be positive.')
+          throw new RangeError('Value must be positive.');
         }
 
         this.setState('duration', seconds);
@@ -89,10 +94,11 @@
       /**
        * Sets the playback rate of the video.
        * @param {number} playbackRate The new playback rate.
+       * @returns {void}
        */
       setPlaybackRate(playbackRate) {
         if(!PLAYBACK_RATES.includes(playbackRate)) {
-          throw new RangeError(`Value must be in [${PLAYBACK_RATES.toString()}].`)
+          throw new RangeError(`Value must be in [${PLAYBACK_RATES.toString()}].`);
         }
 
         this.setState('playbackRate', playbackRate);
@@ -100,6 +106,7 @@
 
       /**
        * Switches playback rate in ascending order.
+       * @returns {void}
        */
       switchPlaybackRate() {
         let newIndex = (PLAYBACK_RATES.indexOf(this.state.playbackRate) + 1) % PLAYBACK_RATES.length;
@@ -109,10 +116,11 @@
 
       /**
        * Toggles the muting.
+       * @returns {void}
        */
       toggleMute() {
         if(this.state.muted) {
-          this.unmute()
+          this.unmute();
         } else {
           this.mute();
         }
@@ -120,25 +128,28 @@
 
       /**
        * Enables muting.
+       * @returns {void}
        */
       mute() {
-          this.setState('muted', true);
+        this.setState('muted', true);
       }
 
       /**
        * Disables muting.
+       * @returns {void}
        */
       unmute() {
-          this.setState('muted', false);
+        this.setState('muted', false);
       }
 
       /**
        * Sets the volume.
        * @param {number} volume The new volume (0.0-1.0).
+       * @returns {void}
        */
       setVolume(volume) {
         if(!volume || volume < 0 || volume > 1) {
-          throw new RangeError('Value must be between 0 and 1.')
+          throw new RangeError('Value must be between 0 and 1.');
         }
 
         // Always unmute first to avoid potential inconsistent states between
@@ -151,10 +162,11 @@
       /**
        * Sets the quality.
        * @param {string} quality The new quality.
+       * @returns {void}
        */
       setQuality(quality) {
         if(!Object.values(QUALITY_MODES).includes(quality)) {
-          throw new RangeError(`Value must be in [${Object.values(QUALITY_MODES).toString()}].`)
+          throw new RangeError(`Value must be in [${Object.values(QUALITY_MODES).toString()}].`);
         }
 
         this.setState('quality', quality);
@@ -163,6 +175,7 @@
 
       /**
        * Toggles the full screen mode.
+       * @returns {void}
        */
       toggleFullScreen() {
         this.setFullScreen(!this.state.fullScreen);
@@ -171,9 +184,18 @@
       /**
        * Sets the full screen mode explicitly.
        * @param {boolean} fullScreen Boolean determining whether the full screen mode is active or not.
+       * @returns {void}
        */
       setFullScreen(fullScreen) {
         this.setState('fullScreen', fullScreen);
+      }
+
+      /**
+       * Toggles the visibility of the chapters overview.
+       * @returns {void}
+       */
+      toggleDisplayChaptersOverview() {
+        this.setState('displayChaptersOverview', !this.state.displayChaptersOverview);
       }
     }
 

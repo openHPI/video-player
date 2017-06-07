@@ -1,11 +1,13 @@
-<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 
-<dom-module id='quality-switch'>
+<link rel="import" href="../../constants.html">
+
+<dom-module id="quality-switch">
   <template>
     <style type="text/css" include="control-bar--style-module">
     </style>
 
-    <div id='container__quality_switch' class='user_controls'>
+    <div id="container__quality_switch" class="user_controls">
       <a id="button__switch_quality" class="button">
         [[_getQualityName(state.quality)]]
       </a>

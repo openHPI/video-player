@@ -1,6 +1,9 @@
-<link rel='import' href='../../../polymer/polymer-element.html'>
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
-<dom-module id='video-stream'>
+<link rel="import" href="../constants.html">
+<link rel="import" href="../3rd-imports/hls-js.html">
+
+<dom-module id="video-stream">
 
   <template>
     <style type="text/css">
@@ -15,7 +18,7 @@
     </style>
 
     <div id="container__video_stream">
-      <video id='video' preload="auto"></video>
+      <video id="video" preload="auto"></video>
     </div>
   </template>
 
@@ -40,7 +43,7 @@
               type: Boolean,
               value: true,
             },
-            hlsClient: Object
+            hlsClient: Object,
           };
         }
 
@@ -51,8 +54,8 @@
             '_playbackRateChanged(state.playbackRate)',
             '_volumeChanged(state.volume)',
             '_mutedChanged(state.muted)',
-            '_qualityChanged(urls, state.quality)'
-          ]
+            '_qualityChanged(urls, state.quality)',
+          ];
         }
 
         ready() {
@@ -132,8 +135,7 @@
             // The src attribute can not be updated using data bindings
             // since the binding may be overwritten by hls.js
             this.$.video.setAttribute('src', url);
-          }
-          else {
+          } else {
             // Create and configure new hls client for existing video element
             this.hlsClient = new Hls();
             this.hlsClient.loadSource(url);

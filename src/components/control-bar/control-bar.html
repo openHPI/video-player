@@ -1,14 +1,16 @@
-<link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='progress-bar.html'>
-<link rel='import' href='playpause-control.html'>
-<link rel='import' href='sound-control.html'>
-<link rel='import' href='videotime-display.html'>
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="progress-bar.html">
+<link rel="import" href="playpause-control.html">
+<link rel="import" href="sound-control.html">
+<link rel="import" href="videotime-display.html">
+<link rel="import" href="chapters-overview-control.html">
 <link rel="import" href="speed-control.html">
 <link rel="import" href="quality-switch.html">
-<link rel='import' href='mute-control.html'>
-<link rel='import' href='full-screen-control.html'>
+<link rel="import" href="mute-control.html">
+<link rel="import" href="full-screen-control.html">
 
-<dom-module id='control-bar'>
+<dom-module id="control-bar">
   <template>
     <style type="text/css">
       #container__control_bar {
@@ -21,16 +23,19 @@
     </style>
 
     <div id="container__control_bar">
-      <playpause-control state='{{state}}' state-manager='{{stateManager}}'></playpause-control>
-      <progress-bar state='{{state}}' state-manager='{{stateManager}}'></progress-bar>
-      <videotime-display state='{{state}}' state-manager='{{stateManager}}'></videotime-display>
-      <speed-control state='{{state}}' state-manager='{{stateManager}}'></speed-control>
+      <playpause-control state="{{state}}" state-manager="{{stateManager}}"></playpause-control>
+      <progress-bar state="{{state}}" state-manager="{{stateManager}}"></progress-bar>
+      <videotime-display state="{{state}}" state-manager="{{stateManager}}"></videotime-display>
+      <speed-control state="{{state}}" state-manager="{{stateManager}}"></speed-control>
       <template is="dom-if" if="{{hasMultipleQualities}}">
-        <quality-switch state='{{state}}' state-manager='{{stateManager}}' available-qualities='{{availableQualities}}'></quality-switch>
+        <quality-switch state="{{state}}" state-manager="{{stateManager}}" available-qualities="{{availableQualities}}"></quality-switch>
       </template>
-      <mute-control state='{{state}}' state-manager='{{stateManager}}'></mute-control>
-      <sound-control state='{{state}}' state-manager='{{stateManager}}'></sound-control>
-      <full-screen-control state='{{state}}' state-manager='{{stateManager}}'></full-screen-control>
+      <template is="dom-if" if="{{hasOutline}}">
+        <chapters-overview-control state="{{state}}" state-manager="{{stateManager}}"></chapters-overview-control>
+      </template>
+      <mute-control state="{{state}}" state-manager="{{stateManager}}"></mute-control>
+      <sound-control state="{{state}}" state-manager="{{stateManager}}"></sound-control>
+      <full-screen-control state="{{state}}" state-manager="{{stateManager}}"></full-screen-control>
     </div>
   </template>
 
@@ -43,6 +48,10 @@
           state: Object,
           stateManager: Object,
           availableQualities: Array,
+          hasOutline: {
+            type: Boolean,
+            value: false,
+          },
           hasMultipleQualities: {
             type: Boolean,
             computed: '_hasMultipleQualities(availableQualities)',
