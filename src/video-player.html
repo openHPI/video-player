@@ -78,7 +78,7 @@
 
   <script>
     define(['base-element', 'state-manager', 'fullscreen-manager', 'hls-js', 'constants'], (BaseElement, StateManager, FullscreenManager, Hls, constants) => {
-      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, QUALITY_MODES} = constants;
+      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME} = constants;
 
       class VideoPlayer extends BaseElement {
         static get is() { return 'video-player'; }
@@ -114,6 +114,7 @@
             'primaryColorChanged(configuration.primaryColor)',
             'secondaryColorChanged(configuration.secondaryColor)',
             'backgoundColorForPrimaryChanged(configuration.backgoundColorForPrimary)',
+            'playStateChanged(state.playState)',
             'fullscreenChanged(state.fullscreen)',
           ];
         }
@@ -122,8 +123,8 @@
           super.ready();
 
           // Fill missing properties in provided state and configuration with default values
-          this.configuration = Object.assign(DEFAULT_CONFIGURATION, this.configuration);
-          this.state = Object.assign(DEFAULT_STATE, this.state, this.configuration.initialState);
+          this.configuration = Object.assign({}, DEFAULT_CONFIGURATION, this.configuration);
+          this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState);
 
           // Initialize StateManager
           this.stateManager = new StateManager(this, 'state');
@@ -140,6 +141,27 @@
           this.fullscreenManager.onFullscreenChanged((fullscreen) => {
             this.stateManager.setFullscreen(fullscreen);
           });
+
+          // Listen for events from other instances to pause playback when
+          // another instance starts playing
+          window.addEventListener(PLAYING_EVENT_NAME, (e) => {
+            if(e.detail && e.detail.sender !== this) {
+              this.stateManager.pause();
+            }
+          });
+        }
+
+        playStateChanged(playState) {
+          // Dispatch event if video is playing to stop playback on other instances
+          if(playState === PLAY_STATES.PLAYING) {
+            let event = new CustomEvent(PLAYING_EVENT_NAME, {
+               detail: {
+                 sender: this
+               }
+             });
+
+            window.dispatchEvent(event);
+          }
         }
 
         fullscreenChanged(fullscreen) {

@@ -33,6 +33,13 @@
      */
     const SYNC_DIFF_THRESHOLD = 0.1;
 
+/**
+ * Contains the name of the event that is used to pause playback on other
+ * player instances when a instance starts playing.
+ * @type {String}
+ */
+    const PLAYING_EVENT_NAME = 'videoPlaying';
+
     /**
      * Contains the default state properties.
      * @type {Object.<string, Object>}
@@ -65,6 +72,7 @@
       PLAYBACK_RATES,
       QUALITY_MODES,
       SYNC_DIFF_THRESHOLD,
+      PLAYING_EVENT_NAME,
       DEFAULT_STATE,
       DEFAULT_CONFIGURATION,
     };
