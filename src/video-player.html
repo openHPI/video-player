@@ -69,15 +69,18 @@
       class VideoPlayer extends Polymer.Element {
         static get is() { return 'video-player'; }
 
+        // A function is used to determine default values of properties to
+        // ensure that each element gets its own copy of the value, rather than
+        // having an object or array shared across all instances of the element.
         static get properties() {
           return {
             configuration: {
               type: Object,
-              value: {},
+              value: () => ({}),
             },
             state: {
               type: Object,
-              value: {
+              value: () => ({
                 playState: StateManager.PLAY_STATES.PAUSED,
                 position: 0,
                 duration: 0,
@@ -86,7 +89,7 @@
                 muted: false,
                 fullScreen: false,
                 displayChaptersOverview: false,
-              },
+              }),
             },
             stateManager: Object,
           };
