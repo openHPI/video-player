@@ -67,6 +67,8 @@
 
   <script>
     define('video-player', ['base-element', 'state-manager', 'fullscreen-manager'], (BaseElement, StateManager, FullscreenManager) => {
+      const PLAYING_EVENT_NAME = 'videoPlaying';
+
       class VideoPlayer extends BaseElement {
         static get is() { return 'video-player'; }
 
@@ -97,6 +99,7 @@
             'primaryColorChanged(configuration.primaryColor)',
             'secondaryColorChanged(configuration.secondaryColor)',
             'backgoundColorForPrimaryChanged(configuration.backgoundColorForPrimary)',
+            'playStateChanged(state.playState)',
             'fullscreenChanged(state.fullscreen)',
           ];
         }
@@ -125,6 +128,27 @@
           this.fullscreenManager.onFullscreenChanged((fullscreen) => {
             this.stateManager.setFullscreen(fullscreen);
           });
+
+          // Listen for events from other instances to pause playback when
+          // another instance starts playing
+          window.addEventListener(PLAYING_EVENT_NAME, (e) => {
+            if(e.detail && e.detail.sender !== this) {
+              this.stateManager.pause();
+            }
+          });
+        }
+
+        playStateChanged(playState) {
+          // Dispatch event if video is playing to stop playback on other instances
+          if(playState === StateManager.PLAY_STATES.PLAYING) {
+            let event = new CustomEvent(PLAYING_EVENT_NAME, {
+               detail: {
+                 sender: this
+               }
+             });
+
+            window.dispatchEvent(event);
+          }
         }
 
         fullscreenChanged(fullscreen) {
