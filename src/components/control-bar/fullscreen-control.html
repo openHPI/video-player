@@ -3,12 +3,12 @@
 <link rel="import" href="../../base-element.html">
 <link rel="import" href="../styling/control-bar--style-module.html">
 
-<dom-module id="mute-control">
+<dom-module id="full-screen-control">
   <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
 
   <template>
     <style type="text/css" include="control-bar--style-module">
-      #container__mute_control {
+      #container__fullscreen_control {
         border-right: none;
       }
       :host {
@@ -16,27 +16,27 @@
         /* It should be about twice the icon size */
         min-width: 3rem;
       }
-      #button__mute i {
+      #button__fullscreen i {
         font-size: 1.5rem;
       }
     </style>
 
-    <div id="container__mute_control" class="user_controls">
-      <a id="button__mute" class="button" on-click="handleClick">
-        <template is="dom-if" if="[[state.muted]]">
-          <i class="fa fa-volume-off" />
+    <div id="container__fullscreen_control" class="user_controls">
+      <a id="button__fullscreen" class="button" on-click="handleClick">
+        <template is="dom-if" if="[[state.fullscreen]]">
+          <i class="fa fa-compress" />
         </template>
-        <template is="dom-if" if="[[!state.muted]]">
-          <i class="fa fa-volume-up" />
+        <template is="dom-if" if="[[!state.fullscreen]]">
+          <i class="fa fa-expand" />
         </template>
       </a>
     </div>
-  </template>
+    </template>
 
   <script>
-    define('mute-control', ['base-element'], (BaseElement) => {
-      class MuteControl extends BaseElement {
-        static get is() { return 'mute-control'; }
+    define('full-screen-control', ['base-element'], (BaseElement) => {
+      class FullscreenControl extends BaseElement {
+        static get is() { return 'full-screen-control'; }
 
         static get properties() {
           return {
@@ -46,11 +46,11 @@
         }
 
         handleClick() {
-          this.stateManager.toggleMute();
+          this.stateManager.toggleFullscreen();
         }
       }
 
-      window.customElements.define(MuteControl.is, MuteControl);
+      window.customElements.define(FullscreenControl.is, FullscreenControl);
     });
   </script>
 

@@ -1,12 +1,12 @@
 <link rel="import" href="../bower_components/imd/imd.html">
-<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
-<link rel="import" href="3rd-imports/font-awesome.html">
 
+<link rel="import" href="base-element.html">
+<link rel="import" href="3rd-imports/font-awesome.html">
 <link rel="import" href="services/state-manager.html">
 <link rel="import" href="services/fullscreen-manager.html">
 <link rel="import" href="components/video-stream.html">
-<link rel="import" href="components/chapters-overview.html">
+<link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/control-bar/control-bar.html">
 
 <dom-module id="video-player">
@@ -53,21 +53,21 @@
             state="{{state}}"
             state-manager="{{stateManager}}"
             url="{{item}}"
-            master="{{_equals(index, 0)}}"
+            master="{{equals(index, 0)}}"
             class="video-stream"
-            style$="height: calc(100% / {{_rowCount(configuration.streams)}});"></video-stream>
+            style$="height: calc(100% / {{rowCount(configuration.streams)}});"></video-stream>
         </template>
       </div>
-      <control-bar state="{{state}}" state-manager="{{stateManager}}" has-outline="{{_hasOutline()}}"></control-bar>
-      <template is="dom-if" if="{{_hasOutline()}}">
-        <chapters-overview class="invisible" state="{{state}}" state-manager="{{stateManager}}" outline="{{configuration.outline}}"></chapters-overview>
+      <control-bar state="{{state}}" state-manager="{{stateManager}}" has-chapters="{{hasChapters}}"></control-bar>
+      <template is="dom-if" if="{{state.isChapterListShown}}">
+        <chapter-list state="{{state}}" state-manager="{{stateManager}}" chapters="{{configuration.chapters}}"></chapter-list>
       </template>
     </div>
   </template>
 
   <script>
-    define(['state-manager', 'fullscreen-manager'], (StateManager, FullscreenManager) => {
-      class VideoPlayer extends Polymer.Element {
+    define('video-player', ['base-element', 'state-manager', 'fullscreen-manager'], (BaseElement, StateManager, FullscreenManager) => {
+      class VideoPlayer extends BaseElement {
         static get is() { return 'video-player'; }
 
         // A function is used to determine default values of properties to
@@ -85,13 +85,19 @@
             },
             stateManager: Object,
             fullscreenManager: Object,
+            hasChapters: {
+              type: Boolean,
+              computed: '_hasChapters(configuration.chapters)',
+            },
           };
         }
 
         static get observers() {
           return [
-            '_fullScreenChanged(state.fullScreen)',
-            '_displayChaptersOverviewChanged(state.displayChaptersOverview)',
+            'primaryColorChanged(configuration.primaryColor)',
+            'secondaryColorChanged(configuration.secondaryColor)',
+            'backgoundColorForPrimaryChanged(configuration.backgoundColorForPrimary)',
+            'fullscreenChanged(state.fullscreen)',
           ];
         }
 
@@ -107,8 +113,8 @@
               playbackRate: 1.0,
               volume: 1.0,
               muted: false,
-              fullScreen: false,
-              displayChaptersOverview: false,
+              fullscreen: false,
+              isChapterListShown: false,
             };
             this.state = Object.assign(defaultState, this.configuration.initialState);
           }
@@ -117,15 +123,13 @@
           // Initialize FullscreenManager
           this.fullscreenManager = new FullscreenManager(this.$['video-player-container']);
           this.fullscreenManager.onFullscreenChanged((fullscreen) => {
-            this.stateManager.setFullScreen(fullscreen);
+            this.stateManager.setFullscreen(fullscreen);
           });
-
-          this._setCssVariables();
         }
 
-        _fullScreenChanged(fullScreen) {
+        fullscreenChanged(fullscreen) {
           if(this.fullscreenManager) {
-            if (fullScreen) {
+            if (fullscreen) {
               this.fullscreenManager.enterFullscreen();
             } else {
               this.fullscreenManager.exitFullscreen();
@@ -133,36 +137,24 @@
           }
         }
 
-        _equals(a, b) {
-          return a === b;
-        }
-        _rowCount(streams) {
+        rowCount(streams) {
           return Math.ceil(streams.length/2);
         }
 
-        _displayChaptersOverviewChanged(displayState) {
-          if(this._hasOutline()) {
-            let chaptersOverview = this.shadowRoot.querySelector('chapters-overview');
-            if (chaptersOverview) {
-              if (displayState) {
-                chaptersOverview.classList.remove('invisible');
-              } else {
-                chaptersOverview.classList.add('invisible');
-              }
-            }
-          }
-        }
-
-        _hasOutline() {
-          return this.configuration && this.configuration.outline && this.configuration.outline.length !== 0;
+        _hasChapters() {
+          return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
-        // The poperties is not correctyl evaluated and thus the variable not set.
-        _setCssVariables() {
-          this.style.setProperty('--primary-color', [[this.configuration.primaryColor]]);
-          this.style.setProperty('--secondary-color', [[this.configuration.secondaryColor]]);
-          this.style.setProperty('--background-color-for-primary', [[this.configuration.backgoundColorForPrimary]]);
+        // The poperties are not correctly evaluated and thus the variable not set.
+        primaryColorChanged(primaryColor) {
+          this.style.setProperty('--primary-color', primaryColor);
+        }
+        secondaryColorChanged(secondaryColor) {
+          this.style.setProperty('--secondary-color', secondaryColor);
+        }
+        backgoundColorForPrimaryChanged(backgoundColorForPrimary) {
+          this.style.setProperty('--background-color-for-primary', backgoundColorForPrimary);
         }
       }
 
