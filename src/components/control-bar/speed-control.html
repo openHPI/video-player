@@ -33,6 +33,10 @@
       }
 
       _toFixed(value, digits) {
+        if(typeof value === 'undefined') {
+          return '';
+        }
+
         return value.toFixed(digits);
       }
     }

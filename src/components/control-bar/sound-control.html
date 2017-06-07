@@ -47,6 +47,10 @@
       }
 
       _displayVolume(volume, muted) {
+        if(typeof volume === 'undefined') {
+          return '';
+        }
+
         return muted ? '0' : volume.toString();
       }
     }

@@ -26,6 +26,10 @@
       }
 
       _toString(value) {
+        if(typeof value === 'undefined') {
+          return '';
+        }
+
         return value.toString();
       }
 
