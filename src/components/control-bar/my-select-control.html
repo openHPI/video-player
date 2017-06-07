@@ -9,8 +9,15 @@
     </style>
 
     <div id="container__my_select_control" class="user_controls">
-        <select id="select__my_select_control" class="button">
-            [[_valueStringFromFormat()]]
+        <select id="select__my_select_control" class="button" on-change="changeHandler">
+          <template is='dom-repeat' items='[[valueRange]]'>
+            <template is='dom-if' if='{{_equal(item, value)}}'>
+              <option value="[[item]]" selected="selected">[[formatValue(item)]]</option>
+            </template>
+            <template is='dom-if' if='{{!_equal(item, value)}}'>
+              <option value="[[item]]">[[formatValue(item)]]</option>
+            </template>
+          </template>
         </select>
     </div>
     </template>
@@ -28,41 +35,29 @@
             type: Object
           },
           value: { 
-            type: Object
+            type: String
           },
-          valueFormatString: {
-            type: String,
-            value: '#[]#'
+          formatValue: {
+            type: Function,
+            value: function() { return this.value; }
           },
           valueRange: {
-            type: Array
+            type: Object,
+            value: function() { return []; }
           },
           changeHandler: {
-            type: String
+            type: Function
           }
         };
       }
 
       ready() {
         super.ready();
-        console.log(this.valueRange);
-        this._initSelect();
         // Add event listeners
-        this.$.select__my_select_control.addEventListener('click', () => this.stateManager.switchPlaybackRate());
       }
 
-      _initSelect() {
-        this.valueRange.forEach(function(value) {
-          let option = new Option(this._valueStringFromFormat(), this.value);
-        }, this);
-      }
-
-      _toFixed(value, digits) {
-        return value.toFixed(digits);
-      }
-
-      _valueStringFromFormat() {
-        return this.valueFormatString.replace("#[]#", this.value);
+      _equal(a, b) {
+        return a == b;
       }
     }
 
