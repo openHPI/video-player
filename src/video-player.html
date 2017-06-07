@@ -4,6 +4,7 @@
 <link rel="import" href="3rd-imports/font-awesome.html">
 
 <link rel="import" href="services/state-manager.html">
+<link rel="import" href="services/fullscreen-manager.html">
 <link rel="import" href="components/video-stream.html">
 <link rel="import" href="components/chapters-overview.html">
 <link rel="import" href="components/control-bar/control-bar.html">
@@ -65,7 +66,7 @@
   </template>
 
   <script>
-    define(['state-manager'], (StateManager) => {
+    define(['state-manager', 'fullscreen-manager'], (StateManager, FullscreenManager) => {
       class VideoPlayer extends Polymer.Element {
         static get is() { return 'video-player'; }
 
@@ -92,6 +93,7 @@
               }),
             },
             stateManager: Object,
+            fullscreenManager: Object,
           };
         }
 
@@ -111,36 +113,22 @@
           }
           this.stateManager = new StateManager(this, 'state');
 
-          // Add event listeners for fullscreen
-          let self = this;
-          this.$['video-player-container'].addEventListener('fullscreenchange', () => {
-            self.stateManager.setFullScreen(document.fullscreen);
-          });
-          this.$['video-player-container'].addEventListener('webkitfullscreenchange', () => {
-            self.stateManager.setFullScreen(document.webkitIsFullScreen);
-          });
-          // Firefox for some reason needs to attach the event to document
-          document.addEventListener('mozfullscreenchange', () => {
-            self.stateManager.setFullScreen(document.mozFullScreen);
-          });
-          this.$['video-player-container'].addEventListener('msfullscreenchange', () => {
-            self.stateManager.setFullScreen(document.msFullscreenElement);
+          // Initialize FullscreenManager
+          this.fullscreenManager = new FullscreenManager(this.$['video-player-container']);
+          this.fullscreenManager.onFullscreenChanged((fullscreen) => {
+            this.stateManager.setFullScreen(fullscreen);
           });
 
           this._setCssVariables();
         }
 
         _fullScreenChanged(fullScreen) {
-          if (fullScreen) {
-            if (this.$['video-player-container'].requestFullscreen) this.$['video-player-container'].requestFullscreen();
-            else if (this.$['video-player-container'].mozRequestFullScreen) this.$['video-player-container'].mozRequestFullScreen();
-            else if (this.$['video-player-container'].webkitRequestFullScreen) this.$['video-player-container'].webkitRequestFullScreen();
-            else if (this.$['video-player-container'].msRequestFullscreen) this.$['video-player-container'].msRequestFullscreen();
-          } else {
-            if (document.exitFullscreen) document.exitFullscreen();
-            else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-            else if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
-            else if (document.msExitFullscreen) document.msExitFullscreen();
+          if(this.fullscreenManager) {
+            if (fullScreen) {
+              this.fullscreenManager.enterFullscreen();
+            } else {
+              this.fullscreenManager.exitFullscreen();
+            }
           }
         }
 

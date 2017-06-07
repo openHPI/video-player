@@ -1,0 +1,65 @@
+<script>
+  define('fullscreen-manager', () => {
+    class FullscreenManager {
+      constructor(fullscreenElement) {
+        this.fullscreenElement = fullscreenElement;
+        this.fullscreenChangedCallbacks = new Set();
+
+        // Attatch event handler for fullscreenchange
+        this.fullscreenElement.addEventListener('fullscreenchange', () => {
+          this._fullScreenChanged(document.fullscreen);
+        });
+        this.fullscreenElement.addEventListener('webkitfullscreenchange', () => {
+          this._fullScreenChanged(document.webkitIsFullScreen);
+        });
+        // Firefox for some reason needs to attach the event to document
+        document.addEventListener('mozfullscreenchange', () => {
+          this._fullScreenChanged(document.mozFullScreen);
+        });
+        this.fullscreenElement.addEventListener('msfullscreenchange', () => {
+          this._fullScreenChanged(document.msFullscreenElement);
+        });
+      }
+
+      enterFullscreen() {
+        if (this.fullscreenElement.requestFullscreen) {
+          this.fullscreenElement.requestFullscreen();
+        } else if (this.fullscreenElement.mozRequestFullScreen) {
+          this.fullscreenElement.mozRequestFullScreen();
+        } else if (this.fullscreenElement.webkitRequestFullScreen) {
+          this.fullscreenElement.webkitRequestFullScreen();
+        } else if (this.fullscreenElement.msRequestFullscreen) {
+          this.fullscreenElement.msRequestFullscreen();
+        }
+      }
+
+      exitFullscreen() {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitCancelFullScreen) {
+          document.webkitCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+      }
+
+      onFullscreenChanged(callback) {
+        this.fullscreenChangedCallbacks.add(callback);
+      }
+
+      offFullscreenChanged(callback) {
+        this.fullscreenChangedCallbacks.delete(callback);
+      }
+
+      _fullScreenChanged(fullscreen) {
+        for(let callback of this.fullscreenChangedCallbacks) {
+          callback(fullscreen);
+        }
+      }
+    }
+
+    return FullscreenManager;
+  });
+</script>
