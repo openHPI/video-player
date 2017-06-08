@@ -29,7 +29,9 @@ The component can then be used in any HTML site in the following way:
     <link rel="import" href="video-player.html">
   </head>
   <body>
-    <video-player streams='["http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"]'></video-player>
+    <video-player configuration='{
+      "streams": ["http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"]
+    }'></video-player>
   </body>
 </html>
 ```
