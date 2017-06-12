@@ -1,11 +1,12 @@
 <link rel="import" href="../bower_components/imd/imd.html">
-<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
-<link rel="import" href="3rd-imports/font-awesome.html">
 
+<link rel="import" href="base-element.html">
+<link rel="import" href="3rd-imports/font-awesome.html">
 <link rel="import" href="services/state-manager.html">
+<link rel="import" href="services/fullscreen-manager.html">
 <link rel="import" href="components/video-stream.html">
-<link rel="import" href="components/chapters-overview.html">
+<link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/control-bar/control-bar.html">
 <link rel='import' href='components/resizer-control.html'>
 
@@ -54,7 +55,7 @@
             state="{{state}}"
             state-manager="{{stateManager}}"
             url="{{item}}"
-            master="{{_equals(index, 0)}}"
+            master="{{equals(index, 0)}}"
             class="video-stream"
             style$="height: calc(100% / {{_rowCount(configuration.streams)}});"></video-stream>
           <template is="dom-if" if="{{_isResizer(index, configuration.streams.length)}}">
@@ -62,45 +63,49 @@
           </template>
         </template>
       </div>
-      <control-bar state="{{state}}" state-manager="{{stateManager}}" has-outline="{{_hasOutline()}}"></control-bar>
-      <template is="dom-if" if="{{_hasOutline()}}">
-        <chapters-overview class="invisible" state="{{state}}" state-manager="{{stateManager}}" outline="{{configuration.outline}}"></chapters-overview>
+      <control-bar state="{{state}}" state-manager="{{stateManager}}" has-chapters="{{hasChapters}}"></control-bar>
+      <template is="dom-if" if="{{state.isChapterListShown}}">
+        <chapter-list state="{{state}}" state-manager="{{stateManager}}" chapters="{{configuration.chapters}}"></chapter-list>
       </template>
     </div>
   </template>
 
   <script>
-    define(['state-manager'], (StateManager) => {
-      class VideoPlayer extends Polymer.Element {
+    define('video-player', ['base-element', 'state-manager', 'fullscreen-manager'], (BaseElement, StateManager, FullscreenManager) => {
+      const PLAYING_EVENT_NAME = 'videoPlaying';
+
+      class VideoPlayer extends BaseElement {
         static get is() { return 'video-player'; }
 
+        // A function is used to determine default values of properties to
+        // ensure that each element gets its own copy of the value, rather than
+        // having an object or array shared across all instances of the element.
         static get properties() {
           return {
             configuration: {
               type: Object,
-              value: {},
+              value: () => ({}),
             },
             state: {
               type: Object,
-              value: {
-                playState: StateManager.PLAY_STATES.PAUSED,
-                position: 0,
-                duration: 0,
-                playbackRate: 1.0,
-                volume: 1.0,
-                muted: false,
-                fullScreen: false,
-                displayChaptersOverview: false,
-              },
+              value: () => ({}),
             },
             stateManager: Object,
+            fullscreenManager: Object,
+            hasChapters: {
+              type: Boolean,
+              computed: '_hasChapters(configuration.chapters)',
+            },
           };
         }
 
         static get observers() {
           return [
-            '_fullScreenChanged(state.fullScreen)',
-            '_displayChaptersOverviewChanged(state.displayChaptersOverview)',
+            'primaryColorChanged(configuration.primaryColor)',
+            'secondaryColorChanged(configuration.secondaryColor)',
+            'backgoundColorForPrimaryChanged(configuration.backgoundColorForPrimary)',
+            'playStateChanged(state.playState)',
+            'fullscreenChanged(state.fullscreen)',
           ];
         }
 
@@ -108,51 +113,49 @@
           super.ready();
 
           // Initialize state and StateManager
-          if(this.configuration.initialState) {
-            this.state = Object.assign(this.state, this.configuration.initialState);
-          }
+          const defaultState = {
+            playState: StateManager.PLAY_STATES.PAUSED,
+            position: 0,
+            duration: 0,
+            playbackRate: 1.0,
+            volume: 1.0,
+            muted: false,
+            fullscreen: false,
+            isChapterListShown: false,
+          };
+          const initialState = this.configuration.initialState || {};
+          this.state = Object.assign(defaultState, initialState);
           this.stateManager = new StateManager(this, 'state');
 
-          // Add event listeners for fullscreen
-          let self = this;
-          this.$['video-player-container'].addEventListener('fullscreenchange', () => {
-            self.stateManager.setFullScreen(document.fullscreen);
-          });
-          this.$['video-player-container'].addEventListener('webkitfullscreenchange', () => {
-            self.stateManager.setFullScreen(document.webkitIsFullScreen);
-          });
-          // Firefox for some reason needs to attach the event to document
-          document.addEventListener('mozfullscreenchange', () => {
-            self.stateManager.setFullScreen(document.mozFullScreen);
-          });
-          this.$['video-player-container'].addEventListener('msfullscreenchange', () => {
-            self.stateManager.setFullScreen(document.msFullscreenElement);
+          // Initialize FullscreenManager
+          this.fullscreenManager = new FullscreenManager(this.$['video-player-container']);
+          this.fullscreenManager.onFullscreenChanged((fullscreen) => {
+            this.stateManager.setFullscreen(fullscreen);
           });
 
-          this._setCssVariables();
           this.$['streams-container'].addEventListener('mouseenter', this._showResizer.bind(this));
           this.$['streams-container'].addEventListener('mouseleave', this._hideResizer.bind(this));
+
+          // Listen for events from other instances to pause playback when
+          // another instance starts playing
+          window.addEventListener(PLAYING_EVENT_NAME, (e) => {
+            if(e.detail && e.detail.sender !== this) {
+              this.stateManager.pause();
+            }
+          });
         }
 
-        _fullScreenChanged(fullScreen) {
-          if (fullScreen) {
-            if (this.$['video-player-container'].requestFullscreen) this.$['video-player-container'].requestFullscreen();
-            else if (this.$['video-player-container'].mozRequestFullScreen) this.$['video-player-container'].mozRequestFullScreen();
-            else if (this.$['video-player-container'].webkitRequestFullScreen) this.$['video-player-container'].webkitRequestFullScreen();
-            else if (this.$['video-player-container'].msRequestFullscreen) this.$['video-player-container'].msRequestFullscreen();
-          } else {
-            if (document.exitFullscreen) document.exitFullscreen();
-            else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-            else if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
-            else if (document.msExitFullscreen) document.msExitFullscreen();
+        playStateChanged(playState) {
+          // Dispatch event if video is playing to stop playback on other instances
+          if(playState === StateManager.PLAY_STATES.PLAYING) {
+            let event = new CustomEvent(PLAYING_EVENT_NAME, {
+               detail: {
+                 sender: this
+               }
+             });
+
+            window.dispatchEvent(event);
           }
-        }
-
-        _equals(a, b) {
-          return a === b;
-        }
-        _rowCount(streams) {
-          return Math.ceil(streams.length/2);
         }
         _isResizer(index, length) {
           // Do not show the resizer when there is no seconde video to resize
@@ -165,29 +168,34 @@
           this.shadowRoot.querySelectorAll('resizer-control').forEach(function(currentValue) {currentValue.style.visibility = "hidden"; });
         }
 
-        _displayChaptersOverviewChanged(displayState) {
-          if(this._hasOutline()) {
-            let chaptersOverview = this.shadowRoot.querySelector('chapters-overview');
-            if (chaptersOverview) {
-              if (displayState) {
-                chaptersOverview.classList.remove('invisible');
-              } else {
-                chaptersOverview.classList.add('invisible');
-              }
+        fullscreenChanged(fullscreen) {
+          if(this.fullscreenManager) {
+            if (fullscreen) {
+              this.fullscreenManager.enterFullscreen();
+            } else {
+              this.fullscreenManager.exitFullscreen();
             }
           }
         }
 
-        _hasOutline() {
-          return this.configuration && this.configuration.outline && this.configuration.outline.length !== 0;
+        rowCount(streams) {
+          return Math.ceil(streams.length/2);
+        }
+
+        _hasChapters() {
+          return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
-        // The poperties is not correctyl evaluated and thus the variable not set.
-        _setCssVariables() {
-          this.style.setProperty('--primary-color', [[this.configuration.primaryColor]]);
-          this.style.setProperty('--secondary-color', [[this.configuration.secondaryColor]]);
-          this.style.setProperty('--background-color-for-primary', [[this.configuration.backgoundColorForPrimary]]);
+        // The poperties are not correctly evaluated and thus the variable not set.
+        primaryColorChanged(primaryColor) {
+          this.style.setProperty('--primary-color', primaryColor);
+        }
+        secondaryColorChanged(secondaryColor) {
+          this.style.setProperty('--secondary-color', secondaryColor);
+        }
+        backgoundColorForPrimaryChanged(backgoundColorForPrimary) {
+          this.style.setProperty('--background-color-for-primary', backgoundColorForPrimary);
         }
       }
 
