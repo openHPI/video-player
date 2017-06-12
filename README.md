@@ -53,11 +53,9 @@ The player configuration is provided as JSON object:
 * **initialState** (Object): The initial state the player has when loaded. The following options are available:
     * **playState** (String): `<'PLAYING'|'PAUSED'>`
     * **position** (Number): Seconds
-    * **duration** (Number): Seconds
     * **playbackRate** (Number): `<[0.7, 1.0, 1.3, 1.5, 1.8, 2.0]>`
     * **volume** (Number): `<0..1>`
     * **muted** (Boolean)
-    * **fullscreen** (Boolean)
     * **isChapterListShown** (Boolean)
 * **chapters** (Object): List of timestamps with chapter names
     ```JSON
