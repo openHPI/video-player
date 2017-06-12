@@ -26,6 +26,16 @@
     };
 
     /**
+     * Contains the human-readable names for the quality modes.
+     * @type {Object.<string, string>}
+     */
+    const QUALITY_NAMES = {
+      [QUALITY_MODES.HLS]: 'Auto',
+      [QUALITY_MODES.HD]: 'HD',
+      [QUALITY_MODES.SD]: 'SD',
+    };
+
+    /**
      * Contains the difference threshold in seconds between position of the
      * state and position of a single video stream from which the video stream
      * is synced manually.
@@ -71,6 +81,7 @@
       PLAY_STATES,
       PLAYBACK_RATES,
       QUALITY_MODES,
+      QUALITY_NAMES,
       SYNC_DIFF_THRESHOLD,
       PLAYING_EVENT_NAME,
       DEFAULT_STATE,

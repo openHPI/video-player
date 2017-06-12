@@ -5,10 +5,9 @@
 <link rel="import" href="playpause-control.html">
 <link rel="import" href="sound-control.html">
 <link rel="import" href="videotime-display.html">
-<link rel="import" href="chapter-list-switch.html">
 <link rel="import" href="speed-control.html">
+<link rel="import" href="chapter-list-switch.html">
 <link rel="import" href="quality-switch.html">
-<link rel="import" href="select-control.html">
 <link rel="import" href="mute-control.html">
 <link rel="import" href="fullscreen-control.html">
 
@@ -32,7 +31,6 @@
       <template is="dom-if" if="{{hasMultipleQualities}}">
         <quality-switch state="{{state}}" state-manager="{{stateManager}}" available-qualities="{{availableQualities}}"></quality-switch>
       </template>
-      <select-control value="{{state.playbackRate}}" format-value="[[_formatPlaybackRate]]" value-range="[[stateManager.constructor.PLAYBACK_RATES]]" change-handler="[[_setPlaybackRate]]" state="{{state}}" state-manager="{{stateManager}}"></select-control>
       <template is="dom-if" if="{{hasChapters}}">
         <chapter-list-switch state="{{state}}" state-manager="{{stateManager}}"></chapter-list-switch>
       </template>
@@ -52,6 +50,7 @@
             state: Object,
             stateManager: Object,
             hasChapters: Boolean,
+            availableQualities: Boolean,
             hasMultipleQualities: {
               type: Boolean,
               computed: '_hasMultipleQualities(availableQualities)',
@@ -63,14 +62,6 @@
           super.ready();
 
           window.addEventListener('keydown', this.onkeydown.bind(this));
-        }
-
-        _formatPlaybackRate(playbackRate) {
-          return playbackRate.toFixed(1) + 'x';
-        }
-
-        _setPlaybackRate(event) {
-          this.stateManager.setPlaybackRate(Number.parseFloat(event.composedPath()[0].value));
         }
 
         onkeydown(e) {

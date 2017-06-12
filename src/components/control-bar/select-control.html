@@ -1,65 +1,82 @@
-<link rel='import' href='../../../bower_components/polymer/polymer-element.html'>
-<link rel='import' href='../styling/control-bar--style-module.html'>
+<link rel="import" href="../../../bower_components/imd/imd.html">
 
-<dom-module id='select-control'>
-  <link rel='import' type='css' href='../../../bower_components/components-font-awesome/css/font-awesome.min.css'>
+<link rel="import" href="../../base-element.html">
+<link rel="import" href="../styling/control-bar--style-module.html">
+
+<dom-module id="select-control">
 
   <template>
-    <style type='text/css' include="control-bar--style-module">
+    <style type="text/css" include="control-bar--style-module">
     </style>
 
-    <div id="container__select_control" class="user_controls">
-        <select id="select__select" on-change="changeHandler">
-          <template is='dom-repeat' items='[[valueRange]]'>
-            <option value="[[item]]">[[formatValue(item)]]</option>
+    <div id="container__select_control">
+      <!-- Show control as binary switch if there are only 2 values to choose from. -->
+      <template is="dom-if" if="{{binarySelection}}">
+        <a id="button__select" class="button" on-click="handleButtonClick">
+          [[formatter(selectedValue)]]
+        </a>
+      </template>
+
+      <!-- Show control as dropdown if there are more than 2 values to choose from. -->
+      <template is="dom-if" if="{{!binarySelection}}">
+        <select id="select__select" value="{{selectedValue}}" on-change="handleSelectionChanged">
+          <template is="dom-repeat" items="[[values]]">
+            <template is="dom-if" if="{{equals(item, selectedValue)}}">
+              <option value="[[item]]" selected="selected">[[formatter(item)]]</option>
+            </template>
+            <template is="dom-if" if="{{!equals(item, selectedValue)}}">
+              <option value="[[item]]">[[formatter(item)]]</option>
+            </template>
           </template>
         </select>
+      </template>
     </div>
-    </template>
+  </template>
 
   <script>
-    class SelectControl extends Polymer.Element {
-      static get is() { return 'select-control'; }
+    define('select-control', ['base-element'], (BaseElement) => {
+      class SelectControl extends BaseElement {
+        static get is() { return 'select-control'; }
 
-      static get properties() {
-        return {
-          state: {
-            type: Object
-          },
-          stateManager: {
-            type: Object
-          },
-          value: { 
-            type: String
-          },
-          formatValue: {
-            type: Function,
-            value: function() { return this.value; }
-          },
-          valueRange: {
-            type: Object,
-            value: function() { return []; }
-          },
-          changeHandler: {
-            type: Function
-          }
-        };
+        static get properties() {
+          return {
+            values: {
+              type: Array,
+              value: [],
+            },
+            selectedValue: String,
+            formatter: {
+              type: Function,
+              value: (x) => x,
+            },
+            binarySelection: {
+              type: Boolean,
+              computed: '_binarySelection(values)',
+            },
+          };
+        }
+
+        _binarySelection() {
+          return this.values && this.values.length === 2;
+        }
+
+        handleButtonClick() {
+          let index = (this.values.indexOf(this.selectedValue) + 1) % this.selectedValue.length;
+          this.setSelectedValue(this.values[index]);
+        }
+
+        handleSelectionChanged(e) {
+          this.setSelectedValue(e.target.value);
+        }
+
+        setSelectedValue(value) {
+          this.selectedValue = value;
+          this.dispatchEvent(new CustomEvent('change'));
+        }
       }
 
-      ready() {
-        super.ready();
-        // Add event listeners
-        Polymer.RenderStatus.afterNextRender(this, function() {
-          this.$.select__select.value = this.value;
-        });
-      }
-
-      _equal(a, b) {
-        return a == b;
-      }
-    }
-
-    window.customElements.define(SelectControl.is, SelectControl);
+      window.customElements.define(SelectControl.is, SelectControl);
+    });
   </script>
 
 </dom-module>
