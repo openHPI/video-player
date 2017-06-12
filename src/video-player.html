@@ -155,10 +155,10 @@
           // Dispatch event if video is playing to stop playback on other instances
           if(playState === PLAY_STATES.PLAYING) {
             let event = new CustomEvent(PLAYING_EVENT_NAME, {
-               detail: {
-                 sender: this
-               }
-             });
+              detail: {
+                sender: this,
+              },
+            });
 
             window.dispatchEvent(event);
           }
