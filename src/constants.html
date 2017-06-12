@@ -36,18 +36,24 @@
     };
 
     /**
+     * Contains the MIME type of HLS streams.
+     * @type {String}
+     */
+    const HLS_MIME_TYPE = 'application/x-mpegURL';
+
+    /**
      * Contains the difference threshold in seconds between position of the
      * state and position of a single video stream from which the video stream
      * is synced manually.
      * @type {Number}
      */
-    const SYNC_DIFF_THRESHOLD = 0.1;
+    const SYNC_DIFF_THRESHOLD = 0.2;
 
-/**
- * Contains the name of the event that is used to pause playback on other
- * player instances when a instance starts playing.
- * @type {String}
- */
+    /**
+     * Contains the name of the event that is used to pause playback on other
+     * player instances when a instance starts playing.
+     * @type {String}
+     */
     const PLAYING_EVENT_NAME = 'videoPlaying';
 
     /**

@@ -31,7 +31,7 @@
 
   <script>
     define('video-stream', ['base-element', 'hls-js', 'constants'], (BaseElement, Hls, constants) => {
-      const {PLAY_STATES, QUALITY_MODES, SYNC_DIFF_THRESHOLD} = constants;
+      const {PLAY_STATES, QUALITY_MODES, HLS_MIME_TYPE, SYNC_DIFF_THRESHOLD} = constants;
 
       class VideoStream extends BaseElement {
         static get is() { return 'video-stream'; }
@@ -51,6 +51,11 @@
               value: true,
             },
             hlsClient: Object,
+            nativeHlsSupport: {
+              type: Boolean,
+              readOnly: true,
+              computed: '_nativeHlsSupport()',
+            },
           };
         }
 
@@ -63,6 +68,10 @@
             'mutedChanged(state.muted)',
             'qualityChanged(urls, state.quality)',
           ];
+        }
+
+        _nativeHlsSupport() {
+          return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
         }
 
         handleTimeUpdate() {
@@ -127,7 +136,7 @@
           this.initializingVideo = true;
 
           // Change source depending on quality
-          if(quality !== QUALITY_MODES.HLS) {
+          if(this.nativeHlsSupport || quality !== QUALITY_MODES.HLS) {
             // Destroy old hls client
             if(this.hlsClient) {
               this.hlsClient.destroy();
