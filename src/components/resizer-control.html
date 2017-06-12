@@ -38,7 +38,7 @@
         return {
           globalFlexBasisGap: {
             type: Array,
-            value: [0, 0]
+            value: () => [0, 0]
           },
           videos: {
             type: Array
@@ -78,27 +78,26 @@
       _resizeVideos(e) {  
         var resizerPositionX =  (e.originalTarget || e.srcElement).offsetLeft;
         var direction = this._getMouseDirection(e, resizerPositionX);
-        var defaultWidth = this.parentElement.offsetWidth * 0.49;
+        // maxGap defines the maximal value by which a videos can be increased or decreased.
+        // Since we change both videos at the same time the number has to be halved.
+        var maxGap = (this.parentElement.offsetWidth * 0.49) / 2;
         var factor = Math.abs(e.pageX - resizerPositionX);
 
-        /* The flex-basis must be kept between 1 and 49 (in absolute values). Otherwise the styling will break.
-        * The reisiszing works in two parts: First the video which shall be greater is increased until the 49% are reached.
-        * Second the other video is decreased.
+        /* 
+        * The resizing consists of two parts: One video is increased, while the other one os decreased by the same factor.
+        * This is neccessary to keep these two videos in a row. If only one video is decreased it may be that videos from the belower row
+        * will shift up.
         */
         if(direction === "left") {
-          if(this.globalFlexBasisGap[1] < 0) {
-            this._changeFlexBasis(this.videos[1], factor, 1)
-          }
-          else if(this.globalFlexBasisGap[0] <= 0 && this.globalFlexBasisGap[0] > - defaultWidth){
-            this._changeFlexBasis(this.videos[0], - factor, 0)
+          if(this.globalFlexBasisGap[1] < maxGap) {
+            this._changeFlexBasis(this.videos[1], factor, 1, maxGap)
+            this._changeFlexBasis(this.videos[0], -factor, 0, maxGap)
           }
         }
         else if(direction === "right") {
-          if(this.globalFlexBasisGap[0] < 0) {
-            this._changeFlexBasis(this.videos[0], factor, 0)
-          }
-          else if(this.globalFlexBasisGap[1] <= 0 && this.globalFlexBasisGap[1] > - defaultWidth) {
-            this._changeFlexBasis(this.videos[1], - factor, 1)
+          if(this.globalFlexBasisGap[0] < maxGap) {
+            this._changeFlexBasis(this.videos[1], -factor, 1, maxGap)
+            this._changeFlexBasis(this.videos[0], factor, 0, maxGap)
           }
         }
       }
@@ -135,10 +134,13 @@
         }
       }
 
-      _changeFlexBasis(video, factor, index) {
+      _changeFlexBasis(video, factor, index, maxGap) {
         var oldValue = this.globalFlexBasisGap[index];
-        // The new value is not allowed to be greater than 0 since this value will be substracted from the basis 49%.
-        var newValue = (oldValue + factor) <= 0 ? (oldValue + factor) : 0;
+
+        // The new value is not allowed to be greater than the maximal gap
+        var newValue = oldValue + factor; 
+        newValue = newValue <= - maxGap ? (- maxGap) : newValue;
+        newValue = newValue >= maxGap ? maxGap : newValue;
 
         this.globalFlexBasisGap[index] = newValue;
         video.style.flexBasis = "calc(49% + " + newValue + "px)";

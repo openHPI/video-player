@@ -57,7 +57,7 @@
             master="{{_equals(index, 0)}}"
             class="video-stream"
             style$="height: calc(100% / {{_rowCount(configuration.streams)}});"></video-stream>
-          <template is="dom-if" if="{{_isResizer(index)}}">
+          <template is="dom-if" if="{{_isResizer(index, configuration.streams.length)}}">
             <resizer-control></resizer-control>
           </template>
         </template>
@@ -154,8 +154,9 @@
         _rowCount(streams) {
           return Math.ceil(streams.length/2);
         }
-        _isResizer(index) {
-          return index % 2 == 0
+        _isResizer(index, length) {
+          // Do not show the resizer when there is no seconde video to resize
+          return (index % 2 == 0) && (index !== length - 1)
         }
         _showResizer() {
           this.shadowRoot.querySelectorAll('resizer-control').forEach(function(currentValue) {currentValue.style.visibility = "visible"; });
