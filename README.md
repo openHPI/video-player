@@ -36,6 +36,39 @@ The component can then be used in any HTML site in the following way:
 </html>
 ```
 
+## Configuration
+
+The player configuration is provided as JSON object: 
+```html
+<video-player configuration='{}'></video-player>
+```
+
+### Required Parameters
+* **streams** (Array): List of URLs to the videos streams
+* **primaryColor** (String): HEX code of the color for text and all other main content
+* **secondaryColor** (String): HEX code of the highlighting color
+* **backgoundColorForPrimary** (String): HEX code of the background for the `primaryColor`
+
+### Optional Parameters
+* **initialState** (Object): The initial state the player has when loaded. The following options are available:
+    * **playState** (String): `<'PLAYING'|'PAUSED'>`
+    * **position** (Number): Seconds
+    * **duration** (Number): Seconds
+    * **playbackRate** (Number): `<[0.7, 1.0, 1.3, 1.5, 1.8, 2.0]>`
+    * **volume** (Number): `<0..1>`
+    * **muted** (Boolean)
+    * **fullscreen** (Boolean)
+    * **isChapterListShown** (Boolean)
+* **chapters** (Object): List of timestamps with chapter names
+    ```JSON
+    "chapters": [
+      {
+        "text": "Chapter 1",
+        "seconds": 0
+      }
+    ]
+    ```
+
 ## Tests
 
 ### Prerequisites
