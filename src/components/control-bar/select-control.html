@@ -1,0 +1,65 @@
+<link rel='import' href='../../../bower_components/polymer/polymer-element.html'>
+<link rel='import' href='../styling/control-bar--style-module.html'>
+
+<dom-module id='select-control'>
+  <link rel='import' type='css' href='../../../bower_components/components-font-awesome/css/font-awesome.min.css'>
+
+  <template>
+    <style type='text/css' include="control-bar--style-module">
+    </style>
+
+    <div id="container__select_control" class="user_controls">
+        <select id="select__select" on-change="changeHandler">
+          <template is='dom-repeat' items='[[valueRange]]'>
+            <option value="[[item]]">[[formatValue(item)]]</option>
+          </template>
+        </select>
+    </div>
+    </template>
+
+  <script>
+    class SelectControl extends Polymer.Element {
+      static get is() { return 'select-control'; }
+
+      static get properties() {
+        return {
+          state: {
+            type: Object
+          },
+          stateManager: {
+            type: Object
+          },
+          value: { 
+            type: String
+          },
+          formatValue: {
+            type: Function,
+            value: function() { return this.value; }
+          },
+          valueRange: {
+            type: Object,
+            value: function() { return []; }
+          },
+          changeHandler: {
+            type: Function
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+        // Add event listeners
+        Polymer.RenderStatus.afterNextRender(this, function() {
+          this.$.select__select.value = this.value;
+        });
+      }
+
+      _equal(a, b) {
+        return a == b;
+      }
+    }
+
+    window.customElements.define(SelectControl.is, SelectControl);
+  </script>
+
+</dom-module>
