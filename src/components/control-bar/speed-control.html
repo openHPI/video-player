@@ -43,8 +43,7 @@
         }
 
         selectionChanged(e) {
-          let playbackRate = Number.parseFloat(e.target.selectedValue);
-          this.stateManager.setPlaybackRate(playbackRate);
+          this.stateManager.setPlaybackRate(e.target.selectedValue);
         }
       }
 

@@ -19,14 +19,9 @@
 
       <!-- Show control as dropdown if there are more than 2 values to choose from. -->
       <template is="dom-if" if="{{!binarySelection}}">
-        <select id="select__select" value="{{selectedValue}}" on-change="handleSelectionChanged">
+        <select id="select__select" on-change="handleSelectionChanged">
           <template is="dom-repeat" items="[[values]]">
-            <template is="dom-if" if="{{equals(item, selectedValue)}}">
-              <option value="[[item]]" selected="selected">[[formatter(item)]]</option>
-            </template>
-            <template is="dom-if" if="{{!equals(item, selectedValue)}}">
-              <option value="[[item]]">[[formatter(item)]]</option>
-            </template>
+            <option value="[[item]]" selected="{{equals(item, selectedValue)}}">[[formatter(item)]]</option>
           </template>
         </select>
       </template>
@@ -66,7 +61,11 @@
         }
 
         handleSelectionChanged(e) {
-          this.setSelectedValue(e.target.value);
+          // Since select element converts values to string, find the value,
+          // whose string matches the value of the select element to ensure the
+          // correct type.
+          let selectedValue = this.values.find(x => x.toString() === e.target.value);
+          this.setSelectedValue(selectedValue);
         }
 
         setSelectedValue(value) {
