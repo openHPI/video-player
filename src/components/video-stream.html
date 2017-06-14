@@ -20,7 +20,7 @@
     <div id="container__video_stream">
       <video
         id="video"
-        preload="auto"
+        preload="[[ifThenElse(preload, 'auto', 'metadata')]]"
         poster="[[ifThen(urls.poster, urls.poster)]]"
         on-click="handleClick"
         on-canplay="handleCanPlay"
@@ -42,6 +42,10 @@
             state: Object,
             stateManager: Object,
             urls: Object,
+            preload: {
+              type: Boolean,
+              value: true,
+            },
             master: {
               type: Boolean,
               value: true,

@@ -9,7 +9,7 @@
 <link rel="import" href="components/video-stream.html">
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/control-bar/control-bar.html">
-<link rel='import' href='components/resizer-control.html'>
+<link rel="import" href="components/resizer-control.html">
 
 <dom-module id="video-player">
   <template>
@@ -56,6 +56,7 @@
             state="{{state}}"
             state-manager="{{stateManager}}"
             urls="{{item}}"
+            preload="{{configuration.videoPreload}}"
             master="{{equals(index, 0)}}"
             class="video-stream"
             style$="height: calc(100% / {{rowCount(configuration.streams)}});">

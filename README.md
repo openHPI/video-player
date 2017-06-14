@@ -57,16 +57,17 @@ The player configuration is provided as JSON object:
 
 ### Optional Parameters
 * **initialState** (Object): The initial state the player has when loaded. The following options are available:
-    * **playState** (String): `<'PLAYING'|'PAUSED'>`
-    * **position** (Number): Seconds
-    * **playbackRate** (Number): `<[0.7, 1.0, 1.3, 1.5, 1.8, 2.0]>`
-    * **volume** (Number): `<0..1>`
-    * **muted** (Boolean)
-    * **isChapterListShown** (Boolean)
-* **primaryColor** (String): HEX code of the color for text and all other main content
-* **secondaryColor** (String): HEX code of the highlighting color
-* **backgroundColorForPrimary** (String): HEX code of the background for the `primaryColor`
-* **chapters** (Object): List of timestamps with chapter names
+    * **playState** (String): `<'PLAYING'|'PAUSED'>` (default: `PAUSED`)
+    * **position** (Number): Seconds (default: `0`)
+    * **playbackRate** (Number): `<[0.7, 1.0, 1.3, 1.5, 1.8, 2.0]>` (default: `1.0`)
+    * **volume** (Number): `<0..1>` (default: `1.0`)
+    * **muted** (Boolean): (default: `false`)
+    * **isChapterListShown** (Boolean): (default: `false`)
+* **primaryColor** (String): HEX code of the color for text and all other main content (default: `#FFFFFF`)
+* **secondaryColor** (String): HEX code of the highlighting color (default: `#DD6112`)
+* **backgroundColorForPrimary** (String): HEX code of the background for the `primaryColor` (default: `#424242`)
+* **videoPreload** (Boolean): Turns on/off preloading of the videos when the page loads (default: `true`)
+* **chapters** (Array): List of timestamps with chapter names (default: `[]`)
     ```JSON
     "chapters": [
       {
