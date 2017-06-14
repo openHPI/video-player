@@ -56,7 +56,7 @@ The player configuration is provided as JSON object:
     ```
 * **primaryColor** (String): HEX code of the color for text and all other main content
 * **secondaryColor** (String): HEX code of the highlighting color
-* **backgoundColorForPrimary** (String): HEX code of the background for the `primaryColor`
+* **backgroundColorForPrimary** (String): HEX code of the background for the `primaryColor`
 
 ### Optional Parameters
 * **initialState** (Object): The initial state the player has when loaded. The following options are available:
