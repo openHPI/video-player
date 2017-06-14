@@ -62,7 +62,7 @@
             style$="height: calc(100% / {{rowCount(configuration.streams)}});">
           </video-stream>
           <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
-            <resizer-control style$="visibility: [[ifThenElse(needResizerShown, 'visible', 'hidden')]]"></resizer-control>
+            <resizer-control style$="visibility: [[ifThenElse(isResizerShown, 'visible', 'hidden')]]"></resizer-control>
           </template>
         </template>
       </div>
@@ -104,7 +104,7 @@
             },
             stateManager: Object,
             fullscreenManager: Object,
-            needResizerShown: {
+            isResizerShown: {
               type: Boolean,
               value: false,
             },
@@ -164,8 +164,8 @@
           });
 
           // Add event handlers for mouse events to show/hide resizer
-          this.$['streams-container'].addEventListener('mouseenter', () => this.needResizerShown = true);
-          this.$['streams-container'].addEventListener('mouseleave', () => this.needResizerShown = false);
+          this.$['streams-container'].addEventListener('mouseenter', () => this.isResizerShown = true);
+          this.$['streams-container'].addEventListener('mouseleave', () => this.isResizerShown = false);
 
           // Listen for events from other instances to pause playback when
           // another instance starts playing
