@@ -40,7 +40,7 @@
        * @returns {void}
        */
       play() {
-        this.setState('playState', PLAY_STATES.PLAYING);
+        this.setPlayState( PLAY_STATES.PLAYING);
       }
 
       /**
@@ -48,7 +48,20 @@
        * @returns {void}
        */
       pause() {
-        this.setState('playState', PLAY_STATES.PAUSED);
+        this.setPlayState(PLAY_STATES.PAUSED);
+      }
+
+      /**
+       * Sets the play state to specified value.
+       * @param {string} playState The new play state.
+       * @returns {void}
+       */
+      setPlayState(playState) {
+        if(!Object.values(PLAY_STATES).includes(playState)) {
+          throw new RangeError(`Value must be in [${Object.values(PLAY_STATES).toString()}].`);
+        }
+
+        this.setState('playState', playState);
       }
 
       /**
@@ -56,10 +69,10 @@
        * @returns {void}
        */
       togglePlayPause() {
-        if(this.state.playState === PLAY_STATES.PLAYING) {
-          this.pause();
-        } else {
+        if(this.state.playState === PLAY_STATES.PAUSED) {
           this.play();
+        } else {
+          this.pause();
         }
       }
 

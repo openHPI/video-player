@@ -41,6 +41,7 @@
           return {
             state: Object,
             stateManager: Object,
+            synchronizationManager: Object,
             urls: Object,
             preload: {
               type: Boolean,
@@ -79,6 +80,16 @@
           return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
         }
 
+        connectedCallback() {
+          super.connectedCallback();
+          this.synchronizationManager.registerVideo(this.$.video);
+        }
+
+        disconnectedCallback() {
+          super.disconnectedCallback();
+          this.synchronizationManager.unregisterVideo(this.$.video);
+        }
+
         handleTimeUpdate() {
           if(this.master && !this.initializingVideo) {
             this.stateManager.setPosition(this.$.video.currentTime);
@@ -114,7 +125,7 @@
         playStateChanged(playState) {
           if (playState === PLAY_STATES.PLAYING)
             this.$.video.play();
-          else
+          else if (playState === PLAY_STATES.PAUSED)
             this.$.video.pause();
         }
 

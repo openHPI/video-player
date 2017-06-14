@@ -20,7 +20,7 @@
 
     <div id="container__play_pause_control" class="user_controls">
       <a id="button__play_pause" class="button" on-click="handleClick">
-        <i class$="fa [[ifThenElse(isPlaying, 'fa-pause', 'fa-play')]]"></i>
+        <i class$="fa [[iconClass]]"></i>
       </a>
     </div>
   </template>
@@ -36,15 +36,22 @@
           return {
             state: Object,
             stateManager: Object,
-            isPlaying: {
-              type: Boolean,
-              computed: '_isPlaying(state.playState)',
-            },
+            iconClass: String,
           };
         }
 
-        _isPlaying(playState) {
-          return playState === PLAY_STATES.PLAYING;
+        static get observers() {
+          return [
+            'playStateChanged(state.playState)',
+          ];
+        }
+
+        playStateChanged(playState) {
+          if(playState === PLAY_STATES.PLAYING) {
+            this.iconClass = 'fa-pause';
+          } else if(playState === PLAY_STATES.PAUSED) {
+            this.iconClass = 'fa-play';
+          }
         }
 
         handleClick() {
