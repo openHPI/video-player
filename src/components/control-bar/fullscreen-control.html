@@ -23,12 +23,7 @@
 
     <div id="container__fullscreen_control" class="user_controls">
       <a id="button__fullscreen" class="button" on-click="handleClick">
-        <template is="dom-if" if="[[state.fullscreen]]">
-          <i class="fa fa-compress" />
-        </template>
-        <template is="dom-if" if="[[!state.fullscreen]]">
-          <i class="fa fa-expand" />
-        </template>
+        <i class$="fa [[ifThenElse(state.fullscreen, 'fa-compress', 'fa-expand')]]"></i>
       </a>
     </div>
     </template>
