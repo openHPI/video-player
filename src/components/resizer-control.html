@@ -1,0 +1,163 @@
+<link rel='import' href='../../../../polymer/polymer-element.html'>
+
+<dom-module id='resizer-control'>
+  <link rel='import' type='css' href='../../../components-font-awesome/css/font-awesome.min.css'>
+
+  <template>
+    <style type="text/css">
+      /*
+      * The nested flex boxes are unfortunately neccessary to avoid Safaris 100% height bug
+      */
+      :host {
+        display: flex;
+        z-index: 2;
+        visibility: hidden;
+      }
+      #container__resizer_control {
+        display: flex;
+        overflow: hidden;
+      }
+      #resizer {
+        border: 2px solid black;
+        cursor: ew-resize;
+        height: inherit;
+      }
+    </style>
+
+    <div id="container__resizer_control">
+      <div id="resizer" draggable="true">
+      </div>
+    </div>
+  </template>
+
+  <script>
+    class ResizerControl extends Polymer.Element {
+      static get is() { return 'resizer-control'; }
+
+      static get properties() {
+        return {
+          globalFlexBasisGap: {
+            type: Array,
+            value: () => [0, 0]
+          },
+          videos: {
+            type: Array
+          },
+          mousePositionX: {
+            type: Number
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+
+        // Add event listeners
+        this.$.resizer.addEventListener('dragstart', this._handleDragStart.bind(this));
+        this.$.resizer.addEventListener('drag', this._resizeVideos.bind(this));
+        this.$.resizer.addEventListener('dragend', this._handleDragEnd.bind(this));
+      }
+
+      _handleDragStart(e) {
+        // Neccessary for FF to handle Drag'n'Drop
+        // Since FF does not support the mouse position within a drag event, it has to be handled with the dragover event
+        e.dataTransfer.setData('text', '');
+        this.parentElement.addEventListener('dragover', this._handleDragOver.bind(this));
+
+        // Get videos to resize
+        this.videos = [this._findPreviousVideo(), this._findNextVideo()];
+
+        // Avoid a dragging ghost image by creating a new element which shall be shown
+        // but is hidden per default. Unfortunately this is the only way to do so.
+        var dragImage = this.cloneNode(true);
+        dragImage.style.visibility = "hidden";
+        document.body.appendChild(dragImage);
+        e.dataTransfer.setDragImage(dragImage, 0, 0);
+      }
+
+      _handleDragEnd(e) {
+        // Remove the created ghost element & eventhandler when the dragging ended.
+        document.body.removeChild(document.body.lastChild);
+        this.parentElement.removeEventListener('dragover', this._handleDragOver.bind(this));
+      }
+
+      _handleDragOver(e) {
+        this.mousePositionX = e.pageX;
+      }
+
+      _resizeVideos(e) {          
+        var resizerPositionX =  (e.originalTarget || e.srcElement).offsetLeft;
+        var direction = this._getMouseDirection(e, resizerPositionX);
+        // maxGap defines the maximal value by which a videos can be increased or decreased.
+        // Since we change both videos at the same time the number has to be halved.
+        var maxGap = (this.parentElement.offsetWidth * 0.49) / 2;
+        var factor = Math.abs(this.mousePositionX - resizerPositionX);
+
+        /* 
+        * The resizing consists of two parts: One video is increased, while the other one os decreased by the same factor.
+        * This is neccessary to keep these two videos in a row. If only one video is decreased it may be that videos from the belower row
+        * will shift up.
+        */
+        if(direction === "left") {
+          if(this.globalFlexBasisGap[1] < maxGap) {
+            this._changeFlexBasis(this.videos[1], factor, 1, maxGap)
+            this._changeFlexBasis(this.videos[0], -factor, 0, maxGap)
+          }
+        }
+        else if(direction === "right") {
+          if(this.globalFlexBasisGap[0] < maxGap) {
+            this._changeFlexBasis(this.videos[1], -factor, 1, maxGap)
+            this._changeFlexBasis(this.videos[0], factor, 0, maxGap)
+          }
+        }
+      }
+
+      _findNextVideo() {
+        // Iterate forward through the DOM until the first video element is found
+        var that = this;
+        while (that.nodeName !== "VIDEO-STREAM") {
+          that = that.nextElementSibling;
+        }
+        return that;
+      }
+
+      _findPreviousVideo() {
+        // Iterate backward through the DOM until the first video element is found
+        var that = this;
+        while (that.nodeName !== "VIDEO-STREAM") {
+          that = that.previousElementSibling;
+        }
+        return that;
+      }
+
+      _getMouseDirection(e, resizerPositionX) {
+        // This handles the special case when ending the drag, 
+        // where e.pageX is 0
+        if(this.mousePositionX === 0) {
+          return ""
+        }
+
+        if (this.mousePositionX < resizerPositionX) {
+            return "left";
+        } else if (this.mousePositionX > resizerPositionX) {
+            return "right";
+        }
+      }
+
+      _changeFlexBasis(video, factor, index, maxGap) {
+        var oldValue = this.globalFlexBasisGap[index];
+
+        // The new value is not allowed to be greater than the maximal gap
+        var newValue = oldValue + factor; 
+        newValue = newValue <= - maxGap ? (- maxGap) : newValue;
+        newValue = newValue >= maxGap ? maxGap : newValue;
+
+        this.globalFlexBasisGap[index] = newValue;
+        video.style.flexBasis = "calc(49% + " + newValue + "px)";
+      }
+    }
+
+    window.customElements.define(ResizerControl.is, ResizerControl);
+  </script>
+
+</dom-module>

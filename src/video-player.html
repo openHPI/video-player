@@ -9,6 +9,7 @@
 <link rel="import" href="components/video-stream.html">
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/control-bar/control-bar.html">
+<link rel='import' href='components/resizer-control.html'>
 
 <dom-module id="video-player">
   <template>
@@ -43,7 +44,8 @@
         height: calc(100% - 45px);
       }
       .video-stream {
-        flex: 1 1 50%;
+        /* 49 to leave a bit space for the resizer */
+        flex: 1 1 49%;
       }
     </style>
 
@@ -58,6 +60,9 @@
             class="video-stream"
             style$="height: calc(100% / {{rowCount(configuration.streams)}});">
           </video-stream>
+          <template is="dom-if" if="{{_isResizer(index, configuration.streams.length)}}">
+            <resizer-control></resizer-control>
+          </template>
         </template>
       </div>
       <control-bar
@@ -136,6 +141,9 @@
             this.stateManager.setFullscreen(fullscreen);
           });
 
+          this.$['streams-container'].addEventListener('mouseenter', this._showResizer.bind(this));
+          this.$['streams-container'].addEventListener('mouseleave', this._hideResizer.bind(this));
+
           // Listen for events from other instances to pause playback when
           // another instance starts playing
           window.addEventListener(PLAYING_EVENT_NAME, (e) => {
@@ -177,6 +185,16 @@
 
             window.dispatchEvent(event);
           }
+        }
+        _isResizer(index, length) {
+          // Do not show the resizer when there is no seconde video to resize
+          return (index % 2 == 0) && (index !== length - 1)
+        }
+        _showResizer() {
+          this.shadowRoot.querySelectorAll('resizer-control').forEach(function(currentValue) {currentValue.style.visibility = "visible"; });
+        }
+        _hideResizer() {
+          this.shadowRoot.querySelectorAll('resizer-control').forEach(function(currentValue) {currentValue.style.visibility = "hidden"; });
         }
 
         fullscreenChanged(fullscreen) {
