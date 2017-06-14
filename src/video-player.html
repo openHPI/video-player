@@ -60,8 +60,8 @@
             class="video-stream"
             style$="height: calc(100% / {{rowCount(configuration.streams)}});">
           </video-stream>
-          <template is="dom-if" if="{{_isResizer(index, configuration.streams.length)}}">
-            <resizer-control></resizer-control>
+          <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
+            <resizer-control style$="visibility: [[ifThenElse(needResizerShown, 'visible', 'hidden')]]"></resizer-control>
           </template>
         </template>
       </div>
@@ -103,6 +103,10 @@
             },
             stateManager: Object,
             fullscreenManager: Object,
+            needResizerShown: {
+              type: Boolean,
+              value: false,
+            },
             availableQualities: {
               type: Array,
               computed: '_availableQualities(configuration.streams)',
@@ -126,6 +130,23 @@
           ];
         }
 
+        _availableQualities(streams) {
+          if (streams) {
+            let supportedQualities = Object.values(QUALITY_MODES);
+            if(!Hls.isSupported()) {
+              supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
+            }
+
+            return supportedQualities
+                     .filter(quality => streams.every(stream => Object.keys(stream)
+                                                                      .includes(quality)));
+          }
+        }
+
+        _hasChapters() {
+          return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
+        }
+
         ready() {
           super.ready();
 
@@ -141,8 +162,9 @@
             this.stateManager.setFullscreen(fullscreen);
           });
 
-          this.$['streams-container'].addEventListener('mouseenter', this._showResizer.bind(this));
-          this.$['streams-container'].addEventListener('mouseleave', this._hideResizer.bind(this));
+          // Add event handlers for mouse events to show/hide resizer
+          this.$['streams-container'].addEventListener('mouseenter', () => this.needResizerShown = true);
+          this.$['streams-container'].addEventListener('mouseleave', () => this.needResizerShown = false);
 
           // Listen for events from other instances to pause playback when
           // another instance starts playing
@@ -186,16 +208,6 @@
             window.dispatchEvent(event);
           }
         }
-        _isResizer(index, length) {
-          // Do not show the resizer when there is no seconde video to resize
-          return (index % 2 == 0) && (index !== length - 1)
-        }
-        _showResizer() {
-          this.shadowRoot.querySelectorAll('resizer-control').forEach(function(currentValue) {currentValue.style.visibility = "visible"; });
-        }
-        _hideResizer() {
-          this.shadowRoot.querySelectorAll('resizer-control').forEach(function(currentValue) {currentValue.style.visibility = "hidden"; });
-        }
 
         fullscreenChanged(fullscreen) {
           if(this.fullscreenManager) {
@@ -205,27 +217,6 @@
               this.fullscreenManager.exitFullscreen();
             }
           }
-        }
-
-        _availableQualities(streams) {
-          if (streams) {
-            let supportedQualities = Object.values(QUALITY_MODES);
-            if(!Hls.isSupported()) {
-              supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
-            }
-
-            return supportedQualities
-                     .filter(quality => streams.every(stream => Object.keys(stream)
-                                                                      .includes(quality)));
-          }
-        }
-
-        _hasChapters() {
-          return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
-        }
-
-        rowCount(streams) {
-          return Math.ceil(streams.length/2);
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
@@ -238,6 +229,15 @@
         }
         backgroundColorForPrimaryChanged(backgroundColorForPrimary) {
           this.style.setProperty('--background-color-for-primary', backgroundColorForPrimary);
+        }
+
+        needResizer(index, length) {
+          // Do not show the resizer when there is no second video to resize
+          return (index % 2 === 0) && (index !== length - 1);
+        }
+
+        rowCount(streams) {
+          return Math.ceil(streams.length / 2);
         }
       }
 

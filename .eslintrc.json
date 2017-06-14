@@ -21,7 +21,7 @@
     "camelcase": "error",
     "no-var": "error",
     "block-scoped-var": "error",
-    "consistent-this": ["error", "self"],
+    "consistent-this": ["error", "that"],
     "eqeqeq": "error",
     "guard-for-in": "error",
     "object-shorthand": "error",
