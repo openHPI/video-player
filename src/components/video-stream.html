@@ -23,6 +23,18 @@
         on-click="handleClick"
         on-loadedmetadata="handleLoadedMetadata"
         on-timeupdate="handleTimeUpdate">
+       
+
+
+        <template is="dom-if" if="{{captions}}">
+          <template is="dom-if" if="{{master}}">
+             <track src="/home/mkonrad/Desktop/videoplayer/demo/captions/subtitles_en.vtt" kind="subtitles" srclang="en" label="English">
+          </template> 
+        </template>
+
+
+
+
       </video>
     </div>
   </template>
@@ -37,6 +49,10 @@
             state: Object,
             stateManager: Object,
             url: String,
+            captions: {
+              type: Object,
+              value: () => ({})
+            },
             master: {
               type: Boolean,
               value: true,

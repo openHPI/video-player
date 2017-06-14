@@ -55,6 +55,7 @@
             url="{{item}}"
             master="{{equals(index, 0)}}"
             class="video-stream"
+            captions="{{configuration.captions}}"
             style$="height: calc(100% / {{rowCount(configuration.streams)}});"></video-stream>
         </template>
       </div>
