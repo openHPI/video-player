@@ -14,7 +14,7 @@
         position: absolute;
         /* Equals control bar height. This is set to assure that the dropdown opens to the top. */
         bottom: 45px;
-        /* Cancel out the padding */ 
+        /* Cancel out the padding */
         left: -10px;
 
         background-color: #424242;
@@ -26,36 +26,26 @@
         line-height: 2;
         padding: 7px 10px;
         cursor: pointer;
-      }      
+      }
       .dropdown-content a:hover {
         background-color: grey;
-      }     
+      }
       .dropdown-content a.selected {
         background-color: grey;
       }
     </style>
 
     <div id="container__select_control" class="user_controls">
-      <!-- Show control as binary switch if there are only 2 values to choose from. -->
-      <template is="dom-if" if="{{binarySelection}}">
-        <a id="button__select" class="button" on-click="handleBinaryButtonClick">
+      <div class="dropdown">
+        <a id="button__select" class="button" on-click="handleButtonClick">
           [[formatter(selectedValue)]]
         </a>
-      </template>
-
-      <!-- Show control as dropdown if there are more than 2 values to choose from. -->
-      <template is="dom-if" if="{{!binarySelection}}">
-        <div class="dropdown">
-          <a id="button__select" class="button" on-click="handleMultipleButtonClick">
-            [[formatter(selectedValue)]]
-          </a>
-          <div id="dropdown__select" class="dropdown-content" style$="display: [[ifThenElse(isDropDownOpen, 'initial;', 'none;')]]"> 
-            <template is="dom-repeat" items="[[values]]">
-              <a on-click="handleSelectionChanged" class$="[[ifEqualsThen(item, selectedValue, 'selected')]]">[[formatter(item)]]</a>
-            </template>
-          </div>
+        <div id="dropdown__select" class="dropdown-content" style$="display: [[ifThenElse(isDropDownOpen, 'initial', 'none')]];">
+          <template is="dom-repeat" items="[[values]]">
+            <a on-click="handleDropDownElementClick" class$="[[ifEqualsThen(item, selectedValue, 'selected')]]">[[formatter(item)]]</a>
+          </template>
         </div>
-      </template>
+      </div>
     </div>
   </template>
 
@@ -75,31 +65,25 @@
               type: Function,
               value: (x) => x,
             },
-            binarySelection: {
-              type: Boolean,
-              computed: '_binarySelection(values)',
-            },
             isDropDownOpen: {
               type: Boolean,
-              value: false
-            }
+              value: false,
+            },
           };
         }
 
-        _binarySelection() {
-          return this.values && this.values.length === 2;
+        handleButtonClick() {
+          if(this.values.length > 2) {
+            // Show dropdown if there are more than 2 values to choose from
+            this.isDropDownOpen = !this.isDropDownOpen;
+          } else {
+            // Toggle value, if there are only 2 values to choose from
+            let index = (this.values.indexOf(this.selectedValue) + 1) % this.selectedValue.length;
+            this.setSelectedValue(this.values[index]);
+          }
         }
 
-        handleBinaryButtonClick() {
-          let index = (this.values.indexOf(this.selectedValue) + 1) % this.selectedValue.length;
-          this.setSelectedValue(this.values[index]);
-        }
-
-        handleMultipleButtonClick() {
-          this.isDropDownOpen = !this.isDropDownOpen;
-        }
-
-        handleSelectionChanged(e) {
+        handleDropDownElementClick(e) {
           this.setSelectedValue(e.model.item);
           this.isDropDownOpen = false;
         }
@@ -107,7 +91,7 @@
         setSelectedValue(value) {
           this.selectedValue = value;
           this.dispatchEvent(new CustomEvent('change'));
-        } 
+        }
       }
 
       window.customElements.define(SelectControl.is, SelectControl);

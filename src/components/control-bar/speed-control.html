@@ -39,7 +39,7 @@
         }
 
         formatPlaybackRate(playbackRate) {
-          return playbackRate.toFixed(1) + 'x';
+          return this.toFixedOrEmpty(playbackRate, 1) + 'x';
         }
 
         selectionChanged(e) {
