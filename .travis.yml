@@ -11,4 +11,4 @@ deploy:
   skip_cleanup: true
   on:
     repo: openHPI/videoplayer
-    branch: releases
+    tags: true
