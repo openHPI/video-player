@@ -30,7 +30,7 @@ The component can then be used in any HTML site in the following way:
   </head>
   <body>
     <video-player configuration='{
-      "streams": [{"src": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}]
+      "streams": [{"hd": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}]
     }'></video-player>
   </body>
 </html>
@@ -38,25 +38,22 @@ The component can then be used in any HTML site in the following way:
 
 ## Configuration
 
-The player configuration is provided as JSON object: 
+The player configuration is provided as JSON object:
 ```html
 <video-player configuration='{}'></video-player>
 ```
 
 ### Required Parameters
-* **streams** (Array): List of URLs to the videos streams of different qualities and (optional) poster images. If there is only one quality, use `sd`.
+* **streams** (Array): List of URLs to the videos streams of different qualities and (optional) poster images. If there is only one quality, use `hd`.
     ```JSON
     "streams": [
       {
         "sd": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
         "hd": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        "poster": "/components/video-player/demo/poster_1.jpg"
+        "poster": "https://peach.blender.org/wp-content/uploads/bbb-splash.png"
       }
     ]
     ```
-* **primaryColor** (String): HEX code of the color for text and all other main content
-* **secondaryColor** (String): HEX code of the highlighting color
-* **backgroundColorForPrimary** (String): HEX code of the background for the `primaryColor`
 
 ### Optional Parameters
 * **initialState** (Object): The initial state the player has when loaded. The following options are available:
@@ -66,6 +63,9 @@ The player configuration is provided as JSON object:
     * **volume** (Number): `<0..1>`
     * **muted** (Boolean)
     * **isChapterListShown** (Boolean)
+* **primaryColor** (String): HEX code of the color for text and all other main content
+* **secondaryColor** (String): HEX code of the highlighting color
+* **backgroundColorForPrimary** (String): HEX code of the background for the `primaryColor`
 * **chapters** (Object): List of timestamps with chapter names
     ```JSON
     "chapters": [
