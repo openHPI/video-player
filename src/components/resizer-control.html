@@ -42,6 +42,9 @@
           },
           videos: {
             type: Array
+          },
+          mousePositionX: {
+            type: Number
           }
         };
       }
@@ -57,7 +60,9 @@
 
       _handleDragStart(e) {
         // Neccessary for FF to handle Drag'n'Drop
+        // Since FF does not support the mouse position within a drag event, it has to be handled with the dragover event
         e.dataTransfer.setData('text', '');
+        this.parentElement.addEventListener('dragover', this._handleDragOver.bind(this));
 
         // Get videos to resize
         this.videos = [this._findPreviousVideo(), this._findNextVideo()];
@@ -71,17 +76,22 @@
       }
 
       _handleDragEnd(e) {
-        // Remove the cerated ghost element when the dragging ended.
+        // Remove the created ghost element & eventhandler when the dragging ended.
         document.body.removeChild(document.body.lastChild);
+        this.parentElement.removeEventListener('dragover', this._handleDragOver.bind(this));
       }
 
-      _resizeVideos(e) {  
+      _handleDragOver(e) {
+        this.mousePositionX = e.pageX;
+      }
+
+      _resizeVideos(e) {          
         var resizerPositionX =  (e.originalTarget || e.srcElement).offsetLeft;
         var direction = this._getMouseDirection(e, resizerPositionX);
         // maxGap defines the maximal value by which a videos can be increased or decreased.
         // Since we change both videos at the same time the number has to be halved.
         var maxGap = (this.parentElement.offsetWidth * 0.49) / 2;
-        var factor = Math.abs(e.pageX - resizerPositionX);
+        var factor = Math.abs(this.mousePositionX - resizerPositionX);
 
         /* 
         * The resizing consists of two parts: One video is increased, while the other one os decreased by the same factor.
@@ -123,13 +133,13 @@
       _getMouseDirection(e, resizerPositionX) {
         // This handles the special case when ending the drag, 
         // where e.pageX is 0
-        if(e.pageX === 0) {
+        if(this.mousePositionX === 0) {
           return ""
         }
 
-        if (e.pageX < resizerPositionX) {
+        if (this.mousePositionX < resizerPositionX) {
             return "left";
-        } else if (e.pageX > resizerPositionX) {
+        } else if (this.mousePositionX > resizerPositionX) {
             return "right";
         }
       }
