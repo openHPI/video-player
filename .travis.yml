@@ -1,6 +1,8 @@
 language: node_js
 node_js: node
-before_install: npm install -g bower
+before_install:
+  - openssl aes-256-cbc -K $encrypted_8e2dd55f8485_key -iv $encrypted_8e2dd55f8485_iv -in deploy_key.enc -out deploy_key -d
+  - npm install -g bower
 install: npm install
 script: npm run bundle
 deploy:
@@ -11,5 +13,3 @@ deploy:
   on:
     repo: openHPI/videoplayer
     branch: releases
-  api_key:
-    secure: JfOKLpJS2SwsYU9XevkEQM305brsKsDU6H5CcjzM08XGn9uli2esXZIBmRIcddLFaF4Z0xedyFvusdWB+7o5TxGEaW9Tkm/sZtZi0IiKnbaLusKD8l2G8bUitjlruilQS4bYgU5Ua+lcskloc1VZfGBU/sLqWgltnyA1iZLp1aI9ZBz5PQ2lyHuLMxqLr5n3XKD0eQAwaSZmH1+kHRxisNBg4T/NaJcb/iRmwWNCuhBLCgAz+3IVY8RqypCdrIwHCazQjYLxKIa/BmbkMfgSHPYh+uaw2jCdCc0CAt+dxpE2kr+E6vVdPSMViIB2R0CHruCf3ej+Ccl1MagN3tqziKW+POpMEpKOT3ceiu8aTxx1kSnowcqmOqbqGbU363FdRTLMwFzaqwUwWzGBjjzegYk0dzUO6hYIlsySziKpD3StJR8HWOLm65Fcj4N9NnkQbWg3xLZRj0gc5+tZWX2aANEcwkcDRktYxW3tuYk3AjW9PCExVB+Yki1gR/BHKnq3qBIj/5eAqmIfsOz0RE/jDE3Ayr2y43tA0/Je5Sclnrx21UyBlWcN0PxzLv41Z41bSmwTJuIwy/7fqNpvyb2LE2jZpKSdqd/8tf29cBT4RilQnmWbDkHY6wfqKy544wyC/6T0gUzOuEVonB5YSzPwnB+EDYJbuvwAikKxDEtYt/g=
