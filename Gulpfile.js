@@ -9,6 +9,7 @@ const htmlmin = require('gulp-htmlmin');
 const cleanCSS = require('gulp-clean-css');
 const runSequence = require('run-sequence');
 const mergeStream = require('merge-stream');
+const stripJsComments = require('gulp-uncomment');
 const Bundler = require('polymer-build').Bundler;
 const HtmlSplitter = require('polymer-build').HtmlSplitter;
 const PolymerProject = require('polymer-build').PolymerProject;
@@ -62,7 +63,8 @@ const bundle = (baseDir, outputDir) => {
   return mergeStream(project.sources(), project.dependencies())
     .pipe(htmlSplitter.split())
     .pipe(gulpif( /\.css$/, cleanCSS()))
-    .pipe(gulpif( /\.html$/, htmlmin({collapseWhitespace: true})))
+    .pipe(gulpif( /\.html$/, htmlmin({collapseWhitespace: true, removeComments: true})))
+    .pipe(gulpif( /\.js$/, stripJsComments({removeEmptyLines: true})))
     .pipe(htmlSplitter.rejoin())
     .pipe(project.bundler())
     .pipe(gulp.dest(path.join(cwd, outputDir)))
