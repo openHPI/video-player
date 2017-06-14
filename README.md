@@ -30,7 +30,7 @@ The component can then be used in any HTML site in the following way:
   </head>
   <body>
     <video-player configuration='{
-      "streams": ["http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"]
+      "streams": [{"src": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}]
     }'></video-player>
   </body>
 </html>
@@ -44,7 +44,16 @@ The player configuration is provided as JSON object:
 ```
 
 ### Required Parameters
-* **streams** (Array): List of URLs to the videos streams
+* **streams** (Array): List of URLs to the videos streams of different qualities and (optional) poster images. If there is only one quality, use `sd`.
+    ```JSON
+    "streams": [
+      {
+        "sd": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "hd": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "poster": "/components/video-player/demo/poster_1.jpg"
+      }
+    ]
+    ```
 * **primaryColor** (String): HEX code of the color for text and all other main content
 * **secondaryColor** (String): HEX code of the highlighting color
 * **backgoundColorForPrimary** (String): HEX code of the background for the `primaryColor`
