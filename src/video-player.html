@@ -52,7 +52,8 @@
           <video-stream
             state="{{state}}"
             state-manager="{{stateManager}}"
-            url="{{item}}"
+            url="{{item.src}}"
+            poster="{{item.poster}}"
             master="{{equals(index, 0)}}"
             class="video-stream"
             style$="height: calc(100% / {{rowCount(configuration.streams)}});"></video-stream>

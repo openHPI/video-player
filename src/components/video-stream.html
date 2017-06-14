@@ -20,6 +20,7 @@
         id="video"
         src$="[[url]]"
         preload="auto"
+        poster="[[poster]]"
         on-click="handleClick"
         on-loadedmetadata="handleLoadedMetadata"
         on-timeupdate="handleTimeUpdate">
@@ -37,6 +38,7 @@
             state: Object,
             stateManager: Object,
             url: String,
+            poster: String,
             master: {
               type: Boolean,
               value: true,
