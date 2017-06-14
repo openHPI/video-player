@@ -1,0 +1,15 @@
+language: node_js
+node_js: 'node'
+before_install: npm install -g bower
+install: npm install
+script: npm run bundle
+deploy:
+  provider: releases
+  api_key:
+    secure: "Ygemy7UXYZYq+PW2T8fuzWWgIqHmiq8jmr1Md4mxiLymE19ODtUzZsZTDNVUqbvXFtfCEXo6uEBIYT9Y1Uiz/GjrTMBZJxumyk6yT+uqE97gD6uPDw4NuWFWtuVf8ifUWXt6ZqmBMevGado6t5m2WUd/lKSbC1REU1ySWAIRoPxzDTyJC9/XqIREjjyrXXoUo2T3t/3fRgXCwVGCet4RTyX6xAfNoqhDuJ4HAnmHDQUOGOgD+qlczn9etmBi9LjarSNdYF+fds7GQxu4IuUEYjI2YLGA/HqxcnI7OKuVJpl+AMTP3zWv+jQKfRRum2RiPI/6W9DgM8NoIS1J3PwVCIBKafyoh/YS0XcXUt+1mc/Q7k9eIfk5x72L08BPT2dB9IQM0+vRLOvdcW3rqoQ6/HF9bbCe9sZubBGP5IN/85LI2QaoirFXmr5FHj/wfoB/b/1wExgk3/roVow/y8pG3CSeJxUQxq4y4639tg00UY1j3y0NIS0e8ZNR9709sIe1F4A9puJcZEPUTr4xq0eVt4B9yA6P1frHoxAEmiTNNsuAfuzFYbWy3mDlPaYRsyel8HW6PX768ruGrMbvQAdP+BvR6bQtsW8aCmY2RIzE3a8DTXTFeCvcQ00FBxAulySJkama1mYs5me09cYFNDP4XUkVoMAo7/HbMKaz3U4wIZE="
+  file_glob: true
+  file: dist/*
+  skip_cleanup: true
+  on:
+    repo: openHPI/videoplayer
+    branch: releases
