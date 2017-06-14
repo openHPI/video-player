@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/imd/imd.html">
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 
+<link rel="import" href="3rd-imports/hls-js.html">
 <link rel="import" href="base-element.html">
 <link rel="import" href="3rd-imports/font-awesome.html">
 <link rel="import" href="services/state-manager.html">
@@ -52,22 +53,32 @@
           <video-stream
             state="{{state}}"
             state-manager="{{stateManager}}"
-            url="{{item}}"
+            urls="{{item}}"
             master="{{equals(index, 0)}}"
             class="video-stream"
-            style$="height: calc(100% / {{rowCount(configuration.streams)}});"></video-stream>
+            style$="height: calc(100% / {{rowCount(configuration.streams)}});">
+          </video-stream>
         </template>
       </div>
-      <control-bar state="{{state}}" state-manager="{{stateManager}}" has-chapters="{{hasChapters}}"></control-bar>
+      <control-bar
+        state="{{state}}"
+        state-manager="{{stateManager}}"
+        has-chapters="{{hasChapters}}"
+        available-qualities="{{availableQualities}}">
+      </control-bar>
       <template is="dom-if" if="{{state.isChapterListShown}}">
-        <chapter-list state="{{state}}" state-manager="{{stateManager}}" chapters="{{configuration.chapters}}"></chapter-list>
+        <chapter-list
+          state="{{state}}"
+          state-manager="{{stateManager}}"
+          chapters="{{configuration.chapters}}">
+        </chapter-list>
       </template>
     </div>
   </template>
 
   <script>
-    define('video-player', ['base-element', 'state-manager', 'fullscreen-manager'], (BaseElement, StateManager, FullscreenManager) => {
-      const PLAYING_EVENT_NAME = 'videoPlaying';
+    define(['base-element', 'state-manager', 'fullscreen-manager', 'hls-js', 'constants'], (BaseElement, StateManager, FullscreenManager, Hls, constants) => {
+      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME} = constants;
 
       class VideoPlayer extends BaseElement {
         static get is() { return 'video-player'; }
@@ -87,6 +98,10 @@
             },
             stateManager: Object,
             fullscreenManager: Object,
+            availableQualities: {
+              type: Array,
+              computed: '_availableQualities(configuration.streams)',
+            },
             hasChapters: {
               type: Boolean,
               computed: '_hasChapters(configuration.chapters)',
@@ -96,6 +111,8 @@
 
         static get observers() {
           return [
+            'configurationChanged(configuration)',
+            'availableQualitiesChanged(availableQualities, stateManager)',
             'primaryColorChanged(configuration.primaryColor)',
             'secondaryColorChanged(configuration.secondaryColor)',
             'backgoundColorForPrimaryChanged(configuration.backgoundColorForPrimary)',
@@ -107,19 +124,10 @@
         ready() {
           super.ready();
 
-          // Initialize state and StateManager
-          const defaultState = {
-            playState: StateManager.PLAY_STATES.PAUSED,
-            position: 0,
-            duration: 0,
-            playbackRate: 1.0,
-            volume: 1.0,
-            muted: false,
-            fullscreen: false,
-            isChapterListShown: false,
-          };
-          const initialState = this.configuration.initialState || {};
-          this.state = Object.assign(defaultState, initialState);
+          // Build state from provided intial state configuration and default values
+          this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState);
+
+          // Initialize StateManager
           this.stateManager = new StateManager(this, 'state');
 
           // Initialize FullscreenManager
@@ -137,14 +145,35 @@
           });
         }
 
+        reloadConfiguration() {
+          // Clone configuration to reevaluate all observers
+          this.configuration = Object.assign({}, this.configuration);
+        }
+
+        configurationChanged(configuration) {
+          // Fill missing properties in provided configuration with default values
+          if(Object.keys(DEFAULT_CONFIGURATION).filter(x => !Object.keys(configuration).includes(x)).length > 0) {
+            this.configuration = Object.assign({}, DEFAULT_CONFIGURATION, configuration);
+          }
+        }
+
+        availableQualitiesChanged(availableQualities) {
+          // If not all streams are available in the specified quality, use default one that is available for all streams
+          if(this.stateManager && !availableQualities.includes(this.state.quality)) {
+            let defaultQuality = Object.values(QUALITY_MODES)
+                                       .find(quality => availableQualities.includes(quality));
+            this.stateManager.setQuality(defaultQuality);
+          }
+        }
+
         playStateChanged(playState) {
           // Dispatch event if video is playing to stop playback on other instances
-          if(playState === StateManager.PLAY_STATES.PLAYING) {
+          if(playState === PLAY_STATES.PLAYING) {
             let event = new CustomEvent(PLAYING_EVENT_NAME, {
-               detail: {
-                 sender: this
-               }
-             });
+              detail: {
+                sender: this,
+              },
+            });
 
             window.dispatchEvent(event);
           }
@@ -160,12 +189,25 @@
           }
         }
 
-        rowCount(streams) {
-          return Math.ceil(streams.length/2);
+        _availableQualities(streams) {
+          if (streams) {
+            let supportedQualities = Object.values(QUALITY_MODES);
+            if(!Hls.isSupported()) {
+              supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
+            }
+
+            return supportedQualities
+                     .filter(quality => streams.every(stream => Object.keys(stream)
+                                                                      .includes(quality)));
+          }
         }
 
         _hasChapters() {
           return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
+        }
+
+        rowCount(streams) {
+          return Math.ceil(streams.length/2);
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.

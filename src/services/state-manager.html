@@ -1,5 +1,9 @@
+<link rel="import" href="../constants.html">
+
 <script>
-  define('state-manager', () => {
+  define('state-manager', ['constants'], (constants) => {
+    const {PLAY_STATES, PLAYBACK_RATES, QUALITY_MODES} = constants;
+
     class StateManager {
       /**
        * Initializes a new StateManager instance.
@@ -11,26 +15,6 @@
         this.videoPlayer = videoPlayer;
         this.statePath = statePath;
       }
-
-      /**
-       * Contains the supported playback rates sorted ascending.
-       * @type {number[]}
-       */
-      static get PLAYBACK_RATES() {
-        return [0.7, 1.0, 1.3, 1.5, 1.8, 2.0];
-      }
-
-      /**
-       * Contains the different play states.
-       * @type {Object.<string, string>}
-       */
-      static get PLAY_STATES() {
-        return {
-          PLAYING: 'PLAYING',
-          PAUSED: 'PAUSED',
-        };
-      }
-
 
       /**
        * Gets the state object of the attatched VideoPlayer.
@@ -56,7 +40,7 @@
        * @returns {void}
        */
       play() {
-        this.setState('playState', StateManager.PLAY_STATES.PLAYING);
+        this.setState('playState', PLAY_STATES.PLAYING);
       }
 
       /**
@@ -64,7 +48,7 @@
        * @returns {void}
        */
       pause() {
-        this.setState('playState', StateManager.PLAY_STATES.PAUSED);
+        this.setState('playState', PLAY_STATES.PAUSED);
       }
 
       /**
@@ -72,7 +56,7 @@
        * @returns {void}
        */
       togglePlayPause() {
-        if(this.state.playState === StateManager.PLAY_STATES.PLAYING) {
+        if(this.state.playState === PLAY_STATES.PLAYING) {
           this.pause();
         } else {
           this.play();
@@ -113,22 +97,12 @@
        * @returns {void}
        */
       setPlaybackRate(playbackRate) {
-        if(!StateManager.PLAYBACK_RATES.includes(playbackRate)) {
-          throw new RangeError(`Value must be in [${StateManager.PLAYBACK_RATES.toString()}].`);
+        if(!PLAYBACK_RATES.includes(playbackRate)) {
+          throw new RangeError(`Value must be in [${PLAYBACK_RATES.toString()}].`);
         }
 
         this.setState('playbackRate', playbackRate);
       }
-
-      /**
-       * Switches playback rate in ascending order.
-       * @returns {void}
-       */
-      switchPlaybackRate() {
-        let newIndex = (StateManager.PLAYBACK_RATES.indexOf(this.state.playbackRate) + 1) % StateManager.PLAYBACK_RATES.length;
-        this.setPlaybackRate(StateManager.PLAYBACK_RATES[newIndex]);
-      }
-
 
       /**
        * Toggles the muting.
@@ -172,6 +146,20 @@
         // e.g. mute button icon and sound-control-bar
         this.unmute();
         this.setState('volume', volume);
+      }
+
+
+      /**
+       * Sets the quality.
+       * @param {string} quality The new quality.
+       * @returns {void}
+       */
+      setQuality(quality) {
+        if(!Object.values(QUALITY_MODES).includes(quality)) {
+          throw new RangeError(`Value must be in [${Object.values(QUALITY_MODES).toString()}].`);
+        }
+
+        this.setState('quality', quality);
       }
 
 

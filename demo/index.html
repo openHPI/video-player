@@ -13,8 +13,14 @@
     <video-player
      configuration='{
         "streams" : [
-          "http://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_13_02/video.mp4",
-          "http://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_13_02/desktop.mp4"
+          {
+            "hd": "http://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_13_02/video.mp4",
+            "sd": "http://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_13_02/desktop.mp4"
+          },
+          {
+            "hd": "http://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_13_02/desktop.mp4",
+            "sd": "http://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_13_02/video.mp4"
+          }
         ],
         "primaryColor" : "#FFFFFF",
         "secondaryColor" : "#DD6112",
