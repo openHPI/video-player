@@ -111,6 +111,8 @@
 
         static get observers() {
           return [
+            'configurationChanged(configuration)',
+            'availableQualitiesChanged(availableQualities, stateManager)',
             'primaryColorChanged(configuration.primaryColor)',
             'secondaryColorChanged(configuration.secondaryColor)',
             'backgoundColorForPrimaryChanged(configuration.backgoundColorForPrimary)',
@@ -122,19 +124,11 @@
         ready() {
           super.ready();
 
-          // Fill missing properties in provided state and configuration with default values
-          this.configuration = Object.assign({}, DEFAULT_CONFIGURATION, this.configuration);
+          // Build state from provided intial state configuration and default values
           this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState);
 
           // Initialize StateManager
           this.stateManager = new StateManager(this, 'state');
-
-          // If not all streams are available in the specified quality, use default one that is available for all streams
-          if(!this.availableQualities.includes(this.state.quality)) {
-            let defaultQuality = Object.values(QUALITY_MODES)
-                                       .find(quality => this.availableQualities.includes(quality));
-            this.stateManager.setQuality(defaultQuality);
-          }
 
           // Initialize FullscreenManager
           this.fullscreenManager = new FullscreenManager(this.$['video-player-container']);
@@ -149,6 +143,27 @@
               this.stateManager.pause();
             }
           });
+        }
+
+        reloadConfiguration() {
+          // Clone configuration to reevaluate all observers
+          this.configuration = Object.assign({}, this.configuration);
+        }
+
+        configurationChanged(configuration) {
+          // Fill missing properties in provided configuration with default values
+          if(Object.keys(DEFAULT_CONFIGURATION).filter(x => !Object.keys(configuration).includes(x)).length > 0) {
+            this.configuration = Object.assign({}, DEFAULT_CONFIGURATION, configuration);
+          }
+        }
+
+        availableQualitiesChanged(availableQualities) {
+          // If not all streams are available in the specified quality, use default one that is available for all streams
+          if(this.stateManager && !availableQualities.includes(this.state.quality)) {
+            let defaultQuality = Object.values(QUALITY_MODES)
+                                       .find(quality => availableQualities.includes(quality));
+            this.stateManager.setQuality(defaultQuality);
+          }
         }
 
         playStateChanged(playState) {
@@ -175,14 +190,16 @@
         }
 
         _availableQualities(streams) {
-          let supportedQualities = Object.values(QUALITY_MODES);
-          if(!Hls.isSupported()) {
-            supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
-          }
+          if (streams) {
+            let supportedQualities = Object.values(QUALITY_MODES);
+            if(!Hls.isSupported()) {
+              supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
+            }
 
-          return supportedQualities
-                   .filter(quality => streams.every(stream => Object.keys(stream)
-                                                                    .includes(quality)));
+            return supportedQualities
+                     .filter(quality => streams.every(stream => Object.keys(stream)
+                                                                      .includes(quality)));
+          }
         }
 
         _hasChapters() {
