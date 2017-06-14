@@ -42,7 +42,11 @@
             seconds2 = '0' + seconds2;
           }
 
-          return hours + ':' + minutes + ':' + seconds2;
+          if(hours === 0) {
+            return minutes + ':' + seconds2;
+          } else {
+            return hours + ':' + minutes + ':' + seconds2;
+          }
         }
       }
 
