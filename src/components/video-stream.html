@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
 
 <link rel="import" href="../base-element.html">
+<!--link rel="import" href="track-element.html"-->
 
 <dom-module id="video-stream">
   <template>
@@ -23,18 +24,9 @@
         on-click="handleClick"
         on-loadedmetadata="handleLoadedMetadata"
         on-timeupdate="handleTimeUpdate">
-       
-
-
-        <template is="dom-if" if="{{captions}}">
-          <template is="dom-if" if="{{master}}">
-             <track src="/home/mkonrad/Desktop/videoplayer/demo/captions/subtitles_en.vtt" kind="subtitles" srclang="en" label="English">
-          </template> 
-        </template>
-
-
-
-
+        <template is="dom-repeat" items="{{captions}}">
+          <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English">
+        </template>  
       </video>
     </div>
   </template>
@@ -49,6 +41,7 @@
             state: Object,
             stateManager: Object,
             url: String,
+            mode: String,
             captions: {
               type: Object,
               value: () => ({})
@@ -67,6 +60,7 @@
             'playbackRateChanged(state.playbackRate)',
             'volumeChanged(state.volume)',
             'mutedChanged(state.muted)',
+            'captionsToggled(state.showCaptions)'
           ];
         }
         handleTimeUpdate() {
@@ -109,6 +103,14 @@
 
         mutedChanged(muted) {
           this.$.video.muted = muted;
+        }
+
+        captionsToggled(captions) {
+          Polymer.RenderStatus.afterNextRender(this, function() {
+            if(this.master){
+              this.state.showCaptions ? this.$.video.textTracks[0].mode = "showing" : this.$.video.textTracks[0].mode = "hidden";
+            }
+          });
         }
       }
 

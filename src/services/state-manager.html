@@ -199,6 +199,18 @@
       toggleIsChapterListShown() {
         this.setState('isChapterListShown', !this.state.isChapterListShown);
       }
+
+      /**
+       * En/Disables captions.
+       * @returns {void}
+       */
+      toggleCaptions() {
+        if(this.state.showCaptions) {
+          this.setState('showCaptions', false);
+        } else {
+          this.setState('showCaptions', true);
+        }
+      }
     }
 
     return StateManager;

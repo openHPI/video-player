@@ -9,6 +9,7 @@
 <link rel="import" href="speed-control.html">
 <link rel="import" href="mute-control.html">
 <link rel="import" href="fullscreen-control.html">
+<link rel="import" href="caption-control.html">
 
 <dom-module id="control-bar">
   <template>
@@ -26,6 +27,9 @@
       <playpause-control state="{{state}}" state-manager="{{stateManager}}"></playpause-control>
       <progress-bar state="{{state}}" state-manager="{{stateManager}}"></progress-bar>
       <videotime-display state="{{state}}" state-manager="{{stateManager}}"></videotime-display>
+      <template is="dom-if" if="{{hasCaptions}}">
+        <caption-control state="{{state}}" state-manager="{{stateManager}}"></caption-control>
+      </template>
       <speed-control state="{{state}}" state-manager="{{stateManager}}"></speed-control>
       <template is="dom-if" if="{{hasChapters}}">
         <chapter-list-switch state="{{state}}" state-manager="{{stateManager}}"></chapter-list-switch>
@@ -46,6 +50,7 @@
             state: Object,
             stateManager: Object,
             hasChapters: Boolean,
+            hasCaptions: Boolean,
           };
         }
 

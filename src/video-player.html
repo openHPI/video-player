@@ -44,26 +44,37 @@
       .video-stream {
         flex: 1 1 50%;
       }
+      #topbox {
+        position: absolute;
+        top: 80px;
+        right: 0;
+        width: 800px;
+        height: 400px;
+        border: 3px solid #73AD21;
+      }
     </style>
 
-    <div id="video-player-container">
-      <div id="streams-container">
-        <template is="dom-repeat" items="{{configuration.streams}}">
-          <video-stream
-            state="{{state}}"
-            state-manager="{{stateManager}}"
-            url="{{item}}"
-            master="{{equals(index, 0)}}"
-            class="video-stream"
-            captions="{{configuration.captions}}"
-            style$="height: calc(100% / {{rowCount(configuration.streams)}});"></video-stream>
+    <div id="topbox">
+      <div id="video-player-container">
+        <div id="streams-container">
+          <template is="dom-repeat" items="{{configuration.streams}}">
+            <video-stream
+              state="{{state}}"
+              state-manager="{{stateManager}}"
+              url="{{item}}"
+              master="{{equals(index, 0)}}"
+              class="video-stream"
+              captions="{{configuration.captions}}"
+              style$="height: calc(100% / {{rowCount(configuration.streams)}});"></video-stream>
+          </template>
+        </div>
+        <control-bar state="{{state}}" state-manager="{{stateManager}}" has-chapters="{{hasChapters}}" has-captions="{{hasCaptions}}"></control-bar>
+        <template is="dom-if" if="{{state.isChapterListShown}}">
+          <chapter-list state="{{state}}" state-manager="{{stateManager}}" chapters="{{configuration.chapters}}"></chapter-list>
         </template>
       </div>
-      <control-bar state="{{state}}" state-manager="{{stateManager}}" has-chapters="{{hasChapters}}"></control-bar>
-      <template is="dom-if" if="{{state.isChapterListShown}}">
-        <chapter-list state="{{state}}" state-manager="{{stateManager}}" chapters="{{configuration.chapters}}"></chapter-list>
-      </template>
     </div>
+
   </template>
 
   <script>
@@ -92,6 +103,10 @@
               type: Boolean,
               computed: '_hasChapters(configuration.chapters)',
             },
+            hasCaptions: {
+              type: Boolean,
+              computed: '_hasCaptions(configuration.captions)',
+            },
           };
         }
 
@@ -118,6 +133,7 @@
             muted: false,
             fullscreen: false,
             isChapterListShown: false,
+            showCaptions: false,
           };
           const initialState = this.configuration.initialState || {};
           this.state = Object.assign(defaultState, initialState);
@@ -167,6 +183,10 @@
 
         _hasChapters() {
           return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
+        }
+
+        _hasCaptions() {
+          return this.configuration && this.configuration.captions && this.configuration.captions.length !== 0;
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.

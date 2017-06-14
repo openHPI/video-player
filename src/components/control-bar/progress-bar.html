@@ -35,8 +35,9 @@
         }
 
         handleClick(e) {
-          // Get x value by substracting offsetleft of progress-bar
-          let x = e.pageX - this.$.progress__bar.offsetLeft;
+          // Get x value by substracting offsetleft of progress-bar to entire site
+          //let x = e.pageX - this.$.progress__bar.offsetLeft;
+          let x = e.pageX - this.$.progress__bar.getBoundingClientRect().left;
           // Calculate value that will be between 0 and the max value (duration of video) -> exact moment of video
           let clickedValue = x * this.$.progress__bar.max / this.$.progress__bar.offsetWidth;
           // Check if still within borders
