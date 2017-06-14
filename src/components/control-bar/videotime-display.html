@@ -10,7 +10,7 @@
     </style>
 
     <div id="container__videotime_display" class="user_controls">
-      [[secondsToHms(state.position)]]
+      [[secondsToHms(state.position, state.duration)]]/[[secondsToHms(state.duration, state.duration)]]
     </div>
   </template>
 
@@ -26,7 +26,7 @@
           };
         }
 
-        secondsToHms(position) {
+        secondsToHms(position, duration) {
           let seconds = Number(position);
           let hours = Math.floor(seconds / 3600);
           let minutes = Math.floor(seconds % 3600 / 60);
@@ -42,10 +42,10 @@
             seconds2 = '0' + seconds2;
           }
 
-          if(hours === 0) {
-            return minutes + ':' + seconds2;
-          } else {
+          if(duration > 3600) {
             return hours + ':' + minutes + ':' + seconds2;
+          } else {
+            return minutes + ':' + seconds2;
           }
         }
       }
