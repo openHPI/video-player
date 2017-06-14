@@ -21,7 +21,7 @@
       <video
         id="video"
         preload="auto"
-        poster="[[urls.poster]]"
+        poster="[[ifThen(urls.poster, urls.poster)]]"
         on-click="handleClick"
         on-canplay="handleCanPlay"
         on-loadedmetadata="handleLoadedMetadata"
