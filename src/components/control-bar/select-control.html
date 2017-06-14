@@ -7,23 +7,54 @@
 
   <template>
     <style type="text/css" include="control-bar--style-module">
+      .dropdown {
+        position: relative;
+      }
+      .dropdown-content {
+        position: absolute;
+        /* Equals control bar height. This is set to assure that the dropdown opens to the top. */
+        bottom: 45px;
+        /* Cancel out the padding */ 
+        left: -10px;
+
+        background-color: #424242;
+        background-color: var(--background-color-for-primary);
+        color: #FFFFFF;
+        color: var(--primary-color);
+      }
+      .dropdown-content a {
+        line-height: 2;
+        padding: 7px 10px;
+        cursor: pointer;
+      }      
+      .dropdown-content a:hover {
+        background-color: grey;
+      }     
+      .dropdown-content a.selected {
+        background-color: grey;
+      }
     </style>
 
     <div id="container__select_control" class="user_controls">
       <!-- Show control as binary switch if there are only 2 values to choose from. -->
       <template is="dom-if" if="{{binarySelection}}">
-        <a id="button__select" class="button" on-click="handleButtonClick">
+        <a id="button__select" class="button" on-click="handleBinaryButtonClick">
           [[formatter(selectedValue)]]
         </a>
       </template>
 
       <!-- Show control as dropdown if there are more than 2 values to choose from. -->
       <template is="dom-if" if="{{!binarySelection}}">
-        <select id="select__select" on-change="handleSelectionChanged">
-          <template is="dom-repeat" items="[[values]]">
-            <option value="[[item]]" selected="{{equals(item, selectedValue)}}">[[formatter(item)]]</option>
-          </template>
-        </select>
+        <div class="dropdown">
+          <a id="button__select" class="button" on-click="handleMultipleButtonClick">
+            [[formatter(selectedValue)]]
+          </a>
+          <div id="dropdown__select" class="dropdown-content" style$="display: [[ifThenElse(isDropDownOpen, 'initial;', 'none;')]]"> 
+            <template is="dom-repeat" items="[[values]]">
+              <a on-click="handleSelectionChanged" class$="[[ifEqualsThen(item, selectedValue, 'selected')]]">[[formatter(item)]]</a>
+            </template>
+          </div>
+        </div>
       </template>
     </div>
   </template>
@@ -48,6 +79,10 @@
               type: Boolean,
               computed: '_binarySelection(values)',
             },
+            isDropDownOpen: {
+              type: Boolean,
+              value: false
+            }
           };
         }
 
@@ -55,23 +90,24 @@
           return this.values && this.values.length === 2;
         }
 
-        handleButtonClick() {
+        handleBinaryButtonClick() {
           let index = (this.values.indexOf(this.selectedValue) + 1) % this.selectedValue.length;
           this.setSelectedValue(this.values[index]);
         }
 
+        handleMultipleButtonClick() {
+          this.isDropDownOpen = !this.isDropDownOpen;
+        }
+
         handleSelectionChanged(e) {
-          // Since select element converts values to string, find the value,
-          // whose string matches the value of the select element to ensure the
-          // correct type.
-          let selectedValue = this.values.find(x => x.toString() === e.target.value);
-          this.setSelectedValue(selectedValue);
+          this.setSelectedValue(e.model.item);
+          this.isDropDownOpen = false;
         }
 
         setSelectedValue(value) {
           this.selectedValue = value;
           this.dispatchEvent(new CustomEvent('change'));
-        }
+        } 
       }
 
       window.customElements.define(SelectControl.is, SelectControl);
