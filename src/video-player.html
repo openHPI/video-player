@@ -115,7 +115,7 @@
             'availableQualitiesChanged(availableQualities, stateManager)',
             'primaryColorChanged(configuration.primaryColor)',
             'secondaryColorChanged(configuration.secondaryColor)',
-            'backgoundColorForPrimaryChanged(configuration.backgoundColorForPrimary)',
+            'backgroundColorForPrimaryChanged(configuration.backgroundColorForPrimary)',
             'playStateChanged(state.playState)',
             'fullscreenChanged(state.fullscreen)',
           ];
@@ -218,8 +218,8 @@
         secondaryColorChanged(secondaryColor) {
           this.style.setProperty('--secondary-color', secondaryColor);
         }
-        backgoundColorForPrimaryChanged(backgoundColorForPrimary) {
-          this.style.setProperty('--background-color-for-primary', backgoundColorForPrimary);
+        backgroundColorForPrimaryChanged(backgroundColorForPrimary) {
+          this.style.setProperty('--background-color-for-primary', backgroundColorForPrimary);
         }
       }
 
