@@ -51,7 +51,6 @@
     "gulp-if": "^2.0.2",
     "gulp-ignore": "^2.0.2",
     "gulp-uglify": "^3.0.0",
-    "gulp-uncomment": "^0.3.0",
     "htmlhint": "^0.9.13",
     "polymer-build": "^1.5.1",
     "polymer-cli": "^1.2.0",
