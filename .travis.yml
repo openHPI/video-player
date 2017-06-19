@@ -1,8 +1,5 @@
 language: node_js
 node_js: node
-branches:
-  only:
-  - releases
 before_install: npm install -g bower cross-zip-cli
 install: npm install
 script: npm run bundle
