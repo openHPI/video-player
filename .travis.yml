@@ -5,12 +5,13 @@ brnaches:
     - master
     - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
 env: 
-  - DIST_NAME=$($(git rev-parse --show-toplevel)-$(git describe --abbrev=0 --tags))
+  - DIST_NAME=$(basename $(git rev-parse --show-toplevel)-$(git describe --abbrev=0 --tags))
 before_install: npm install -g bower cross-zip-cli
 install: npm install
 script: 
   - npm run bundle
   - cross-zip dist $DIST_NAME.zip
+  - echo $DIST_NAME
 deploy:
   provider: releases
   api_key:
