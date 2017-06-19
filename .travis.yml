@@ -2,8 +2,9 @@ language: node_js
 node_js: node
 before_install: npm install -g bower cross-zip-cli
 install: npm install
-script: npm run bundle
-after_script: cross-zip $TRAVIS_BUILD_DIR/dist $TRAVIS_BUILD_DIR/dist.zip
+script: 
+  - npm run bundle
+  - cross-zip $TRAVIS_BUILD_DIR/dist $TRAVIS_BUILD_DIR/dist.zip
 deploy:
   provider: releases
   api_key:
