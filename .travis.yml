@@ -7,7 +7,7 @@ before_install: npm install -g bower cross-zip-cli
 install: npm install
 script: 
   - npm run bundle
-  - cross-zip $TRAVIS_BUILD_DIR/dist $TRAVIS_BUILD_DIR/dist.zip
+  - cross-zip $TRAVIS_BUILD_DIR/dist $TRAVIS_BUILD_DIR/$(basename $(git rev-parse --show-toplevel)-$(git describe --abbrev=0 --tags)).zip
 deploy:
   provider: releases
   api_key:
