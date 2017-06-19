@@ -60,6 +60,7 @@
     "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html",
     "postinstall": "bower install",
     "serve": "polymer serve",
-    "bundle": "gulp bundle"
+    "bundle": "gulp bundle",
+    "deploy": "./deploy.sh"
   }
 }
