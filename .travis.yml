@@ -1,9 +1,9 @@
 language: node_js
 node_js: node
-brnaches:
+branches:
   only: 
-    - master
-    - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+  - master
+  - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
 env: 
   - DIST_NAME=$(basename $(git rev-parse --show-toplevel)-$(git describe --abbrev=0 --tags))
 before_install: npm install -g bower cross-zip-cli
