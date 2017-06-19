@@ -3,11 +3,14 @@ node_js: node
 brnaches:
   only: 
   - master
+  - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+env: 
+  - DIST_NAME=$(git rev-parse --show-toplevel)-$(git describe --abbrev=0 --tags))
 before_install: npm install -g bower cross-zip-cli
 install: npm install
 script: 
   - npm run bundle
-  - cross-zip $TRAVIS_BUILD_DIR/dist $TRAVIS_BUILD_DIR/$(basename $(git rev-parse --show-toplevel)-$(git describe --abbrev=0 --tags)).zip
+  - cross-zip $TRAVIS_BUILD_DIR/dist $TRAVIS_BUILD_DIR/$DIST_NAME.zip
 deploy:
   provider: releases
   api_key:
@@ -17,4 +20,3 @@ deploy:
   on:
     repo: openHPI/videoplayer
     tags: true
-    all_branches: true
