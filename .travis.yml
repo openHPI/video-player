@@ -16,3 +16,4 @@ deploy:
   on:
     repo: openHPI/videoplayer
     tags: true
+    all_branches: true
