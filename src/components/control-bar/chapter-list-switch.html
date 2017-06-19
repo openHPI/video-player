@@ -16,13 +16,10 @@
       #button__chapter_list i {
         font-size: 1.5rem;
       }
-      #button__chapter_list.active {
-        border: 1px solid yellow;
-      }
     </style>
 
     <div id="container__chapter_list_switch" class="user_controls">
-      <a id="button__chapter_list" class$="button [[ifThen(state.isChapterListShown, 'active')]]" on-click="handleClick">
+      <a id="button__chapter_list" class$="button [[ifThenElse(state.isChapterListShown, '', 'inactive')]]" on-click="handleClick">
         <i class="fa fa-list"></i>
       </a>
     </div>
