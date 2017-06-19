@@ -10,13 +10,13 @@ before_install: npm install -g bower cross-zip-cli
 install: npm install
 script: 
   - npm run bundle
-  - cross-zip $TRAVIS_BUILD_DIR/dist $TRAVIS_BUILD_DIR/$DIST_NAME.zip
+  - cross-zip dist $$DIST_NAME.zip
 deploy:
   provider: releases
   api_key:
     secure: PGi29wD0hxjnYvMi3DJA5cR/dXztb407yvq1ggKq9vAp0HX+nC4mYptjjRBlddWNBfO6d4XGtuCWgBZ46uLjE7yZW/h6e/OCUhmR05ddzBE6lXect22RfEOl4hoABWNGSXzpI8rzzQkgJ0lLBB/R6qTIQczuPLzqgf45QHw1nX9mY4lYlbGTGimLD0Jt3jJDG/uOP3wLXMNCEqAJ0NQ80X2Ydy/KYiOhcxiZTZa8iybtle4Bl4Ks9GNWJaOWwr2vaG4nKFnmEBCoq42ECz87u6P2c1asNv5560JF4oj59wHBnXIDPfr5uJRwxbIpFqRgLuskqHCde68xdNMD0jlss4U1QJ5DGoWPdGcyys9wXWOmCR0JYIB5rzUce3xVdkUKHnEf9K1u8ULxdA++aTzxAxbHrtYNLXedzlCNcLifHDRV1MwQiBCu4rDRuWZvLH4+FQ1su7oj6CMFLKoT8vafUGY/9M9pmFa+ZGTm3h3pMccRk8GV03fH1fIPsX3ScLNgCov7+n9hajIsVsLCl3d8+6omN43ikbH5tJopy3tSAC4gu4wdAwZbRn7cq1EjbGrn5AIZbQQPFwMO3IX5IXAfCbP1pwi+qFMLUOPijEtU39HYXzJ4lgebdNBI7IRcHIm9ihCDG32MBg5xSejc1aYM/QXt2VaocEada5W8xTqsERA=
   skip_cleanup: true
-  file: $TRAVIS_BUILD_DIR/dist.zip
+  file: $DIST_NAME.zip
   on:
     repo: openHPI/videoplayer
     tags: true
