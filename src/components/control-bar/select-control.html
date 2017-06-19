@@ -16,6 +16,7 @@
         bottom: 45px;
         /* Cancel out the padding */
         left: -10px;
+        right: -10px;
 
         background-color: #424242;
         background-color: var(--background-color-for-primary);
@@ -23,9 +24,11 @@
         color: var(--primary-color);
       }
       .dropdown-content a {
+        display: inline-block;
         line-height: 2;
-        padding: 7px 10px;
         cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .open #button__select {
         cursor: default;
