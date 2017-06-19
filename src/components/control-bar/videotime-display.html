@@ -1,51 +1,57 @@
-<link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../styling/control-bar--style-module.html'>
+<link rel="import" href="../../../bower_components/imd/imd.html">
 
-<dom-module id='videotime-display'>
+<link rel="import" href="../../base-element.html">
+<link rel="import" href="../styling/control-bar--style-module.html">
+
+<dom-module id="videotime-display">
 
   <template>
-    <style type='text/css' include="control-bar--style-module">
+    <style type="text/css" include="control-bar--style-module">
     </style>
 
     <div id="container__videotime_display" class="user_controls">
-      [[_secondsToHms(state.position)]]
+      [[secondsToHms(state.position, state.duration)]]/[[secondsToHms(state.duration, state.duration)]]
     </div>
   </template>
 
   <script>
-    class VideoTimeDisplay extends Polymer.Element {
-      static get is() { return 'videotime-display'; }
+    define('videotime-display', ['base-element'], (BaseElement) => {
+      class VideoTimeDisplay extends BaseElement {
+        static get is() { return 'videotime-display'; }
 
-      static get properties() {
-        return {
-          state: {
-            type: Object
-          },
-          stateManager: {
-            type: Object
+        static get properties() {
+          return {
+            state: Object,
+            stateManager: Object,
+          };
+        }
+
+        secondsToHms(position, duration) {
+          let seconds = Number(position);
+          let hours = Math.floor(seconds / 3600);
+          let minutes = Math.floor(seconds % 3600 / 60);
+          let seconds2 = Math.floor(seconds % 3600 % 60);
+
+          if(hours < 10) {
+            hours = '0' + hours;
           }
-        };
+          if(minutes < 10) {
+            minutes = '0' + minutes;
+          }
+          if(seconds2 < 10) {
+            seconds2 = '0' + seconds2;
+          }
+
+          if(duration > 3600) {
+            return hours + ':' + minutes + ':' + seconds2;
+          } else {
+            return minutes + ':' + seconds2;
+          }
+        }
       }
 
-      ready() {
-        super.ready();
-      }
-
-      _secondsToHms(position) {
-        var seconds   = Number(position);
-        var hours     = Math.floor(seconds / 3600);
-        var minutes   = Math.floor(seconds % 3600 / 60);
-        var seconds2  = Math.floor(seconds % 3600 % 60);
-
-        if(hours < 10){hours = "0" + hours;}
-        if(minutes < 10){minutes = "0" + minutes;}
-        if(seconds2 < 10){seconds2 = "0" + seconds2;}
-
-        return hours + ":" + minutes + ":" + seconds2;
-      }
-    }
-
-    window.customElements.define(VideoTimeDisplay.is, VideoTimeDisplay);
+      window.customElements.define(VideoTimeDisplay.is, VideoTimeDisplay);
+    });
   </script>
 
 </dom-module>

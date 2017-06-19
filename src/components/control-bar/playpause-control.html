@@ -1,11 +1,13 @@
-<link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='../styling/control-bar--style-module.html'>
+<link rel="import" href="../../../bower_components/imd/imd.html">
 
-<dom-module id='playpause-control'>
-  <link rel='import' type='css' href='../../../../components-font-awesome/css/font-awesome.min.css'>
+<link rel="import" href="../../base-element.html">
+<link rel="import" href="../styling/control-bar--style-module.html">
+
+<dom-module id="playpause-control">
+  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
 
   <template>
-    <style type='text/css' include="control-bar--style-module">
+    <style type="text/css" include="control-bar--style-module">
       :host {
         /* Avoid flickering with changing icons */
         /* It should be about twice the icon size */
@@ -17,45 +19,48 @@
     </style>
 
     <div id="container__play_pause_control" class="user_controls">
-      <a id='button__play_pause' class="button">
-        <template is="dom-if" if="[[_equals(state.playState, 'PLAYING')]]">
-          <i class="fa fa-pause">
-        </template>
-        <template is="dom-if" if="[[!_equals(state.playState, 'PLAYING')]]">
-          <i class="fa fa-play">
-        </template>
+      <a id="button__play_pause" class="button" on-click="handleClick">
+        <i class$="fa [[iconClass]]"></i>
       </a>
     </div>
   </template>
 
   <script>
-    class PlayPauseControl extends Polymer.Element {
-      static get is() { return 'playpause-control'; }
+    define('playpause-control', ['base-element', 'constants'], (BaseElement, constants) => {
+      const {PLAY_STATES} = constants;
 
-      static get properties() {
-        return {
-          state: {
-            type: Object
-          },
-          stateManager: {
-            type: Object
+      class PlayPauseControl extends BaseElement {
+        static get is() { return 'playpause-control'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            stateManager: Object,
+            iconClass: String,
+          };
+        }
+
+        static get observers() {
+          return [
+            'playStateChanged(state.playState)',
+          ];
+        }
+
+        playStateChanged(playState) {
+          if(playState === PLAY_STATES.PLAYING) {
+            this.iconClass = 'fa-pause';
+          } else if(playState === PLAY_STATES.PAUSED) {
+            this.iconClass = 'fa-play';
           }
-        };
+        }
+
+        handleClick() {
+          this.stateManager.togglePlayPause();
+        }
       }
 
-      ready() {
-        super.ready();
-
-        // Add event listeners
-        this.$.button__play_pause.addEventListener('click', () => this.stateManager.togglePlayPause());
-      }
-
-      _equals(a, b) {
-        return a === b;
-      }
-    }
-
-    window.customElements.define(PlayPauseControl.is, PlayPauseControl);
+      window.customElements.define(PlayPauseControl.is, PlayPauseControl);
+    });
   </script>
 
 </dom-module>

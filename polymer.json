@@ -12,6 +12,9 @@
   "lint": {
     "rules": [
       "polymer-2-hybrid"
+    ],
+    "ignoreWarnings": [
+      "unknown-superclass"
     ]
   }
 }

@@ -1,13 +1,17 @@
-<link rel='import' href='../../../../polymer/polymer-element.html'>
-<link rel='import' href='progress-bar.html'>
-<link rel='import' href='playpause-control.html'>
-<link rel='import' href='sound-control.html'>
-<link rel='import' href='videotime-display.html'>
-<link rel="import" href="speed-control.html">
-<link rel='import' href='mute-control.html'>
-<link rel='import' href='full-screen-control.html'>
+<link rel="import" href="../../../bower_components/imd/imd.html">
 
-<dom-module id='control-bar'>
+<link rel="import" href="../../base-element.html">
+<link rel="import" href="progress-bar.html">
+<link rel="import" href="playpause-control.html">
+<link rel="import" href="sound-control.html">
+<link rel="import" href="videotime-display.html">
+<link rel="import" href="speed-control.html">
+<link rel="import" href="chapter-list-switch.html">
+<link rel="import" href="quality-switch.html">
+<link rel="import" href="mute-control.html">
+<link rel="import" href="fullscreen-control.html">
+
+<dom-module id="control-bar">
   <template>
     <style type="text/css">
       #container__control_bar {
@@ -20,62 +24,76 @@
     </style>
 
     <div id="container__control_bar">
-      <playpause-control state='{{state}}' state-manager='{{stateManager}}'></playpause-control>
-      <progress-bar state='{{state}}' state-manager='{{stateManager}}'></progress-bar>
-      <videotime-display state='{{state}}' state-manager='{{stateManager}}'></videotime-display>
-      <speed-control state='{{state}}' state-manager='{{stateManager}}'></speed-control>
-      <mute-control state='{{state}}' state-manager='{{stateManager}}'></mute-control>
-      <sound-control state='{{state}}' state-manager='{{stateManager}}'></sound-control>
-      <full-screen-control state='{{state}}' state-manager='{{stateManager}}'></full-screen-control>
+      <playpause-control state="{{state}}" state-manager="{{stateManager}}"></playpause-control>
+      <progress-bar state="{{state}}" state-manager="{{stateManager}}"></progress-bar>
+      <videotime-display state="{{state}}" state-manager="{{stateManager}}"></videotime-display>
+      <speed-control state="{{state}}" state-manager="{{stateManager}}"></speed-control>
+      <template is="dom-if" if="{{hasMultipleQualities}}">
+        <quality-switch state="{{state}}" state-manager="{{stateManager}}" available-qualities="{{availableQualities}}"></quality-switch>
+      </template>
+      <template is="dom-if" if="{{hasChapters}}">
+        <chapter-list-switch state="{{state}}" state-manager="{{stateManager}}"></chapter-list-switch>
+      </template>
+      <mute-control state="{{state}}" state-manager="{{stateManager}}"></mute-control>
+      <sound-control state="{{state}}" state-manager="{{stateManager}}"></sound-control>
+      <full-screen-control state="{{state}}" state-manager="{{stateManager}}"></full-screen-control>
     </div>
   </template>
 
   <script>
-    class ControlBar extends Polymer.Element {
-      static get is() { return 'control-bar'; }
+    define('control-bar', ['base-element'], (BaseElement) => {
+      class ControlBar extends BaseElement {
+        static get is() { return 'control-bar'; }
 
-      static get properties() {
-        return {
-          state: {
-            type: Object
-          },
-          stateManager: {
-            type: Object
+        static get properties() {
+          return {
+            state: Object,
+            stateManager: Object,
+            hasChapters: Boolean,
+            availableQualities: Boolean,
+            hasMultipleQualities: {
+              type: Boolean,
+              computed: '_hasMultipleQualities(availableQualities)',
+            },
+          };
+        }
+
+        ready() {
+          super.ready();
+
+          window.addEventListener('keydown', this.onkeydown.bind(this));
+        }
+
+        onkeydown(e) {
+          if (e.defaultPrevented) {
+            // Do nothing if the event was already processed
+            return;
           }
-        };
-      }
 
-      ready() {
-        super.ready();
+          if(e.key === 'ArrowRight') {
+            this.stateManager.setPosition(this.state.position + 15);
+          } else if (e.key === 'ArrowLeft') {
+            this.stateManager.setPosition(this.state.position - 15);
+          } else if (e.key === ' ' || e.key === 'p') {
+            this.stateManager.togglePlayPause();
+          } else if (e.key === 'f') {
+            this.stateManager.toggleFullScreen();
+          } else {
+            return;
+          }
 
-        window.addEventListener('keydown', this._onkeydown.bind(this));
-      }
-
-      _onkeydown(e) {
-        if (e.defaultPrevented) {
-          // Do nothing if the event was already processed
-          return;
+          // Make sure the user doesn't trigger anything else with their
+          // keyboard interaction, like scrolling the page
+          e.preventDefault();
         }
 
-        if(e.key === 'ArrowRight') {
-          this.stateManager.setPosition(this.state.position + 15);
-        } else if (e.key === 'ArrowLeft') {
-          this.stateManager.setPosition(this.state.position - 15);
-        } else if (e.key === ' ') {
-          this.stateManager.togglePlayPause();
-        } else if (e.key === 'f') {
-          this.stateManager.toggleFullScreen();
-        } else {
-          return;
+        _hasMultipleQualities() {
+          return this.availableQualities.length > 1;
         }
-
-        // Make sure the user doesn't trigger anything else with their
-        // keyboard interaction, like scrolling the page
-        e.preventDefault();
       }
-    }
 
-    window.customElements.define(ControlBar.is, ControlBar);
+      window.customElements.define(ControlBar.is, ControlBar);
+    });
   </script>
 
 </dom-module>

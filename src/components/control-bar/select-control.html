@@ -1,0 +1,115 @@
+<link rel="import" href="../../../bower_components/imd/imd.html">
+
+<link rel="import" href="../../base-element.html">
+<link rel="import" href="../styling/control-bar--style-module.html">
+
+<dom-module id="select-control">
+
+  <template>
+    <style type="text/css" include="control-bar--style-module">
+      .dropdown {
+        position: relative;
+      }
+      .dropdown-content {
+        position: absolute;
+        /* Equals control bar height. This is set to assure that the dropdown opens to the top. */
+        bottom: 45px;
+        /* Cancel out the padding */
+        left: -10px;
+
+        background-color: #424242;
+        background-color: var(--background-color-for-primary);
+        color: #FFFFFF;
+        color: var(--primary-color);
+      }
+      .dropdown-content a {
+        line-height: 2;
+        padding: 7px 10px;
+        cursor: pointer;
+      }
+      .open #button__select {
+        cursor: default;
+      }
+
+      .dropdown-content a:hover {
+        background-color: grey;
+      }
+      .dropdown-content a.selected {
+        background-color: grey;
+      }
+    </style>
+
+    <div id="container__select_control" class="user_controls">
+      <div class="dropdown" on-mouseover="showDropDown" on-mouseout="hideDropDown">
+        <a id="button__select" class="button" on-click="handleButtonClick">
+          [[formatter(selectedValue)]]
+        </a>
+        <div id="dropdown__select" class="dropdown-content" style$="display: [[ifThenElse(isDropDownOpen, 'initial', 'none')]];">
+          <template is="dom-repeat" items="[[values]]">
+            <a on-click="handleDropDownElementClick" class$="[[ifEqualsThen(item, selectedValue, 'selected')]]">[[formatter(item)]]</a>
+          </template>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    define('select-control', ['base-element'], (BaseElement) => {
+      class SelectControl extends BaseElement {
+        static get is() { return 'select-control'; }
+
+        static get properties() {
+          return {
+            values: {
+              type: Array,
+              value: [],
+            },
+            selectedValue: String,
+            formatter: {
+              type: Function,
+              value: (x) => x,
+            },
+            isDropDownOpen: {
+              type: Boolean,
+              value: false,
+            },
+          };
+        }
+
+        showDropDown() {
+          if(this.values.length > 2) {
+            // Show dropdown if there are more than 2 values to choose from
+            this.isDropDownOpen = true;
+            this.$.container__select_control.classList.add('open');
+          }
+        }
+
+        hideDropDown() {
+          this.isDropDownOpen = false;
+          this.$.container__select_control.classList.remove('open');
+        }
+
+        handleButtonClick() {
+          if(this.values.length === 2) {
+            // Toggle value, if there are only 2 values to choose from
+            let index = (this.values.indexOf(this.selectedValue) + 1) % this.selectedValue.length;
+            this.setSelectedValue(this.values[index]);
+          }
+        }
+
+        handleDropDownElementClick(e) {
+          this.setSelectedValue(e.model.item);
+          this.hideDropDown();
+        }
+
+        setSelectedValue(value) {
+          this.selectedValue = value;
+          this.dispatchEvent(new CustomEvent('change'));
+        }
+      }
+
+      window.customElements.define(SelectControl.is, SelectControl);
+    });
+  </script>
+
+</dom-module>

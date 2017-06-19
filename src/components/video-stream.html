@@ -1,7 +1,10 @@
-<link rel='import' href='../../../polymer/polymer-element.html'>
+<link rel="import" href="../../bower_components/imd/imd.html">
 
-<dom-module id='video-stream'>
+<link rel="import" href="../constants.html">
+<link rel="import" href="../base-element.html">
+<link rel="import" href="../3rd-imports/hls-js.html">
 
+<dom-module id="video-stream">
   <template>
     <style type="text/css">
       #container__video_stream {
@@ -15,87 +18,160 @@
     </style>
 
     <div id="container__video_stream">
-      <video id='video' src$='[[url]]' preload="auto"></video>
+      <video
+        id="video"
+        preload="[[ifThenElse(preload, 'auto', 'metadata')]]"
+        poster="[[ifThen(urls.poster, urls.poster)]]"
+        on-click="handleClick"
+        on-canplay="handleCanPlay"
+        on-loadedmetadata="handleLoadedMetadata"
+        on-timeupdate="handleTimeUpdate">
+      </video>
     </div>
   </template>
 
   <script>
-    class VideoStream extends Polymer.Element {
-      static get is() { return 'video-stream'; }
+    define('video-stream', ['base-element', 'hls-js', 'constants'], (BaseElement, Hls, constants) => {
+      const {PLAY_STATES, QUALITY_MODES, HLS_MIME_TYPE, SYNC_DIFF_THRESHOLD} = constants;
 
-      static get properties() {
-        return {
-          url: {
-            type: String
-          },
-          master: {
-            type: Boolean,
-            value: true
-          },
-          state: {
-            type: Object
-          },
-          stateManager: {
-            type: Object
-          }
-        };
-      }
+      class VideoStream extends BaseElement {
+        static get is() { return 'video-stream'; }
 
-      static get observers() {
-        return [
-          '_playStateChanged(state.playState)',
-          '_positionChanged(state.position)',
-          '_playbackRateChanged(state.playbackRate)',
-          '_volumeChanged(state.volume)',
-          '_mutedChanged(state.muted)'
-        ]
-      }
+        static get properties() {
+          return {
+            state: Object,
+            stateManager: Object,
+            synchronizationManager: Object,
+            urls: Object,
+            preload: {
+              type: Boolean,
+              value: true,
+            },
+            master: {
+              type: Boolean,
+              value: true,
+            },
+            qualityUrl: String,
+            initializingVideo: {
+              type: Boolean,
+              value: true,
+            },
+            hlsClient: Object,
+            nativeHlsSupport: {
+              type: Boolean,
+              readOnly: true,
+              computed: '_nativeHlsSupport()',
+            },
+          };
+        }
 
-      ready() {
-        super.ready();
-        // Add event listeners
-        this.$.video.addEventListener('timeupdate', () => {
-          if(this.master) {
+        static get observers() {
+          return [
+            'playStateChanged(state.playState)',
+            'positionChanged(state.position)',
+            'playbackRateChanged(state.playbackRate)',
+            'volumeChanged(state.volume)',
+            'mutedChanged(state.muted)',
+            'qualityChanged(urls, state.quality)',
+          ];
+        }
+
+        _nativeHlsSupport() {
+          return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
+        }
+
+        connectedCallback() {
+          super.connectedCallback();
+          this.synchronizationManager.registerVideo(this.$.video);
+        }
+
+        disconnectedCallback() {
+          super.disconnectedCallback();
+          this.synchronizationManager.unregisterVideo(this.$.video);
+        }
+
+        handleTimeUpdate() {
+          if(this.master && !this.initializingVideo) {
             this.stateManager.setPosition(this.$.video.currentTime);
           }
-        });
-        // load metadata for extraction of the video's duration
-        this.$.video.addEventListener('loadedmetadata', () => {
+        }
+
+        handleLoadedMetadata() {
+          // Extract duration of the video after metadata have been loaded
           if(this.master) {
             this.stateManager.setDuration(this.$.video.duration);
           }
-        });
-        // start/stop both streams when they get clicked on
-        this.$.video.addEventListener('click', () => this.stateManager.togglePlayPause());
-      }
+        }
 
-      _playStateChanged(playState) {
-        if (playState == 'PLAYING')
-          this.$.video.play();
-        else
-          this.$.video.pause();
-      }
+        handleCanPlay() {
+          if(this.initializingVideo) {
+            this.applyState();
+            this.initializingVideo = false;
+          }
+        }
 
-      _positionChanged(position) {
-        if( Math.abs(this.$.video.currentTime - position) > 1 ) {
-          this.$.video.currentTime = position;
+        handleClick() {
+          this.stateManager.togglePlayPause();
+        }
+
+        applyState() {
+          this.playStateChanged(this.state.playState);
+          this.positionChanged(this.state.position);
+          this.playbackRateChanged(this.state.playbackRate);
+          this.volumeChanged(this.state.volume);
+          this.mutedChanged(this.state.muted);
+        }
+
+        playStateChanged(playState) {
+          if (playState === PLAY_STATES.PLAYING)
+            this.$.video.play();
+          else if (playState === PLAY_STATES.PAUSED)
+            this.$.video.pause();
+        }
+
+        positionChanged(position) {
+          if(Math.abs(this.$.video.currentTime - position) > SYNC_DIFF_THRESHOLD) {
+            this.$.video.currentTime = position;
+          }
+        }
+
+        playbackRateChanged(playbackRate) {
+          this.$.video.playbackRate = playbackRate;
+        }
+
+        volumeChanged(volume) {
+          this.$.video.volume = volume;
+        }
+
+        mutedChanged(muted) {
+          this.$.video.muted = muted;
+        }
+
+        qualityChanged(urls, quality) {
+          let url = urls[quality];
+          this.initializingVideo = true;
+
+          // Change source depending on quality
+          if(this.nativeHlsSupport || quality !== QUALITY_MODES.HLS) {
+            // Destroy old hls client
+            if(this.hlsClient) {
+              this.hlsClient.destroy();
+            }
+
+            // The src attribute can not be updated using data bindings
+            // since the binding may be overwritten by hls.js
+            this.$.video.setAttribute('src', url);
+          } else {
+            // Create and configure new hls client for existing video element
+            this.hlsClient = new Hls();
+            this.hlsClient.loadSource(url);
+            this.hlsClient.attachMedia(this.$.video);
+          }
         }
       }
 
-      _playbackRateChanged(playbackRate) {
-        this.$.video.playbackRate = playbackRate;
-      }
-
-      _volumeChanged(volume) {
-        this.$.video.volume = volume;
-      }
-
-      _mutedChanged(muted) {
-        this.$.video.muted = muted;
-      }
-    }
-
-    window.customElements.define(VideoStream.is, VideoStream);
+      window.customElements.define(VideoStream.is, VideoStream);
+    });
   </script>
 
 </dom-module>

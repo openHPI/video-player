@@ -9,6 +9,7 @@ const htmlmin = require('gulp-htmlmin');
 const cleanCSS = require('gulp-clean-css');
 const runSequence = require('run-sequence');
 const mergeStream = require('merge-stream');
+const stripJsComments = require('gulp-uncomment');
 const Bundler = require('polymer-build').Bundler;
 const HtmlSplitter = require('polymer-build').HtmlSplitter;
 const PolymerProject = require('polymer-build').PolymerProject;
@@ -35,6 +36,7 @@ gulp.task('transpile-es5', ['prepare-transpile'], () => {
   let polymer = gulp.src('.tmp/bower_components/polymer/**/*', { base: '.tmp' })
     .pipe(polymerHtmlSplitter.split())
 		.pipe(gulpif( /\.js$/, babel({presets: [babelPresetES2015NoModules]})))
+		.pipe(gulpif( /\.js$/, uglify()))
 		.pipe(polymerHtmlSplitter.rejoin());
 
   const componentHtmlSplitter = new HtmlSplitter();
@@ -42,6 +44,7 @@ gulp.task('transpile-es5', ['prepare-transpile'], () => {
   let component = mergeStream(project.sources(), project.dependencies())
     .pipe(ignore.exclude('bower_components/webcomponentsjs/**/*'))
     .pipe(ignore.exclude('bower_components/polymer/**/*'))
+    .pipe(ignore.exclude('bower_components/imd/**/*'))
     .pipe(componentHtmlSplitter.split())
 		.pipe(gulpif( /\.js$/, babel({presets: [babelPresetES2015]})))
 		.pipe(gulpif( /\.js$/, uglify()))
@@ -60,7 +63,8 @@ const bundle = (baseDir, outputDir) => {
   return mergeStream(project.sources(), project.dependencies())
     .pipe(htmlSplitter.split())
     .pipe(gulpif( /\.css$/, cleanCSS()))
-    .pipe(gulpif( /\.html$/, htmlmin({collapseWhitespace: true})))
+    .pipe(gulpif( /\.html$/, htmlmin({collapseWhitespace: true, removeComments: true})))
+    .pipe(gulpif( /\.js$/, stripJsComments({removeEmptyLines: true})))
     .pipe(htmlSplitter.rejoin())
     .pipe(project.bundler())
     .pipe(gulp.dest(path.join(cwd, outputDir)))

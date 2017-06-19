@@ -3,35 +3,35 @@
 <link rel="import" href="../../base-element.html">
 <link rel="import" href="../styling/control-bar--style-module.html">
 
-<dom-module id="mute-control">
+<dom-module id="chapter-list-switch">
   <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
 
   <template>
     <style type="text/css" include="control-bar--style-module">
-      #container__mute_control {
-        border-right: none;
-      }
       :host {
         /* Avoid flickering with changing icons */
         /* It should be about twice the icon size */
         min-width: 3rem;
       }
-      #button__mute i {
+      #button__chapter_list i {
         font-size: 1.5rem;
+      }
+      #button__chapter_list.active {
+        border: 1px solid yellow;
       }
     </style>
 
-    <div id="container__mute_control" class="user_controls">
-      <a id="button__mute" class="button" on-click="handleClick">
-        <i class$="fa [[ifThenElse(state.muted, 'fa-volume-off', 'fa-volume-up')]]"></i>
+    <div id="container__chapter_list_switch" class="user_controls">
+      <a id="button__chapter_list" class$="button [[ifThen(state.isChapterListShown, 'active')]]" on-click="handleClick">
+        <i class="fa fa-list"></i>
       </a>
     </div>
-  </template>
+    </template>
 
   <script>
-    define('mute-control', ['base-element'], (BaseElement) => {
-      class MuteControl extends BaseElement {
-        static get is() { return 'mute-control'; }
+    define('chapter-list-switch', ['base-element'], (BaseElement) => {
+      class ChapterListControl extends BaseElement {
+        static get is() { return 'chapter-list-switch'; }
 
         static get properties() {
           return {
@@ -41,11 +41,11 @@
         }
 
         handleClick() {
-          this.stateManager.toggleMute();
+          this.stateManager.toggleIsChapterListShown();
         }
       }
 
-      window.customElements.define(MuteControl.is, MuteControl);
+      window.customElements.define(ChapterListControl.is, ChapterListControl);
     });
   </script>
 
