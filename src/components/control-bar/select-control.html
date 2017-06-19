@@ -27,6 +27,10 @@
         padding: 7px 10px;
         cursor: pointer;
       }
+      .open #button__select {
+        cursor: default;
+      }
+
       .dropdown-content a:hover {
         background-color: grey;
       }
@@ -36,7 +40,7 @@
     </style>
 
     <div id="container__select_control" class="user_controls">
-      <div class="dropdown">
+      <div class="dropdown" on-mouseover="showDropDown" on-mouseout="hideDropDown">
         <a id="button__select" class="button" on-click="handleButtonClick">
           [[formatter(selectedValue)]]
         </a>
@@ -72,11 +76,21 @@
           };
         }
 
-        handleButtonClick() {
+        showDropDown() {
           if(this.values.length > 2) {
             // Show dropdown if there are more than 2 values to choose from
-            this.isDropDownOpen = !this.isDropDownOpen;
-          } else {
+            this.isDropDownOpen = true;
+            this.$.container__select_control.classList.add('open');
+          }
+        }
+
+        hideDropDown() {
+          this.isDropDownOpen = false;
+          this.$.container__select_control.classList.remove('open');
+        }
+
+        handleButtonClick() {
+          if(this.values.length === 2) {
             // Toggle value, if there are only 2 values to choose from
             let index = (this.values.indexOf(this.selectedValue) + 1) % this.selectedValue.length;
             this.setSelectedValue(this.values[index]);
@@ -85,7 +99,7 @@
 
         handleDropDownElementClick(e) {
           this.setSelectedValue(e.model.item);
-          this.isDropDownOpen = false;
+          this.hideDropDown();
         }
 
         setSelectedValue(value) {
