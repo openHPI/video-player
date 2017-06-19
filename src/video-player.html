@@ -127,9 +127,10 @@
           return [
             'configurationChanged(configuration)',
             'availableQualitiesChanged(availableQualities, stateManager)',
-            'primaryColorChanged(configuration.primaryColor)',
-            'secondaryColorChanged(configuration.secondaryColor)',
-            'backgroundColorForPrimaryChanged(configuration.backgroundColorForPrimary)',
+            'foregroundColorChanged(configuration.foregroundColor)',
+            'accentColorChanged(configuration.accentColor)',
+            'backgroundColorChanged(configuration.backgroundColor)',
+            'secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
             'playStateChanged(state.playState)',
             'fullscreenChanged(state.fullscreen)',
           ];
@@ -229,14 +230,17 @@
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
         // The poperties are not correctly evaluated and thus the variable not set.
-        primaryColorChanged(primaryColor) {
-          this.style.setProperty('--primary-color', primaryColor);
+        foregroundColorChanged(color) {
+          this.style.setProperty('--foreground-color', color);
         }
-        secondaryColorChanged(secondaryColor) {
-          this.style.setProperty('--secondary-color', secondaryColor);
+        accentColorChanged(color) {
+          this.style.setProperty('--accent-color', color);
         }
-        backgroundColorForPrimaryChanged(backgroundColorForPrimary) {
-          this.style.setProperty('--background-color-for-primary', backgroundColorForPrimary);
+        backgroundColorChanged(color) {
+          this.style.setProperty('--background-color', color);
+        }
+        secondaryBackgroundColorChanged(color) {
+          this.style.setProperty('--secondary-background-color', color);
         }
 
         needResizer(index, length) {
