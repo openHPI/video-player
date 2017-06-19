@@ -22,7 +22,7 @@
     </style>
 
     <div id="container__chapter_list_switch" class="user_controls">
-      <a id="button__chapter_list" class$="{{buttonClass}}" on-click="handleClick">
+      <a id="button__chapter_list" class$="button [[ifThen(state.isChapterListShown, 'active')]]" on-click="handleClick">
         <i class="fa fa-list"></i>
       </a>
     </div>
@@ -37,23 +37,11 @@
           return {
             state: Object,
             stateManager: Object,
-            buttonClass: {
-              type: String,
-              computed: '_buttonClass(state.isChapterListShown)',
-            },
           };
         }
 
         handleClick() {
           this.stateManager.toggleIsChapterListShown();
-        }
-
-        _buttonClass() {
-          if(this.state.isChapterListShown) {
-            return 'active';
-          }
-
-          return '';
         }
       }
 

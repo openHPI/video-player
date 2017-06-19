@@ -5,8 +5,9 @@
 <link rel="import" href="playpause-control.html">
 <link rel="import" href="sound-control.html">
 <link rel="import" href="videotime-display.html">
-<link rel="import" href="chapter-list-switch.html">
 <link rel="import" href="speed-control.html">
+<link rel="import" href="chapter-list-switch.html">
+<link rel="import" href="quality-switch.html">
 <link rel="import" href="mute-control.html">
 <link rel="import" href="fullscreen-control.html">
 <link rel="import" href="caption-control.html">
@@ -31,6 +32,9 @@
         <caption-control state="{{state}}" state-manager="{{stateManager}}"></caption-control>
       </template>
       <speed-control state="{{state}}" state-manager="{{stateManager}}"></speed-control>
+      <template is="dom-if" if="{{hasMultipleQualities}}">
+        <quality-switch state="{{state}}" state-manager="{{stateManager}}" available-qualities="{{availableQualities}}"></quality-switch>
+      </template>
       <template is="dom-if" if="{{hasChapters}}">
         <chapter-list-switch state="{{state}}" state-manager="{{stateManager}}"></chapter-list-switch>
       </template>
@@ -50,7 +54,15 @@
             state: Object,
             stateManager: Object,
             hasChapters: Boolean,
+<<<<<<< HEAD
             hasCaptions: Boolean,
+=======
+            availableQualities: Boolean,
+            hasMultipleQualities: {
+              type: Boolean,
+              computed: '_hasMultipleQualities(availableQualities)',
+            },
+>>>>>>> 99dbde63614784949e0c6071d3817cda7af5af14
           };
         }
 
@@ -81,6 +93,10 @@
           // Make sure the user doesn't trigger anything else with their
           // keyboard interaction, like scrolling the page
           e.preventDefault();
+        }
+
+        _hasMultipleQualities() {
+          return this.availableQualities.length > 1;
         }
       }
 

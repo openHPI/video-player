@@ -1,0 +1,103 @@
+<link rel="import" href="../constants.html">
+
+<script>
+  define('synchronization-manager', ['constants'], (constants) => {
+    const {PLAY_STATES} = constants;
+
+    class SynchronizationManager {
+      /**
+       * Initializes a new SynchronizationManager instance.
+       * @param {StateManager} stateManager  The StateManager of the video player instance.
+       * @return {SynchronizationManager}  The new SynchronizationManager instance.
+       */
+      constructor(stateManager) {
+        this.stateManager = stateManager;
+        this.videosWaiting = new Set();
+
+        // Needed in order to overcome removeEventListener
+        this._videoWaiting = this._videoWaiting.bind(this);
+        this._videoReady = this._videoReady.bind(this);
+      }
+
+      /**
+       * Registers a new video element to enable synchronization of this video.
+       * @param  {HTMLElement} video The video element that should be registered.
+       * @return {void}
+       */
+      registerVideo(video) {
+        video.addEventListener('seeking', this._videoWaiting);
+        video.addEventListener('waiting', this._videoWaiting);
+        video.addEventListener('playing', this._videoReady);
+        video.addEventListener('seeked', this._videoReady);
+      }
+
+      /**
+       * Unregisters a new video element to stop synchronization of this video.
+       * @param  {HTMLElement} video The video element that should be unregistered.
+       * @return {void}
+       */
+      unregisterVideo(video) {
+        video.removeEventListener('seeking', this._videoWaiting);
+        video.removeEventListener('waiting', this._videoWaiting);
+        video.removeEventListener('playing', this._videoReady);
+        video.removeEventListener('seeked', this._videoReady);
+      }
+
+      /**
+       * Gets a value determining whether there are videos, which currently
+       * cannot play and need to buffer before continuing playback.
+       * @return {boolean} The value.
+       */
+      anyWaiting() {
+        return this.videosWaiting.size > 0;
+      }
+
+      /**
+       * Is called everytime a registered video element is waiting for new data.
+       * @param  {EventArgs} e The event that was triggered.
+       * @return {void}
+       */
+      _videoWaiting(e) {
+        this.videosWaiting.add(e.target);
+        this._backupPlayState();
+        this.stateManager.setPlayState(PLAY_STATES.WAITING);
+      }
+
+      /**
+       * Is called everytime a registered video element is ready for playback.
+       * @param  {EventArgs} e The event that was triggered.
+       * @return {void}
+       */
+      _videoReady(e) {
+        this.videosWaiting.delete(e.target);
+        if(!this.anyWaiting()) {
+          this._restorePlayState();
+        }
+      }
+
+      /**
+       * Stores the current play state as backup for later use.
+       * @return {void}
+       */
+      _backupPlayState() {
+        let playState = this.stateManager.state.playState;
+        if(playState !== PLAY_STATES.WAITING) {
+          this.backupPlayState = playState;
+        }
+      }
+
+      /**
+       * Restores the backup play state, if present.
+       * @return {void}
+       */
+      _restorePlayState() {
+        if(this.backupPlayState) {
+          this.stateManager.setPlayState(this.backupPlayState);
+          this.backupPlayState = null;
+        }
+      }
+    }
+
+    return SynchronizationManager;
+  });
+</script>

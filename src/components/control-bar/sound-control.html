@@ -42,7 +42,6 @@
 
         handleClick(e) {
           // Get x-axies value of event location
-          //let x = e.pageX - this.$.progress__sound_control.offsetLeft;
           let x = e.pageX - this.$.progress__sound_control.getBoundingClientRect().left;
           // Calculate value that will be between 0 and max value of progress bar
           let clickedValue = x * this.$.progress__sound_control.max / this.$.progress__sound_control.offsetWidth;

@@ -20,18 +20,15 @@
 
     <div id="container__play_pause_control" class="user_controls">
       <a id="button__play_pause" class="button" on-click="handleClick">
-        <template is="dom-if" if="[[equals(state.playState, 'PLAYING')]]">
-          <i class="fa fa-pause" />
-        </template>
-        <template is="dom-if" if="[[!equals(state.playState, 'PLAYING')]]">
-          <i class="fa fa-play" />
-        </template>
+        <i class$="fa [[iconClass]]"></i>
       </a>
     </div>
   </template>
 
   <script>
-    define('playpause-control', ['base-element'], (BaseElement) => {
+    define('playpause-control', ['base-element', 'constants'], (BaseElement, constants) => {
+      const {PLAY_STATES} = constants;
+
       class PlayPauseControl extends BaseElement {
         static get is() { return 'playpause-control'; }
 
@@ -39,7 +36,22 @@
           return {
             state: Object,
             stateManager: Object,
+            iconClass: String,
           };
+        }
+
+        static get observers() {
+          return [
+            'playStateChanged(state.playState)',
+          ];
+        }
+
+        playStateChanged(playState) {
+          if(playState === PLAY_STATES.PLAYING) {
+            this.iconClass = 'fa-pause';
+          } else if(playState === PLAY_STATES.PAUSED) {
+            this.iconClass = 'fa-play';
+          }
         }
 
         handleClick() {

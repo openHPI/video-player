@@ -4,21 +4,25 @@
 <link rel="import" href="../styling/control-bar--style-module.html">
 
 <dom-module id="speed-control">
-  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
 
   <template>
     <style type="text/css" include="control-bar--style-module">
     </style>
 
-    <div id="container__speed_control" class="user_controls">
-        <a id="button__speed_control" class="button" on-click="handleClick">
-            [[toFixedOrEmpty(state.playbackRate, 1)]]x
-        </a>
+    <div id="container__speed_control">
+      <select-control
+        values="[[playbackRates]]"
+        selected-value="[[state.playbackRate]]"
+        formatter="[[formatPlaybackRate]]"
+        on-change="selectionChanged">
+      </select-control>
     </div>
     </template>
 
   <script>
-    define('speed-control', ['base-element'], (BaseElement) => {
+    define('speed-control', ['base-element', 'constants'], (BaseElement, constants) => {
+      const {PLAYBACK_RATES} = constants;
+
       class SpeedControl extends BaseElement {
         static get is() { return 'speed-control'; }
 
@@ -26,11 +30,20 @@
           return {
             state: Object,
             stateManager: Object,
+            playbackRates: {
+              type: Array,
+              readOnly: true,
+              value: PLAYBACK_RATES,
+            },
           };
         }
 
-        handleClick() {
-          this.stateManager.switchPlaybackRate();
+        formatPlaybackRate(playbackRate) {
+          return this.toFixedOrEmpty(playbackRate, 1) + 'x';
+        }
+
+        selectionChanged(e) {
+          this.stateManager.setPlaybackRate(e.target.selectedValue);
         }
       }
 

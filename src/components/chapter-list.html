@@ -14,7 +14,7 @@
       <ul>
           <template is="dom-repeat" items="{{chapters}}">
             <li>
-              <a class$="link__chapter_bookmark {{listItemClass(item, activeChapter)}}" on-click="handleClick">
+              <a class$="link__chapter_bookmark [[ifEqualsThen(item, activeChapter, 'active')]]" on-click="handleClick">
                 {{item.text}}
               </a>
             </li>
@@ -55,14 +55,6 @@
           this.activeChapter = this.chapters.slice()
                                             .reverse()
                                             .find(chapter => chapter.seconds <= this.state.position);
-        }
-
-        listItemClass(chapter) {
-          if(chapter === this.activeChapter) {
-            return 'active';
-          }
-
-          return '';
         }
       }
 

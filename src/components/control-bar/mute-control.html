@@ -23,12 +23,7 @@
 
     <div id="container__mute_control" class="user_controls">
       <a id="button__mute" class="button" on-click="handleClick">
-        <template is="dom-if" if="[[state.muted]]">
-          <i class="fa fa-volume-off" />
-        </template>
-        <template is="dom-if" if="[[!state.muted]]">
-          <i class="fa fa-volume-up" />
-        </template>
+        <i class$="fa [[ifThenElse(state.muted, 'fa-volume-off', 'fa-volume-up')]]"></i>
       </a>
     </div>
   </template>
