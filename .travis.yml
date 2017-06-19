@@ -2,15 +2,15 @@ language: node_js
 node_js: node
 brnaches:
   only: 
-  - master
-  - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+    - master
+    - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
 env: 
-  - DIST_NAME=$(git rev-parse --show-toplevel)-$(git describe --abbrev=0 --tags))
+  - DIST_NAME=$($(git rev-parse --show-toplevel)-$(git describe --abbrev=0 --tags))
 before_install: npm install -g bower cross-zip-cli
 install: npm install
 script: 
   - npm run bundle
-  - cross-zip dist $$DIST_NAME.zip
+  - cross-zip dist $DIST_NAME.zip
 deploy:
   provider: releases
   api_key:
