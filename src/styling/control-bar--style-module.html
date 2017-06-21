@@ -28,8 +28,11 @@
         cursor: default;
       }
       .user_controls a {
-        /* Override potential default stylings for links */
-        @apply --foreground-color !important; /* TODO works? */
+        /* Override potential default stylings for links.
+         * The mixin rules have to be added explicitly to use !important flag */
+        color: #FFFFFF !important;
+        color: var(--foreground-color) !important;
+        @apply --foreground-color;
 
         line-height: 40px;
         height: 100%;
