@@ -9,6 +9,7 @@
       constructor(fullscreenElement) {
         this.fullscreenElement = fullscreenElement;
         this.fullscreenChangedCallbacks = new Set();
+        this.iOS = /iPad/.test(navigator.userAgent) && !window.MSStream;
 
         // Attatch event handler for fullscreenchange
         this.fullscreenElement.addEventListener('fullscreenchange', () => {
@@ -31,7 +32,12 @@
        * @return {void}
        */
       enterFullscreen() {
-        if (this.fullscreenElement.requestFullscreen) {
+        if (this.iOS) {
+          // iOS doesn't have a real full screen mode so we have to fake it
+          // by appending a special iOS class that just stretches the
+          // fullscreenElement to occupy 100% of width and height
+          this.fullscreenElement.classList.add('iPad-fullscreen');
+        } else if (this.fullscreenElement.requestFullscreen) {
           this.fullscreenElement.requestFullscreen();
         } else if (this.fullscreenElement.mozRequestFullScreen) {
           this.fullscreenElement.mozRequestFullScreen();
@@ -47,7 +53,9 @@
        * @return {void}
        */
       exitFullscreen() {
-        if (document.exitFullscreen) {
+        if (this.iOS) {
+          this.fullscreenElement.classList.remove('iPad-fullscreen');
+        } else if (document.exitFullscreen) {
           document.exitFullscreen();
         } else if (document.mozCancelFullScreen) {
           document.mozCancelFullScreen();
