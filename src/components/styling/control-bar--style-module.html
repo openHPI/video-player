@@ -20,19 +20,43 @@
         justify-content: center;
 
         /* ------ General styling of the control section ------ */
-        padding: 10px;
+        padding: 0 10px;
+        height: 40px;
         background-color: #424242;
         background-color: var(--background-color-for-primary);
-        border-right: 2px solid #FFFFFF;
-        border-right: 2px solid var(--primary-color);
         color: #FFFFFF;
         color: var(--primary-color);
         user-select: none;
         cursor: default;
       }
+      .user_controls a {
+        /* Override potential default stylings for links */
+        color: #FFFFFF !important;
+        color: var(--primary-color) !important;
+
+        line-height: 40px;
+        height: 100%;
+        vertical-align: middle;
+        width: 100%;
+        text-align: center;
+      }
+
+      .user_controls a:hover {
+        text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+      }
+      .user_controls i {
+        line-height: inherit;
+      }
+      .user_controls .button i {
+        font-size: 1.25em;
+      }
 
       .button {
         cursor: pointer;
+      }
+      .button.inactive {
+        /* Override default color when the button is inactive */
+        color: grey !important;
       }
 
       /* ------ Styling of the progress bars within the control bar ------*/

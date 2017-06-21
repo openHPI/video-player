@@ -3,18 +3,47 @@
 <link rel="import" href="../base-element.html">
 
 <dom-module id="chapter-list">
+  <link rel="import" type="css" href="../../bower_components/components-font-awesome/css/font-awesome.min.css">
   <template>
     <style type="text/css">
-      .active {
-        font-weight: bold;
+
+      /* TODO: Replace the colors with variables ? */
+
+      #container__chapter_list {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 2;
+        border: 5px solid black;
+        color: white;
+      }
+      #container__chapter_list ul {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+        max-width: 250px;
+      }
+      #container__chapter_list li {
+        padding: 5px 5px 5px 20px;
+        cursor: pointer;
+        -webkit-font-smoothing: antialiased;
+      }
+      #container__chapter_list li:nth-child(odd) {
+        background-color: grey;
+      }
+      #container__chapter_list li:nth-child(even) {
+        background-color: darkgrey;
+      }
+      #container__chapter_list li .link__chapter_bookmark:before {
+        font-family: FontAwesome;
       }
     </style>
 
-    <div id="container__chapter_list" class="_user_controls">
+    <div id="container__chapter_list">
       <ul>
           <template is="dom-repeat" items="{{chapters}}">
             <li>
-              <a class$="link__chapter_bookmark {{listItemClass(item, activeChapter)}}" on-click="handleClick">
+              <a class$="link__chapter_bookmark [[ifEqualsThen(item, activeChapter, 'active fa-caret-right')]]" on-click="handleClick">
                 {{item.text}}
               </a>
             </li>
@@ -55,14 +84,6 @@
           this.activeChapter = this.chapters.slice()
                                             .reverse()
                                             .find(chapter => chapter.seconds <= this.state.position);
-        }
-
-        listItemClass(chapter) {
-          if(chapter === this.activeChapter) {
-            return 'active';
-          }
-
-          return '';
         }
       }
 

@@ -35,6 +35,7 @@ gulp.task('transpile-es5', ['prepare-transpile'], () => {
   let polymer = gulp.src('.tmp/bower_components/polymer/**/*', { base: '.tmp' })
     .pipe(polymerHtmlSplitter.split())
 		.pipe(gulpif( /\.js$/, babel({presets: [babelPresetES2015NoModules]})))
+		.pipe(gulpif( /\.js$/, uglify()))
 		.pipe(polymerHtmlSplitter.rejoin());
 
   const componentHtmlSplitter = new HtmlSplitter();
@@ -61,7 +62,7 @@ const bundle = (baseDir, outputDir) => {
   return mergeStream(project.sources(), project.dependencies())
     .pipe(htmlSplitter.split())
     .pipe(gulpif( /\.css$/, cleanCSS()))
-    .pipe(gulpif( /\.html$/, htmlmin({collapseWhitespace: true})))
+    .pipe(gulpif( /\.html$/, htmlmin({collapseWhitespace: true, removeComments: true})))
     .pipe(htmlSplitter.rejoin())
     .pipe(project.bundler())
     .pipe(gulp.dest(path.join(cwd, outputDir)))

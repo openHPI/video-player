@@ -30,11 +30,52 @@ The component can then be used in any HTML site in the following way:
   </head>
   <body>
     <video-player configuration='{
-      "streams": ["http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"]
+      "streams": [{"hd": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"}]
     }'></video-player>
   </body>
 </html>
 ```
+
+## Configuration
+
+The player configuration is provided as JSON object:
+```html
+<video-player configuration='{}'></video-player>
+```
+
+### Required Parameters
+* **streams** (Array): List of URLs to the videos streams of different qualities and (optional) poster images. If there is only one quality, use `hd`.
+    ```JSON
+    "streams": [
+      {
+        "sd": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "hd": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "poster": "https://peach.blender.org/wp-content/uploads/bbb-splash.png"
+      }
+    ]
+    ```
+
+### Optional Parameters
+* **initialState** (Object): The initial state the player has when loaded. The following options are available:
+    * **playState** (String): `<'PLAYING'|'PAUSED'>` (default: `PAUSED`)
+    * **position** (Number): Seconds (default: `0`)
+    * **playbackRate** (Number): `<[0.7, 1.0, 1.3, 1.5, 1.8, 2.0]>` (default: `1.0`)
+    * **volume** (Number): `<0..1>` (default: `1.0`)
+    * **muted** (Boolean): (default: `false`)
+    * **isChapterListShown** (Boolean): (default: `false`)
+* **primaryColor** (String): HEX code of the color for text and all other main content (default: `#FFFFFF`)
+* **secondaryColor** (String): HEX code of the highlighting color (default: `#DD6112`)
+* **backgroundColorForPrimary** (String): HEX code of the background for the `primaryColor` (default: `#424242`)
+* **videoPreload** (Boolean): Turns on/off preloading of the videos when the page loads (default: `true`)
+* **chapters** (Array): List of timestamps with chapter names (default: `[]`)
+    ```JSON
+    "chapters": [
+      {
+        "text": "Chapter 1",
+        "seconds": 0
+      }
+    ]
+    ```
 
 ## Tests
 

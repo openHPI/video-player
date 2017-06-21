@@ -1,0 +1,101 @@
+<script>
+  define('constants', () => {
+    /**
+     * Contains the different play states.
+     * @type {Object.<string, string>}
+     */
+    const PLAY_STATES = {
+      PLAYING: 'PLAYING',
+      PAUSED: 'PAUSED',
+      WAITING: 'WAITING',
+    };
+
+    /**
+     * Contains the supported playback rates sorted ascending.
+     * @type {Number[]}
+     */
+    const PLAYBACK_RATES = [0.7, 1.0, 1.3, 1.5, 1.8, 2.0];
+
+    /**
+     * Contains the supported quality modes.
+     * @type {Object.<string, string>}
+     */
+    const QUALITY_MODES = {
+      HLS: 'hls',
+      HD: 'hd',
+      SD: 'sd',
+    };
+
+    /**
+     * Contains the human-readable names for the quality modes.
+     * @type {Object.<string, string>}
+     */
+    const QUALITY_NAMES = {
+      [QUALITY_MODES.HLS]: 'Auto',
+      [QUALITY_MODES.HD]: 'HD',
+      [QUALITY_MODES.SD]: 'SD',
+    };
+
+    /**
+     * Contains the MIME type of HLS streams.
+     * @type {String}
+     */
+    const HLS_MIME_TYPE = 'application/x-mpegURL';
+
+    /**
+     * Contains the difference threshold in seconds between position of the
+     * state and position of a single video stream from which the video stream
+     * is synced manually.
+     * @type {Number}
+     */
+    const SYNC_DIFF_THRESHOLD = 0.2;
+
+    /**
+     * Contains the name of the event that is used to pause playback on other
+     * player instances when a instance starts playing.
+     * @type {String}
+     */
+    const PLAYING_EVENT_NAME = 'videoPlaying';
+
+    /**
+     * Contains the default state properties.
+     * @type {Object.<string, Object>}
+     */
+    const DEFAULT_STATE = {
+      playState: PLAY_STATES.PAUSED,
+      position: 0,
+      duration: 0,
+      playbackRate: 1.0,
+      volume: 1.0,
+      muted: false,
+      fullScreen: false,
+      isChapterListShown: false,
+    };
+
+    /**
+     * Contains the default configuration properties.
+     * @type {Object.<string, Object>}
+     */
+    const DEFAULT_CONFIGURATION = {
+      streams: [],
+      chapters: [],
+      initialState: {},
+      videoPreload: true,
+      primaryColor: '#FFFFFF',
+      secondaryColor: '#DD6112',
+      backgroundColorForPrimary : '#424242',
+    };
+
+    return {
+      PLAY_STATES,
+      PLAYBACK_RATES,
+      QUALITY_MODES,
+      QUALITY_NAMES,
+      HLS_MIME_TYPE,
+      SYNC_DIFF_THRESHOLD,
+      PLAYING_EVENT_NAME,
+      DEFAULT_STATE,
+      DEFAULT_CONFIGURATION,
+    };
+  });
+</script>
