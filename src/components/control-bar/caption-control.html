@@ -2,25 +2,21 @@
 
 <link rel="import" href="../../base-element.html">
 <link rel="import" href="../styling/control-bar--style-module.html">
+<link rel="import" href="select-control.html">
 
 <dom-module id="caption-control">
   <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
 
   <template>
     <style type="text/css" include="control-bar--style-module">
-
     </style>
 
-    <div id="container__caption_control" class="user_controls">
-      <a id="button__caption" class="button" on-click="handleClick">
-        <template is="dom-if" if="[[state.showCaptions]]">
-          <i class="fa fa-cc" />
-        </template>
-        <template is="dom-if" if="[[!state.showCaptions]]">
-          <i class="fa fa-cc" />
-        </template>
-      </a>
-    </div>
+    <select-control
+      values="[[captionLanguages]]"
+      selected-value="[[state.selectedCaption]]"
+      formatter="[[dummy]]"
+      on-change="selectionChanged">
+    </select-control>
   </template>
 
   <script>
@@ -32,11 +28,37 @@
           return {
             state: Object,
             stateManager: Object,
+            captions: Object,
+            captionLanguages: {
+              type: Array,
+              value: ['off'],
+            },
           };
         }
 
-        handleClick() {
-          this.stateManager.toggleCaptions();
+        ready() {
+          super.ready();
+          this.getCaptionLanguages();
+        }
+
+        dummy(element){
+          return element;
+        }
+
+        //
+        getCaptionLanguages() {
+          for (var captionElement in this.captions) {
+            var captionObject = this.captions[captionElement];
+            for (var property in captionObject) {
+              if( ! property.localeCompare('language')){
+                this.push('captionLanguages', captionObject[property]);
+              }
+            }
+          }
+        }
+
+        selectionChanged(e) {
+          this.stateManager.setCaptionLanguage(e.target.selectedValue);
         }
       }
 

@@ -2,11 +2,8 @@
 
 <link rel="import" href="../constants.html">
 <link rel="import" href="../base-element.html">
-<<<<<<< HEAD
-<!--link rel="import" href="track-element.html"-->
-=======
 <link rel="import" href="../3rd-imports/hls-js.html">
->>>>>>> 99dbde63614784949e0c6071d3817cda7af5af14
+
 
 <dom-module id="video-stream">
   <template>
@@ -83,7 +80,7 @@
             'playbackRateChanged(state.playbackRate)',
             'volumeChanged(state.volume)',
             'mutedChanged(state.muted)',
-            'captionsToggled(state.showCaptions)'
+            'setCaptionLanguage(state.selectedCaption)',            
             'qualityChanged(urls, state.quality)',
           ];
         }
@@ -159,10 +156,18 @@
           this.$.video.muted = muted;
         }
 
-        captionsToggled(captions) {
+        setCaptionLanguage(language){
           Polymer.RenderStatus.afterNextRender(this, function() {
-            if(this.master){
-              this.state.showCaptions ? this.$.video.textTracks[0].mode = "showing" : this.$.video.textTracks[0].mode = "hidden";
+            if( (this.master) && (this.captions)){
+              for (var textTrackElement in this.$.video.textTracks){
+                var trackObject = this.$.video.textTracks[textTrackElement];
+                if( trackObject && trackObject.language && trackObject.language.match(language)) {
+                  trackObject.mode = "showing";
+                }
+                else if (trackObject && trackObject.language) {
+                  trackObject.mode = "hidden";
+                }
+              }
             }
           });
         }

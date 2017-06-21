@@ -28,8 +28,8 @@
       <playpause-control state="{{state}}" state-manager="{{stateManager}}"></playpause-control>
       <progress-bar state="{{state}}" state-manager="{{stateManager}}"></progress-bar>
       <videotime-display state="{{state}}" state-manager="{{stateManager}}"></videotime-display>
-      <template is="dom-if" if="{{hasCaptions}}">
-        <caption-control state="{{state}}" state-manager="{{stateManager}}"></caption-control>
+      <template is="dom-if" if="{{captions}}">
+        <caption-control state="{{state}}" state-manager="{{stateManager}}" captions="{{captions}}"></caption-control>
       </template>
       <speed-control state="{{state}}" state-manager="{{stateManager}}"></speed-control>
       <template is="dom-if" if="{{hasMultipleQualities}}">
@@ -54,21 +54,17 @@
             state: Object,
             stateManager: Object,
             hasChapters: Boolean,
-<<<<<<< HEAD
-            hasCaptions: Boolean,
-=======
+            captions: Object,
             availableQualities: Boolean,
             hasMultipleQualities: {
               type: Boolean,
               computed: '_hasMultipleQualities(availableQualities)',
             },
->>>>>>> 99dbde63614784949e0c6071d3817cda7af5af14
           };
         }
 
         ready() {
           super.ready();
-
           window.addEventListener('keydown', this.onkeydown.bind(this));
         }
 

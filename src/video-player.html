@@ -58,39 +58,41 @@
       }
     </style>
 
-    <div id="video-player-container">
-      <div id="streams-container">
-        <template is="dom-repeat" items="{{configuration.streams}}">
-          <video-stream
-            state="{{state}}"
-            state-manager="{{stateManager}}"
-            synchronization-manager="{{synchronizationManager}}"
-            urls="{{item}}"
-            preload="{{configuration.videoPreload}}"
-            master="{{equals(index, 0)}}"
-            class="video-stream"
-            captions="{{configuration.captions}}"
-            style$="height: calc(100% / {{rowCount(configuration.streams)}});">
-          </video-stream>
-          <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
-            <resizer-control style$="visibility: [[ifThenElse(isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+    <div id="topbox">
+      <div id="video-player-container">
+        <div id="streams-container">
+          <template is="dom-repeat" items="{{configuration.streams}}">
+            <video-stream
+              state="{{state}}"
+              state-manager="{{stateManager}}"
+              synchronization-manager="{{synchronizationManager}}"
+              urls="{{item}}"
+              preload="{{configuration.videoPreload}}"
+              master="{{equals(index, 0)}}"
+              class="video-stream"
+              captions="{{configuration.captions}}"
+              style$="height: calc(100% / {{rowCount(configuration.streams)}});">
+            </video-stream>
+            <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
+              <resizer-control style$="visibility: [[ifThenElse(isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+            </template>
           </template>
-        </template>
-      </div>
-      <control-bar
-        state="{{state}}"
-        state-manager="{{stateManager}}"
-        has-chapters="{{hasChapters}}"
-        has-captions="{{hasCaptions}}"
-        available-qualities="{{availableQualities}}">
-      </control-bar>
-      <template is="dom-if" if="{{state.isChapterListShown}}">
-        <chapter-list
+        </div>
+        <control-bar
           state="{{state}}"
           state-manager="{{stateManager}}"
-          chapters="{{configuration.chapters}}">
-        </chapter-list>
-      </template>
+          has-chapters="{{hasChapters}}"
+          captions="{{configuration.captions}}"
+          available-qualities="{{availableQualities}}">
+        </control-bar>
+        <template is="dom-if" if="{{state.isChapterListShown}}">
+          <chapter-list
+            state="{{state}}"
+            state-manager="{{stateManager}}"
+            chapters="{{configuration.chapters}}">
+          </chapter-list>
+        </template>
+      </div>
     </div>
 
   </template>
@@ -130,10 +132,6 @@
               type: Boolean,
               computed: '_hasChapters(configuration.chapters)',
             },
-            hasCaptions: {
-              type: Boolean,
-              computed: '_hasCaptions(configuration.captions)',
-            },
           };
         }
 
@@ -168,20 +166,6 @@
 
         ready() {
           super.ready();
-
-          // Initialize state and StateManager
-          const defaultState = {
-            playState: StateManager.PLAY_STATES.PAUSED,
-            position: 0,
-            duration: 0,
-            playbackRate: 1.0,
-            volume: 1.0,
-            muted: false,
-            fullscreen: false,
-            isChapterListShown: false,
-            showCaptions: false,
-          };
-          const initialState = this.configuration.initialState || {};
 
           // Build state from provided intial state configuration and default values
           this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState);
@@ -261,10 +245,6 @@
 
         _hasChapters() {
           return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
-        }
-
-        _hasCaptions() {
-          return this.configuration && this.configuration.captions && this.configuration.captions.length !== 0;
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
