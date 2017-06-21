@@ -65,7 +65,9 @@
           let dragImage = this.cloneNode(true);
           dragImage.style.visibility = 'hidden';
           document.body.appendChild(dragImage);
-          e.dataTransfer.setDragImage(dragImage, 0, 0);
+          // If we want to hide the ghost image in fullscreen mode, we have to
+          // move it completely out of view by setting its position as -10000|-10000
+          e.dataTransfer.setDragImage(dragImage, -10000, -10000);
         }
 
         handleDragEnd() {
