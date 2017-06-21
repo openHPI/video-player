@@ -9,6 +9,7 @@ before_install: npm install -g bower cross-zip-cli
 install: npm install
 script: 
   - npm run test
+  - npm run lint
   - npm run bundle
   - mv dist videoplayer-$TRAVIS_TAG
   - cross-zip videoplayer-$TRAVIS_TAG videoplayer-$TRAVIS_TAG.zip
