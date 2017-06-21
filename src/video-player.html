@@ -80,41 +80,39 @@
       }
     </style>
 
-    <div id="topbox">
-      <div id="video-player-container">
-        <div id="streams-container">
-          <template is="dom-repeat" items="{{configuration.streams}}">
-            <video-stream
-              state="{{state}}"
-              state-manager="{{stateManager}}"
-              synchronization-manager="{{synchronizationManager}}"
-              urls="{{item}}"
-              preload="{{configuration.videoPreload}}"
-              master="{{equals(index, 0)}}"
-              class="video-stream"
-              captions="{{configuration.captions}}"
-              style$="height: calc(100% / {{rowCount(configuration.streams)}});">
-            </video-stream>
-            <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
-              <resizer-control style$="visibility: [[ifThenElse(isResizerShown, 'visible', 'hidden')]]"></resizer-control>
-            </template>
-          </template>
-        </div>
-        <control-bar
-          state="{{state}}"
-          state-manager="{{stateManager}}"
-          has-chapters="{{hasChapters}}"
-          captions="{{configuration.captions}}"
-          available-qualities="{{availableQualities}}">
-        </control-bar>
-        <template is="dom-if" if="{{state.isChapterListShown}}">
-          <chapter-list
+    <div id="video-player-container">
+      <div id="streams-container">
+        <template is="dom-repeat" items="{{configuration.streams}}">
+          <video-stream
             state="{{state}}"
             state-manager="{{stateManager}}"
-            chapters="{{configuration.chapters}}">
-          </chapter-list>
+            synchronization-manager="{{synchronizationManager}}"
+            urls="{{item}}"
+            preload="{{configuration.videoPreload}}"
+            master="{{equals(index, 0)}}"
+            class="video-stream"
+            captions="{{configuration.captions}}"
+            style$="height: calc(100% / {{rowCount(configuration.streams)}});">
+          </video-stream>
+          <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
+            <resizer-control style$="visibility: [[ifThenElse(isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+          </template>
         </template>
       </div>
+      <control-bar
+        state="{{state}}"
+        state-manager="{{stateManager}}"
+        has-chapters="{{hasChapters}}"
+        captions="{{configuration.captions}}"
+        available-qualities="{{availableQualities}}">
+      </control-bar>
+      <template is="dom-if" if="{{state.isChapterListShown}}">
+        <chapter-list
+          state="{{state}}"
+          state-manager="{{stateManager}}"
+          chapters="{{configuration.chapters}}">
+        </chapter-list>
+      </template>
     </div>
 
   </template>
