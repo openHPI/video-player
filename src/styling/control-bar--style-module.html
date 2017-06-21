@@ -22,17 +22,14 @@
         /* ------ General styling of the control section ------ */
         padding: 0 10px;
         height: 40px;
-        background-color: #424242;
-        background-color: var(--background-color);
-        color: #FFFFFF;
-        color: var(--foreground-color);
+        @apply --foreground-color;
+        @apply --background-color;
         user-select: none;
         cursor: default;
       }
       .user_controls a {
         /* Override potential default stylings for links */
-        color: #FFFFFF !important;
-        color: var(--foreground-color) !important;
+        @apply --foreground-color !important; /* TODO works? */
 
         line-height: 40px;
         height: 100%;
@@ -71,16 +68,13 @@
         border: none;
       }
       progress::-webkit-progress-value {
-        background-color: #DD6112;
-        background-color: var(--accent-color);
+        @apply --accent-color-background;
       }
       progress::-moz-progress-bar {
-        background-color: #DD6112;
-        background-color: var(--accent-color);
+        @apply --accent-color-background;
       }
       progress {
-        color: #DD6112;
-        color: var(--accent-color);
+        @apply --accent-color-foreground;
       }
 
     </style>

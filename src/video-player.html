@@ -1,9 +1,10 @@
 <link rel="import" href="../bower_components/imd/imd.html">
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 
-<link rel="import" href="3rd-imports/hls-js.html">
 <link rel="import" href="base-element.html">
-<link rel="import" href="3rd-imports/font-awesome.html">
+<link rel="import" href="3rd-imports/hls-js.html">
+<link rel="import" href="styling/mixins.html">
+<link rel="import" href="styling/font-awesome.html">
 <link rel="import" href="services/state-manager.html">
 <link rel="import" href="services/fullscreen-manager.html">
 <link rel="import" href="services/synchronization-manager.html">
@@ -229,18 +230,18 @@
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
-        // The poperties are not correctly evaluated and thus the variable not set.
+        // The properties are not correctly evaluated and thus the variable not set.
         foregroundColorChanged(color) {
-          this.style.setProperty('--foreground-color', color);
+          Polymer.updateStyles({'--foreground-color': color});
         }
         accentColorChanged(color) {
-          this.style.setProperty('--accent-color', color);
+          Polymer.updateStyles({'--accent-color': color});
         }
         backgroundColorChanged(color) {
-          this.style.setProperty('--background-color', color);
+          Polymer.updateStyles({'--background-color': color});
         }
         secondaryBackgroundColorChanged(color) {
-          this.style.setProperty('--secondary-background-color', color);
+          Polymer.updateStyles({'--secondary-background-color': color});
         }
 
         needResizer(index, length) {

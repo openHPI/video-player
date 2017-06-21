@@ -1,7 +1,7 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
 <link rel="import" href="../../base-element.html">
-<link rel="import" href="../styling/control-bar--style-module.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
 
 <dom-module id="select-control">
 
@@ -19,10 +19,8 @@
         right: -10px;
         z-index: 3;
 
-        background-color: #424242;
-        background-color: var(--background-color);
-        color: #FFFFFF;
-        color: var(--foreground-color);
+        @apply --foreground-color;
+        @apply --background-color;
       }
       .dropdown-content a {
         display: inline-block;
@@ -71,7 +69,7 @@
             selectedValue: String,
             formatter: {
               type: Function,
-              value: (x) => x,
+              value: () => (x) => x,
             },
             isDropDownOpen: {
               type: Boolean,
