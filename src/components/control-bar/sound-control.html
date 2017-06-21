@@ -2,7 +2,7 @@
 
 <link rel="import" href="../../base-element.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
-<link rel="import" href="progress-bar.html">
+<link rel="import" href="../base-components/progress-bar.html">
 
 <dom-module id="sound-control">
   <template>
@@ -16,6 +16,7 @@
     <div id="container__sound_control" class="user_controls">
       <progress-bar
         id="progress__sound_control"
+        border
         value$="[[toStringOrEmpty(effectiveVolume)]]"
         on-change="handleChange">
       </progress-bar>

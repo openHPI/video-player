@@ -9,6 +9,7 @@
       :host {
         /* Necessary to ensure that the height is correct in Safari */
         display: flex;
+        justify-content: center;
       }
 
       /* ------ Styling of the control bar elements ------ */
@@ -17,7 +18,7 @@
         display: flex;
         flex-grow: 1;
         align-items: center;
-        justify-content: center;
+        justify-content: inherit;
 
         /* ------ General styling of the control section ------ */
         padding: 0 10px;
@@ -57,28 +58,7 @@
       .button.inactive {
         /* Override default color when the button is inactive */
         color: grey !important;
-      }
-
-      /* ------ Styling of the progress bars within the control bar ------*/
-      progress[value] {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        width: 100%;
-        border: 1px solid #5a6065;
-      }
-      progress::-ms-fill {
-        border: none;
-      }
-      progress::-webkit-progress-value {
-        @apply --accent-color-background;
-      }
-      progress::-moz-progress-bar {
-        @apply --accent-color-background;
-      }
-      progress {
-        @apply --accent-color-foreground;
-      }
+      }     
 
     </style>
   </template>
