@@ -29,7 +29,7 @@
     "prefer-arrow-callback": "error",
     "arrow-body-style": ["error", "as-needed"],
     "valid-jsdoc": "error",
-    "capitalized-comments": ["error", "always", {"ignoreConsecutiveComments": true}]
+    "capitalized-comments": ["warn", "always", {"ignoreConsecutiveComments": true}]
   },
   "settings": {
     "html/indent": "+2",

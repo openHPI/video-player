@@ -58,7 +58,7 @@
   },
   "scripts": {
     "test": "polymer test",
-    "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html",
+    "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html && polymer lint",
     "postinstall": "bower install",
     "serve": "polymer serve",
     "bundle": "gulp bundle",
