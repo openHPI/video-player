@@ -72,7 +72,7 @@
 
         calcWidth(value, min, max) {
           if(max > min && min <= value && max >= value) {
-            return Math.ceil((value - min) / max * 100);
+            return (value - min) / max * 100;
           }
 
           return 0;
