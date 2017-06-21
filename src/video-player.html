@@ -84,7 +84,7 @@
             style$="height: calc(100% / {{rowCount(configuration.streams)}});">
           </video-stream>
           <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
-            <resizer-control style$="visibility: [[ifThenElse(isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+            <resizer-control state="{{state}}" style$="visibility: [[ifThenElse(isResizerShown, 'visible', 'hidden')]]"></resizer-control>
           </template>
         </template>
       </div>
