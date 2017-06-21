@@ -3,10 +3,12 @@ node_js: node
 branches:
   only: 
   - master
+  - dev
   - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
 before_install: npm install -g bower cross-zip-cli
 install: npm install
 script: 
+  - npm run test
   - npm run bundle
   - mv dist videoplayer-$TRAVIS_TAG
   - cross-zip videoplayer-$TRAVIS_TAG videoplayer-$TRAVIS_TAG.zip
