@@ -12,7 +12,7 @@
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/control-bar/control-bar.html">
 <link rel="import" href="components/progress-container/video-progress.html">
-<link rel='import' href='components/progress-container/lectureslide-bar/lectureslide-bar.html'>
+<link rel="import" href="components/progress-container/lecture-slide-bar/lecture-slide-bar.html">
 <link rel="import" href="components/resizer-control.html">
 
 <dom-module id="video-player">
@@ -102,7 +102,7 @@
 
       <div id="progress-container">
         <template is="dom-if" if="{{configuration.lectureSlides}}">
-          <lectureslide-bar state='{{state}}' state-manager='{{stateManager}}' slides='{{configuration.lectureSlides}}'></lectureslide-bar>
+          <lecture-slide-bar state="{{state}}" state-manager="{{stateManager}}" slides="{{configuration.lectureSlides}}"></lecture-slide-bar>
         </template>
         <video-progress state="{{state}}" state-manager="{{stateManager}}"></video-progress>
       </div>

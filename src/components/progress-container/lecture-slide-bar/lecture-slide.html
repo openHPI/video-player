@@ -1,0 +1,76 @@
+<link rel="import" href="../../../../bower_components/imd/imd.html">
+
+<dom-module id="lecture-slide">
+  <template>
+    <style type="text/css">
+      .container__lecture_slide_element {
+        position: absolute;
+        right: 0;
+        border-left: 1px solid #000;
+        background-color: #777;
+        height: 10px;
+      }
+      .container__lecture_slide_img {
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        bottom: 1px;
+        left: 0px;
+        border: 1px solid #000000;;
+        background-color: #FFF;
+        visibility: hidden;
+      }
+    </style>
+
+    <div id="container__lectureSlide_element" class="container__lecture_slide_element" style$="left: [[_stylePercentage(slide.startPosition,state.duration)]]%">
+        <img id="image__slidePreview" src="[[slide.imageUrl]]" class="container__lecture_slide_img">
+    </div>
+
+  </template>
+
+  <script>
+    define('lecture-slide', ['base-element'], (BaseElement) => {
+      class LectureSlide extends BaseElement {
+        static get is() { return 'lecture-slide'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            stateManager: Object,
+            slide: Object,
+          };
+        }
+
+        ready() {
+          super.ready();
+
+          this.addEventListener('mouseenter', e => this._mouseEnterListener(e));
+          this.addEventListener('mouseleave', e => this._mouseLeaveListener(e));
+          this.addEventListener('click', e => this._mouseClickListener(e));
+        }
+
+        _stylePercentage(position, duration) {
+          return position / duration * 100;
+        }
+
+        _mouseClickListener(){
+          this.stateManager.setPosition(this.slide.startPosition);
+        }
+
+        _mouseEnterListener(){
+          this.$.container__lectureSlide_element.style.backgroundColor = 'white';
+          this.$.image__slidePreview.style.visibility = 'visible';
+          this.$.image__slidePreview.style.bottom = this.$.container__lectureSlide_element.offsetHeight + 1 + 'px';
+        }
+
+        _mouseLeaveListener(){
+          this.$.container__lectureSlide_element.style.backgroundColor = '#777';
+          this.$.image__slidePreview.style.visibility = 'hidden';
+        }
+      }
+
+      window.customElements.define(LectureSlide.is, LectureSlide);
+    });
+  </script>
+
+</dom-module>
