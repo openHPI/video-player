@@ -9,7 +9,6 @@ branches:
   only: 
   - master
   - dev
-  - testme
   - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
 
 before_install: 
