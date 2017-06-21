@@ -49,7 +49,14 @@
             },
             videos: Array,
             mousePositionX: Number,
+            state: Object
           };
+        }
+
+        static get observers() {
+          return [
+            'fullscreenChanged(state.fullscreen)'
+          ];
         }
 
         handleDragStart(e) {
@@ -66,7 +73,9 @@
           let dragImage = this.cloneNode(true);
           dragImage.style.visibility = 'hidden';
           document.body.appendChild(dragImage);
-          e.dataTransfer.setDragImage(dragImage, 0, 0);
+          // If we want to hide the ghost image in fullscreen mode, we have to
+          // move it completely out of view by setting its position as -10000|-10000
+          e.dataTransfer.setDragImage(dragImage, -10000, -10000);
         }
 
         handleDragEnd() {
@@ -147,6 +156,23 @@
 
           this.globalFlexBasisGap[index] = newValue;
           video.style.flexBasis = 'calc(49% + ' + newValue + 'px)';
+        }
+
+        resetResizer () {
+          // Resizing only makes sense if there are at least two videos
+          if(this.videos && this.videos.length > 1){
+            this.videos[0].style.flexBasis = '49%';
+            this.videos[1].style.flexBasis = '49%';
+          }
+        }
+
+        fullscreenChanged (isFullscreen) {
+          // When we exit full screen, we will have a lot less screen real estate
+          // available which means that sometimes we need to adapt
+          if (!isFullscreen) {
+            console.log('resetResizer!');
+            this.resetResizer();
+          }
         }
       }
 
