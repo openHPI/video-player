@@ -16,8 +16,7 @@
         height: 15px;
         border: 1px solid #5A6065;
         border: 1px solid var(--secondary-background-color);
-        background-color: #6D6D6D;
-        background-color: var(--background-color);
+        @apply --background-color;
       }
 
       .progress-overlay {
@@ -26,14 +25,12 @@
       }
 
       #div__primary_progress {
-        background-color: #DD6112;
-        background-color: var(--accent-color);
+        @apply --accent-color-background;
         z-index: 2;
       }
 
       #div__secondary_progress {
-        background-color: #6D6D6D;
-        background-color: var(--secondary-background-color);
+        @apply --secondary-background-color;
         z-index: 1;
       }
     </style>
