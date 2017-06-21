@@ -1,7 +1,7 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
 <link rel="import" href="../../base-element.html">
-<link rel="import" href="progress-bar.html">
+<link rel="import" href="video-progress.html">
 <link rel="import" href="playpause-control.html">
 <link rel="import" href="sound-control.html">
 <link rel="import" href="videotime-display.html">
@@ -26,7 +26,7 @@
 
     <div id="container__control_bar">
       <playpause-control state="{{state}}" state-manager="{{stateManager}}"></playpause-control>
-      <progress-bar state="{{state}}" state-manager="{{stateManager}}"></progress-bar>
+      <video-progress state="{{state}}" state-manager="{{stateManager}}"></video-progress>
       <videotime-display state="{{state}}" state-manager="{{stateManager}}"></videotime-display>
       <template is="dom-if" if="{{captions}}">
         <caption-control state="{{state}}" state-manager="{{stateManager}}" captions="{{captions}}"></caption-control>
@@ -46,6 +46,8 @@
 
   <script>
     define('control-bar', ['base-element'], (BaseElement) => {
+      const SKIP_SECONDS = 15;
+
       class ControlBar extends BaseElement {
         static get is() { return 'control-bar'; }
 
@@ -75,13 +77,13 @@
           }
 
           if(e.key === 'ArrowRight') {
-            this.stateManager.setPosition(this.state.position + 15);
+            this.stateManager.skipSeconds(SKIP_SECONDS);
           } else if (e.key === 'ArrowLeft') {
-            this.stateManager.setPosition(this.state.position - 15);
+            this.stateManager.skipSeconds(-SKIP_SECONDS);
           } else if (e.key === ' ' || e.key === 'p') {
             this.stateManager.togglePlayPause();
           } else if (e.key === 'f') {
-            this.stateManager.toggleFullScreen();
+            this.stateManager.toggleFullscreen();
           } else {
             return;
           }

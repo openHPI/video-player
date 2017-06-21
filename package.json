@@ -1,6 +1,6 @@
 {
   "name": "video-player",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Universal tele-TASK and openHPI player",
   "contributors": [
     {
@@ -51,7 +51,6 @@
     "gulp-if": "^2.0.2",
     "gulp-ignore": "^2.0.2",
     "gulp-uglify": "^3.0.0",
-    "gulp-uncomment": "^0.3.0",
     "htmlhint": "^0.9.13",
     "polymer-build": "^1.5.1",
     "polymer-cli": "^1.2.0",
@@ -59,9 +58,10 @@
   },
   "scripts": {
     "test": "polymer test",
-    "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html",
+    "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html && polymer lint",
     "postinstall": "bower install",
     "serve": "polymer serve",
-    "bundle": "gulp bundle"
+    "bundle": "gulp bundle",
+    "deploy": "./deploy.sh"
   }
 }

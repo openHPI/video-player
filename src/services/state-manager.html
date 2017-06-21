@@ -40,7 +40,7 @@
        * @returns {void}
        */
       play() {
-        this.setPlayState( PLAY_STATES.PLAYING);
+        this.setPlayState(PLAY_STATES.PLAYING);
       }
 
       /**
@@ -69,10 +69,15 @@
        * @returns {void}
        */
       togglePlayPause() {
-        if(this.state.playState === PLAY_STATES.PAUSED) {
-          this.play();
-        } else {
-          this.pause();
+        switch(this.state.playState) {
+          case PLAY_STATES.PAUSED:
+          case PLAY_STATES.FINISHED:
+            this.play();
+            break;
+
+          case PLAY_STATES.PLAYING:
+            this.pause();
+            break;
         }
       }
 
@@ -88,6 +93,35 @@
         }
 
         this.setState('position', seconds);
+
+        if(this.state.position === this.state.duration) {
+          this.setPlayState(PLAY_STATES.FINISHED);
+        } else if(this.state.playState === PLAY_STATES.FINISHED) {
+          this.setPlayState(PLAY_STATES.PAUSED);
+        }
+      }
+
+      /**
+       * Skips a number of seconds from the current position.
+       * @param  {number} seconds The number of seconds to skip.
+       * @returns {void}
+       */
+      skipSeconds(seconds) {
+        let position = Math.max(0, Math.min(this.state.position + seconds, this.state.duration));
+        this.setPosition(position);
+      }
+
+      /**
+       * Sets the current buffer position of the videos.
+       * @param {number} seconds The current buffer position in seconds.
+       * @returns {void}
+       */
+      setBufferPosition(seconds) {
+        if(seconds < 0 || this.state.duration && seconds > this.state.duration) {
+          throw new RangeError('Value must be between 0 and duration of the video.');
+        }
+
+        this.setState('bufferPosition', seconds);
       }
 
       /**
@@ -151,7 +185,7 @@
        * @returns {void}
        */
       setVolume(volume) {
-        if(!volume || volume < 0 || volume > 1) {
+        if(volume < 0 || volume > 1) {
           throw new RangeError('Value must be between 0 and 1.');
         }
 
