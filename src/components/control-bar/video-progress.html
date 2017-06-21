@@ -1,0 +1,44 @@
+<link rel="import" href="../../../bower_components/imd/imd.html">
+
+<link rel="import" href="../../base-element.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
+<link rel="import" href="progress-bar.html">
+
+<dom-module id="video-progress">
+  <template>
+    <style type="text/css" include="control-bar--style-module">
+    </style>
+
+    <div id="container__progress_bar" class="user_controls">
+      <progress-bar
+        id="progress__video_progress"
+        max="[[toStringOrEmpty(state.duration)]]"
+        value$="[[toStringOrEmpty(state.position)]]"
+        secondary-value$="[[toStringOrEmpty(state.bufferPosition)]]"
+        on-change="handleChange">
+      </progress-bar>
+    </div>
+  </template>
+
+  <script>
+    define('video-progress', ['base-element'], (BaseElement) => {
+      class VideoProgress extends BaseElement {
+        static get is() { return 'video-progress'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            stateManager: Object,
+          };
+        }
+
+        handleChange(e) {
+          this.stateManager.setPosition(e.target.value);
+        }
+      }
+
+      window.customElements.define(VideoProgress.is, VideoProgress);
+    });
+  </script>
+
+</dom-module>

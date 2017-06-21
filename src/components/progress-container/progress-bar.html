@@ -1,21 +1,46 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
 <link rel="import" href="../../base-element.html">
-<link rel="import" href="../styling/progress-container--style-module.html">
 
 <dom-module id="progress-bar">
+
   <template>
-    <style type="text/css" include="progress-container--style-module">
+    <style type="text/css">
+      :host {
+        flex-basis: 100%;
+      }
+
+      #container__progress_bar {
+        position: relative;
+        width: 100%;
+        height: 15px;
+        border: 1px solid #5A6065;
+        border: 1px solid var(--secondary-background-color);
+        background-color: #6D6D6D;
+        background-color: var(--background-color);
+      }
+
+      .progress-overlay {
+        position: absolute;
+        height: 100%;
+      }
+
+      #div__primary_progress {
+        background-color: #DD6112;
+        background-color: var(--accent-color);
+        z-index: 2;
+      }
+
+      #div__secondary_progress {
+        background-color: #6D6D6D;
+        background-color: var(--secondary-background-color);
+        z-index: 1;
+      }
     </style>
 
-    <div id="container__progress_bar" class="progress_indicator">
-      <progress
-        id="progress__bar"
-        min="0"
-        max="[[toStringOrEmpty(state.duration)]]"
-        value$="[[toStringOrEmpty(state.position)]]"
-        on-click="handleClick">
-      </progress>
+    <div id="container__progress_bar" on-click="handleClick">
+      <div id="div__primary_progress" class="progress-overlay" style$="width: [[calcWidth(value, min, max)]]%;"></div>
+      <div id="div__secondary_progress" class="progress-overlay" style$="width: [[calcWidth(secondaryValue, min, max)]]%;"></div>
     </div>
   </template>
 
@@ -26,21 +51,42 @@
 
         static get properties() {
           return {
-            state: Object,
-            stateManager: Object,
+            min: {
+              type: Number,
+              value: 0,
+            },
+            max: {
+              type: Number,
+              value: 1,
+            },
+            value: {
+              type: Number,
+              value: 0,
+            },
+            secondaryValue: {
+              type: Number,
+              value: 0,
+            },
           };
         }
 
+        calcWidth(value, min, max) {
+          if(max > min && min <= value && max >= value) {
+            return Math.ceil((value - min) / max * 100);
+          }
+
+          return 0;
+        }
+
         handleClick(e) {
-          // Get x value by substracting offsetleft of progress-bar
-          //let x = e.pageX - this.$.progress__bar.offsetLeft;
-          let x = e.pageX - this.$.progress__bar.getBoundingClientRect().left;
-          // Calculate value that will be between 0 and the max value (duration of video) -> exact moment of video
-          let clickedValue = x * this.$.progress__bar.max / this.$.progress__bar.offsetWidth;
+          // Get x value by substracting offsetleft of control
+          let x = e.pageX - this.getBoundingClientRect().left;
+          // Calculate value that will be between 0 and the max value
+          let clickedValue = x * this.max / this.offsetWidth;
           // Check if still within borders
-          let isClicked = clickedValue <= this.$.progress__bar.max;
-          if(isClicked){
-            this.stateManager.setPosition(clickedValue);
+          if(clickedValue <= this.max) {
+            this.value = clickedValue;
+            this.dispatchEvent(new CustomEvent('change'));
           }
         }
       }

@@ -1,7 +1,8 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
 <link rel="import" href="../../base-element.html">
-<link rel="import" href="../styling/control-bar--style-module.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
+<link rel="import" href="../progress-container/progress-bar.html">
 
 <dom-module id="sound-control">
   <template>
@@ -13,13 +14,11 @@
     </style>
 
     <div id="container__sound_control" class="user_controls">
-      <progress
+      <progress-bar
         id="progress__sound_control"
-        min="0"
-        max="1"
         value$="[[toStringOrEmpty(effectiveVolume)]]"
-        on-click="handleClick">
-      </progress>
+        on-change="handleChange">
+      </progress-bar>
     </div>
 
   </template>
@@ -40,18 +39,9 @@
           };
         }
 
-        handleClick(e) {
-          // Get x-axies value of event location
-          //let x = e.pageX - this.$.progress__sound_control.offsetLeft;
-          let x = e.pageX - this.$.progress__sound_control.getBoundingClientRect().left;
-          // Calculate value that will be between 0 and max value of progress bar
-          let clickedValue = x * this.$.progress__sound_control.max / this.$.progress__sound_control.offsetWidth;
-          // Check if still within borders
-          let isClicked = clickedValue <= this.$.progress__sound_control.max;
-          if(isClicked){
-            this.stateManager.unmute();
-            this.stateManager.setVolume(clickedValue);
-          }
+        handleChange(e) {
+          this.stateManager.unmute();
+          this.stateManager.setVolume(e.target.value);
         }
 
         _effectiveVolume(volume, muted) {
