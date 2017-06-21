@@ -10,6 +10,7 @@
 <link rel="import" href="services/synchronization-manager.html">
 <link rel="import" href="components/video-stream.html">
 <link rel="import" href="components/chapter-list.html">
+<link rel="import" href="components/overlays/waiting-overlay.html">
 <link rel="import" href="components/control-bar/control-bar.html">
 <link rel="import" href="components/progress-container/video-progress.html">
 <link rel="import" href="components/progress-container/lecture-slide-bar/lecture-slide-bar.html">
@@ -63,6 +64,11 @@
         left: 0;
         top: 0;
       }
+
+      #video-container {
+        position: relative;
+      }
+
       #streams-container {
         display: flex;
         flex-wrap: wrap;
@@ -82,22 +88,25 @@
     </style>
 
     <div id="video-player-container">
-      <div id="streams-container">
-        <template is="dom-repeat" items="{{configuration.streams}}">
-          <video-stream
-            state="{{state}}"
-            state-manager="{{stateManager}}"
-            synchronization-manager="{{synchronizationManager}}"
-            urls="{{item}}"
-            preload="{{configuration.videoPreload}}"
-            master="{{equals(index, 0)}}"
-            class="video-stream"
-            style$="height: calc(100% / {{rowCount(configuration.streams)}});">
-          </video-stream>
-          <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
-            <resizer-control state="{{state}}" style$="visibility: [[ifThenElse(isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+      <div id="video-container">
+        <waiting-overlay state="{{state}}" state-manager="{{stateManager}}"></waiting-overlay>
+        <div id="streams-container">
+          <template is="dom-repeat" items="{{configuration.streams}}">
+            <video-stream
+              state="{{state}}"
+              state-manager="{{stateManager}}"
+              synchronization-manager="{{synchronizationManager}}"
+              urls="{{item}}"
+              preload="{{configuration.videoPreload}}"
+              master="{{equals(index, 0)}}"
+              class="video-stream"
+              style$="height: calc(100% / {{rowCount(configuration.streams)}});">
+            </video-stream>
+            <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
+              <resizer-control state="{{state}}" style$="visibility: [[ifThenElse(isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+            </template>
           </template>
-        </template>
+        </div>
       </div>
 
       <div id="progress-container">
