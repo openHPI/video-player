@@ -1,7 +1,7 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
 <link rel="import" href="../../base-element.html">
-<link rel="import" href="progress-bar.html">
+<link rel="import" href="video-progress.html">
 <link rel="import" href="playpause-control.html">
 <link rel="import" href="sound-control.html">
 <link rel="import" href="videotime-display.html">
@@ -25,7 +25,7 @@
 
     <div id="container__control_bar">
       <playpause-control state="{{state}}" state-manager="{{stateManager}}"></playpause-control>
-      <progress-bar state="{{state}}" state-manager="{{stateManager}}"></progress-bar>
+      <video-progress state="{{state}}" state-manager="{{stateManager}}"></video-progress>
       <videotime-display state="{{state}}" state-manager="{{stateManager}}"></videotime-display>
       <speed-control state="{{state}}" state-manager="{{stateManager}}"></speed-control>
       <template is="dom-if" if="{{hasMultipleQualities}}">

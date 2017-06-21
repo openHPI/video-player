@@ -91,6 +91,19 @@
       }
 
       /**
+       * Sets the current buffer position of the videos.
+       * @param {number} seconds The current buffer position in seconds.
+       * @returns {void}
+       */
+      setBufferPosition(seconds) {
+        if(seconds < 0 || this.state.duration && seconds > this.state.duration) {
+          throw new RangeError('Value must be between 0 and duration of the video.');
+        }
+
+        this.setState('bufferPosition', seconds);
+      }
+
+      /**
        * Sets the duration of the video.
        * @param {number} seconds The duration of the current video in seconds.
        * @returns {void}
@@ -151,7 +164,7 @@
        * @returns {void}
        */
       setVolume(volume) {
-        if(!volume || volume < 0 || volume > 1) {
+        if(volume < 0 || volume > 1) {
           throw new RangeError('Value must be between 0 and 1.');
         }
 

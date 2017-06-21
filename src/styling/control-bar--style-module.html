@@ -22,14 +22,17 @@
         /* ------ General styling of the control section ------ */
         padding: 0 10px;
         height: 40px;
-        @apply --primary-color-foreground;
-        @apply --background-color-background;
+        @apply --foreground-color;
+        @apply --background-color;
         user-select: none;
         cursor: default;
       }
       .user_controls a {
-        /* Override potential default stylings for links */
-        @apply --primary-color-foreground !important; /* TODO works? */
+        /* Override potential default stylings for links.
+         * The mixin rules have to be added explicitly to use !important flag */
+        color: #FFFFFF !important;
+        color: var(--foreground-color) !important;
+        @apply --foreground-color;
 
         line-height: 40px;
         height: 100%;
@@ -68,13 +71,13 @@
         border: none;
       }
       progress::-webkit-progress-value {
-        @apply --secondary-color-background;
+        @apply --accent-color-background;
       }
       progress::-moz-progress-bar {
-        @apply --secondary-color-background;
+        @apply --accent-color-background;
       }
       progress {
-        @apply --secondary-color-foreground;
+        @apply --accent-color-foreground;
       }
 
     </style>
