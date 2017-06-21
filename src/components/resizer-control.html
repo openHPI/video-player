@@ -49,13 +49,13 @@
             },
             videos: Array,
             mousePositionX: Number,
-            state: Object
+            state: Object,
           };
         }
 
         static get observers() {
           return [
-            'fullscreenChanged(state.fullscreen)'
+            'fullscreenChanged(state.fullscreen)',
           ];
         }
 
