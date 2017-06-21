@@ -9,9 +9,9 @@
 <link rel="import" href="services/synchronization-manager.html">
 <link rel="import" href="components/video-stream.html">
 <link rel="import" href="components/chapter-list.html">
-<link rel="import" href="components/progress-bar.html">
 <link rel="import" href="components/control-bar/control-bar.html">
-<link rel='import' href='components/lectureslide-bar/lectureslide-bar.html'>
+<link rel="import" href="components/progress-container/progress-bar.html">
+<link rel='import' href='components/progress-container/lectureslide-bar/lectureslide-bar.html'>
 <link rel="import" href="components/resizer-control.html">
 
 <dom-module id="video-player">
@@ -19,6 +19,8 @@
     <style type="text/css">
       :host {
         display: inline-block;
+        border: 1px solid grey;
+        box-shadow: 0 0 3px 1px grey;
       }
 
       /* For some reason, just chaining those fullscreen selectors into one big
@@ -51,6 +53,11 @@
         /* 49 to leave a bit space for the resizer */
         flex: 1 1 49%;
       }
+
+      #progress-container {
+        border-top: 2px solid black;
+        border-bottom: 1px solid black;
+      }
     </style>
 
     <div id="video-player-container">
@@ -72,11 +79,12 @@
         </template>
       </div>
 
-      <template is="dom-if" if="{{configuration.lectureSlides}}">
-        <lectureslide-bar state='{{state}}' state-manager='{{stateManager}}' slides='{{configuration.lectureSlides}}'></lectureslide-bar>
-      </template>
-
-      <progress-bar state="{{state}}" state-manager="{{stateManager}}"></progress-bar>
+      <div id="progress-container">
+        <template is="dom-if" if="{{configuration.lectureSlides}}">
+          <lectureslide-bar state='{{state}}' state-manager='{{stateManager}}' slides='{{configuration.lectureSlides}}'></lectureslide-bar>
+        </template>
+        <progress-bar state="{{state}}" state-manager="{{stateManager}}"></progress-bar>
+      </div>
 
       <control-bar
         state="{{state}}"

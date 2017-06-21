@@ -1,15 +1,16 @@
-<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='../../../../../polymer/polymer-element.html'>
 <link rel='import' href='lecture-slide.html'>
+<link rel="import" href="../styling/progress-container--style-module.html">
 
 <dom-module id='lectureslide-bar'>
   <template>
-    <style type="text/css">
-      #container__control_bar{
-        position: relative;
-      }
+    <style type="text/css" include="progress-container--style-module">
+    #container__lecture_slide {
+      height: 10px;
+    }
     </style>
 
-    <div id="container__control_bar">
+    <div id="container__lecture_slide" class="progress_indicator">
         <template is="dom-repeat" items='{{slides}}'>
           <lecture-slide 
             state='{{state}}' 

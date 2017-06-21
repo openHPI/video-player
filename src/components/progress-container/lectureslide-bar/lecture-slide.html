@@ -1,19 +1,16 @@
-<link rel='import' href='../../../../polymer/polymer-element.html'>
+<link rel='import' href='../../../../../polymer/polymer-element.html'>
 
 <dom-module id='lecture-slide'>
   <template>
     <style type="text/css">
-      .container__lecture_slide{
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
+      .container__lecture_slide_element {
         position: absolute;
         right: 0;
         border-left: 1px solid #000;
         background-color: #777;
         height: 10px;
       }
-      .container__lecture_slide_img{
+      .container__lecture_slide_img {
         margin: 0;
         padding: 0;
         position: absolute;
@@ -25,7 +22,7 @@
       }
     </style>
 
-    <div id="container__lectureSlide_element" class="container__lecture_slide" style="left: [[_stylePercentage(slide.startPosition,state.duration)]]%">
+    <div id="container__lectureSlide_element" class="container__lecture_slide_element" style="left: [[_stylePercentage(slide.startPosition,state.duration)]]%">
         <img id="image__slidePreview" src="[[slide.imageUrl]]" class="container__lecture_slide_img">
     </div>
 
