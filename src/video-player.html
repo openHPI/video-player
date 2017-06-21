@@ -35,9 +35,29 @@
         align-items: center;
       }
 
+      #video-player-container:-webkit-full-screen{
+        width: 100%;
+      }
+      #video-player-container:-moz-full-screen{
+        width: 100%;
+      }
+      #video-player-container:-ms-fullscreen{
+        width: 100%;
+      }
+
       #video-player-container {
         position: relative;
         height: 100%;
+      }
+      #video-player-container.iPad-fullscreen {
+        /* Actually, what we would want here is to set the height to 100vh...but
+           in mobile browsers this results in the content being bigger than what
+           the browser is able to display so we have to use 100% instead.
+           For more information, see https://nicolas-hoizey.com/2015/02/viewport-height-is-taller-than-the-visible-part-of-the-document-in-some-mobile-browsers.html */
+        width: 100vw;
+        position: absolute;
+        left: 0;
+        top: 0;
       }
       #streams-container {
         display: flex;
