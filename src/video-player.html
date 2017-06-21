@@ -9,6 +9,7 @@
 <link rel="import" href="services/synchronization-manager.html">
 <link rel="import" href="components/video-stream.html">
 <link rel="import" href="components/chapter-list.html">
+<link rel="import" href="components/progress-bar.html">
 <link rel="import" href="components/control-bar/control-bar.html">
 <link rel='import' href='components/lectureslide-bar/lectureslide-bar.html'>
 <link rel="import" href="components/resizer-control.html">
@@ -75,13 +76,15 @@
         <lectureslide-bar state='{{state}}' state-manager='{{stateManager}}' slides='{{configuration.lectureSlides}}'></lectureslide-bar>
       </template>
 
+      <progress-bar state="{{state}}" state-manager="{{stateManager}}"></progress-bar>
+
       <control-bar
         state="{{state}}"
         state-manager="{{stateManager}}"
         has-chapters="{{hasChapters}}"
         available-qualities="{{availableQualities}}">
       </control-bar>
-      
+
       <template is="dom-if" if="{{state.isChapterListShown}}">
         <chapter-list
           state="{{state}}"
