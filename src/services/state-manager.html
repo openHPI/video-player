@@ -93,6 +93,22 @@
         }
 
         this.setState('position', seconds);
+
+        if(this.state.position === this.state.duration) {
+          this.setPlayState(PLAY_STATES.FINISHED);
+        } else if(this.state.playState === PLAY_STATES.FINISHED) {
+          this.setPlayState(PLAY_STATES.PAUSED);
+        }
+      }
+
+      /**
+       * Skips a number of seconds from the current position.
+       * @param  {number} seconds The number of seconds to skip.
+       * @returns {void}
+       */
+      skipSeconds(seconds) {
+        let position = Math.max(0, Math.min(this.state.position + seconds, this.state.duration));
+        this.setPosition(position);
       }
 
       /**

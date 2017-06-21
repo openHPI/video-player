@@ -25,8 +25,7 @@
         on-click="handleClick"
         on-canplay="handleCanPlay"
         on-loadedmetadata="handleLoadedMetadata"
-        on-timeupdate="handleTimeUpdate"
-        on-ended="handleEnded">
+        on-timeupdate="handleTimeUpdate">
       </video>
     </div>
   </template>
@@ -113,12 +112,6 @@
 
         handleClick() {
           this.stateManager.togglePlayPause();
-        }
-
-        handleEnded() {
-          if(this.master) {
-            this.stateManager.setPlayState(PLAY_STATES.FINISHED);
-          }
         }
 
         applyState() {

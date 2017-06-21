@@ -42,6 +42,8 @@
 
   <script>
     define('control-bar', ['base-element'], (BaseElement) => {
+      const SKIP_SECONDS = 15;
+
       class ControlBar extends BaseElement {
         static get is() { return 'control-bar'; }
 
@@ -71,9 +73,9 @@
           }
 
           if(e.key === 'ArrowRight') {
-            this.stateManager.setPosition(this.state.position + 15);
+            this.stateManager.skipSeconds(SKIP_SECONDS);
           } else if (e.key === 'ArrowLeft') {
-            this.stateManager.setPosition(this.state.position - 15);
+            this.stateManager.skipSeconds(-SKIP_SECONDS);
           } else if (e.key === ' ' || e.key === 'p') {
             this.stateManager.togglePlayPause();
           } else if (e.key === 'f') {
