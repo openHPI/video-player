@@ -16,6 +16,7 @@
     <div id="container__sound_control" class="user_controls">
       <progress-bar
         id="progress__sound_control"
+        border
         value$="[[toStringOrEmpty(effectiveVolume)]]"
         on-change="handleChange">
       </progress-bar>

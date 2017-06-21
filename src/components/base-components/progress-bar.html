@@ -18,6 +18,9 @@
         border: 1px solid var(--secondary-background-color);
         @apply --background-color;
       }
+      #container__progress_bar.-no-border {
+        border: none;
+      }
 
       .progress-overlay {
         position: absolute;
@@ -35,7 +38,7 @@
       }
     </style>
 
-    <div id="container__progress_bar" on-click="handleClick">
+    <div id="container__progress_bar" on-click="handleClick" class$="[[ifThenElse(border, '', '-no-border')]]">
       <div id="div__primary_progress" class="progress-overlay" style$="width: [[calcWidth(value, min, max)]]%;"></div>
       <div id="div__secondary_progress" class="progress-overlay" style$="width: [[calcWidth(secondaryValue, min, max)]]%;"></div>
     </div>
@@ -64,6 +67,10 @@
               type: Number,
               value: 0,
             },
+            border: {
+              type: Boolean,
+              value: false
+            }
           };
         }
 

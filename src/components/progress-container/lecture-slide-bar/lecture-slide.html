@@ -6,19 +6,18 @@
       .container__lecture_slide_element {
         position: absolute;
         right: 0;
-        border-left: 1px solid #000;
-        background-color: #777;
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+        @apply --secondary-background-color;
         height: 10px;
       }
       .container__lecture_slide_img {
-        margin: 0;
-        padding: 0;
+        display: none;
         position: absolute;
-        bottom: 1px;
         left: 0px;
-        border: 1px solid #000000;;
-        background-color: #FFF;
-        visibility: hidden;
+        max-width: 100px;
+        border: 1px solid black;;
+        background-color: white;
       }
     </style>
 
@@ -59,13 +58,13 @@
 
         _mouseEnterListener(){
           this.$.container__lectureSlide_element.style.backgroundColor = 'white';
-          this.$.image__slidePreview.style.visibility = 'visible';
+          this.$.image__slidePreview.style.display = 'initial';
           this.$.image__slidePreview.style.bottom = this.$.container__lectureSlide_element.offsetHeight + 1 + 'px';
         }
 
         _mouseLeaveListener(){
           this.$.container__lectureSlide_element.style.backgroundColor = '#777';
-          this.$.image__slidePreview.style.visibility = 'hidden';
+          this.$.image__slidePreview.style.display = 'none';
         }
       }
 
