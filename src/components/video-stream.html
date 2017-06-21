@@ -25,7 +25,8 @@
         on-click="handleClick"
         on-canplay="handleCanPlay"
         on-loadedmetadata="handleLoadedMetadata"
-        on-timeupdate="handleTimeUpdate">
+        on-timeupdate="handleTimeUpdate"
+        on-ended="handleEnded">
       </video>
     </div>
   </template>
@@ -114,6 +115,12 @@
           this.stateManager.togglePlayPause();
         }
 
+        handleEnded() {
+          if(this.master) {
+            this.stateManager.setPlayState(PLAY_STATES.FINISHED);
+          }
+        }
+
         applyState() {
           this.playStateChanged(this.state.playState);
           this.positionChanged(this.state.position);
@@ -123,10 +130,11 @@
         }
 
         playStateChanged(playState) {
-          if (playState === PLAY_STATES.PLAYING)
+          if (playState === PLAY_STATES.PLAYING) {
             this.$.video.play();
-          else if (playState === PLAY_STATES.PAUSED)
+          } else if (playState === PLAY_STATES.PAUSED) {
             this.$.video.pause();
+          }
         }
 
         positionChanged(position) {
