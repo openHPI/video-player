@@ -8,6 +8,7 @@
   <template>
     <style type="text/css">
       #container__video_stream {
+        position: relative;
         width: 100%;
         height: 100%;
       }
@@ -15,18 +16,36 @@
         width: inherit;
         height: inherit;
       }
+
+      #container__poster_overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+      }
+
+      #image__poster {
+        width: 100%;
+        height: 100%;
+      }
     </style>
 
     <div id="container__video_stream">
       <video
         id="video"
         preload="[[ifThenElse(preload, 'auto', 'metadata')]]"
-        poster="[[ifThen(urls.poster, urls.poster)]]"
         on-click="handleClick"
         on-canplay="handleCanPlay"
+        on-playing="handlePlaying"
         on-loadedmetadata="handleLoadedMetadata"
         on-timeupdate="handleTimeUpdate">
       </video>
+      <template is="dom-if" if="{{and(urls.poster, isPosterVisible)}}">
+        <div id="container__poster_overlay">
+          <img id="image__poster" src="[[urls.poster]]" />
+        </div>
+      </template>
     </div>
   </template>
 
@@ -53,6 +72,10 @@
             },
             qualityUrl: String,
             initializingVideo: {
+              type: Boolean,
+              value: true,
+            },
+            isPosterVisible: {
               type: Boolean,
               value: true,
             },
@@ -108,6 +131,10 @@
             this.applyState();
             this.initializingVideo = false;
           }
+        }
+
+        handlePlaying() {
+          this.isPosterVisible = false;
         }
 
         handleClick() {
