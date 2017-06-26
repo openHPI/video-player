@@ -10,7 +10,7 @@
     <script src="../../web-component-tester/browser.js"></script>
 
     <link rel="import" href="../video-player.html">
-    <link rel="import" href="../services/state-manager.html">
+    <link rel="import" href="../src/services/state-manager.html">
   </head>
   <body>
 
@@ -92,7 +92,7 @@
 
         test('testing playback rate changes', function() {
           let oldPlaybackRate = stateManager.state.playbackRate;
-          stateManager.switchPlaybackRate();
+          stateManager.setPlaybackRate(2.0);
           assert.notEqual(oldPlaybackRate, stateManager.state.playbackRate, 'switching playback rates works!')
         });
 

@@ -123,10 +123,11 @@
         }
 
         playStateChanged(playState) {
-          if (playState === PLAY_STATES.PLAYING)
+          if (playState === PLAY_STATES.PLAYING) {
             this.$.video.play();
-          else if (playState === PLAY_STATES.PAUSED)
+          } else if (playState === PLAY_STATES.PAUSED) {
             this.$.video.pause();
+          }
         }
 
         positionChanged(position) {

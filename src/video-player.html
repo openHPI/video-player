@@ -1,15 +1,19 @@
 <link rel="import" href="../bower_components/imd/imd.html">
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 
-<link rel="import" href="3rd-imports/hls-js.html">
 <link rel="import" href="base-element.html">
-<link rel="import" href="3rd-imports/font-awesome.html">
+<link rel="import" href="3rd-imports/hls-js.html">
+<link rel="import" href="styling/mixins.html">
+<link rel="import" href="styling/font-awesome.html">
 <link rel="import" href="services/state-manager.html">
 <link rel="import" href="services/fullscreen-manager.html">
 <link rel="import" href="services/synchronization-manager.html">
 <link rel="import" href="components/video-stream.html">
 <link rel="import" href="components/chapter-list.html">
+<link rel="import" href="components/overlays/waiting-overlay.html">
 <link rel="import" href="components/control-bar/control-bar.html">
+<link rel="import" href="components/progress-container/video-progress.html">
+<link rel="import" href="components/progress-container/lecture-slide-bar/lecture-slide-bar.html">
 <link rel="import" href="components/resizer-control.html">
 
 <dom-module id="video-player">
@@ -17,64 +21,108 @@
     <style type="text/css">
       :host {
         display: inline-block;
+        border: 1px solid grey;
+        background-color: black;
       }
 
       /* For some reason, just chaining those fullscreen selectors into one big
          selector doesn't work so we're stupid-duplicating all the rules. */
       #video-player-container:-webkit-full-screen #streams-container{
         display: flex;
-        align-items: center;
+        align-items: stretch;
       }
       #video-player-container:-moz-full-screen #streams-container{
         display: flex;
-        align-items: center;
+        align-items: stretch;
       }
       #video-player-container:-ms-fullscreen #streams-container{
         display: flex;
-        align-items: center;
+        align-items: stretch;
+      }
+
+      #video-player-container:-webkit-full-screen{
+        width: 100%;
+      }
+      #video-player-container:-moz-full-screen{
+        width: 100%;
+      }
+      #video-player-container:-ms-fullscreen{
+        width: 100%;
       }
 
       #video-player-container {
         position: relative;
         height: 100%;
       }
+      #video-player-container.iPad-fullscreen {
+        /* Actually, what we would want here is to set the height to 100vh...but
+           in mobile browsers this results in the content being bigger than what
+           the browser is able to display so we have to use 100% instead.
+           For more information, see https://nicolas-hoizey.com/2015/02/viewport-height-is-taller-than-the-visible-part-of-the-document-in-some-mobile-browsers.html */
+        width: 100vw;
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+
+      #video-container {
+        position: relative;
+      }
+
       #streams-container {
         display: flex;
         flex-wrap: wrap;
         overflow: hidden;
-        /* Cancel out the control bar height */
-        height: calc(100% - 40px);
+        /* Cancel out the control bar height, the progress bar and the lecture slide bar */
+        height: calc(100% - 40px - 16px - 11px);
       }
       .video-stream {
         /* 49 to leave a bit space for the resizer */
         flex: 1 1 49%;
       }
+
+      #progress-container {
+        border-top: 1px solid black;
+        border-bottom: 1px solid black;
+      }
     </style>
 
     <div id="video-player-container">
-      <div id="streams-container">
-        <template is="dom-repeat" items="{{configuration.streams}}">
-          <video-stream
-            state="{{state}}"
-            state-manager="{{stateManager}}"
-            synchronization-manager="{{synchronizationManager}}"
-            urls="{{item}}"
-            preload="{{configuration.videoPreload}}"
-            master="{{equals(index, 0)}}"
-            class="video-stream"
-            style$="height: calc(100% / {{rowCount(configuration.streams)}});">
-          </video-stream>
-          <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
-            <resizer-control style$="visibility: [[ifThenElse(isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+      <div id="video-container">
+        <waiting-overlay state="{{state}}" state-manager="{{stateManager}}"></waiting-overlay>
+        <div id="streams-container">
+          <template is="dom-repeat" items="{{configuration.streams}}">
+            <video-stream
+              state="{{state}}"
+              state-manager="{{stateManager}}"
+              synchronization-manager="{{synchronizationManager}}"
+              urls="{{item}}"
+              preload="{{configuration.videoPreload}}"
+              master="{{equals(index, 0)}}"
+              class="video-stream"
+              style$="height: calc(100% / {{rowCount(configuration.streams)}});">
+            </video-stream>
+            <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
+              <resizer-control state="{{state}}" style$="visibility: [[ifThenElse(isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+            </template>
           </template>
-        </template>
+        </div>
       </div>
+
+      <div id="progress-container">
+        <template is="dom-if" if="{{configuration.lectureSlides}}">
+          <lecture-slide-bar state="{{state}}" state-manager="{{stateManager}}" slides="{{configuration.lectureSlides}}"></lecture-slide-bar>
+        </template>
+        <video-progress state="{{state}}" state-manager="{{stateManager}}"></video-progress>
+      </div>
+
       <control-bar
         state="{{state}}"
         state-manager="{{stateManager}}"
         has-chapters="{{hasChapters}}"
         available-qualities="{{availableQualities}}">
       </control-bar>
+
       <template is="dom-if" if="{{state.isChapterListShown}}">
         <chapter-list
           state="{{state}}"
@@ -82,6 +130,7 @@
           chapters="{{configuration.chapters}}">
         </chapter-list>
       </template>
+
     </div>
   </template>
 
@@ -127,9 +176,10 @@
           return [
             'configurationChanged(configuration)',
             'availableQualitiesChanged(availableQualities, stateManager)',
-            'primaryColorChanged(configuration.primaryColor)',
-            'secondaryColorChanged(configuration.secondaryColor)',
-            'backgroundColorForPrimaryChanged(configuration.backgroundColorForPrimary)',
+            'foregroundColorChanged(configuration.foregroundColor)',
+            'accentColorChanged(configuration.accentColor)',
+            'backgroundColorChanged(configuration.backgroundColor)',
+            'secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
             'playStateChanged(state.playState)',
             'fullscreenChanged(state.fullscreen)',
           ];
@@ -228,15 +278,18 @@
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
-        // The poperties are not correctly evaluated and thus the variable not set.
-        primaryColorChanged(primaryColor) {
-          this.style.setProperty('--primary-color', primaryColor);
+        // The properties are not correctly evaluated and thus the variable not set.
+        foregroundColorChanged(color) {
+          Polymer.updateStyles({'--foreground-color': color});
         }
-        secondaryColorChanged(secondaryColor) {
-          this.style.setProperty('--secondary-color', secondaryColor);
+        accentColorChanged(color) {
+          Polymer.updateStyles({'--accent-color': color});
         }
-        backgroundColorForPrimaryChanged(backgroundColorForPrimary) {
-          this.style.setProperty('--background-color-for-primary', backgroundColorForPrimary);
+        backgroundColorChanged(color) {
+          Polymer.updateStyles({'--background-color': color});
+        }
+        secondaryBackgroundColorChanged(color) {
+          Polymer.updateStyles({'--secondary-background-color': color});
         }
 
         needResizer(index, length) {

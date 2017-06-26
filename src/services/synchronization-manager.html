@@ -13,10 +13,12 @@
       constructor(stateManager) {
         this.stateManager = stateManager;
         this.videosWaiting = new Set();
+        this.videoBufferPositions = new Map();
 
         // Needed in order to overcome removeEventListener
         this._videoWaiting = this._videoWaiting.bind(this);
         this._videoReady = this._videoReady.bind(this);
+        this._videoProgress = this._videoProgress.bind(this);
       }
 
       /**
@@ -29,6 +31,7 @@
         video.addEventListener('waiting', this._videoWaiting);
         video.addEventListener('playing', this._videoReady);
         video.addEventListener('seeked', this._videoReady);
+        video.addEventListener('progress', this._videoProgress);
       }
 
       /**
@@ -41,6 +44,7 @@
         video.removeEventListener('waiting', this._videoWaiting);
         video.removeEventListener('playing', this._videoReady);
         video.removeEventListener('seeked', this._videoReady);
+        video.removeEventListener('progress', this._videoProgress);
       }
 
       /**
@@ -72,6 +76,30 @@
         this.videosWaiting.delete(e.target);
         if(!this.anyWaiting()) {
           this._restorePlayState();
+        }
+      }
+
+      /**
+       * Is called everytime a registered video element downloads new data.
+       * @param  {EventArgs} e The event that was triggered.
+       * @return {void}
+       */
+      _videoProgress(e) {
+        let video = e.target;
+        if(video.buffered.length > 0) {
+          // Get buffer position of the current segment of the video
+          for (let i = video.buffered.length - 1; i >=0; i--) {
+            if (video.buffered.start(i) <= video.currentTime) {
+              let currentBuffer = video.buffered.end(i);
+              this.videoBufferPositions.set(video, currentBuffer);
+              break;
+            }
+          }
+
+          // Update global buffer position with minimum buffer position of all
+          // videos, which is the common buffer
+          let globalBuffer = Math.min(...Array.from(this.videoBufferPositions.values()));
+          this.stateManager.setBufferPosition(globalBuffer);
         }
       }
 

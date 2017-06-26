@@ -9,6 +9,7 @@
       :host {
         /* Necessary to ensure that the height is correct in Safari */
         display: flex;
+        justify-content: center;
       }
 
       /* ------ Styling of the control bar elements ------ */
@@ -17,22 +18,22 @@
         display: flex;
         flex-grow: 1;
         align-items: center;
-        justify-content: center;
+        justify-content: inherit;
 
         /* ------ General styling of the control section ------ */
         padding: 0 10px;
         height: 40px;
-        background-color: #424242;
-        background-color: var(--background-color-for-primary);
-        color: #FFFFFF;
-        color: var(--primary-color);
+        @apply --foreground-color;
+        @apply --background-color;
         user-select: none;
         cursor: default;
       }
       .user_controls a {
-        /* Override potential default stylings for links */
+        /* Override potential default stylings for links.
+         * The mixin rules have to be added explicitly to use !important flag */
         color: #FFFFFF !important;
-        color: var(--primary-color) !important;
+        color: var(--foreground-color) !important;
+        @apply --foreground-color;
 
         line-height: 40px;
         height: 100%;
@@ -57,31 +58,7 @@
       .button.inactive {
         /* Override default color when the button is inactive */
         color: grey !important;
-      }
-
-      /* ------ Styling of the progress bars within the control bar ------*/
-      progress[value] {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        width: 100%;
-        border: 1px solid #5a6065;
-      }
-      progress::-ms-fill {
-        border: none;
-      }
-      progress::-webkit-progress-value {
-        background-color: #DD6112;
-        background-color: var(--secondary-color);
-      }
-      progress::-moz-progress-bar {
-        background-color: #DD6112;
-        background-color: var(--secondary-color);
-      }
-      progress {
-        color: #DD6112;
-        color: var(--secondary-color);
-      }
+      }     
 
     </style>
   </template>
