@@ -15,11 +15,13 @@
 
     <div id="container__lecture_slide" class="progress_indicator">
         <template is="dom-repeat" items="{{slides}}">
-          <lecture-slide
-            state="{{state}}"
-            state-manager="{{stateManager}}"
-            slide="{{item}}">
-          </lecture-slide>
+          <template is="dom-if" if="{{_isValidSlide(item.startPosition, state.duration)}}">
+            <lecture-slide
+              state="{{state}}"
+              state-manager="{{stateManager}}"
+              slide="{{item}}">
+            </lecture-slide>
+          </template>
         </template>
     </div>
 
@@ -36,6 +38,10 @@
             stateManager: Object,
             slides: Array,
           };
+        }
+
+        _isValidSlide(startPosition, duration) {
+          return startPosition < duration;
         }
       }
 
