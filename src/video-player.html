@@ -8,6 +8,7 @@
 <link rel="import" href="services/state-manager.html">
 <link rel="import" href="services/fullscreen-manager.html">
 <link rel="import" href="services/synchronization-manager.html">
+<link rel="import" href="services/user-preferences-manager.html">
 <link rel="import" href="components/video-stream.html">
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/overlays/waiting-overlay.html">
@@ -135,7 +136,7 @@
   </template>
 
   <script>
-    define(['base-element', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'hls-js', 'constants'], (BaseElement, StateManager, FullscreenManager, SynchronizationManager, Hls, constants) => {
+    define(['base-element', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'hls-js', 'constants'], (BaseElement, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, Hls, constants) => {
       const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME} = constants;
 
       class VideoPlayer extends BaseElement {
@@ -182,6 +183,7 @@
             'secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
             'playStateChanged(state.playState)',
             'fullscreenChanged(state.fullscreen)',
+            'userPreferencesStateChanged(state.quality, state.playbackRate, state.volume)'
           ];
         }
 
@@ -205,8 +207,11 @@
         ready() {
           super.ready();
 
+          // Initialize UserPreferencesManager
+          this.userPreferencesManager = new UserPreferencesManager();
+
           // Build state from provided intial state configuration and default values
-          this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState);
+          this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState, this.userPreferencesManager.getPreferences());
 
           // Initialize StateManager
           this.stateManager = new StateManager(this, 'state');
@@ -290,6 +295,16 @@
         }
         secondaryBackgroundColorChanged(color) {
           Polymer.updateStyles({'--secondary-background-color': color});
+        }
+
+        userPreferencesStateChanged(quality, playbackRate, volume) {
+          if (this.userPreferencesManager) {
+            this.userPreferencesManager.setPreferences({
+              quality: quality,
+              playbackRate: playbackRate,
+              volume: volume
+            });
+          }
         }
 
         needResizer(index, length) {
