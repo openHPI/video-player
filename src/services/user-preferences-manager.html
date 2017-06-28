@@ -34,12 +34,10 @@
        * Checks if an array contains a value.
        * @param  {Object} array The array to search in.
        * @param  {Object} checkElement The value to look up.
-       * @return {Boolean}
+       * @return {Boolean} TRUE if array contains checkElement, FALSE if not.
        */
       _inArray(array, checkElement) {
-        return array.find((value) => {
-          return checkElement == value;
-        });
+        return array.find((value) => checkElement === value);
       }
       
       /** 
@@ -49,9 +47,9 @@
        */
       _filterPreferences(preferences) {
         Object.keys(preferences).forEach((key) => {
-            if (!this._inArray(USER_PREFERENCES_KEYS, key)) {
-                delete preferences[key];
-            }
+          if (!this._inArray(USER_PREFERENCES_KEYS, key)) {
+            delete preferences[key];
+          }
         });
         return preferences;
       }

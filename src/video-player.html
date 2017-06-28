@@ -183,7 +183,7 @@
             'secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
             'playStateChanged(state.playState)',
             'fullscreenChanged(state.fullscreen)',
-            'userPreferencesStateChanged(state.quality, state.playbackRate, state.volume)'
+            'userPreferencesStateChanged(state.quality, state.playbackRate, state.volume)',
           ];
         }
 
@@ -300,9 +300,9 @@
         userPreferencesStateChanged(quality, playbackRate, volume) {
           if (this.userPreferencesManager) {
             this.userPreferencesManager.setPreferences({
-              quality: quality,
-              playbackRate: playbackRate,
-              volume: volume
+              quality,
+              playbackRate,
+              volume,
             });
           }
         }
