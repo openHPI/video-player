@@ -167,7 +167,7 @@
                   this.stateManager.setCurrentCaption(trackObject.activeCues[0]);
                   self = this;
                   trackObject.oncuechange = function (){
-                    self.stateManager.setCurrentCaption(trackObject.activeCues[0]);
+                    self.stateManager.setCurrentCaption(this.activeCues[0]);
                   }
                 }
                 else if (trackObject && trackObject.language) {
