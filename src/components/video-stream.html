@@ -29,7 +29,7 @@
         on-timeupdate="handleTimeUpdate">
         <template is="dom-repeat" items="{{captions}}">
           <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English">
-        </template>  
+        </template>
       </video>
     </div>
   </template>
@@ -80,7 +80,7 @@
             'playbackRateChanged(state.playbackRate)',
             'volumeChanged(state.volume)',
             'mutedChanged(state.muted)',
-            'setCaptionLanguage(state.selectedCaption)',            
+            'setCaptionLanguage(state.selectedCaption)',
             'qualityChanged(urls, state.quality)',
           ];
         }
@@ -164,6 +164,11 @@
                 var trackObject = this.$.video.textTracks[textTrackElement];
                 if( trackObject && trackObject.language && trackObject.language.match(language)) {
                   trackObject.mode = "showing";
+                  this.stateManager.setCurrentCaption(trackObject.activeCues[0]);
+                  self = this;
+                  trackObject.oncuechange = function (){
+                    self.stateManager.setCurrentCaption(trackObject.activeCues[0]);
+                  }
                 }
                 else if (trackObject && trackObject.language) {
                   trackObject.mode = "hidden";

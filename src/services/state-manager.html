@@ -235,8 +235,12 @@
         this.setState('isChapterListShown', !this.state.isChapterListShown);
       }
 
-      setCaptionLanguage(language){
+      setCaptionLanguage(language) {
         this.setState('selectedCaption', language);
+      }
+
+      setCurrentCaption(newCaption) {
+        this.setState('currentCaption', newCaption);
       }
     }
 
