@@ -22,6 +22,14 @@
         window.localStorage.setItem(this.storageKey, JSON.stringify(filteredPreferences));
       }
 
+      /**
+       * Reads the user preferences.
+       * @return {Object} JSON Object with user preferences.
+       */
+      getPreferences() {
+        return JSON.parse(window.localStorage.getItem(this.storageKey));
+      }
+
       /** 
        * Checks if an array contains a value.
        * @param  {Object} array The array to search in.

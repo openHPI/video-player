@@ -207,8 +207,11 @@
         ready() {
           super.ready();
 
+          // Initialize UserPreferencesManager
+          this.userPreferencesManager = new UserPreferencesManager();
+
           // Build state from provided intial state configuration and default values
-          this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState);
+          this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState, this.userPreferencesManager.getPreferences());
 
           // Initialize StateManager
           this.stateManager = new StateManager(this, 'state');
@@ -221,9 +224,6 @@
 
           // Initialize SynchronizationManager
           this.synchronizationManager = new SynchronizationManager(this.stateManager);
-
-          // Initialize UserPreferencesManager
-          this.userPreferencesManager = new UserPreferencesManager();
 
           // Add event handlers for mouse events to show/hide resizer
           this.$['streams-container'].addEventListener('mouseenter', () => this.isResizerShown = true);
