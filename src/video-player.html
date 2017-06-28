@@ -10,6 +10,7 @@
 <link rel="import" href="services/synchronization-manager.html">
 <link rel="import" href="components/video-stream.html">
 <link rel="import" href="components/chapter-list.html">
+<link rel="import" href="components/interactive-transcript.html">
 <link rel="import" href="components/overlays/waiting-overlay.html">
 <link rel="import" href="components/control-bar/control-bar.html">
 <link rel="import" href="components/progress-container/video-progress.html">
@@ -133,6 +134,14 @@
         </chapter-list>
       </template>
 
+      <template is="dom-if" if="{{state.isInteractiveTransctiptShown}}">
+        <interactive-transcript
+          state="{{state}}"
+          state-manager="{{stateManager}}"
+          chapters="{{configuration.chapters}}">
+        </interactive-transcript>
+      </template>
+
     </div>
 
   </template>
@@ -172,6 +181,10 @@
               type: Boolean,
               computed: '_hasChapters(configuration.chapters)',
             },
+            hasCaptions: {
+              type: Boolean,
+              computed: '_hasCaptions(configuration.chapters)',
+            },            
           };
         }
 
@@ -203,6 +216,10 @@
 
         _hasChapters() {
           return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
+        }
+
+        _hasCaptions() {
+          return this.configuration && this.configuration.captions && this.configuration.captions.length !== 0;
         }
 
         ready() {
@@ -282,10 +299,6 @@
 
         rowCount(streams) {
           return Math.ceil(streams.length/2);
-        }
-
-        _hasChapters() {
-          return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.

@@ -7,6 +7,7 @@
 <link rel="import" href="videotime-display.html">
 <link rel="import" href="speed-control.html">
 <link rel="import" href="chapter-list-switch.html">
+<link rel="import" href="interactive-transcript-switch.html">
 <link rel="import" href="quality-switch.html">
 <link rel="import" href="mute-control.html">
 <link rel="import" href="fullscreen-control.html">
@@ -38,6 +39,9 @@
       <videotime-display state="{{state}}" state-manager="{{stateManager}}" class="-flex-grow"></videotime-display>
       <template is="dom-if" if="{{captions}}">
         <caption-control state="{{state}}" state-manager="{{stateManager}}" captions="{{captions}}"></caption-control>
+      </template>
+      <template is="dom-if" if="{{captions}}">
+        <interactive-transcript-switch state="{{state}}" state-manager="{{stateManager}}"></chapter-list-switch>
       </template>
       <speed-control state="{{state}}" state-manager="{{stateManager}}"></speed-control>
       <template is="dom-if" if="{{hasMultipleQualities}}">

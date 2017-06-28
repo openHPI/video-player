@@ -235,8 +235,25 @@
         this.setState('isChapterListShown', !this.state.isChapterListShown);
       }
 
+      /**
+       * Toggles the visibility of the interactive transcript.
+       * @returns {void}
+       */
+      toggleInteractiveTranscript() {
+        this.setState('isInteractiveTransctiptShown', !this.state.isInteractiveTransctiptShown);
+      }
+
+      /**
+       * Sets the visibility and the language of the possible captions
+       * @returns {void}
+       */
       setCaptionLanguage(language){
         this.setState('selectedCaption', language);
+      }
+
+
+      setCues(cues){
+        this.setState('cues', cues);
       }
     }
 
