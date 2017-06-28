@@ -9,18 +9,22 @@
         visibility: visible;
         position: absolute;
         bottom: 15px;
-        width: calc(100% - 60px);
-        padding: 3px 20px;
+        width: calc(100% - 40px);
+        margin: 0 20px;
         text-align: center;
+        color: white;
+      }
+      .caption-cue-text {
+        display: table;
+        margin: 0 auto;
+        padding: 3px 10px;
         background-color: rgba(0,0,0,0.7);
         border-radius: 5px;
-        margin: 0 10px;
-        color: white;
       }
     </style>
 
     <div id="container__captions" style$="visibility: [[ifThenElse(isVisible, 'visible', 'hidden')]];">
-      [[currentCaptionCue.text]]
+      <div class="caption-cue-text">[[currentCaptionCue.text]]</div>
     </div>
   </template>
 
@@ -43,18 +47,17 @@
 
         static get observers() {
           return [
-            'captionCueChanged(state.currentCaption)'
+            'captionCueChanged(state.currentCaption)',
+            'captionsChanged(state.selectedCaption)'
           ];
         }
 
         captionsChanged(newCaptions) {
-          console.log('new captions!');
-          console.log(newCaptions);
+          // Here we can make adjustments when the user changes the captions,
+          // i.e. by choosing their language or turning them off
         }
 
         captionCueChanged(newCue) {
-          console.log('new cue!');
-          console.log(newCue);
           this.currentCaptionCue = newCue;
         }
 
