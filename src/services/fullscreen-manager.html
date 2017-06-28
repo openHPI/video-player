@@ -9,7 +9,6 @@
       constructor(fullscreenElement) {
         this.fullscreenElement = fullscreenElement;
         this.fullscreenChangedCallbacks = new Set();
-        this.iOS = /iPad/.test(navigator.userAgent) && !window.MSStream;
 
         // Attatch event handler for fullscreenchange
         this.fullscreenElement.addEventListener('fullscreenchange', () => {
@@ -32,12 +31,7 @@
        * @return {void}
        */
       enterFullscreen() {
-        if (this.iOS) {
-          // iOS doesn't have a real full screen mode so we have to fake it
-          // by appending a special iOS class that just stretches the
-          // fullscreenElement to occupy 100% of width and height
-          this.fullscreenElement.classList.add('iPad-fullscreen');
-        } else if (this.fullscreenElement.requestFullscreen) {
+        if (this.fullscreenElement.requestFullscreen) {
           this.fullscreenElement.requestFullscreen();
         } else if (this.fullscreenElement.mozRequestFullScreen) {
           this.fullscreenElement.mozRequestFullScreen();
@@ -45,6 +39,11 @@
           this.fullscreenElement.webkitRequestFullScreen();
         } else if (this.fullscreenElement.msRequestFullscreen) {
           this.fullscreenElement.msRequestFullscreen();
+        } else {
+          // This is primarily for iOS since iOS doesn't have a real full screen
+          // mode so we have to fake it by appending a special iOS class that just
+          // stretches the fullscreenElement to occupy 100% of width and height
+          this.fullscreenElement.classList.add('fake-fullscreen');
         }
       }
 
@@ -53,9 +52,7 @@
        * @return {void}
        */
       exitFullscreen() {
-        if (this.iOS) {
-          this.fullscreenElement.classList.remove('iPad-fullscreen');
-        } else if (document.exitFullscreen) {
+        if (document.exitFullscreen) {
           document.exitFullscreen();
         } else if (document.mozCancelFullScreen) {
           document.mozCancelFullScreen();
@@ -63,6 +60,8 @@
           document.webkitCancelFullScreen();
         } else if (document.msExitFullscreen) {
           document.msExitFullscreen();
+        } else {
+          this.fullscreenElement.classList.remove('fake-fullscreen');
         }
       }
 

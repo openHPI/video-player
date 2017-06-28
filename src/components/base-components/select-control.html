@@ -4,6 +4,7 @@
 <link rel="import" href="../../styling/control-bar--style-module.html">
 
 <dom-module id="select-control">
+  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
 
   <template>
     <style type="text/css" include="control-bar--style-module">
@@ -42,16 +43,25 @@
     </style>
 
     <div id="container__select_control" class="user_controls">
-      <div class="dropdown" on-mouseover="showDropDown" on-mouseout="hideDropDown">
+
+      <template is="dom-if" if="{{isMultiValueSwitch()}}">
+        <div class="dropdown" on-mouseover="showDropDown" on-mouseout="hideDropDown">
+          <a id="button__select" class="button">
+            <i class$="[[iconClasses]]"></i>
+          </a>
+          <div id="dropdown__select" class="dropdown-content" style$="display: [[ifThenElse(isDropDownOpen, 'initial', 'none')]];">
+            <template is="dom-repeat" items="[[values]]">
+              <a on-click="handleDropDownElementClick" class$="[[ifEqualsThen(item, selectedValue, 'selected')]]">[[formatter(item)]]</a>
+            </template>
+          </div>
+        </div>
+      </template>
+
+      <template is="dom-if" if="{{isTupleSwitch()}}">
         <a id="button__select" class="button" on-click="handleButtonClick">
           [[formatter(selectedValue)]]
         </a>
-        <div id="dropdown__select" class="dropdown-content" style$="display: [[ifThenElse(isDropDownOpen, 'initial', 'none')]];">
-          <template is="dom-repeat" items="[[values]]">
-            <a on-click="handleDropDownElementClick" class$="[[ifEqualsThen(item, selectedValue, 'selected')]]">[[formatter(item)]]</a>
-          </template>
-        </div>
-      </div>
+      </template>       
     </div>
   </template>
 
@@ -75,15 +85,16 @@
               type: Boolean,
               value: false,
             },
+            iconClasses: {
+              type: String,
+              value: "",
+            }
           };
         }
 
         showDropDown() {
-          if(this.values.length > 2) {
-            // Show dropdown if there are more than 2 values to choose from
-            this.isDropDownOpen = true;
-            this.$.container__select_control.classList.add('open');
-          }
+          this.isDropDownOpen = true;
+          this.$.container__select_control.classList.add('open');
         }
 
         hideDropDown() {
@@ -92,11 +103,8 @@
         }
 
         handleButtonClick() {
-          if(this.values.length === 2) {
-            // Toggle value, if there are only 2 values to choose from
-            let index = (this.values.indexOf(this.selectedValue) + 1) % this.selectedValue.length;
-            this.setSelectedValue(this.values[index]);
-          }
+          let index = (this.values.indexOf(this.selectedValue) + 1) % this.selectedValue.length;
+          this.setSelectedValue(this.values[index]);
         }
 
         handleDropDownElementClick(e) {
@@ -107,6 +115,14 @@
         setSelectedValue(value) {
           this.selectedValue = value;
           this.dispatchEvent(new CustomEvent('change'));
+        }
+
+        isTupleSwitch() {
+          return this.values.length === 2;
+        }       
+
+        isMultiValueSwitch() {
+          return this.values.length > 2;
         }
       }
 

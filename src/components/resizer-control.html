@@ -2,7 +2,8 @@
 
 <link rel="import" href="../base-element.html">
 
-<dom-module id="resizer-control">
+<dom-module id="resizer-control"><link rel="import" type="css" href="../../bower_components/components-font-awesome/css/font-awesome.min.css">
+
   <template>
     <style type="text/css">
       /*
@@ -22,6 +23,22 @@
         border: 2px solid var(--secondary-background-color);
         cursor: ew-resize;
         height: inherit;
+      }
+
+      #resizer:before, #resizer:after{
+        position: absolute;
+        top: calc(50% - 15px);
+        font-size: 2em;
+        color: var(--secondary-background-color);
+        font-family: FontAwesome;
+      }
+      #resizer:before {
+          content: "\f053";
+          margin-left: -1.25em;
+      }
+      #resizer:after {
+          content: "\f054";
+          margin-left: 0.5em;
       }
     </style>
 
