@@ -201,10 +201,12 @@
                 var trackObject = this.$.video.textTracks[textTrackElement];
                 if( trackObject && trackObject.language && trackObject.language.match(language)) {
                   trackObject.mode = "showing";
-                  this.stateManager.setCurrentCaption(trackObject.activeCues[0]);
+                  this.stateManager.setCurrentCaptionCue(trackObject.activeCues[0]);
                   self = this;
+                  // Subscribe to cue changes as defined in the WebVTT API:
+                  // https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API
                   trackObject.oncuechange = function (){
-                    self.stateManager.setCurrentCaption(this.activeCues[0]);
+                    self.stateManager.setCurrentCaptionCue(this.activeCues[0]);
                   }
                 }
                 else if (trackObject && trackObject.language) {
