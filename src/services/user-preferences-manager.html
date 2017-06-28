@@ -1,0 +1,54 @@
+<link rel="import" href="../constants.html">
+<script>
+  define('user-preferences-manager', ['constants'], (constants) => {
+    const {USER_PREFERENCES_KEYS} = constants;
+
+    class UserPreferencesManager {
+      /**
+       * Initializes a new UserPreferencesManager instance.
+       * @return {UserPreferencesManager}  The new UserPreferencesManager instance.
+       */
+      constructor() {
+        this.storageKey = 'videoplayerUserPreferences';
+      }
+
+      /**
+       * Writes given user preferences as they are.
+       * @param  {Object} preferences The Object containing the preferences.
+       * @return {void}
+       */
+      setPreferences(preferences) {
+        let filteredPreferences = this._filterPreferences(preferences);
+        window.localStorage.setItem(this.storageKey, JSON.stringify(filteredPreferences));
+      }
+
+      /** 
+       * Checks if an array contains a value.
+       * @param  {Object} array The array to search in.
+       * @param  {Object} checkElement The value to look up.
+       * @return {Boolean}
+       */
+      _inArray(array, checkElement) {
+        return array.find((value) => {
+          return checkElement == value;
+        });
+      }
+      
+      /** 
+       * Filters the given Object for allowed user preferences keys.
+       * @param  {Object} preferences The raw preferences object.
+       * @return {Object} The filtered preferences object.
+       */
+      _filterPreferences(preferences) {
+        Object.keys(preferences).forEach((key) => {
+            if (!this._inArray(USER_PREFERENCES_KEYS, key)) {
+                delete preferences[key];
+            }
+        });
+        return preferences;
+      }
+    }
+
+    return UserPreferencesManager;
+  });
+</script>
