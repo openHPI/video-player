@@ -62,7 +62,7 @@
         }        
 
         _getSlidePosition(position, duration) {
-          var percentage = this._stylePercentage(position, duration);
+          let percentage = this._stylePercentage(position, duration);
           // This is an approximation 
           // to avoid that the slide image overflows the video container
           if(percentage > 90) {
