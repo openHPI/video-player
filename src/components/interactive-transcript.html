@@ -70,23 +70,22 @@
         static get observers() {
           return [
             'updateActiveTranscript(cues, state.position)',
-            'setCues(state.cues)',
+            'getCues(state.cues)',
           ];
         }
 
-        setCues(){
+        getCues(){
           // flush array
           this.splice("cues", 0, this.cues.length);
           // refill it
-          for (var cueElement in this.state.cues) {
-            var cuePoint = this.state.cues[cueElement];
+          for (let cueElement in this.state.cues) {
+            let cuePoint = this.state.cues[cueElement];
             this.push('cues', cuePoint);
           }
         }
         
         handleClick(e) {
           let cuePoint = e.model.item;
-          //console.log(cuePoint);
           this.stateManager.setPosition(cuePoint.startTime);
         }
 

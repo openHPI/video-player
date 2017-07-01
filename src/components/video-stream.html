@@ -198,6 +198,9 @@
         setCaptionLanguage(language){
           Polymer.RenderStatus.afterNextRender(this, function() {
             if( this.master && this.captions ){
+              //set cues to null, so that they cannot get toggled by interactive-transcrpt-switch
+              if( language == "off") this.stateManager.setCues(null);
+              // get selected language from all tracks, show them and set their cues
               for (var textTrackElement in this.$.video.textTracks){
                 var trackObject = this.$.video.textTracks[textTrackElement];
                 if( trackObject && trackObject.language && trackObject.language.match(language)) {

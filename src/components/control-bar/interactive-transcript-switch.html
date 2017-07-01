@@ -31,8 +31,20 @@
           };
         }
 
+        static get observers() {
+          return [
+            'getCaptionLanguage(state.selectedCaption)',            
+          ];
+        }
+
         handleClick() {
           if(this.state.cues) this.stateManager.toggleInteractiveTranscript();
+        }
+
+        getCaptionLanguage() {
+          if (this.state.selectedCaption == "off" && this.state.isInteractiveTransctiptShown) {
+            this.stateManager.toggleInteractiveTranscript();
+          }
         }
       }
 
