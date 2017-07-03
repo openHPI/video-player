@@ -234,6 +234,24 @@
       toggleIsChapterListShown() {
         this.setState('isChapterListShown', !this.state.isChapterListShown);
       }
+
+      /**
+       * Sets the new caption language or turns captions off by sending the
+       * language 'off'
+       * @param {String} language The language to be set
+       */
+      setCaptionLanguage(language) {
+        this.setState('selectedCaption', language);
+      }
+
+      /**
+       * Sets the new caption cue
+       * @param {Object} newCaption The new caption object, as provided by the
+       * WebVTT logic
+       */
+      setCurrentCaptionCue(newCaption) {
+        this.setState('currentCaptionCue', newCaption)
+      }
     }
 
     return StateManager;

@@ -12,6 +12,7 @@
 <link rel="import" href="components/video-stream.html">
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/overlays/waiting-overlay.html">
+<link rel="import" href="components/overlays/captions-display.html">
 <link rel="import" href="components/control-bar/control-bar.html">
 <link rel="import" href="components/progress-container/video-progress.html">
 <link rel="import" href="components/progress-container/lecture-slide-bar/lecture-slide-bar.html">
@@ -101,6 +102,7 @@
               preload="{{configuration.videoPreload}}"
               master="{{equals(index, 0)}}"
               class="video-stream"
+              captions="{{configuration.captions}}"
               style$="height: calc(100% / {{rowCount(configuration.streams)}});">
             </video-stream>
             <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
@@ -108,6 +110,7 @@
             </template>
           </template>
         </div>
+        <captions-display state="{{state}}" state-manager="{{stateManager}}"></captions-display>
       </div>
 
       <div id="progress-container">
@@ -121,6 +124,7 @@
         state="{{state}}"
         state-manager="{{stateManager}}"
         has-chapters="{{hasChapters}}"
+        captions="{{configuration.captions}}"
         available-qualities="{{availableQualities}}">
       </control-bar>
 
@@ -133,6 +137,7 @@
       </template>
 
     </div>
+
   </template>
 
   <script>
@@ -280,6 +285,14 @@
               this.fullscreenManager.exitFullscreen();
             }
           }
+        }
+
+        rowCount(streams) {
+          return Math.ceil(streams.length/2);
+        }
+
+        _hasChapters() {
+          return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
