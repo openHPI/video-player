@@ -1,7 +1,7 @@
 <link rel="import" href="../constants.html">
 <script>
   define('user-preferences-manager', ['constants'], (constants) => {
-    const {USER_PREFERENCES_KEYS} = constants;
+    const {USER_PREFERENCES_KEYS, USER_PREFERNECES_STORAGE_KEY} = constants;
 
     class UserPreferencesManager {
       /**
@@ -9,7 +9,6 @@
        * @return {UserPreferencesManager}  The new UserPreferencesManager instance.
        */
       constructor() {
-        this.storageKey = 'videoplayerUserPreferences';
       }
 
       /**
@@ -18,8 +17,8 @@
        * @return {void}
        */
       setPreferences(preferences) {
-        let filteredPreferences = this._filterPreferences(preferences);
-        window.localStorage.setItem(this.storageKey, JSON.stringify(filteredPreferences));
+        let filteredPreferences = this._filterPreferences(preferences.base);
+        window.localStorage.setItem(USER_PREFERNECES_STORAGE_KEY, JSON.stringify(filteredPreferences));
       }
 
       /**
@@ -27,17 +26,7 @@
        * @return {Object} JSON Object with user preferences.
        */
       getPreferences() {
-        return JSON.parse(window.localStorage.getItem(this.storageKey));
-      }
-
-      /** 
-       * Checks if an array contains a value.
-       * @param  {Object} array The array to search in.
-       * @param  {Object} checkElement The value to look up.
-       * @return {Boolean} TRUE if array contains checkElement, FALSE if not.
-       */
-      _inArray(array, checkElement) {
-        return array.find((value) => checkElement === value);
+        return JSON.parse(window.localStorage.getItem(USER_PREFERNECES_STORAGE_KEY));
       }
       
       /** 
@@ -46,12 +35,7 @@
        * @return {Object} The filtered preferences object.
        */
       _filterPreferences(preferences) {
-        Object.keys(preferences).forEach((key) => {
-          if (!this._inArray(USER_PREFERENCES_KEYS, key)) {
-            delete preferences[key];
-          }
-        });
-        return preferences;
+        return Object.assign({}, ...USER_PREFERENCES_KEYS.map(key => ({[key]: preferences[key]})));
       }
     }
 
