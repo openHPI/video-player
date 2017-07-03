@@ -42,7 +42,7 @@
         }
 
         getCaptionLanguage() {
-          if (this.state.selectedCaption == "off" && this.state.isInteractiveTranscriptShown) {
+          if (this.state.selectedCaption === 'off' && this.state.isInteractiveTranscriptShown) {
             this.stateManager.toggleInteractiveTranscript();
           }
         }

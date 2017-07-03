@@ -32,7 +32,7 @@
   </template>
 
   <script>
-    define('captions-display', ['base-element', 'constants'], (BaseElement, constants) => {
+    define('captions-display', ['base-element'], (BaseElement) => {
 
       class CaptionsDisplay extends BaseElement {
         static get is() { return 'captions-display'; }
@@ -44,21 +44,22 @@
             isVisible: {
               type: Boolean,
               computed: '_isVisible(state.selectedCaption)',
-            }
+            },
           };
         }
 
         static get observers() {
           return [
             'captionCueChanged(state.currentCaptionCue)',
-            'captionsChanged(state.selectedCaption)'
+            // 'captionsChanged(state.selectedCaption)',
           ];
         }
 
-        captionsChanged(newCaptions) {
-          // Here we can make adjustments when the user changes the captions,
-          // i.e. by choosing their language or turning them off
-        }
+        // If needed later on
+        // captionsChanged(newCaptions) {
+        //   // Here we can make adjustments when the user changes the captions,
+        //   // i.e. by choosing their language or turning them off
+        // }
 
         captionCueChanged(newCue) {
           this.currentCaptionCue = newCue;
