@@ -31,12 +31,13 @@
             captions: Object,
             captionLanguages: {
               type: Array,
-              value: ['off'],
+              value: ['off']
             },
           };
         }
 
         ready() {
+          // caption languages need to be ready before super.ready() is called
           this.getCaptionLanguages();
           super.ready();
         }
@@ -45,7 +46,6 @@
           return element;
         }
 
-        //
         getCaptionLanguages() {
           for (var captionElement in this.captions) {
             var captionObject = this.captions[captionElement];

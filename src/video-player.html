@@ -13,6 +13,7 @@
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/interactive-transcript.html">
 <link rel="import" href="components/overlays/waiting-overlay.html">
+<link rel="import" href="components/overlays/captions-display.html">
 <link rel="import" href="components/control-bar/control-bar.html">
 <link rel="import" href="components/progress-container/video-progress.html">
 <link rel="import" href="components/progress-container/lecture-slide-bar/lecture-slide-bar.html">
@@ -110,6 +111,7 @@
             </template>
           </template>
         </div>
+        <captions-display state="{{state}}" state-manager="{{stateManager}}"></captions-display>
       </div>
 
       <div id="progress-container">

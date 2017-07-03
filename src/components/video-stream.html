@@ -17,6 +17,9 @@
         width: inherit;
         height: inherit;
       }
+      ::cue{
+        visibility: hidden;
+      }
 
       #container__poster_overlay {
         position: absolute;
@@ -44,7 +47,7 @@
         on-timeupdate="handleTimeUpdate">
         <template is="dom-repeat" items="{{captions}}">
           <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English">
-        </template>  
+        </template>
       </video>
       <template is="dom-if" if="{{and(urls.poster, isPosterVisible)}}">
         <div id="container__poster_overlay">
@@ -108,7 +111,7 @@
             'playbackRateChanged(state.playbackRate)',
             'volumeChanged(state.volume)',
             'mutedChanged(state.muted)',
-            'setCaptionLanguage(state.selectedCaption)',            
+            'setCaptionLanguage(state.selectedCaption)',
             'qualityChanged(urls, state.quality)',
           ];
         }
@@ -205,8 +208,17 @@
                 var trackObject = this.$.video.textTracks[textTrackElement];
                 if( trackObject && trackObject.language && trackObject.language.match(language)) {
                   trackObject.mode = "showing";
-                  // set cues for interactive transcript
+                  // set caption cues for interactive transcript
                   this.stateManager.setCues(trackObject.cues);
+                  
+                  // set current caption cue-point for video subtitles
+                  this.stateManager.setCurrentCaptionCue(trackObject.activeCues[0]);
+                  self = this;
+                  // Subscribe to cue changes as defined in the WebVTT API:
+                  // https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API
+                  trackObject.oncuechange = function (){
+                    self.stateManager.setCurrentCaptionCue(this.activeCues[0]);
+                  }
                 }
                 else if ( trackObject && trackObject.language ) {
                   trackObject.mode = "hidden";
