@@ -135,12 +135,11 @@
         </chapter-list>
       </template>
 
-      <template is="dom-if" if="{{state.isInteractiveTransctiptShown}}">
-        <interactive-transcript
-          state="{{state}}"
-          state-manager="{{stateManager}}">
-        </interactive-transcript>
-      </template>
+      <interactive-transcript
+        style$="display: [[ifThenElse(state.isInteractiveTranscriptShown, 'initial', 'none')]]"
+        state="{{state}}"
+        state-manager="{{stateManager}}">
+      </interactive-transcript>
 
     </div>
 
@@ -180,10 +179,6 @@
             hasChapters: {
               type: Boolean,
               computed: '_hasChapters(configuration.chapters)',
-            },
-            hasCaptions: {
-              type: Boolean,
-              computed: '_hasCaptions(configuration.chapters)',
             },            
           };
         }
@@ -217,10 +212,6 @@
 
         _hasChapters() {
           return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
-        }
-
-        _hasCaptions() {
-          return this.configuration && this.configuration.captions && this.configuration.captions.length !== 0;
         }
 
         ready() {

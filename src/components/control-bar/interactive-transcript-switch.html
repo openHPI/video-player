@@ -13,7 +13,7 @@
 
     <div id="container__interactive_transcript_switch" class="user_controls">
       <a id="button__interactive_transcript" class$="button [[ifThenElse(state.isInteractiveTransctiptShown, '', 'inactive')]]" on-click="handleClick">
-        <i class="fa fa-cc"></i>
+        <i class="fa fa-file-text-o"></i>
       </a>
     </div>
 
@@ -42,7 +42,7 @@
         }
 
         getCaptionLanguage() {
-          if (this.state.selectedCaption == "off" && this.state.isInteractiveTransctiptShown) {
+          if (this.state.selectedCaption == "off" && this.state.isInteractiveTranscriptShown) {
             this.stateManager.toggleInteractiveTranscript();
           }
         }

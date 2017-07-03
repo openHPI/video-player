@@ -14,8 +14,8 @@
     <select-control
       values="[[captionLanguages]]"
       selected-value="[[state.selectedCaption]]"
-      formatter="[[dummy]]"
-      on-change="selectionChanged">
+      on-change="selectionChanged"
+      icon-classes="fa fa-cc">
     </select-control>
   </template>
 
@@ -37,8 +37,8 @@
         }
 
         ready() {
-          super.ready();
           this.getCaptionLanguages();
+          super.ready();
         }
 
         dummy(element){
