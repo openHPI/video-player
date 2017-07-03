@@ -183,7 +183,7 @@
             'secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
             'playStateChanged(state.playState)',
             'fullscreenChanged(state.fullscreen)',
-            'userPreferencesStateChanged(state.quality, state.playbackRate, state.volume)',
+            'userPreferencesStateChanged(state.*)',
           ];
         }
 
@@ -297,13 +297,9 @@
           Polymer.updateStyles({'--secondary-background-color': color});
         }
 
-        userPreferencesStateChanged(quality, playbackRate, volume) {
+        userPreferencesStateChanged(states) {
           if (this.userPreferencesManager) {
-            this.userPreferencesManager.setPreferences({
-              quality,
-              playbackRate,
-              volume,
-            });
+            this.userPreferencesManager.setPreferences(states);
           }
         }
 
