@@ -1,47 +1,47 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
 
 <link rel="import" href="../base-element.html">
+<link rel="import" href="../styling/lists--style-module.html">
 
 <dom-module id="interactive-transcript">
   <link rel="import" type="css" href="../../bower_components/components-font-awesome/css/font-awesome.min.css">
   <template>
-    <style type="text/css">
-
-      /* TODO: Replace the colors with variables ? */
+    <style type="text/css" include="lists--style-module">
 
       #container__interactive_transcript {
-        position: absolute;
-        z-index: 2;
-        border: 5px solid black;
-        color: white;
+        overflow: hidden;
+        color: black;
+        height: 200px;
       }
-      #container__interactive_transcript ul {
-        margin: 0;
-        padding: 0;
-        list-style-type: none;
-        max-width: 250px;
+
+      #container__interactive_transcript .list {
+        perspective: 400px;
+        perspective: 300px;
+        perspective-origin: 50% 50%;
       }
-      #container__interactive_transcript li {
-        padding: 5px 5px 5px 20px;
-        cursor: pointer;
-        -webkit-font-smoothing: antialiased;
+
+      #container__interactive_transcript .list_item {
+        padding: 15px 5px 15px 20px;
+        background-color: #eee;
+        font-size: 1rem;
+        @apply --transition-duration-600;
       }
-      #container__interactive_transcript li:nth-child(odd) {
-        background-color: grey;
+
+      #container__interactive_transcript .list_item:nth-child(odd) {
+        background-color: #fff;
       }
-      #container__interactive_transcript li:nth-child(even) {
-        background-color: darkgrey;
-      }
-      #container__interactive_transcript li .link__active_transcript_bookmark:before {
-        font-family: FontAwesome;
+
+      #container__interactive_transcript .list_item:hover {
+        @apply --accent-color-background;
+        @apply --transition-duration-200;
       }
     </style>
 
-    <div id="container__interactive_transcript">
-      <ul>
+    <div id="container__interactive_transcript" class="container__list">
+      <ul class="list">
           <template is="dom-repeat" items="{{cues}}">
-            <li>
-              <a class$="link__active_transcript_bookmark [[ifEqualsThen(item, activeTranscript, 'active fa-caret-right')]]" on-click="handleClick">
+            <li class="list_item" style$="[[ifEqualsThen(item, activeTranscript, 'background-color: #999;')]]">
+              <a class$="link__active_transcript_bookmark list_item__link [[ifEqualsThen(item, activeTranscript, 'active fa-caret-right')]]" on-click="handleClick">
                 {{item.text}}
               </a>
             </li>
