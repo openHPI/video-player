@@ -1,56 +1,41 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
 
 <link rel="import" href="../base-element.html">
+<link rel="import" href="../styling/lists--style-module.html">
 
 <dom-module id="chapter-list">
   <link rel="import" type="css" href="../../bower_components/components-font-awesome/css/font-awesome.min.css">
   <template>
-    <style type="text/css">
-
-      /* TODO: Replace the colors with variables ? */
-
+    <style type="text/css" include="lists--style-module">
       #container__chapter_list {
-        position: absolute;
         top: 0;
         right: 0;
-        z-index: 2;
-        border: 5px solid black;
-        color: white;
+        border: 3px solid black;
+        @apply --foreground-color;
       }
-      #container__chapter_list ul {
-        margin: 0;
-        padding: 0;
-        list-style-type: none;
+      #container__chapter_list .list {
         max-width: 250px;
       }
-      #container__chapter_list li {
-        padding: 5px 5px 5px 20px;
-        cursor: pointer;
-        -webkit-font-smoothing: antialiased;
+      #container__chapter_list .list_item {
+        @apply --background-color
       }
       #container__chapter_list li:nth-child(odd) {
-        background-color: grey;
-      }
-      #container__chapter_list li:nth-child(even) {
-        background-color: darkgrey;
-      }
-      #container__chapter_list li .link__chapter_bookmark:before {
-        font-family: FontAwesome;
+        @apply --secondary-background-color
       }
     </style>
 
-    <div id="container__chapter_list">
-      <ul>
+    <div id="container__chapter_list" class="container__list">
+      <ul class="list">
           <template is="dom-repeat" items="{{chapters}}">
-            <li>
-              <a class$="link__chapter_bookmark [[ifEqualsThen(item, activeChapter, 'active fa-caret-right')]]" on-click="handleClick">
+            <li class="list_item">
+              <a class$="link__chapter_bookmark list_item__link [[ifEqualsThen(item, activeChapter, 'active fa-caret-right')]]" on-click="handleClick">
                 {{item.text}}
               </a>
             </li>
           </template>
       </ul>
     </div>
-    </template>
+  </template>
 
   <script>
     define('chapter-list', ['base-element'], (BaseElement) => {

@@ -1,0 +1,32 @@
+<dom-module id="lists--style-module">
+  <template>
+    <style type="text/css">
+      /*
+      ** Style module for all kinds of lists
+      ** This is for example used for the interactive transcripts or chapters component.
+      */
+
+      .container__list {
+        position: absolute;
+      }
+
+      .container__list .list {
+        margin: 0;
+        padding: 0;
+        overflow-y: scroll;
+        list-style-type: none;
+        height: inherit;
+      }
+
+      .container__list .list_item {
+        padding: 5px 5px 5px 20px;
+        cursor: pointer;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .container__list .list_item .list_item__link:before {
+        font-family: FontAwesome;
+      }
+    </style>
+  </template>
+</dom-module>
