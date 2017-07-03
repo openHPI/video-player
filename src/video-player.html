@@ -92,7 +92,9 @@
       <div id="video-container">
         <!-- Videos Overlays -->
         <waiting-overlay state="{{state}}" state-manager="{{stateManager}}"></waiting-overlay>
-        <finished-overlay state="{{state}}" state-manager="{{stateManager}}" related-videos="{{configuration.relatedVideos}}"></finished-overlay>
+        <template is="dom-if" if="{{configuration.relatedVideos}}">
+          <finished-overlay state="{{state}}" state-manager="{{stateManager}}" related-videos="{{configuration.relatedVideos}}"></finished-overlay>
+        </template>
 
         <!-- Video Streams -->
         <div id="streams-container">
