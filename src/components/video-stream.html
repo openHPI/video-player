@@ -38,7 +38,7 @@
         on-click="handleClick"
         on-canplay="handleCanPlay"
         on-playing="handlePlaying"
-        on-ended="handleEnded"
+        on-ended="handleTimeUpdate"
         on-loadedmetadata="handleLoadedMetadata"
         on-timeupdate="handleTimeUpdate">
       </video>
@@ -116,7 +116,8 @@
 
         handleTimeUpdate() {
           if(this.master && !this.initializingVideo) {
-            this.stateManager.setPosition(this.$.video.currentTime);
+            let position = this.$.video.ended ? this.state.duration : this.$.video.currentTime;
+            this.stateManager.setPosition(position);
           }
         }
 
@@ -136,12 +137,6 @@
 
         handlePlaying() {
           this.isPosterVisible = false;
-        }
-
-        handleEnded() {
-          // Sometimes the position does not equals the duration if the video
-          // has ended. To fix this issue, the position is set manually.
-          this.stateManager.setPosition(this.state.duration);
         }
 
         handleClick() {

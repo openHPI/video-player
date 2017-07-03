@@ -11,6 +11,7 @@
 <link rel="import" href="components/video-stream.html">
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/overlays/waiting-overlay.html">
+<link rel="import" href="components/overlays/finished-overlay.html">
 <link rel="import" href="components/control-bar/control-bar.html">
 <link rel="import" href="components/progress-container/video-progress.html">
 <link rel="import" href="components/progress-container/lecture-slide-bar/lecture-slide-bar.html">
@@ -89,7 +90,11 @@
 
     <div id="video-player-container">
       <div id="video-container">
+        <!-- Videos Overlays -->
         <waiting-overlay state="{{state}}" state-manager="{{stateManager}}"></waiting-overlay>
+        <finished-overlay state="{{state}}" state-manager="{{stateManager}}" related-videos="{{configuration.relatedVideos}}"></finished-overlay>
+
+        <!-- Video Streams -->
         <div id="streams-container">
           <template is="dom-repeat" items="{{configuration.streams}}">
             <video-stream
@@ -109,6 +114,7 @@
         </div>
       </div>
 
+      <!-- Progress Bars -->
       <div id="progress-container">
         <template is="dom-if" if="{{configuration.lectureSlides}}">
           <lecture-slide-bar state="{{state}}" state-manager="{{stateManager}}" slides="{{configuration.lectureSlides}}"></lecture-slide-bar>
@@ -116,6 +122,7 @@
         <video-progress state="{{state}}" state-manager="{{stateManager}}"></video-progress>
       </div>
 
+      <!-- Control Bar -->
       <control-bar
         state="{{state}}"
         state-manager="{{stateManager}}"
@@ -123,6 +130,7 @@
         available-qualities="{{availableQualities}}">
       </control-bar>
 
+      <!-- Chapter List -->
       <template is="dom-if" if="{{state.isChapterListShown}}">
         <chapter-list
           state="{{state}}"

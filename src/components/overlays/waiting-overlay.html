@@ -1,22 +1,18 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
 <link rel="import" href="../../base-element.html">
+<link rel="import" href="../../styling/overlay--style-module.html">
 
 <dom-module id="waiting-overlay">
   <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
   <template>
-    <style type="text/css">
+    <style type="text/css" include="overlay--style-module">
       #container__waiting_overlay {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: 3;
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: rgba(0, 0, 0, 0.25);
       }
-
+      
       #icon_spinner {
         opacity: 0.9;
         font-size: 6vw;
@@ -46,7 +42,7 @@
       }
     </style>
 
-    <div id="container__waiting_overlay" style$="visibility: [[ifThenElse(isVisible, 'visible', 'hidden')]];">
+    <div id="container__waiting_overlay" class="overlay" style$="visibility: [[ifThenElse(isVisible, 'visible', 'hidden')]];">
       <i id="icon_spinner" class="fa fa-spinner" aria-hidden="true"></i>
     </div>
   </template>
