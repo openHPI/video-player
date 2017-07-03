@@ -69,19 +69,23 @@
 
         static get observers() {
           return [
-            'updateActiveTranscript(cues, state.position)',
             'getCues(state.cues)',
+            'updateActiveTranscript(cues, state.position)',
           ];
         }
+
 
         getCues(){
           // flush array
           this.splice("cues", 0, this.cues.length);
           // refill it
-          for (let cueElement in this.state.cues) {
-            let cuePoint = this.state.cues[cueElement];
-            this.push('cues', cuePoint);
+          if(this.state.cues) {
+            for(let i = 0; i < this.state.cues.length; i++){
+              this.push('cues', this.state.cues[i]);
+            }
           }
+          // call update ...because listener on 'cues' does not seem to work
+          this.updateActiveTranscript();
         }
         
         handleClick(e) {
@@ -90,7 +94,7 @@
         }
 
         updateActiveTranscript() {
-          this.activeTranscript = this.cues.slice()
+            this.activeTranscript = this.cues.slice()
                                             .reverse()
                                             .find(cuePoint => cuePoint.startTime <= this.state.position);
         }

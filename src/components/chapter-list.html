@@ -81,6 +81,7 @@
         }
 
         updateActiveChapter() {
+          //console.log(this.state.position);
           this.activeChapter = this.chapters.slice()
                                             .reverse()
                                             .find(chapter => chapter.seconds <= this.state.position);
