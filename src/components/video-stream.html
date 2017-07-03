@@ -38,7 +38,7 @@
         on-click="handleClick"
         on-canplay="handleCanPlay"
         on-playing="handlePlaying"
-        on-ended="handleTimeUpdate"
+        on-ended="handleEnded"
         on-loadedmetadata="handleLoadedMetadata"
         on-timeupdate="handleTimeUpdate">
       </video>
@@ -116,8 +116,7 @@
 
         handleTimeUpdate() {
           if(this.master && !this.initializingVideo) {
-            let position = this.$.video.ended ? this.state.duration : this.$.video.currentTime;
-            this.stateManager.setPosition(position);
+            this.stateManager.setPosition(this.$.video.currentTime);
           }
         }
 
@@ -137,6 +136,14 @@
 
         handlePlaying() {
           this.isPosterVisible = false;
+        }
+
+        handleEnded() {
+          // Explicitly propagate end position
+          if(this.master) {
+            this.stateManager.setPosition(this.state.duration);
+          }
+          this.isPosterVisible = true;
         }
 
         handleClick() {
