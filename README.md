@@ -63,6 +63,7 @@ The player configuration is provided as JSON object:
     * **volume** (Number): `<0..1>` (default: `1.0`)
     * **muted** (Boolean): (default: `false`)
     * **isChapterListShown** (Boolean): (default: `false`)
+* **userPreferences** (Object): Override parts of the default/initial/saved state. Meant to be provided by the server based on the current user. See [User Preferences](#user-preferences)
 * **primaryColor** (String): HEX code of the color for text and all other main content (default: `#FFFFFF`)
 * **secondaryColor** (String): HEX code of the highlighting color (default: `#DD6112`)
 * **backgroundColorForPrimary** (String): HEX code of the background for the `primaryColor` (default: `#424242`)
@@ -89,3 +90,9 @@ The component is set up to be tested via [web-component-tester](https://github.c
 ```
 $ npm test
 ```
+
+## Miscellaneous
+### User Preferences
+Properties changesd by the user, e.g. `playbackRate`, `volume` or `quality`, are always automatically saved in the browser's LocalStorage.
+
+When using `userPreferences` in the configuration, it will override the preferences saved in LocalStorage.
