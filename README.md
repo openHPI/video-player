@@ -93,6 +93,9 @@ $ npm test
 
 ## Miscellaneous
 ### User Preferences
-Properties changesd by the user, e.g. `playbackRate`, `volume` or `quality`, are always automatically saved in the browser's LocalStorage.
+Properties changed by the user are always automatically saved in the browser's LocalStorage. Possible for:
+* `playbackRate`
+* `quality`
+* `volume`
 
 When using `userPreferences` in the configuration, it will override the preferences saved in LocalStorage.
