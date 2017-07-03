@@ -211,7 +211,7 @@
           this.userPreferencesManager = new UserPreferencesManager();
 
           // Build state from provided intial state configuration and default values
-          this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState, this.userPreferencesManager.getPreferences());
+          this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState, this.userPreferencesManager.getPreferences(), this.configuration.userPreferences);
 
           // Initialize StateManager
           this.stateManager = new StateManager(this, 'state');
