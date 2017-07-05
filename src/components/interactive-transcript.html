@@ -26,12 +26,17 @@
         font-size: 1rem;
         @apply --transition-duration-600;
       }
+      #container__interactive_transcript .list_item.-active,
+      #container__interactive_transcript .list_item:nth-child(odd).-active {
+        background-color: #999;
+      }
 
       #container__interactive_transcript .list_item:nth-child(odd) {
         background-color: #fff;
       }
 
-      #container__interactive_transcript .list_item:hover {
+      #container__interactive_transcript .list_item:hover,
+      #container__interactive_transcript .list_item.-active:hover {
         @apply --accent-color-background;
         @apply --transition-duration-200;
       }
@@ -40,7 +45,7 @@
     <div id="container__interactive_transcript" class="container__list">
       <ul class="list">
           <template is="dom-repeat" items="{{cues}}">
-            <li class="list_item" style$="[[ifEqualsThen(item, activeTranscript, 'background-color: #999;')]]">
+            <li class$="list_item [[ifEqualsThen(item, activeTranscript, '-active')]]">
               <a class$="link__active_transcript_bookmark list_item__link [[ifEqualsThen(item, activeTranscript, 'active fa-caret-right')]]" on-click="handleClick">
                 {{item.text}}
               </a>
@@ -94,9 +99,18 @@
         }
 
         updateActiveTranscript() {
-            this.activeTranscript = this.cues.slice()
+          let oldTranscript = this.activeTranscript;
+          this.activeTranscript = this.cues.slice()
                                             .reverse()
                                             .find(cuePoint => cuePoint.startTime <= this.state.position);
+          this.scrollIntoView(oldTranscript, this.activeTranscript);
+        }
+
+        scrollIntoView(oldElement, newElement) {
+          let activeElement = this.$.container__interactive_transcript.getElementsByClassName('-active')[0];
+          if(activeElement && oldElement !== newElement) {
+            activeElement.scrollIntoView({behavior: 'smooth'});
+          }
         }
       }
 

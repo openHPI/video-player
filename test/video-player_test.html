@@ -20,23 +20,31 @@
     </test-fixture>
 
     <script>
+      // This runs before each test file gets executed
+      beforeEach(function() {
+        // We want to run tests with an empty local storage to avoid
+        // unintended side effects and to start with a clean slate in each
+        // test file.
+        localStorage.clear();
+      });
+
       suite('video-player', function() {
+        let videoPlayer;
+
+        setup(function() {
+          videoPlayer = fixture('BasicTestFixture');
+        });
 
         test('instantiating the element with default properties works', function() {
-          var videoPlayer = fixture('BasicTestFixture');
           assert.isNotNull(videoPlayer.configuration, 'there is a configuration');
           assert.isObject(videoPlayer.stateManager, 'video-player', 'stateManger is available');
           // Testing whether all stateManager values are at their default
-          assert.equal(videoPlayer.state.position, 0);
-          assert.equal(videoPlayer.state.duration, 0);
-          assert.equal(videoPlayer.state.playbackRate, 1.0);
-          assert.equal(videoPlayer.state.volume, 1.0);
-          assert.equal(videoPlayer.state.position, 0);
-          assert.equal(videoPlayer.state.muted, false);
-          assert.equal(videoPlayer.state.fullScreen, false);
-
-          videoPlayer.stateManager.togglePlayPause();
-          assert.equal(videoPlayer.state.playState, 'PLAYING');
+          assert.equal(videoPlayer.state.position, 0, 'position value is at default');
+          assert.equal(videoPlayer.state.duration, 0, 'duration value is at default');
+          assert.equal(videoPlayer.state.playbackRate, 1.0, 'playback rate value is at default');
+          assert.equal(videoPlayer.state.volume, 1.0, 'volume value is at default');
+          assert.equal(videoPlayer.state.muted, false, 'muted value is at default');
+          assert.equal(videoPlayer.state.fullScreen, false, 'full screen value is at default');
         });
 
       });
