@@ -131,8 +131,12 @@
         }
 
         handleTimeUpdate() {
+          let currentTime = this.$.video.currentTime;
+          if(0 < currentTime && currentTime < this.state.duration) {
+            this.isPosterVisible = false;
+          }
           if(this.master && !this.initializingVideo) {
-            this.stateManager.setPosition(this.$.video.currentTime);
+            this.stateManager.setPosition(currentTime);
           }
         }
 
