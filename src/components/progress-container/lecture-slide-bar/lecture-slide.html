@@ -3,7 +3,7 @@
 <dom-module id="lecture-slide">
   <template>
     <style type="text/css">
-      .container__lecture_slide_element {
+      #container__lecture_slide_element {
         position: absolute;
         right: 0;
         border-left: 1px solid black;
@@ -11,18 +11,35 @@
         @apply --secondary-background-color;
         height: 10px;
       }
-      .container__lecture_slide_img {
+      #container__lecture_slide_element:hover {
+        background-color: white;
+      }
+
+      #image__slide_preview {
         display: none;
         position: absolute;
-        left: 0px;
+        bottom: 100%;
         max-width: 100px;
         border: 1px solid black;;
         background-color: white;
       }
+      #container__lecture_slide_element.-left #image__slide_preview {
+        left: 0;
+      }
+      #container__lecture_slide_element.-right #image__slide_preview {
+        right: 0;
+      }
+
+      #container__lecture_slide_element:hover #image__slide_preview {
+        display: initial;
+      }
     </style>
 
-    <div id="container__lectureSlide_element" class="container__lecture_slide_element" style$="left: [[_stylePercentage(slide.startPosition,state.duration)]]%">
-        <img id="image__slidePreview" src="[[slide.imageUrl]]" class="container__lecture_slide_img">
+    <div id="container__lecture_slide_element" 
+         on-click="handleClick" 
+         style$="left: [[_stylePercentage(slide.startPosition, state.duration)]]%;"
+         class$="[[_getSlidePosition(slide.startPosition, state.duration)]]">
+        <img id="image__slide_preview" src="[[slide.imageUrl]]">
     </div>
 
   </template>
@@ -40,31 +57,23 @@
           };
         }
 
-        ready() {
-          super.ready();
-
-          this.addEventListener('mouseenter', e => this._mouseEnterListener(e));
-          this.addEventListener('mouseleave', e => this._mouseLeaveListener(e));
-          this.addEventListener('click', e => this._mouseClickListener(e));
-        }
-
         _stylePercentage(position, duration) {
           return position / duration * 100;
+        }        
+
+        _getSlidePosition(position, duration) {
+          let percentage = this._stylePercentage(position, duration);
+          // This is an approximation 
+          // to avoid that the slide image overflows the video container
+          if(percentage > 90) {
+            return '-right';
+          } else {
+            return '-left';
+          }
         }
 
-        _mouseClickListener(){
+        handleClick(){
           this.stateManager.setPosition(this.slide.startPosition);
-        }
-
-        _mouseEnterListener(){
-          this.$.container__lectureSlide_element.style.backgroundColor = 'white';
-          this.$.image__slidePreview.style.display = 'initial';
-          this.$.image__slidePreview.style.bottom = this.$.container__lectureSlide_element.offsetHeight + 1 + 'px';
-        }
-
-        _mouseLeaveListener(){
-          this.$.container__lectureSlide_element.style.backgroundColor = '#777';
-          this.$.image__slidePreview.style.display = 'none';
         }
       }
 

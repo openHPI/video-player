@@ -1,0 +1,69 @@
+<link rel="import" href="../../../bower_components/imd/imd.html">
+
+<link rel="import" href="../../base-element.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
+<link rel="import" href="../base-components/select-control.html">
+
+<dom-module id="caption-control">
+  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
+
+  <template>
+    <style type="text/css" include="control-bar--style-module">
+    </style>
+
+    <select-control
+      values="[[captionLanguages]]"
+      selected-value="[[state.selectedCaption]]"
+      on-change="selectionChanged"
+      icon-classes="fa fa-cc">
+    </select-control>
+  </template>
+
+  <script>
+    define('caption-control', ['base-element'], (BaseElement) => {
+      class CaptionControl extends BaseElement {
+        static get is() { return 'caption-control'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            stateManager: Object,
+            captions: Object,
+            captionLanguages: {
+              type: Array,
+              value: ['off'],
+            },
+          };
+        }
+
+        ready() {
+          // Caption languages need to be ready before super.ready() is called
+          this.getCaptionLanguages();
+          super.ready();
+        }
+
+        dummy(element){
+          return element;
+        }
+
+        getCaptionLanguages() {
+          for (let captionElement in this.captions) {
+            let captionObject = this.captions[captionElement];
+            for (let property in captionObject) {
+              if( ! property.localeCompare('language')){
+                this.push('captionLanguages', captionObject[property]);
+              }
+            }
+          }
+        }
+
+        selectionChanged(e) {
+          this.stateManager.setCaptionLanguage(e.target.selectedValue);
+        }
+      }
+
+      window.customElements.define(CaptionControl.is, CaptionControl);
+    });
+  </script>
+
+</dom-module>

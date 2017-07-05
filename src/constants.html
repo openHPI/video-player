@@ -72,6 +72,9 @@
       muted: false,
       fullScreen: false,
       isChapterListShown: false,
+      selectedCaption: 'off',
+      isInteractiveTranscriptShown: false,
+      cues: null,
     };
 
     /**
@@ -89,6 +92,22 @@
       secondaryBackgroundColor: '#6D6D6D',
     };
 
+    /**
+     * Contains the possible user preferences properties.
+     * @type {String[]}
+     */
+    const USER_PREFERENCES_KEYS = [
+      'quality',
+      'playbackRate',
+      'volume',
+    ];
+
+    /**
+     * Contains the local storage key for the user preferences.
+     * @type {String[]}
+     */
+    const USER_PREFERNECES_STORAGE_KEY = 'videoplayerUserPreferences';
+
     return {
       PLAY_STATES,
       PLAYBACK_RATES,
@@ -99,6 +118,8 @@
       PLAYING_EVENT_NAME,
       DEFAULT_STATE,
       DEFAULT_CONFIGURATION,
+      USER_PREFERENCES_KEYS,
+      USER_PREFERNECES_STORAGE_KEY,
     };
   });
 </script>

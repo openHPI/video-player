@@ -7,9 +7,11 @@
 <link rel="import" href="videotime-display.html">
 <link rel="import" href="speed-control.html">
 <link rel="import" href="chapter-list-switch.html">
+<link rel="import" href="interactive-transcript-switch.html">
 <link rel="import" href="quality-switch.html">
 <link rel="import" href="mute-control.html">
 <link rel="import" href="fullscreen-control.html">
+<link rel="import" href="caption-control.html">
 
 <dom-module id="control-bar">
   <template>
@@ -35,6 +37,12 @@
     <div id="container__control_bar">
       <playpause-control state="{{state}}" state-manager="{{stateManager}}"></playpause-control>
       <videotime-display state="{{state}}" state-manager="{{stateManager}}" class="-flex-grow"></videotime-display>
+      <template is="dom-if" if="{{captions}}">
+        <caption-control state="{{state}}" state-manager="{{stateManager}}" captions="{{captions}}"></caption-control>
+      </template>
+      <template is="dom-if" if="{{captions}}">
+        <interactive-transcript-switch state="{{state}}" state-manager="{{stateManager}}"></chapter-list-switch>
+      </template>
       <speed-control state="{{state}}" state-manager="{{stateManager}}"></speed-control>
       <template is="dom-if" if="{{hasMultipleQualities}}">
         <quality-switch state="{{state}}" state-manager="{{stateManager}}" available-qualities="{{availableQualities}}"></quality-switch>
@@ -60,6 +68,7 @@
             state: Object,
             stateManager: Object,
             hasChapters: Boolean,
+            captions: Object,
             availableQualities: Boolean,
             hasMultipleQualities: {
               type: Boolean,
@@ -70,7 +79,6 @@
 
         ready() {
           super.ready();
-
           window.addEventListener('keydown', this.onkeydown.bind(this));
         }
 

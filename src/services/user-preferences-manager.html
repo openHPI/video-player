@@ -1,0 +1,44 @@
+<link rel="import" href="../constants.html">
+<script>
+  define('user-preferences-manager', ['constants'], (constants) => {
+    const {USER_PREFERENCES_KEYS, USER_PREFERNECES_STORAGE_KEY} = constants;
+
+    class UserPreferencesManager {
+      /**
+       * Initializes a new UserPreferencesManager instance.
+       * @return {UserPreferencesManager}  The new UserPreferencesManager instance.
+       */
+      constructor() {
+      }
+
+      /**
+       * Writes given user preferences as they are.
+       * @param  {Object} preferences The Object containing the preferences.
+       * @return {void}
+       */
+      setPreferences(preferences) {
+        let filteredPreferences = this._filterPreferences(preferences.base);
+        window.localStorage.setItem(USER_PREFERNECES_STORAGE_KEY, JSON.stringify(filteredPreferences));
+      }
+
+      /**
+       * Reads the user preferences.
+       * @return {Object} JSON Object with user preferences.
+       */
+      getPreferences() {
+        return JSON.parse(window.localStorage.getItem(USER_PREFERNECES_STORAGE_KEY));
+      }
+      
+      /** 
+       * Filters the given Object for allowed user preferences keys.
+       * @param  {Object} preferences The raw preferences object.
+       * @return {Object} The filtered preferences object.
+       */
+      _filterPreferences(preferences) {
+        return Object.assign({}, ...USER_PREFERENCES_KEYS.map(key => ({[key]: preferences[key]})));
+      }
+    }
+
+    return UserPreferencesManager;
+  });
+</script>

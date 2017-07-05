@@ -4,10 +4,12 @@
 <link rel="import" href="../base-element.html">
 <link rel="import" href="../3rd-imports/hls-js.html">
 
+
 <dom-module id="video-stream">
   <template>
     <style type="text/css">
       #container__video_stream {
+        position: relative;
         width: 100%;
         height: 100%;
       }
@@ -15,18 +17,43 @@
         width: inherit;
         height: inherit;
       }
+      ::cue{
+        visibility: hidden;
+      }
+
+      #container__poster_overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+      }
+
+      #image__poster {
+        width: 100%;
+        height: 100%;
+      }
     </style>
 
     <div id="container__video_stream">
       <video
         id="video"
         preload="[[ifThenElse(preload, 'auto', 'metadata')]]"
-        poster="[[ifThen(urls.poster, urls.poster)]]"
         on-click="handleClick"
         on-canplay="handleCanPlay"
+        on-playing="handlePlaying"
+        on-ended="handleEnded"
         on-loadedmetadata="handleLoadedMetadata"
         on-timeupdate="handleTimeUpdate">
+        <template is="dom-repeat" items="{{captions}}">
+          <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English">
+        </template>
       </video>
+      <template is="dom-if" if="{{and(urls.poster, isPosterVisible)}}">
+        <div id="container__poster_overlay">
+          <img id="image__poster" src="[[urls.poster]]" alt="Poster" />
+        </div>
+      </template>
     </div>
   </template>
 
@@ -42,6 +69,10 @@
             state: Object,
             stateManager: Object,
             synchronizationManager: Object,
+            captions: {
+              type: Object,
+              value: () => ({}),
+            },
             urls: Object,
             preload: {
               type: Boolean,
@@ -56,6 +87,10 @@
               type: Boolean,
               value: true,
             },
+            isPosterVisible: {
+              type: Boolean,
+              value: true,
+            },
             hlsClient: Object,
             nativeHlsSupport: {
               type: Boolean,
@@ -65,6 +100,10 @@
           };
         }
 
+        ready(){
+          super.ready();
+        }
+
         static get observers() {
           return [
             'playStateChanged(state.playState)',
@@ -72,6 +111,7 @@
             'playbackRateChanged(state.playbackRate)',
             'volumeChanged(state.volume)',
             'mutedChanged(state.muted)',
+            'setCaptionLanguage(state.selectedCaption)',
             'qualityChanged(urls, state.quality)',
           ];
         }
@@ -91,8 +131,12 @@
         }
 
         handleTimeUpdate() {
+          let currentTime = this.$.video.currentTime;
+          if(0 < currentTime && currentTime < this.state.duration) {
+            this.isPosterVisible = false;
+          }
           if(this.master && !this.initializingVideo) {
-            this.stateManager.setPosition(this.$.video.currentTime);
+            this.stateManager.setPosition(currentTime);
           }
         }
 
@@ -108,6 +152,16 @@
             this.applyState();
             this.initializingVideo = false;
           }
+        }
+
+        handlePlaying() {
+          this.isPosterVisible = false;
+        }
+
+        handleEnded() {
+          // Sometimes the position does not equals the duration if the video
+          // has ended. To fix this issue, the position is set manually.
+          this.stateManager.setPosition(this.state.duration);
         }
 
         handleClick() {
@@ -146,6 +200,35 @@
 
         mutedChanged(muted) {
           this.$.video.muted = muted;
+        }
+
+        setCaptionLanguage(language){
+          Polymer.RenderStatus.afterNextRender(this, function() {
+            if(this.master && this.captions){
+              // Set cues to null, so that they cannot get toggled by interactive-transcrpt-switch
+              if(language === 'off') this.stateManager.setCues(null);
+              // Get selected language from all tracks, show them and set their cues
+              for (let textTrackElement in this.$.video.textTracks){
+                let trackObject = this.$.video.textTracks[textTrackElement];
+                if( trackObject && trackObject.language && trackObject.language.match(language)) {
+                  trackObject.mode = 'showing';
+                  // Set caption cues for interactive transcript
+                  this.stateManager.setCues(trackObject.cues);
+                  
+                  // Set current caption cue-point for video subtitles
+                  this.stateManager.setCurrentCaptionCue(trackObject.activeCues[0]);
+                  self = this;
+                  // Subscribe to cue changes as defined in the WebVTT API:
+                  // https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API
+                  trackObject.oncuechange = function () {
+                    self.stateManager.setCurrentCaptionCue(this.activeCues[0]);
+                  };
+                } else if (trackObject && trackObject.language) {
+                  trackObject.mode = 'hidden';
+                }
+              }
+            }
+          });
         }
 
         qualityChanged(urls, quality) {

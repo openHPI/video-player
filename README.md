@@ -63,6 +63,7 @@ The player configuration is provided as JSON object:
     * **volume** (Number): `<0..1>` (default: `1.0`)
     * **muted** (Boolean): (default: `false`)
     * **isChapterListShown** (Boolean): (default: `false`)
+* **userPreferences** (Object): Override parts of the default/initial/saved state. Meant to be provided by the server based on the current user. See [User Preferences](#user-preferences)
 * **primaryColor** (String): HEX code of the color for text and all other main content (default: `#FFFFFF`)
 * **secondaryColor** (String): HEX code of the highlighting color (default: `#DD6112`)
 * **backgroundColorForPrimary** (String): HEX code of the background for the `primaryColor` (default: `#424242`)
@@ -79,6 +80,8 @@ The player configuration is provided as JSON object:
 
 ## Tests
 
+Tests are realized via the web-component-tester module. General information about testing with Polymer can be found [here](https://www.polymer-project.org/2.0/docs/tools/tests). Polymer uses [Mocha](http://mochajs.org) as its test framework, [Chai](http://chaijs.com) for assertions, [Sinon](http://sinonjs.org/) for spies, stubs, and mocks, [Selenium](http://www.seleniumhq.org/) for running tests against multiple browsers, and [Accessibility Developer Tools](https://github.com/GoogleChrome/accessibility-developer-tools) for accessibility audits.
+
 ### Prerequisites
 
 For Safari, you need to install the extension [SafariDriver.safariextz](http://selenium-release.storage.googleapis.com/2.48/SafariDriver.safariextz). Also, you need to have the _Develop_ menu active (toggled on in Preferences) and have toggled on the option _Allow Remote Automation_ underneath the _Develop_ menu.
@@ -89,3 +92,12 @@ The component is set up to be tested via [web-component-tester](https://github.c
 ```
 $ npm test
 ```
+
+## Miscellaneous
+### User Preferences
+Properties changed by the user are always automatically saved in the browser's LocalStorage. Possible for:
+* `playbackRate`
+* `quality`
+* `volume`
+
+When using `userPreferences` in the configuration, it will override the preferences saved in LocalStorage.

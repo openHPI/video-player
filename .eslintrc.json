@@ -21,15 +21,16 @@
     "camelcase": "error",
     "no-var": "error",
     "block-scoped-var": "error",
-    "consistent-this": ["error", "that"],
+    "consistent-this": ["warn", "that"],
     "eqeqeq": "error",
-    "guard-for-in": "error",
+    "guard-for-in": "warn",
     "object-shorthand": "error",
     "arrow-spacing": "error",
     "prefer-arrow-callback": "error",
     "arrow-body-style": ["error", "as-needed"],
     "valid-jsdoc": "error",
-    "capitalized-comments": ["warn", "always", {"ignoreConsecutiveComments": true}]
+    "capitalized-comments": ["warn", "always", {"ignoreConsecutiveComments": true}],
+    "no-global-assign": "warn"
   },
   "settings": {
     "html/indent": "+2",
