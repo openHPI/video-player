@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
-<link rel="import" href="../../base-element.html">
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 <link rel="import" href="../base-components/select-control.html">
 
@@ -22,16 +23,19 @@
     </template>
 
   <script>
-    define('speed-control', ['base-element', 'constants'], (BaseElement, constants) => {
+    define('speed-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {PLAYBACK_RATES} = constants;
 
-      class SpeedControl extends BaseElement {
+      class SpeedControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'speed-control'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
+            stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
             playbackRates: {
               type: Array,
               readOnly: true,

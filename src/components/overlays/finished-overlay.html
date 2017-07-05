@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
-<link rel="import" href="../../base-element.html">
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/overlay--style-module.html">
 
 <dom-module id="finished-overlay">
@@ -31,7 +32,7 @@
         font-size: 0.8vw;
         background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0) 75%);
       }
-      
+
       .container__related_video:hover .container_related_overlay {
         display: initial;
       }
@@ -51,10 +52,10 @@
   </template>
 
   <script>
-    define('finished-overlay', ['base-element', 'constants'], (BaseElement, constants) => {
+    define('finished-overlay', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {PLAY_STATES} = constants;
 
-      class FinishedOverlay extends BaseElement {
+      class FinishedOverlay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'finished-overlay'; }
 
         static get properties() {
@@ -83,9 +84,9 @@
           return Math.ceil(Math.sqrt(this.relatedVideos.length));
         }
         _getFlexBasis() {
-          /* 
+          /*
           * Calculate the flex-basis for each element.
-          * Each element has 100% divided by the number of columns. 
+          * Each element has 100% divided by the number of columns.
           * Furhter the margin of 4px needs to be substracted each time
           * in order to keep this width.
           */

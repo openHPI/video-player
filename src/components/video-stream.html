@@ -1,7 +1,8 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
 
 <link rel="import" href="../constants.html">
-<link rel="import" href="../base-element.html">
+<link rel="import" href="../mixins/binding-helpers.html">
+<link rel="import" href="../mixins/ioc-requester.html">
 <link rel="import" href="../3rd-imports/hls-js.html">
 
 
@@ -60,17 +61,23 @@
   </template>
 
   <script>
-    define('video-stream', ['base-element', 'hls-js', 'constants'], (BaseElement, Hls, constants) => {
+    define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, Hls, constants) => {
       const {PLAY_STATES, QUALITY_MODES, HLS_MIME_TYPE, SYNC_DIFF_THRESHOLD} = constants;
 
-      class VideoStream extends BaseElement {
+      class VideoStream extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'video-stream'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
-            synchronizationManager: Object,
+            stateManager: {
+              typeof: Object,
+              inject: 'StateManager',
+            },
+            synchronizationManager: {
+              typeof: Object,
+              inject: 'SynchronizationManager',
+            },
             captions: {
               type: Object,
               value: () => ({}),
@@ -122,8 +129,8 @@
           return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
         }
 
-        connectedCallback() {
-          super.connectedCallback();
+        servicesInjectedCallback() {
+          super.servicesInjectedCallback();
           this.synchronizationManager.registerVideo(this.$.video);
         }
 

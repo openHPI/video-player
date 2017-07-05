@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
 
-<link rel="import" href="../base-element.html">
+<link rel="import" href="../mixins/binding-helpers.html">
+<link rel="import" href="../mixins/ioc-requester.html">
 <link rel="import" href="../styling/lists--style-module.html">
 
 <dom-module id="interactive-transcript">
@@ -66,14 +67,17 @@
   </template>
 
   <script>
-    define('interactive-transcript', ['base-element'], (BaseElement) => {
-      class InteractiveTranscript extends BaseElement {
+    define('interactive-transcript', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class InteractiveTranscript extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'interactive-transcript'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
+            stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
             cues: {
               type: Array,
               value: [],
@@ -102,7 +106,7 @@
           // call update ...because listener on 'cues' does not seem to work
           this.updateActiveTranscript();
         }
-        
+
         handleClick(e) {
           let cuePoint = e.model.item;
           this.stateManager.setPosition(cuePoint.startTime);

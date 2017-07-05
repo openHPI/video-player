@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
 
-<link rel="import" href="../base-element.html">
+<link rel="import" href="../mixins/binding-helpers.html">
+<link rel="import" href="../mixins/ioc-requester.html">
 
 <dom-module id="resizer-control">
   <link rel="import" type="css" href="../../bower_components/components-font-awesome/css/font-awesome.min.css">
@@ -55,8 +56,8 @@
   </template>
 
   <script>
-    define('resizer-control', ['base-element'], (BaseElement) => {
-      class ResizerControl extends BaseElement {
+    define('resizer-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class ResizerControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'resizer-control'; }
 
         static get properties() {

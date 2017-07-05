@@ -1,5 +1,8 @@
 <link rel="import" href="../../../../bower_components/imd/imd.html">
 
+<link rel="import" href="../../../mixins/binding-helpers.html">
+<link rel="import" href="../../../mixins/ioc-requester.html">
+
 <dom-module id="lecture-slide">
   <template>
     <style type="text/css">
@@ -36,8 +39,8 @@
       }
     </style>
 
-    <div id="container__lecture_slide_element" 
-         on-click="handleClick" 
+    <div id="container__lecture_slide_element"
+         on-click="handleClick"
          style$="left: [[_stylePercentage(slide.startPosition, state.duration)]]%;"
          class$="[[_getSlidePosition(slide.startPosition, state.duration)]]">
         <img id="image__slide_preview" src="[[slide.imageUrl]]">
@@ -46,25 +49,28 @@
   </template>
 
   <script>
-    define('lecture-slide', ['base-element'], (BaseElement) => {
-      class LectureSlide extends BaseElement {
+    define('lecture-slide', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class LectureSlide extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'lecture-slide'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
+            stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
             slide: Object,
           };
         }
 
         _stylePercentage(position, duration) {
           return position / duration * 100;
-        }        
+        }
 
         _getSlidePosition(position, duration) {
           let percentage = this._stylePercentage(position, duration);
-          // This is an approximation 
+          // This is an approximation
           // to avoid that the slide image overflows the video container
           if(percentage > 90) {
             return '-right';

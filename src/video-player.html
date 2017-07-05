@@ -1,7 +1,9 @@
 <link rel="import" href="../bower_components/imd/imd.html">
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 
-<link rel="import" href="base-element.html">
+<link rel="import" href="mixins/ioc-provider.html">
+<link rel="import" href="mixins/ioc-requester.html">
+<link rel="import" href="mixins/binding-helpers.html">
 <link rel="import" href="3rd-imports/hls-js.html">
 <link rel="import" href="styling/mixins.html">
 <link rel="import" href="styling/font-awesome.html">
@@ -94,9 +96,9 @@
       @media (max-width: 768px) {
         :host {
           /*
-          * The min-widths are necessary to avoid that the video containter and 
-          * the controlbar have different widths on small screens. 
-          */ 
+          * The min-widths are necessary to avoid that the video containter and
+          * the controlbar have different widths on small screens.
+          */
           min-width: 260px
         }
         .hidden-for-mobile {
@@ -107,7 +109,7 @@
         :host {
           /*
           * Look above
-          */ 
+          */
           min-width: 560px
         }
       }
@@ -116,9 +118,9 @@
     <div id="video-player-container">
       <div id="video-container">
         <!-- Videos Overlays -->
-        <waiting-overlay state="{{state}}" state-manager="{{stateManager}}"></waiting-overlay>
+        <waiting-overlay state="{{state}}"></waiting-overlay>
         <template is="dom-if" if="{{configuration.relatedVideos}}">
-          <finished-overlay state="{{state}}" state-manager="{{stateManager}}" related-videos="{{configuration.relatedVideos}}"></finished-overlay>
+          <finished-overlay state="{{state}}" related-videos="{{configuration.relatedVideos}}"></finished-overlay>
         </template>
 
         <!-- Video Streams -->
@@ -126,8 +128,6 @@
           <template is="dom-repeat" items="{{configuration.streams}}">
             <video-stream
               state="{{state}}"
-              state-manager="{{stateManager}}"
-              synchronization-manager="{{synchronizationManager}}"
               urls="{{item}}"
               preload="{{configuration.videoPreload}}"
               master="{{equals(index, 0)}}"
@@ -140,21 +140,20 @@
             </template>
           </template>
         </div>
-        <captions-display state="{{state}}" state-manager="{{stateManager}}"></captions-display>
+        <captions-display state="{{state}}"></captions-display>
       </div>
 
       <!-- Progress Bars -->
       <div id="progress-container">
         <template is="dom-if" if="{{configuration.lectureSlides}}">
-          <lecture-slide-bar state="{{state}}" state-manager="{{stateManager}}" slides="{{configuration.lectureSlides}}" class="hidden-for-mobile"></lecture-slide-bar>
+          <lecture-slide-bar state="{{state}}" slides="{{configuration.lectureSlides}}" class="hidden-for-mobile"></lecture-slide-bar>
         </template>
-        <video-progress state="{{state}}" state-manager="{{stateManager}}"></video-progress>
+        <video-progress state="{{state}}" ></video-progress>
       </div>
 
       <!-- Control Bar -->
       <control-bar
         state="{{state}}"
-        state-manager="{{stateManager}}"
         has-chapters="{{hasChapters}}"
         captions="{{configuration.captions}}"
         available-qualities="{{availableQualities}}">
@@ -164,26 +163,23 @@
       <template is="dom-if" if="{{state.isChapterListShown}}">
         <chapter-list
           state="{{state}}"
-          state-manager="{{stateManager}}"
+
           chapters="{{configuration.chapters}}">
         </chapter-list>
       </template>
 
-      <interactive-transcript
-        style$="display: [[ifThenElse(state.isInteractiveTranscriptShown, 'initial', 'none')]]"
-        state="{{state}}"
-        state-manager="{{stateManager}}">
-      </interactive-transcript>
-
+      <template is="dom-if" if="{{state.isInteractiveTranscriptShown}}">
+        <interactive-transcript state="{{state}}"></interactive-transcript>
+      </template>
     </div>
 
   </template>
 
   <script>
-    define(['base-element', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'hls-js', 'constants'], (BaseElement, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, Hls, constants) => {
+    define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'hls-js', 'constants'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, Hls, constants) => {
       const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME} = constants;
 
-      class VideoPlayer extends BaseElement {
+      class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
         static get is() { return 'video-player'; }
 
         // A function is used to determine default values of properties to
@@ -199,9 +195,22 @@
               type: Object,
               value: () => ({}),
             },
-            stateManager: Object,
-            fullscreenManager: Object,
-            synchronizationManager: Object,
+            stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            captionsManager: {
+              type: Object,
+              inject: 'CaptionsManager',
+            },
+            fullscreenManager: {
+              type: Object,
+              inject: 'FullscreenManager',
+            },
+            userPreferencesManager: {
+              type: Object,
+              inject: 'UserPreferencesManager',
+            },
             isResizerShown: {
               type: Boolean,
               value: false,
@@ -227,6 +236,7 @@
             'secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
             'playStateChanged(state.playState)',
             'fullscreenChanged(state.fullscreen)',
+            'captionLanguageChanged(state.captionLanguage)',
             'userPreferencesStateChanged(state.*)',
           ];
         }
@@ -248,26 +258,29 @@
           return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
         }
 
-        ready() {
-          super.ready();
+        bindServices(iocKernel) {
+          super.bindServices(iocKernel);
 
-          // Initialize UserPreferencesManager
-          this.userPreferencesManager = new UserPreferencesManager();
+          iocKernel.bind(StateManager).toSelf(this, 'state').inSingletonScope();
+          iocKernel.bind(UserPreferencesManager).toSelf().inSingletonScope();
+          iocKernel.bind(SynchronizationManager).toSelf(iocKernel.get(StateManager)).inSingletonScope();
+          iocKernel.bind(FullscreenManager).toSelf(() => this.$['video-player-container']).inSingletonScope();
+        }
+
+        servicesInjectedCallback() {
+          super.servicesInjectedCallback();
 
           // Build state from provided intial state configuration and default values
           this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState, this.userPreferencesManager.getPreferences(), this.configuration.userPreferences);
 
-          // Initialize StateManager
-          this.stateManager = new StateManager(this, 'state');
-
           // Initialize FullscreenManager
-          this.fullscreenManager = new FullscreenManager(this.$['video-player-container']);
           this.fullscreenManager.onFullscreenChanged((fullscreen) => {
             this.stateManager.setFullscreen(fullscreen);
           });
+        }
 
-          // Initialize SynchronizationManager
-          this.synchronizationManager = new SynchronizationManager(this.stateManager);
+        ready() {
+          super.ready();
 
           // Add event handlers for mouse events to show/hide resizer
           this.$['streams-container'].addEventListener('mouseenter', () => this.isResizerShown = true);
@@ -339,6 +352,12 @@
         }
         secondaryBackgroundColorChanged(color) {
           Polymer.updateStyles({'--secondary-background-color': color});
+        }
+
+        captionLanguageChanged(language) {
+          if(this.state.isInteractiveTranscriptShown && language === 'off') {
+            this.stateManager.toggleInteractiveTranscript();
+          }
         }
 
         userPreferencesStateChanged(states) {

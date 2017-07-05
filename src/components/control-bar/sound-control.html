@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
-<link rel="import" href="../../base-element.html">
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 <link rel="import" href="../base-components/progress-bar.html">
 
@@ -16,23 +17,26 @@
     <div id="container__sound_control" class="user_controls">
       <progress-bar
         id="progress__sound_control"
-        border
         value$="[[toStringOrEmpty(effectiveVolume)]]"
-        on-change="handleChange">
+        on-change="handleChange"
+        border>
       </progress-bar>
     </div>
 
   </template>
 
   <script>
-    define('sound-control', ['base-element'], (BaseElement) => {
-      class SoundControl extends BaseElement {
+    define('sound-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class SoundControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'sound-control'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
+            stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
             effectiveVolume: {
               type: Number,
               computed: '_effectiveVolume(state.volume, state.muted)',

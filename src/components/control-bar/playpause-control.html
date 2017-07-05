@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
-<link rel="import" href="../../base-element.html">
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 
 <dom-module id="playpause-control">
@@ -23,7 +24,7 @@
   </template>
 
   <script>
-    define('playpause-control', ['base-element', 'constants'], (BaseElement, constants) => {
+    define('playpause-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {PLAY_STATES} = constants;
       const PLAY_STATE_ICONS = {
         [PLAY_STATES.PLAYING]: 'fa-pause',
@@ -31,13 +32,16 @@
         [PLAY_STATES.FINISHED]: 'fa-refresh',
       };
 
-      class PlayPauseControl extends BaseElement {
+      class PlayPauseControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'playpause-control'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
+            stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
             iconClass: String,
           };
         }
