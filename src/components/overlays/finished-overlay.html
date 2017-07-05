@@ -9,23 +9,23 @@
       #container__finished_overlay {
         display: flex;
         flex-wrap: wrap;
-        align-items: flex-start;
         padding: 25px;
-        box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
         background-color: rgba(0, 0, 0, 0.75);
+        @apply --box-sizing-border-box;
       }
 
       .container__related_video {
         position: relative;
-        flex-grow: 1;
-        margin: 2px;
+        flex-shrink: 1;
+        padding: 2px;
+        @apply --box-sizing-border-box;
       }
 
       .image__related_video {
         display: block;
-        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        margin: auto;
       }
 
       .container_related_overlay {
@@ -35,9 +35,7 @@
         width: 100%;
         height: 100%;
         padding: 10px;
-        box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
+        @apply --box-sizing-border-box;
         font-size: 0.8vw;
         background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0) 75%);
       }
@@ -48,7 +46,7 @@
 
     <div id="container__finished_overlay" class="overlay" style$="visibility: [[ifThenElse(isVisible, 'visible', 'hidden')]];">
       <template is="dom-repeat" items="{{relatedVideos}}">
-        <div class="container__related_video">
+        <div class="container__related_video" style$="height: calc(100% / {{_getRows()}}); flex-basis: calc(100% / {{_getColumns()}})">
           <a href="{{item.url}}">
             <img class="image__related_video" src="{{item.imageUrl}}" alt="Thumbnail" />
             <div class="container_related_overlay">
@@ -84,6 +82,13 @@
 
         _isVisible(playState) {
           return playState === PLAY_STATES.FINISHED;
+        }
+
+        _getRows() {
+          return Math.round(Math.sqrt(this.relatedVideos.length));
+        }
+        _getColumns() {
+          return Math.ceil(Math.sqrt(this.relatedVideos.length));
         }
       }
 
