@@ -18,7 +18,8 @@
       #image__slide_preview {
         display: none;
         position: absolute;
-        bottom: 100%;
+        /* Cancel out the top border */
+        bottom: calc(100% + 1px);
         max-width: 100px;
         border: 1px solid black;;
         background-color: white;

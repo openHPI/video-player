@@ -159,9 +159,11 @@
         }
 
         handleEnded() {
-          // Sometimes the position does not equals the duration if the video
-          // has ended. To fix this issue, the position is set manually.
-          this.stateManager.setPosition(this.state.duration);
+          // Explicitly propagate end position
+          if(this.master) {
+            this.stateManager.setPosition(this.state.duration);
+          }
+          this.isPosterVisible = true;
         }
 
         handleClick() {

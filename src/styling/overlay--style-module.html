@@ -1,0 +1,22 @@
+<dom-module id="overlay--style-module">
+  <template>
+    <style type="text/css">
+      /* ------
+      * The styles defined here are heritated by many classes.
+      * Thus be careful when changing rules here.
+       ------ */
+
+     .overlay {
+       position: absolute;
+       width: 100%;
+       height: 100%;
+       z-index: 3;
+       background-color: rgba(0, 0, 0, 0.25);
+       @apply --foreground-color;
+     }
+     .overlay a {
+       @apply --foreground-color;
+     }
+    </style>
+  </template>
+</dom-module>
