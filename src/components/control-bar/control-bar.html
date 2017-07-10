@@ -31,6 +31,12 @@
         justify-content: flex-end;
         background-color: #424242;
         background-color: var(--background-color-for-primary);
+      } 
+
+      @media (max-width: 768px) {
+        .hidden-for-mobile {
+          display: none;
+        }
       }
     </style>
 
@@ -38,20 +44,20 @@
       <playpause-control state="{{state}}" state-manager="{{stateManager}}"></playpause-control>
       <videotime-display state="{{state}}" state-manager="{{stateManager}}" class="-flex-grow"></videotime-display>
       <template is="dom-if" if="{{captions}}">
-        <caption-control state="{{state}}" state-manager="{{stateManager}}" captions="{{captions}}"></caption-control>
+        <caption-control state="{{state}}" state-manager="{{stateManager}}" captions="{{captions}}" class="hidden-for-mobile"></caption-control>
       </template>
       <template is="dom-if" if="{{captions}}">
-        <interactive-transcript-switch state="{{state}}" state-manager="{{stateManager}}"></chapter-list-switch>
+        <interactive-transcript-switch state="{{state}}" state-manager="{{stateManager}}" class="hidden-for-mobile"></chapter-list-switch>
       </template>
-      <speed-control state="{{state}}" state-manager="{{stateManager}}"></speed-control>
+      <speed-control state="{{state}}" state-manager="{{stateManager}}" class="hidden-for-mobile"></speed-control>
       <template is="dom-if" if="{{hasMultipleQualities}}">
         <quality-switch state="{{state}}" state-manager="{{stateManager}}" available-qualities="{{availableQualities}}"></quality-switch>
       </template>
       <template is="dom-if" if="{{hasChapters}}">
-        <chapter-list-switch state="{{state}}" state-manager="{{stateManager}}"></chapter-list-switch>
+        <chapter-list-switch state="{{state}}" state-manager="{{stateManager}}" class="hidden-for-mobile"></chapter-list-switch>
       </template>
-      <mute-control state="{{state}}" state-manager="{{stateManager}}"></mute-control>
-      <sound-control state="{{state}}" state-manager="{{stateManager}}"></sound-control>
+      <mute-control state="{{state}}" state-manager="{{stateManager}}" class="hidden-for-mobile"></mute-control>
+      <sound-control state="{{state}}" state-manager="{{stateManager}}" class="hidden-for-mobile"></sound-control>
       <full-screen-control state="{{state}}" state-manager="{{stateManager}}"></full-screen-control>
     </div>
   </template>

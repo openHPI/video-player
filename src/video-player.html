@@ -89,6 +89,12 @@
         border-top: 1px solid black;
         border-bottom: 1px solid black;
       }
+
+      @media (max-width: 768px) {
+        .hidden-for-mobile {
+          display: none;
+        }
+      }
     </style>
 
     <div id="video-player-container">
@@ -124,7 +130,7 @@
       <!-- Progress Bars -->
       <div id="progress-container">
         <template is="dom-if" if="{{configuration.lectureSlides}}">
-          <lecture-slide-bar state="{{state}}" state-manager="{{stateManager}}" slides="{{configuration.lectureSlides}}"></lecture-slide-bar>
+          <lecture-slide-bar state="{{state}}" state-manager="{{stateManager}}" slides="{{configuration.lectureSlides}}" class="hidden-for-mobile"></lecture-slide-bar>
         </template>
         <video-progress state="{{state}}" state-manager="{{stateManager}}"></video-progress>
       </div>
