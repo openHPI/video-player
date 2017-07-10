@@ -12,6 +12,7 @@
         overflow: hidden;
         color: black;
         height: 200px;
+        width: 100%;
       }
 
       #container__interactive_transcript .list {
@@ -21,11 +22,17 @@
       }
 
       #container__interactive_transcript .list_item {
+        display: flex;
         padding: 15px 5px 15px 20px;
         background-color: #eee;
         font-size: 1rem;
         @apply --transition-duration-600;
       }
+      #container__interactive_transcript .list_item .list_item__prefix {
+        white-space: nowrap;
+        margin-right: 15px;
+      }
+
       #container__interactive_transcript .list_item.-active,
       #container__interactive_transcript .list_item:nth-child(odd).-active {
         background-color: #999;
@@ -46,7 +53,10 @@
       <ul class="list">
           <template is="dom-repeat" items="{{cues}}">
             <li class$="list_item [[ifEqualsThen(item, activeTranscript, '-active')]]">
-              <a class$="link__active_transcript_bookmark list_item__link [[ifEqualsThen(item, activeTranscript, 'active fa-caret-right')]]" on-click="handleClick">
+              <a class$="list_item__prefix list_item__link [[ifEqualsThen(item, activeTranscript, 'active fa-caret-right')]]" on-click="handleClick">
+                [[secondsToHms(item.startTime, state.duration)]] - [[secondsToHms(item.endTime, state.duration)]]:
+              </a>
+              <a class="list_item__link" on-click="handleClick">
                 {{item.text}}
               </a>
             </li>

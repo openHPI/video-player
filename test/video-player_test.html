@@ -93,7 +93,7 @@
         test('instantiating the element with set properties works', function() {
           assert.isNotNull(videoPlayer.configuration, 'there is a configuration');
           assert.isObject(videoPlayer.stateManager, 'video-player', 'stateManger is available');
-          // Testing whether all stateManager values are at their default
+          // Testing whether all stateManager values are at their set value
           assert.equal(videoPlayer.state.position, 0, 'position value is at default');
           assert.equal(videoPlayer.state.duration, 0, 'duration value is at default');
           assert.equal(videoPlayer.state.playbackRate, 1.3, 'playback rate value is at set value');
