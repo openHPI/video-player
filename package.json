@@ -53,11 +53,14 @@
     "gulp-uglify": "^3.0.0",
     "htmlhint": "^0.9.13",
     "polymer-build": "^1.5.1",
-    "polymer-cli": "^1.2.0",
+    "polymer-cli": "^1.3.0",
     "run-sequence": "^1.2.2"
   },
   "scripts": {
     "test": "polymer test",
+    "test-firefox": "polymer test -l firefox",
+    "test-safari": "polymer test -l safari",
+    "test-chrome": "polymer test -l chrome",
     "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html && polymer lint",
     "postinstall": "bower install",
     "serve": "polymer serve",

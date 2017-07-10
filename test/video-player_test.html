@@ -6,43 +6,98 @@
 
     <title>video-player test</title>
 
+    <link rel="import" href="../video-player.html">
+
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
-
-    <link rel="import" href="../video-player.html">
   </head>
   <body>
 
-    <test-fixture id="BasicTestFixture">
+    <test-fixture id="VideoPlayerTestFixture">
       <template>
-        <video-player></video-player>
+        <video-player
+        configuration='{
+        "streams" : [
+          {
+            "hd": "/components/video-player/test/BigBuckBunny30s.mp4",
+            "sd": "/components/video-player/test/BigBuckBunny30s.mp4",
+            "poster": "/components/video-player/demo/poster_1.jpg"
+          },
+          {
+            "hd": "/components/video-player/test/BigBuckBunny30s.mp4",
+            "sd": "/components/video-player/test/BigBuckBunny30s.mp4",
+            "poster": "/components/video-player/demo/poster_2.jpg"
+          }
+        ],
+        "captions" : [
+          {
+            "language" : "de",
+            "source" : "/components/video-player/demo/captions/subtitles_de.vtt"
+          },
+          {
+            "language" : "en",
+            "source" : "/components/video-player/demo/captions/subtitles_en.vtt"
+          },
+          {
+            "language" : "fr",
+            "source" : "/components/video-player/demo/captions/subtitles_fr.vtt"
+          }
+        ],
+        "lectureSlides" : [
+          {
+            "imageUrl" : "/components/video-player/test/bbb-splash.png",
+            "startPosition" : 0
+          }
+        ],
+        "primaryColor" : "#FFFFFF",
+        "secondaryColor" : "#DD6112",
+        "backgroundColorForPrimary" : "#424242",
+        "initialState": {
+          "volume": 0.75
+        },
+        "userPreferences": {
+          "quality": "sd",
+          "playbackRate": 1.3
+        },
+        "chapters": [
+          {
+            "text": "Das Internet - Netz der Netze",
+            "seconds": 0
+          },
+          {
+            "text": "Basiskomponeneten von Netzwerken",
+            "seconds": 15
+          }
+        ]
+      }'></video-player>
       </template>
     </test-fixture>
 
     <script>
-      // This runs before each test file gets executed
-      beforeEach(function() {
-        // We want to run tests with an empty local storage to avoid
-        // unintended side effects and to start with a clean slate in each
-        // test file.
-        localStorage.clear();
-      });
 
       suite('video-player', function() {
         let videoPlayer;
 
         setup(function() {
-          videoPlayer = fixture('BasicTestFixture');
+          // We want to run tests with an empty local storage to avoid
+          // unintended side effects and to start with a clean slate in each
+          // test file.
+          if (localStorage) {
+            localStorage.clear();
+          } else if (window.localStorage) {
+            window.localStorage.clear();
+          }
+          videoPlayer = fixture('VideoPlayerTestFixture');
         });
 
-        test('instantiating the element with default properties works', function() {
+        test('instantiating the element with set properties works', function() {
           assert.isNotNull(videoPlayer.configuration, 'there is a configuration');
           assert.isObject(videoPlayer.stateManager, 'video-player', 'stateManger is available');
-          // Testing whether all stateManager values are at their default
+          // Testing whether all stateManager values are at their set value
           assert.equal(videoPlayer.state.position, 0, 'position value is at default');
           assert.equal(videoPlayer.state.duration, 0, 'duration value is at default');
-          assert.equal(videoPlayer.state.playbackRate, 1.0, 'playback rate value is at default');
-          assert.equal(videoPlayer.state.volume, 1.0, 'volume value is at default');
+          assert.equal(videoPlayer.state.playbackRate, 1.3, 'playback rate value is at set value');
+          assert.equal(videoPlayer.state.volume, 0.75, 'volume value is at set value');
           assert.equal(videoPlayer.state.muted, false, 'muted value is at default');
           assert.equal(videoPlayer.state.fullScreen, false, 'full screen value is at default');
         });
