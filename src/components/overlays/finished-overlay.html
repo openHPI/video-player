@@ -39,7 +39,7 @@
 
     <div id="container__finished_overlay" class="overlay" style$="visibility: [[ifThenElse(isVisible, 'visible', 'hidden')]];">
       <template is="dom-repeat" items="{{relatedVideos}}">
-        <div class="container__related_video" style$="height: calc(100% / {{_getRows()}}); flex-basis: calc({{_getFlexBasis()}}); background-image: url('{{item.imageUrl}}');">
+        <div class="container__related_video" style$="height: calc({{_getHeight()}}); flex-basis: calc({{_getFlexBasis()}}); background-image: url('{{item.imageUrl}}');">
           <a href="{{item.url}}">
             <div class="container_related_overlay">
               <span>{{item.title}}</span>
@@ -90,6 +90,12 @@
           * in order to keep this width.
           */
           return "(100% - 4px * 2 * " + this._getColumns() + ") / " + this._getColumns();
+        }
+        _getHeight() {
+          /*
+          * Similar to the flexbasis the margin needs be calculated
+          */
+          return "(100% - 4px * 2 * " + this._getRows() + ") / " + this._getRows();
         }
       }
 
