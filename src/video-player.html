@@ -13,6 +13,7 @@
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/interactive-transcript.html">
 <link rel="import" href="components/overlays/waiting-overlay.html">
+<link rel="import" href="components/overlays/finished-overlay.html">
 <link rel="import" href="components/overlays/captions-display.html">
 <link rel="import" href="components/control-bar/control-bar.html">
 <link rel="import" href="components/progress-container/video-progress.html">
@@ -23,7 +24,7 @@
   <template>
     <style type="text/css">
       :host {
-        display: inline-block;
+        display: block;
         border: 1px solid grey;
         background-color: black;
       }
@@ -92,7 +93,13 @@
 
     <div id="video-player-container">
       <div id="video-container">
+        <!-- Videos Overlays -->
         <waiting-overlay state="{{state}}" state-manager="{{stateManager}}"></waiting-overlay>
+        <template is="dom-if" if="{{configuration.relatedVideos}}">
+          <finished-overlay state="{{state}}" state-manager="{{stateManager}}" related-videos="{{configuration.relatedVideos}}"></finished-overlay>
+        </template>
+
+        <!-- Video Streams -->
         <div id="streams-container">
           <template is="dom-repeat" items="{{configuration.streams}}">
             <video-stream
@@ -114,6 +121,7 @@
         <captions-display state="{{state}}" state-manager="{{stateManager}}"></captions-display>
       </div>
 
+      <!-- Progress Bars -->
       <div id="progress-container">
         <template is="dom-if" if="{{configuration.lectureSlides}}">
           <lecture-slide-bar state="{{state}}" state-manager="{{stateManager}}" slides="{{configuration.lectureSlides}}"></lecture-slide-bar>
@@ -121,6 +129,7 @@
         <video-progress state="{{state}}" state-manager="{{stateManager}}"></video-progress>
       </div>
 
+      <!-- Control Bar -->
       <control-bar
         state="{{state}}"
         state-manager="{{stateManager}}"
@@ -129,6 +138,7 @@
         available-qualities="{{availableQualities}}">
       </control-bar>
 
+      <!-- Chapter List -->
       <template is="dom-if" if="{{state.isChapterListShown}}">
         <chapter-list
           state="{{state}}"
@@ -181,7 +191,7 @@
             hasChapters: {
               type: Boolean,
               computed: '_hasChapters(configuration.chapters)',
-            },            
+            },
           };
         }
 
