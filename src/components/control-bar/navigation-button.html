@@ -1,0 +1,84 @@
+<link rel="import" href="../../../bower_components/imd/imd.html">
+
+<link rel="import" href="../../base-element.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
+
+<dom-module id="navigation-button">
+  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
+
+  <template>
+    <style type="text/css" include="control-bar--style-module">
+      :host {
+        /* Avoid flickering with changing icons */
+        /* It should be about twice the icon size */
+        min-width: 3rem;
+      }
+    </style>
+
+
+    <template is="dom-if" if="{{previousVideo}}">
+      <div id="container__previous_video" class="user_controls">
+        <a id="button__previous_video" class="button" on-click="handleClick">
+          <i class="fa fa-step-backward"></i>
+        </a>
+      </div>
+    </template>
+
+    <template is="dom-if" if="{{nextVideo}}">
+      <div id="container__next_video" class="user_controls">
+        <a id="button__next_video" class="button" on-click="handleClick">
+          <i class="fa fa-step-forward"></i>
+        </a>
+      </div>
+    </template>
+
+
+  </template>
+
+  <script>
+    define('navigation-button', ['base-element'], (BaseElement) => {
+      class NavigationButton extends BaseElement {
+        static get is() { return 'navigation-button'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            stateManager: Object,
+            previousVideo: {
+              type: Boolean,
+              value: false
+            },
+            nextVideo: {
+              type: Boolean,
+              value: false
+            },
+            content: {
+              type: Object,
+              value: {}
+            }
+          };
+        }
+
+        handleClick() {
+          var http = new XMLHttpRequest();
+          var url = "/target_function";
+          var params = JSON.stringify(this.content);
+          http.open("POST", url, true);
+
+          //Send the proper header information along with the request
+          http.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+
+          http.onreadystatechange = function() {//Call a function when the state changes.
+              if(http.readyState == 4 && http.status == 200) {
+                  alert(http.responseText);
+              }
+          }
+          http.send(params);
+        }
+      }
+
+      window.customElements.define(NavigationButton.is, NavigationButton);
+    });
+  </script>
+
+</dom-module>

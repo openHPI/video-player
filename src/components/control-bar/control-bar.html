@@ -12,6 +12,7 @@
 <link rel="import" href="mute-control.html">
 <link rel="import" href="fullscreen-control.html">
 <link rel="import" href="caption-control.html">
+<link rel="import" href="navigation-button.html">
 
 <dom-module id="control-bar">
   <template>
@@ -41,7 +42,13 @@
     </style>
 
     <div id="container__control_bar">
+      <template is="dom-if" if="{{previousVideo}}">
+        <navigation-button state="{{state}}" state-manager="{{stateManager}}" previous-video="true" content="{{previousVideo}}"></navigation-button>
+      </template>
       <playpause-control state="{{state}}" state-manager="{{stateManager}}"></playpause-control>
+      <template is="dom-if" if="{{nextVideo}}">
+        <navigation-button  state="{{state}}" state-manager="{{stateManager}}" next-video="true" content="{{nextVideo}}"></navigation-button>
+      </template>
       <videotime-display state="{{state}}" state-manager="{{stateManager}}" class="-flex-grow"></videotime-display>
       <template is="dom-if" if="{{captions}}">
         <caption-control state="{{state}}" state-manager="{{stateManager}}" captions="{{captions}}" class="hidden-for-mobile"></caption-control>
@@ -80,6 +87,8 @@
               type: Boolean,
               computed: '_hasMultipleQualities(availableQualities)',
             },
+            nextVideo: Object,
+            previousVideo: Object,
           };
         }
 
