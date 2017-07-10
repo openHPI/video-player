@@ -28,29 +28,6 @@
             stateManager: Object,
           };
         }
-
-        secondsToHms(position, duration) {
-          let seconds = Number(position);
-          let hours = Math.floor(seconds / 3600);
-          let minutes = Math.floor(seconds % 3600 / 60);
-          let seconds2 = Math.floor(seconds % 3600 % 60);
-
-          if(hours < 10) {
-            hours = '0' + hours;
-          }
-          if(minutes < 10) {
-            minutes = '0' + minutes;
-          }
-          if(seconds2 < 10) {
-            seconds2 = '0' + seconds2;
-          }
-
-          if(duration > 3600) {
-            return hours + ':' + minutes + ':' + seconds2;
-          } else {
-            return minutes + ':' + seconds2;
-          }
-        }
       }
 
       window.customElements.define(VideoTimeDisplay.is, VideoTimeDisplay);
