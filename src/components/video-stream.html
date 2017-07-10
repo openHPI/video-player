@@ -17,7 +17,9 @@
         width: inherit;
         height: inherit;
       }
-      ::cue{
+      /* For all browsers, ::cue is sufficient to hide the caption, only Safari
+         needs ::-webkit-media-text-track-container */
+      ::cue, ::-webkit-media-text-track-container {
         visibility: hidden;
       }
 
@@ -216,7 +218,7 @@
                   trackObject.mode = 'showing';
                   // Set caption cues for interactive transcript
                   this.stateManager.setCues(trackObject.cues);
-                  
+
                   // Set current caption cue-point for video subtitles
                   this.stateManager.setCurrentCaptionCue(trackObject.activeCues[0]);
                   self = this;
