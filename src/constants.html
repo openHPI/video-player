@@ -86,11 +86,23 @@
       chapters: [],
       initialState: {},
       videoPreload: true,
-      foregroundColor: '#FFFFFF',
-      accentColor: '#DD6112',
-      backgroundColor: '#424242',
-      secondaryBackgroundColor: '#6D6D6D',
+      themes: 'openHPI',
     };
+
+    const THEMES = {
+      openHPI: {
+        foregroundColor: '#FFFFFF', 
+        accentColor: '#DD6112',
+        backgroundColor: '#424242',
+        secondaryBackgroundColor: '#6D6D6D',
+      },
+      teleTask: {
+        foregroundColor: '#FFFFFF', 
+        accentColor: '#f5a704',
+        backgroundColor: '#424242',
+        secondaryBackgroundColor: '#6D6D6D',
+      },
+    }; 
 
     /**
      * Contains the possible user preferences properties.
@@ -120,6 +132,7 @@
       DEFAULT_CONFIGURATION,
       USER_PREFERENCES_KEYS,
       USER_PREFERNECES_STORAGE_KEY,
+      THEMES,
     };
   });
 </script>
