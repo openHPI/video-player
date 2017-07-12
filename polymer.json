@@ -11,10 +11,12 @@
   ],
   "lint": {
     "rules": [
-      "polymer-2-hybrid"
+      "polymer-2"
     ],
     "ignoreWarnings": [
-      "unknown-superclass"
+      "unknown-superclass",
+      "databinding-calls-must-be-functions",
+      "databind-with-unknown-property"
     ]
   }
 }
