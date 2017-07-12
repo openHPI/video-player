@@ -131,9 +131,8 @@
               state="[[state]]"
               urls="[[item]]"
               preload="[[configuration.videoPreload]]"
-              master="[[equals(index, 0)]]"
               class="video-stream"
-              captions="[[configuration.captions]]"
+              captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
               style$="height: calc(100% / [[_rowCount(configuration.streams)]]);">
             </video-stream>
             <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">

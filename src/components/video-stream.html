@@ -44,11 +44,7 @@
         id="video"
         preload="[[ifThenElse(preload, 'auto', 'metadata')]]"
         on-click="_handleClick"
-        on-canplay="handleCanPlay"
-        on-playing="_handlePlaying"
-        on-ended="_handleEnded"
-        on-loadedmetadata="_handleLoadedMetadata"
-        on-timeupdate="_handleTimeUpdate">
+        on-canplay="_handleCanPlay">
         <template is="dom-repeat" items="[[captions]]">
           <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
         </template>
@@ -73,10 +69,6 @@
             state: Object,
             urls: Object,
             captions: Array,
-            master: {
-              type: Boolean,
-              value: true,
-            },
             preload: {
               type: Boolean,
               value: true,
@@ -94,15 +86,15 @@
               type: Boolean,
               value: true,
             },
-            _isPosterVisible: {
-              type: Boolean,
-              value: true,
-            },
             _hlsClient: Object,
             _nativeHlsSupport: {
               type: Boolean,
               readOnly: true,
               computed: '_getNativeHlsSupport()',
+            },
+            _isPosterVisible: {
+              type: Boolean,
+              computed: '_getIsPosterVisible(state.position, state.duration)',
             },
           };
         }
@@ -133,6 +125,10 @@
           return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
         }
 
+        _getIsPosterVisible(position, duration) {
+          return position === 0 || position === duration;
+        }
+
         _playStateChanged(playState) {
           if (playState === PLAY_STATES.PLAYING) {
             this.$.video.play();
@@ -160,10 +156,12 @@
         }
 
         _qualityChanged(urls, quality) {
-          let url = urls[quality];
-          this._isInitializingVideo = true;
+          if(this._synchronizationManager) {
+            this._synchronizationManager.initializing(this.$.video);
+          }
 
           // Change source depending on quality
+          let url = urls[quality];
           if(this._nativeHlsSupport || quality !== QUALITY_MODES.HLS) {
             // Destroy old hls client
             if(this._hlsClient) {
@@ -179,10 +177,13 @@
             this._hlsClient.loadSource(url);
             this._hlsClient.attachMedia(this.$.video);
           }
+
+          // Reapply current state to video element
+          this._applyState();
         }
 
         _captionLanguageChanged(language){
-          if(this.master && this.captions && this._stateManager) {
+          if(this.captions && this._stateManager) {
             // Set cues to null, so that they cannot get toggled by interactive-transcript-switch
             if(language === 'off') {
               this._stateManager.setActiveCaptions(null);
@@ -208,46 +209,8 @@
           }
         }
 
-        _handleTimeUpdate() {
-          let currentTime = this.$.video.currentTime;
-          if(0 < currentTime && currentTime < this.state.duration) {
-            this._isPosterVisible = false;
-          }
-          if(this.master && !this._isInitializingVideo) {
-            this._stateManager.setPosition(currentTime);
-          }
-
-          // Trigger ended event handler manually, since the event is not
-          // triggered correctly on synchronized video streams.
-          if(currentTime >= this.state.duration) {
-            this._handleEnded();
-          }
-        }
-
-        _handleLoadedMetadata() {
-          // Extract duration of the video after metadata have been loaded
-          if(this.master) {
-            this._stateManager.setDuration(this.$.video.duration);
-          }
-        }
-
-        handleCanPlay() {
-          if(this._isInitializingVideo) {
-            this._applyState();
-            this._isInitializingVideo = false;
-          }
-        }
-
-        _handlePlaying() {
-          this._isPosterVisible = false;
-        }
-
-        _handleEnded() {
-          // Explicitly propagate end position (needed for HLS.js)
-          if(this.master) {
-            this._stateManager.setPosition(this.state.duration);
-          }
-          this._isPosterVisible = true;
+        _handleCanPlay() {
+          this._synchronizationManager.ready(this.$.video);
         }
 
         _handleClick() {
