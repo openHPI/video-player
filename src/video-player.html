@@ -7,6 +7,7 @@
 <link rel="import" href="3rd-imports/hls-js.html">
 <link rel="import" href="styling/mixins.html">
 <link rel="import" href="styling/font-awesome.html">
+<link rel="import" href="styling/global--style-module.html">
 <link rel="import" href="services/state-manager.html">
 <link rel="import" href="services/fullscreen-manager.html">
 <link rel="import" href="services/synchronization-manager.html">
@@ -24,7 +25,7 @@
 
 <dom-module id="video-player">
   <template>
-    <style type="text/css">
+    <style type="text/css" include="global--style-module">
       :host {
         display: block;
         border: 1px solid grey;
@@ -160,15 +161,10 @@
       </control-bar>
 
       <!-- Chapter List -->
-      <template is="dom-if" if="{{state.isChapterListShown}}">
-        <chapter-list state="{{state}}" chapters="{{configuration.chapters}}"></chapter-list>
-      </template>
+      <chapter-list state="{{state}}" chapters="{{configuration.chapters}}" show-if="{{state.isChapterListShown}}"></chapter-list>
 
       <!-- Interactive Transcript -->
-      <interactive-transcript
-        style$="display: [[ifThenElse(state.isInteractiveTranscriptShown, 'initial', 'none')]]"
-        state="{{state}}">
-      </interactive-transcript>
+      <interactive-transcript state="{{state}}" show-if="[[state.isInteractiveTranscriptShown]]"></interactive-transcript>
     </div>
 
   </template>

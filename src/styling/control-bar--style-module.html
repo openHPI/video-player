@@ -1,6 +1,8 @@
+<link rel="import" href="global--style-module.html">
+
 <dom-module id="control-bar--style-module">
   <template>
-    <style type="text/css">
+    <style type="text/css" include="global--style-module">
       /* ------
       * The styles defined here are heritated by many classes.
       * Thus be careful when changing rules here.
@@ -28,7 +30,7 @@
         user-select: none;
         cursor: default;
       }
-      
+
       .user_controls.-no-padding-left {
         padding-left: 0;
       }
@@ -58,7 +60,7 @@
       .button.inactive {
         /* Override default color when the button is inactive */
         color: grey !important;
-      }     
+      }
 
     </style>
   </template>

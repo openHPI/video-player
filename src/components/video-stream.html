@@ -1,14 +1,15 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
 
 <link rel="import" href="../constants.html">
+<link rel="import" href="../3rd-imports/hls-js.html">
 <link rel="import" href="../mixins/binding-helpers.html">
 <link rel="import" href="../mixins/ioc-requester.html">
-<link rel="import" href="../3rd-imports/hls-js.html">
+<link rel="import" href="../styling/global--style-module.html">
 
 
 <dom-module id="video-stream">
   <template>
-    <style type="text/css">
+    <style type="text/css" include="global--style-module">
       #container__video_stream {
         position: relative;
         width: 100%;

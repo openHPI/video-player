@@ -1,5 +1,22 @@
 <script>
   define('binding-helpers', () => (superClass) => class extends superClass {
+    static get properties() {
+      return {
+        showIf: {
+          type: Boolean,
+          observer: '_showIfChanged',
+        },
+      };
+    }
+
+    _showIfChanged(condition) {
+      if(condition) {
+        this.classList.remove('-hidden');
+      } else {
+        this.classList.add('-hidden');
+      }
+    }
+
     equals(...values) {
       return values.reduce((x, y) => x === y);
     }

@@ -2,12 +2,13 @@
 
 <link rel="import" href="../mixins/binding-helpers.html">
 <link rel="import" href="../mixins/ioc-requester.html">
+<link rel="import" href="../styling/global--style-module.html">
 
 <dom-module id="resizer-control">
   <link rel="import" type="css" href="../../bower_components/components-font-awesome/css/font-awesome.min.css">
 
   <template>
-    <style type="text/css">
+    <style type="text/css" include="global--style-module">
       /*
       * The nested flex boxes are unfortunately neccessary to avoid Safaris 100% height bug
       */
