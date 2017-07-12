@@ -15,6 +15,7 @@
     ],
     "ignoreWarnings": [
       "unknown-superclass",
+      "set-unknown-attribute",
       "databinding-calls-must-be-functions",
       "databind-with-unknown-property"
     ]
