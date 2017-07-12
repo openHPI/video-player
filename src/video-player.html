@@ -26,6 +26,7 @@
       :host {
         display: block;
         border: 1px solid grey;
+        border-bottom: none;
         background-color: black;
       }
 
@@ -91,8 +92,23 @@
       }
 
       @media (max-width: 768px) {
+        :host {
+          /*
+          * The min-widths are necessary to avoid that the video containter and 
+          * the controlbar have different widths on small screens. 
+          */ 
+          min-width: 260px
+        }
         .hidden-for-mobile {
           display: none;
+        }
+      }
+      @media (min-width: 769px) {
+        :host {
+          /*
+          * Look above
+          */ 
+          min-width: 560px
         }
       }
     </style>
