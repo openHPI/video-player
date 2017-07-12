@@ -28,7 +28,7 @@
     </style>
 
     <div id="container__captions" style$="visibility: [[ifThenElse(isVisible, 'visible', 'hidden')]];">
-      <div class="caption-cue-text">[[currentCaptionCue.text]]</div>
+      <div class="caption-cue-text">[[activeCue.text]]</div>
     </div>
   </template>
 
@@ -45,33 +45,27 @@
               type: Object,
               inject: 'StateManager',
             },
-            currentCaptionCue: Object,
+            activeCue: {
+              type: Object,
+              computed: '_activeCue(state.activeCaptions, state.position)',
+            },
             isVisible: {
               type: Boolean,
-              computed: '_isVisible(state.selectedCaption)',
+              computed: '_isVisible(state.captionLanguage)',
             },
           };
         }
 
-        static get observers() {
-          return [
-            'captionCueChanged(state.currentCaptionCue)',
-            // 'captionsChanged(state.selectedCaption)',
-          ];
+        _activeCue(activeCaptions, position) {
+          if(activeCaptions) {
+            return activeCaptions.slice()
+                                 .reverse()
+                                 .find(cue => cue.startTime <= position);
+          }
         }
 
-        // If needed later on
-        // captionsChanged(newCaptions) {
-        //   // Here we can make adjustments when the user changes the captions,
-        //   // i.e. by choosing their language or turning them off
-        // }
-
-        captionCueChanged(newCue) {
-          this.currentCaptionCue = newCue;
-        }
-
-        _isVisible(selectedCaption) {
-          return selectedCaption !== 'off';
+        _isVisible(captionLanguage) {
+          return captionLanguage !== 'off';
         }
       }
 

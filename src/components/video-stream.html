@@ -49,7 +49,7 @@
         on-loadedmetadata="handleLoadedMetadata"
         on-timeupdate="handleTimeUpdate">
         <template is="dom-repeat" items="{{captions}}">
-          <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English">
+          <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="handleTrackLoaded">
         </template>
       </video>
       <template is="dom-if" if="{{and(urls.poster, isPosterVisible)}}">
@@ -78,11 +78,8 @@
               typeof: Object,
               inject: 'SynchronizationManager',
             },
-            captions: {
-              type: Object,
-              value: () => ({}),
-            },
             urls: Object,
+            captions: Object,
             preload: {
               type: Boolean,
               value: true,
@@ -109,10 +106,6 @@
           };
         }
 
-        ready(){
-          super.ready();
-        }
-
         static get observers() {
           return [
             'playStateChanged(state.playState)',
@@ -120,7 +113,7 @@
             'playbackRateChanged(state.playbackRate)',
             'volumeChanged(state.volume)',
             'mutedChanged(state.muted)',
-            'setCaptionLanguage(state.selectedCaption)',
+            'captionLanguageChanged(state.captionLanguage)',
             'qualityChanged(urls, state.quality)',
           ];
         }
@@ -213,33 +206,31 @@
           this.$.video.muted = muted;
         }
 
-        setCaptionLanguage(language){
-          Polymer.RenderStatus.afterNextRender(this, function() {
-            if(this.master && this.captions){
-              // Set cues to null, so that they cannot get toggled by interactive-transcrpt-switch
-              if(language === 'off') this.stateManager.setCues(null);
-              // Get selected language from all tracks, show them and set their cues
-              for (let textTrackElement in this.$.video.textTracks){
-                let trackObject = this.$.video.textTracks[textTrackElement];
-                if( trackObject && trackObject.language && trackObject.language.match(language)) {
-                  trackObject.mode = 'showing';
-                  // Set caption cues for interactive transcript
-                  this.stateManager.setCues(trackObject.cues);
+        captionLanguageChanged(language){
+          if(this.master && this.captions && this.stateManager) {
+            // Set cues to null, so that they cannot get toggled by interactive-transcript-switch
+            if(language === 'off') {
+              this.stateManager.setActiveCaptions(null);
+            }
 
-                  // Set current caption cue-point for video subtitles
-                  this.stateManager.setCurrentCaptionCue(trackObject.activeCues[0]);
-                  self = this;
-                  // Subscribe to cue changes as defined in the WebVTT API:
-                  // https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API
-                  trackObject.oncuechange = function () {
-                    self.stateManager.setCurrentCaptionCue(this.activeCues[0]);
-                  };
-                } else if (trackObject && trackObject.language) {
-                  trackObject.mode = 'hidden';
-                }
+            for(let textTrack of this.$.video.textTracks) {
+              if(textTrack.language === language) {
+                textTrack.mode = 'showing';
+                // If captions are not yet loaded, they will be set in
+                // handleTrackLoaded when load event is dispatched.
+                this.stateManager.setActiveCaptions(Array.from(textTrack.cues));
+              } else {
+                textTrack.mode = 'hidden';
               }
             }
-          });
+          }
+        }
+
+        handleTrackLoaded(e) {
+          let textTrack = e.target.track;
+          if(textTrack.language === this.state.captionLanguage) {
+            this.stateManager.setActiveCaptions(Array.from(textTrack.cues));
+          }
         }
 
         qualityChanged(urls, quality) {

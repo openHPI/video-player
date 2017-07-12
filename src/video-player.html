@@ -148,29 +148,27 @@
         <template is="dom-if" if="{{configuration.lectureSlides}}">
           <lecture-slide-bar state="{{state}}" slides="{{configuration.lectureSlides}}" class="hidden-for-mobile"></lecture-slide-bar>
         </template>
-        <video-progress state="{{state}}" ></video-progress>
+        <video-progress state="{{state}}"></video-progress>
       </div>
 
       <!-- Control Bar -->
       <control-bar
         state="{{state}}"
         has-chapters="{{hasChapters}}"
-        captions="{{configuration.captions}}"
+        caption-languages="{{captionLanguages}}"
         available-qualities="{{availableQualities}}">
       </control-bar>
 
       <!-- Chapter List -->
       <template is="dom-if" if="{{state.isChapterListShown}}">
-        <chapter-list
-          state="{{state}}"
-
-          chapters="{{configuration.chapters}}">
-        </chapter-list>
+        <chapter-list state="{{state}}" chapters="{{configuration.chapters}}"></chapter-list>
       </template>
 
-      <template is="dom-if" if="{{state.isInteractiveTranscriptShown}}">
-        <interactive-transcript state="{{state}}"></interactive-transcript>
-      </template>
+      <!-- Interactive Transcript -->
+      <interactive-transcript
+        style$="display: [[ifThenElse(state.isInteractiveTranscriptShown, 'initial', 'none')]]"
+        state="{{state}}">
+      </interactive-transcript>
     </div>
 
   </template>
@@ -199,10 +197,6 @@
               type: Object,
               inject: 'StateManager',
             },
-            captionsManager: {
-              type: Object,
-              inject: 'CaptionsManager',
-            },
             fullscreenManager: {
               type: Object,
               inject: 'FullscreenManager',
@@ -214,6 +208,10 @@
             isResizerShown: {
               type: Boolean,
               value: false,
+            },
+            captionLanguages: {
+              type: Array,
+              computed: '_captionLanguages(configuration.captions)',
             },
             availableQualities: {
               type: Array,
@@ -237,8 +235,12 @@
             'playStateChanged(state.playState)',
             'fullscreenChanged(state.fullscreen)',
             'captionLanguageChanged(state.captionLanguage)',
-            'userPreferencesStateChanged(state.*)',
+            'userPreferencesStateChanged(state.*)'
           ];
+        }
+
+        _captionLanguages(captions) {
+          return captions.map(caption => caption.language);
         }
 
         _availableQualities(streams) {

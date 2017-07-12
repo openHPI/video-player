@@ -13,8 +13,8 @@
     </style>
 
     <select-control
-      values="[[captionLanguages]]"
-      selected-value="[[state.selectedCaption]]"
+      values="[[values]]"
+      selected-value="[[state.captionLanguage]]"
       on-change="selectionChanged"
       icon-classes="fa fa-cc">
     </select-control>
@@ -32,33 +32,16 @@
               type: Object,
               inject: 'StateManager',
             },
-            captions: Object,
-            captionLanguages: {
+            languages: Array,
+            values: {
               type: Array,
-              value: ['off'],
+              computed: '_values(languages.*)',
             },
           };
         }
 
-        ready() {
-          // Caption languages need to be ready before super.ready() is called
-          this.getCaptionLanguages();
-          super.ready();
-        }
-
-        dummy(element){
-          return element;
-        }
-
-        getCaptionLanguages() {
-          for (let captionElement in this.captions) {
-            let captionObject = this.captions[captionElement];
-            for (let property in captionObject) {
-              if( ! property.localeCompare('language')){
-                this.push('captionLanguages', captionObject[property]);
-              }
-            }
-          }
+        _values() {
+          return ['off'].concat(this.languages);
         }
 
         selectionChanged(e) {

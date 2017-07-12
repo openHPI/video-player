@@ -37,16 +37,18 @@
 
         static get observers() {
           return [
-            'getCaptionLanguage(state.selectedCaption)',
+            'captionLanguageChanged(state.captionLanguage, isInteractiveTranscriptShown)',
           ];
         }
 
         handleClick() {
-          if(this.state.cues) this.stateManager.toggleInteractiveTranscript();
+          if(this.state.activeCaptions) {
+            this.stateManager.toggleInteractiveTranscript();
+          }
         }
 
-        getCaptionLanguage() {
-          if (this.state.selectedCaption === 'off' && this.state.isInteractiveTranscriptShown) {
+        captionLanguageChanged(captionLanguage, isInteractiveTranscriptShown) {
+          if (captionLanguage === 'off' && isInteractiveTranscriptShown) {
             this.stateManager.toggleInteractiveTranscript();
           }
         }

@@ -44,10 +44,10 @@
     <div id="container__control_bar">
       <playpause-control state="{{state}}"></playpause-control>
       <videotime-display state="{{state}}" class="-flex-grow"></videotime-display>
-      <template is="dom-if" if="{{captions}}">
-        <caption-control state="{{state}}" captions="{{captions}}" class="hidden-for-mobile"></caption-control>
+      <template is="dom-if" if="{{captionLanguages}}">
+        <caption-control state="{{state}}" languages="{{captionLanguages}}" class="hidden-for-mobile"></caption-control>
       </template>
-      <template is="dom-if" if="{{captions}}">
+      <template is="dom-if" if="{{captionLanguages}}">
         <interactive-transcript-switch state="{{state}}" class="hidden-for-mobile"></interactive-transcript-switch>
       </template>
       <speed-control state="{{state}}" class="hidden-for-mobile"></speed-control>
@@ -78,7 +78,7 @@
               inject: 'StateManager',
             },
             hasChapters: Boolean,
-            captions: Object,
+            captionLanguages: Array,
             availableQualities: Boolean,
             hasMultipleQualities: {
               type: Boolean,
