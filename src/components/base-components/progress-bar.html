@@ -86,8 +86,14 @@
           // Get x value by substracting offsetleft of control
           let borderLeftWidth = parseInt(getComputedStyle(this.$.container__progress_bar, null).getPropertyValue('border-left-width'), 10);
           let x = e.pageX - this.getBoundingClientRect().left - borderLeftWidth;
+
+          // Heuristic to take care the end can be reached
+          if(this.getBoundingClientRect().width - x  <= 1 ) {
+            x = this.getBoundingClientRect().width;
+          }
+
           // Calculate value that will be between 0 and the max value
-          let clickedValue = x * this.max / this.offsetWidth;
+          let clickedValue = x * this.max / this.getBoundingClientRect().width;
           // Check if still within borders
           if(clickedValue <= this.max) {
             this.value = clickedValue;
