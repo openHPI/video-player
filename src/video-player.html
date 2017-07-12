@@ -171,7 +171,7 @@
 
   <script>
     define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'hls-js', 'constants'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, Hls, constants) => {
-      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME} = constants;
+      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES} = constants;
 
       class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
         static get is() { return 'video-player'; }
@@ -228,6 +228,7 @@
             '_accentColorChanged(configuration.accentColor)',
             '_backgroundColorChanged(configuration.backgroundColor)',
             '_secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
+            '_themeChanged(configuration.themes)',
             '_playStateChanged(state.playState)',
             '_fullscreenChanged(state.fullscreen)',
             '_captionLanguageChanged(state.captionLanguage)',
@@ -340,16 +341,32 @@
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
         // The properties are not correctly evaluated and thus the variable not set.
         _foregroundColorChanged(color) {
-          Polymer.updateStyles({'--foreground-color': color});
+          if(color) {
+            Polymer.updateStyles({'--foreground-color': color});
+          }
         }
         _accentColorChanged(color) {
-          Polymer.updateStyles({'--accent-color': color});
+          if(color) {
+            Polymer.updateStyles({'--accent-color': color});
+          }
         }
         _backgroundColorChanged(color) {
-          Polymer.updateStyles({'--background-color': color});
+          if(color) {
+            Polymer.updateStyles({'--background-color': color});
+          }
         }
         _secondaryBackgroundColorChanged(color) {
-          Polymer.updateStyles({'--secondary-background-color': color});
+          if(color) {
+            Polymer.updateStyles({'--secondary-background-color': color});
+          }
+        }
+        _themeChanged(name) {
+          if(name in THEMES) {
+            this._foregroundColorChanged(THEMES[name].foregroundColor);
+            this._accentColorChanged(THEMES[name].accentColor);
+            this._backgroundColorChanged(THEMES[name].backgroundColor);
+            this._secondaryBackgroundColorChanged(THEMES[name].secondaryBackgroundColor);
+          }
         }
 
         _captionLanguageChanged(language) {
