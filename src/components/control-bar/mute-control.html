@@ -20,7 +20,7 @@
     </style>
 
     <div id="container__mute_control" class="user_controls">
-      <a id="button__mute" class="button" on-click="handleClick">
+      <a id="button__mute" class="button" on-click="_handleClick">
         <i class$="fa [[ifThenElse(state.muted, 'fa-volume-off', 'fa-volume-up')]]"></i>
       </a>
     </div>
@@ -34,15 +34,15 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
           };
         }
 
-        handleClick() {
-          this.stateManager.toggleMute();
+        _handleClick() {
+          this._stateManager.toggleMute();
         }
       }
 

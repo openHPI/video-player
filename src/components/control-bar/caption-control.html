@@ -13,9 +13,9 @@
     </style>
 
     <select-control
-      values="[[values]]"
+      values="[[_values]]"
       selected-value="[[state.captionLanguage]]"
-      on-change="selectionChanged"
+      on-change="_selectionChanged"
       icon-classes="fa fa-cc">
     </select-control>
   </template>
@@ -28,24 +28,24 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            languages: Array,
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            languages: Array,
-            values: {
+            _values: {
               type: Array,
-              computed: '_values(languages.*)',
+              computed: '_getValues(languages.*)',
             },
           };
         }
 
-        _values() {
+        _getValues() {
           return ['off'].concat(this.languages);
         }
 
-        selectionChanged(e) {
-          this.stateManager.setCaptionLanguage(e.target.selectedValue);
+        _selectionChanged(e) {
+          this._stateManager.setCaptionLanguage(e.target.selectedValue);
         }
       }
 

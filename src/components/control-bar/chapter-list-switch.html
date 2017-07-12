@@ -17,7 +17,7 @@
     </style>
 
     <div id="container__chapter_list_switch" class="user_controls">
-      <a id="button__chapter_list" class$="button [[ifThenElse(state.isChapterListShown, '', 'inactive')]]" on-click="handleClick">
+      <a id="button__chapter_list" class$="button [[ifNotThen(state.isChapterListShown, 'inactive')]]" on-click="_handleClick">
         <i class="fa fa-list"></i>
       </a>
     </div>
@@ -31,15 +31,15 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
           };
         }
 
-        handleClick() {
-          this.stateManager.toggleIsChapterListShown();
+        _handleClick() {
+          this._stateManager.toggleIsChapterListShown();
         }
       }
 

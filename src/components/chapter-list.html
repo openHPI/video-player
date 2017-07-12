@@ -29,7 +29,7 @@
       <ul class="list">
           <template is="dom-repeat" items="{{chapters}}">
             <li class="list_item">
-              <a class$="link__chapter_bookmark list_item__link [[ifEqualsThen(item, activeChapter, 'active fa-caret-right')]]" on-click="handleClick">
+              <a class$="link__chapter_bookmark list_item__link [[ifEqualsThen(item, activeChapter, 'active fa-caret-right')]]" on-click="_handleClick">
                 {{item.text}}
               </a>
             </li>
@@ -46,33 +46,26 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            chapters: Array,
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            chapters: {
+            activeChapter: {
               type: Object,
-              value: [],
+              computed: '_getActiveChapter(chapters, state.position)',
             },
-            activeChapter: Object,
           };
         }
 
-        static get observers() {
-          return [
-            'updateActiveChapter(chapters, state.position)',
-          ];
+        _getActiveChapter(chapters, position) {
+          return chapters.slice()
+                         .reverse()
+                         .find(chapter => chapter.seconds <= position);
         }
 
-        handleClick(e) {
-          let chapter = e.model.item;
-          this.stateManager.setPosition(chapter.seconds);
-        }
-
-        updateActiveChapter() {
-          this.activeChapter = this.chapters.slice()
-                                            .reverse()
-                                            .find(chapter => chapter.seconds <= this.state.position);
+        _handleClick(e) {
+          this._stateManager.setPosition(e.model.item.seconds);
         }
       }
 

@@ -17,8 +17,8 @@
     <div id="container__sound_control" class="user_controls -no-padding-left">
       <progress-bar
         id="progress__sound_control"
-        value$="[[toStringOrEmpty(effectiveVolume)]]"
-        on-change="handleChange"
+        value$="[[toStringOrEmpty(_effectiveVolume)]]"
+        on-change="_handleChange"
         border>
       </progress-bar>
     </div>
@@ -33,28 +33,28 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            effectiveVolume: {
+            _effectiveVolume: {
               type: Number,
-              computed: '_effectiveVolume(state.volume, state.muted)',
+              computed: '_getEffectiveVolume(state.volume, state.muted)',
             },
           };
         }
 
-        handleChange(e) {
-          this.stateManager.unmute();
-          this.stateManager.setVolume(e.target.value);
-        }
-
-        _effectiveVolume(volume, muted) {
+        _getEffectiveVolume(volume, muted) {
           if(typeof volume === 'undefined') {
             return '';
           }
 
           return muted ? 0 : volume;
+        }
+
+        _handleChange(e) {
+          this._stateManager.unmute();
+          this._stateManager.setVolume(e.target.value);
         }
       }
 

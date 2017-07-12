@@ -31,11 +31,11 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            slides: Array,
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            slides: Array,
           };
         }
 

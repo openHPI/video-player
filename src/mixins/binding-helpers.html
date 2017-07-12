@@ -33,6 +33,10 @@
       return this.ifThenElse(condition, thenValue, '');
     }
 
+    ifNotThen(condition, thenValue) {
+      return this.ifThen(!condition, thenValue);
+    }
+
     ifThenElse(condition, thenValue, elseValue) {
       return condition ? thenValue : elseValue;
     }

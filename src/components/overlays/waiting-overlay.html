@@ -43,7 +43,7 @@
       }
     </style>
 
-    <div id="container__waiting_overlay" class="overlay" style$="visibility: [[ifThenElse(isVisible, 'visible', 'hidden')]];">
+    <div id="container__waiting_overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
       <i id="icon_spinner" class="fa fa-spinner" aria-hidden="true"></i>
     </div>
   </template>
@@ -58,18 +58,18 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            isVisible: {
+            _isVisible: {
               type: Boolean,
-              computed: '_isVisible(state.playState)',
+              computed: '_getIsVisible(state.playState)',
             },
           };
         }
 
-        _isVisible(playState) {
+        _getIsVisible(playState) {
           return playState === PLAY_STATES.WAITING;
         }
       }

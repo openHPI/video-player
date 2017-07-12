@@ -17,7 +17,7 @@
     </style>
 
     <div id="container__play_pause_control" class="user_controls">
-      <a id="button__play_pause" class="button" on-click="handleClick">
+      <a id="button__play_pause" class="button" on-click="_handleClick">
         <i class$="fa [[iconClass]]"></i>
       </a>
     </div>
@@ -38,29 +38,29 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            iconClass: String,
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            iconClass: String,
           };
         }
 
         static get observers() {
           return [
-            'playStateChanged(state.playState)',
+            '_playStateChanged(state.playState)',
           ];
         }
 
-        playStateChanged(playState) {
+        _playStateChanged(playState) {
           let newIcon = PLAY_STATE_ICONS[playState];
           if(newIcon) {
             this.iconClass = newIcon;
           }
         }
 
-        handleClick() {
-          this.stateManager.togglePlayPause();
+        _handleClick() {
+          this._stateManager.togglePlayPause();
         }
       }
 

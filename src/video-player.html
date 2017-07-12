@@ -134,10 +134,10 @@
               master="{{equals(index, 0)}}"
               class="video-stream"
               captions="{{configuration.captions}}"
-              style$="height: calc(100% / {{rowCount(configuration.streams)}});">
+              style$="height: calc(100% / {{_rowCount(configuration.streams)}});">
             </video-stream>
-            <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
-              <resizer-control state="{{state}}" style$="visibility: [[ifThenElse(isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+            <template is="dom-if" if="{{_needResizer(index, configuration.streams.length)}}">
+              <resizer-control state="{{state}}" style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"></resizer-control>
             </template>
           </template>
         </div>
@@ -155,9 +155,9 @@
       <!-- Control Bar -->
       <control-bar
         state="{{state}}"
-        has-chapters="{{hasChapters}}"
-        caption-languages="{{captionLanguages}}"
-        available-qualities="{{availableQualities}}">
+        has-chapters="{{_hasChapters}}"
+        caption-languages="{{_captionLanguages}}"
+        available-qualities="{{_availableQualities}}">
       </control-bar>
 
       <!-- Chapter List -->
@@ -189,71 +189,50 @@
               type: Object,
               value: () => ({}),
             },
-            stateManager: {
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            fullscreenManager: {
+            _fullscreenManager: {
               type: Object,
               inject: 'FullscreenManager',
             },
-            userPreferencesManager: {
+            _userPreferencesManager: {
               type: Object,
               inject: 'UserPreferencesManager',
             },
-            isResizerShown: {
+            _isResizerShown: {
               type: Boolean,
               value: false,
             },
-            captionLanguages: {
+            _captionLanguages: {
               type: Array,
-              computed: '_captionLanguages(configuration.captions)',
+              computed: '_getCaptionLanguages(configuration.captions)',
             },
-            availableQualities: {
+            _availableQualities: {
               type: Array,
-              computed: '_availableQualities(configuration.streams)',
+              computed: '_getAvailableQualities(configuration.streams)',
             },
-            hasChapters: {
+            _hasChapters: {
               type: Boolean,
-              computed: '_hasChapters(configuration.chapters)',
+              computed: '_getHasChapters(configuration.chapters)',
             },
           };
         }
 
         static get observers() {
           return [
-            'configurationChanged(configuration)',
-            'availableQualitiesChanged(availableQualities, stateManager)',
-            'foregroundColorChanged(configuration.foregroundColor)',
-            'accentColorChanged(configuration.accentColor)',
-            'backgroundColorChanged(configuration.backgroundColor)',
-            'secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
-            'playStateChanged(state.playState)',
-            'fullscreenChanged(state.fullscreen)',
-            'captionLanguageChanged(state.captionLanguage)',
-            'userPreferencesStateChanged(state.*)',
+            '_configurationChanged(configuration)',
+            '_availableQualitiesChanged(_availableQualities, _stateManager)',
+            '_foregroundColorChanged(configuration.foregroundColor)',
+            '_accentColorChanged(configuration.accentColor)',
+            '_backgroundColorChanged(configuration.backgroundColor)',
+            '_secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
+            '_playStateChanged(state.playState)',
+            '_fullscreenChanged(state.fullscreen)',
+            '_captionLanguageChanged(state.captionLanguage)',
+            '_userPreferencesStateChanged(state.*)',
           ];
-        }
-
-        _captionLanguages(captions) {
-          return captions.map(caption => caption.language);
-        }
-
-        _availableQualities(streams) {
-          if (streams) {
-            let supportedQualities = Object.values(QUALITY_MODES);
-            if(!Hls.isSupported()) {
-              supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
-            }
-
-            return supportedQualities
-                     .filter(quality => streams.every(stream => Object.keys(stream)
-                                                                      .includes(quality)));
-          }
-        }
-
-        _hasChapters() {
-          return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
         }
 
         bindServices(iocKernel) {
@@ -269,11 +248,11 @@
           super.servicesInjectedCallback();
 
           // Build state from provided intial state configuration and default values
-          this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState, this.userPreferencesManager.getPreferences(), this.configuration.userPreferences);
+          this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState, this._userPreferencesManager.getPreferences(), this.configuration.userPreferences);
 
           // Initialize FullscreenManager
-          this.fullscreenManager.onFullscreenChanged((fullscreen) => {
-            this.stateManager.setFullscreen(fullscreen);
+          this._fullscreenManager.onFullscreenChanged((fullscreen) => {
+            this._stateManager.setFullscreen(fullscreen);
           });
         }
 
@@ -281,16 +260,37 @@
           super.ready();
 
           // Add event handlers for mouse events to show/hide resizer
-          this.$['streams-container'].addEventListener('mouseenter', () => this.isResizerShown = true);
-          this.$['streams-container'].addEventListener('mouseleave', () => this.isResizerShown = false);
+          this.$['streams-container'].addEventListener('mouseenter', () => this._isResizerShown = true);
+          this.$['streams-container'].addEventListener('mouseleave', () => this._isResizerShown = false);
 
           // Listen for events from other instances to pause playback when
           // another instance starts playing
           window.addEventListener(PLAYING_EVENT_NAME, (e) => {
             if(e.detail && e.detail.sender !== this) {
-              this.stateManager.pause();
+              this._stateManager.pause();
             }
           });
+        }
+
+        _getCaptionLanguages(captions) {
+          return captions.map(caption => caption.language);
+        }
+
+        _getAvailableQualities(streams) {
+          if (streams) {
+            let supportedQualities = Object.values(QUALITY_MODES);
+            if(!Hls.isSupported()) {
+              supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
+            }
+
+            return supportedQualities
+                     .filter(quality => streams.every(stream => Object.keys(stream)
+                                                                      .includes(quality)));
+          }
+        }
+
+        _getHasChapters() {
+          return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
         }
 
         reloadConfiguration() {
@@ -298,23 +298,23 @@
           this.configuration = Object.assign({}, this.configuration);
         }
 
-        configurationChanged(configuration) {
+        _configurationChanged(configuration) {
           // Fill missing properties in provided configuration with default values
           if(Object.keys(DEFAULT_CONFIGURATION).filter(x => !Object.keys(configuration).includes(x)).length > 0) {
             this.configuration = Object.assign({}, DEFAULT_CONFIGURATION, configuration);
           }
         }
 
-        availableQualitiesChanged(availableQualities) {
+        _availableQualitiesChanged(_availableQualities) {
           // If not all streams are available in the specified quality, use default one that is available for all streams
-          if(this.stateManager && !availableQualities.includes(this.state.quality)) {
+          if(this._stateManager && !_availableQualities.includes(this.state.quality)) {
             let defaultQuality = Object.values(QUALITY_MODES)
-                                       .find(quality => availableQualities.includes(quality));
-            this.stateManager.setQuality(defaultQuality);
+                                       .find(quality => _availableQualities.includes(quality));
+            this._stateManager.setQuality(defaultQuality);
           }
         }
 
-        playStateChanged(playState) {
+        _playStateChanged(playState) {
           // Dispatch event if video is playing to stop playback on other instances
           if(playState === PLAY_STATES.PLAYING) {
             let event = new CustomEvent(PLAYING_EVENT_NAME, {
@@ -327,49 +327,49 @@
           }
         }
 
-        fullscreenChanged(fullscreen) {
-          if(this.fullscreenManager) {
+        _fullscreenChanged(fullscreen) {
+          if(this._fullscreenManager) {
             if (fullscreen) {
-              this.fullscreenManager.enterFullscreen();
+              this._fullscreenManager.enterFullscreen();
             } else {
-              this.fullscreenManager.exitFullscreen();
+              this._fullscreenManager.exitFullscreen();
             }
           }
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
         // The properties are not correctly evaluated and thus the variable not set.
-        foregroundColorChanged(color) {
+        _foregroundColorChanged(color) {
           Polymer.updateStyles({'--foreground-color': color});
         }
-        accentColorChanged(color) {
+        _accentColorChanged(color) {
           Polymer.updateStyles({'--accent-color': color});
         }
-        backgroundColorChanged(color) {
+        _backgroundColorChanged(color) {
           Polymer.updateStyles({'--background-color': color});
         }
-        secondaryBackgroundColorChanged(color) {
+        _secondaryBackgroundColorChanged(color) {
           Polymer.updateStyles({'--secondary-background-color': color});
         }
 
-        captionLanguageChanged(language) {
+        _captionLanguageChanged(language) {
           if(this.state.isInteractiveTranscriptShown && language === 'off') {
-            this.stateManager.toggleInteractiveTranscript();
+            this._stateManager.toggleInteractiveTranscript();
           }
         }
 
-        userPreferencesStateChanged(states) {
-          if (this.userPreferencesManager) {
-            this.userPreferencesManager.setPreferences(states);
+        _userPreferencesStateChanged(states) {
+          if (this._userPreferencesManager) {
+            this._userPreferencesManager.setPreferences(states);
           }
         }
 
-        needResizer(index, length) {
+        _needResizer(index, length) {
           // Do not show the resizer when there is no second video to resize
           return (index % 2 === 0) && (index !== length - 1);
         }
 
-        rowCount(streams) {
+        _rowCount(streams) {
           return Math.ceil(streams.length / 2);
         }
       }

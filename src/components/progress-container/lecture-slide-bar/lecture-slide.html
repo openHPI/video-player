@@ -41,7 +41,7 @@
     </style>
 
     <div id="container__lecture_slide_element"
-         on-click="handleClick"
+         on-click="_handleClick"
          style$="left: [[_stylePercentage(slide.startPosition, state.duration)]]%;"
          class$="[[_getSlidePosition(slide.startPosition, state.duration)]]">
         <img id="image__slide_preview" src="[[slide.imageUrl]]">
@@ -57,11 +57,11 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            slide: Object,
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            slide: Object,
           };
         }
 
@@ -80,8 +80,8 @@
           }
         }
 
-        handleClick(){
-          this.stateManager.setPosition(this.slide.startPosition);
+        _handleClick(){
+          this._stateManager.setPosition(this.slide.startPosition);
         }
       }
 

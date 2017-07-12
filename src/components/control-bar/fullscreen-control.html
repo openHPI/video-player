@@ -34,7 +34,7 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
@@ -42,7 +42,7 @@
         }
 
         handleClick() {
-          this.stateManager.toggleFullscreen();
+          this._stateManager.toggleFullscreen();
         }
       }
 

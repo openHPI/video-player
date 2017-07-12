@@ -38,7 +38,7 @@
       }
     </style>
 
-    <div id="container__finished_overlay" class="overlay" style$="visibility: [[ifThenElse(isVisible, 'visible', 'hidden')]];">
+    <div id="container__finished_overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
       <template is="dom-repeat" items="{{relatedVideos}}">
         <div class="container__related_video" style$="height: calc({{_getHeight()}}); flex-basis: calc({{_getFlexBasis()}}); background-image: url('{{item.imageUrl}}');">
           <a href="{{item.url}}">
@@ -61,28 +61,27 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
-            relatedVideos: {
-              type: Array,
-              value: [],
-            },
-            isVisible: {
+            relatedVideos: Array,
+            _stateManager: Object,
+            _isVisible: {
               type: Boolean,
-              computed: '_isVisible(state.playState)',
+              computed: '_getIsVisible(state.playState)',
             },
           };
         }
 
-        _isVisible(playState) {
+        _getIsVisible(playState) {
           return playState === PLAY_STATES.FINISHED;
         }
 
         _getRows() {
           return Math.round(Math.sqrt(this.relatedVideos.length));
         }
+
         _getColumns() {
           return Math.ceil(Math.sqrt(this.relatedVideos.length));
         }
+
         _getFlexBasis() {
           /*
           * Calculate the flex-basis for each element.
@@ -92,6 +91,7 @@
           */
           return '(100% - 4px * 2 * ' + this._getColumns() + ') / ' + this._getColumns();
         }
+        
         _getHeight() {
           /*
           * Similar to the flexbasis the margin needs be calculated

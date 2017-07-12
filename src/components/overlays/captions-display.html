@@ -3,10 +3,11 @@
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/overlay--style-module.html">
+<link rel="import" href="../../styling/global--style-module.html">
 
-<dom-module id="captions-display" include="overlay--style-module">
+<dom-module id="captions-display">
   <template>
-    <style type="text/css">
+    <style type="text/css" include="overlay--style-module">
       #container__captions {
         visibility: visible;
         position: absolute;
@@ -28,8 +29,8 @@
       }
     </style>
 
-    <div id="container__captions" style$="visibility: [[ifThenElse(isVisible, 'visible', 'hidden')]];">
-      <div class="caption-cue-text">[[activeCue.text]]</div>
+    <div id="container__captions" class$="[[ifNotThen(_isVisible, '-hidden')]]">
+      <div class="caption-cue-text">[[_activeCue.text]]</div>
     </div>
   </template>
 
@@ -42,22 +43,22 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            activeCue: {
+            _activeCue: {
               type: Object,
-              computed: '_activeCue(state.activeCaptions, state.position)',
+              computed: '_getActiveCue(state.activeCaptions, state.position)',
             },
-            isVisible: {
+            _isVisible: {
               type: Boolean,
-              computed: '_isVisible(state.captionLanguage)',
+              computed: '_getIsVisible(state.captionLanguage)',
             },
           };
         }
 
-        _activeCue(activeCaptions, position) {
+        _getActiveCue(activeCaptions, position) {
           if(activeCaptions) {
             return activeCaptions.slice()
                                  .reverse()
@@ -65,7 +66,7 @@
           }
         }
 
-        _isVisible(captionLanguage) {
+        _getIsVisible(captionLanguage) {
           return captionLanguage !== 'off';
         }
       }

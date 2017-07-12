@@ -16,7 +16,7 @@
         max="[[toStringOrEmpty(state.duration)]]"
         value$="[[toStringOrEmpty(state.position)]]"
         secondary-value$="[[toStringOrEmpty(state.bufferPosition)]]"
-        on-change="handleChange">
+        on-change="_handleChange">
       </progress-bar>
     </div>
   </template>
@@ -29,15 +29,15 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
           };
         }
 
-        handleChange(e) {
-          this.stateManager.setPosition(e.target.value);
+        _handleChange(e) {
+          this._stateManager.setPosition(e.target.value);
         }
       }
 

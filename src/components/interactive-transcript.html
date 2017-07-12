@@ -53,11 +53,11 @@
     <div id="container__interactive_transcript" class="container__list">
       <ul class="list">
           <template is="dom-repeat" items="{{state.activeCaptions}}">
-            <li class$="list_item [[ifEqualsThen(item, activeCue, '-active')]]">
-              <a class$="list_item__prefix list_item__link [[ifEqualsThen(item, activeCue, 'active fa-caret-right')]]" on-click="handleClick">
+            <li class$="list_item [[ifEqualsThen(item, _activeCue, '-active')]]">
+              <a class$="list_item__prefix list_item__link [[ifEqualsThen(item, _activeCue, 'active fa-caret-right')]]" on-click="_handleClick">
                 [[secondsToHms(item.startTime, state.duration)]] - [[secondsToHms(item.endTime, state.duration)]]:
               </a>
-              <a class="list_item__link" on-click="handleClick">
+              <a class="list_item__link" on-click="_handleClick">
                 {{item.text}}
               </a>
             </li>
@@ -68,30 +68,30 @@
 
   <script>
     define('interactive-transcript', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
-      class InteractiveCue extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+      class InteractiveTranscript extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'interactive-transcript'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            activeCue: {
+            _activeCue: {
               type: Object,
-              computed: '_activeCue(state.activeCaptions, state.position)',
+              computed: '_getActiveCue(state.activeCaptions, state.position)',
             },
           };
         }
 
         static get observers() {
           return [
-            'activeCueChanged(activeCue, state.isInteractiveTranscriptShown)', // Observe isInteractiveTranscriptShown to scroll to current element when element is shown
+            '_activeCueChanged(_activeCue, state.isInteractiveTranscriptShown)', // Observe isInteractiveTranscriptShown to scroll to current element when element is shown
           ];
         }
 
-        _activeCue(activeCaptions, position) {
+        _getActiveCue(activeCaptions, position) {
           if(activeCaptions) {
             return activeCaptions.slice()
                                  .reverse()
@@ -99,19 +99,19 @@
           }
         }
 
-        handleClick(e) {
-          this.stateManager.setPosition(e.model.item.startTime);
-        }
-
-        activeCueChanged() {
+        _activeCueChanged() {
           let activeElement = this.$.container__interactive_transcript.getElementsByClassName('-active')[0];
           if(activeElement) {
             activeElement.scrollIntoView({behavior: 'smooth'});
           }
         }
+
+        _handleClick(e) {
+          this._stateManager.setPosition(e.model.item.startTime);
+        }
       }
 
-      window.customElements.define(InteractiveCue.is, InteractiveCue);
+      window.customElements.define(InteractiveTranscript.is, InteractiveTranscript);
     });
   </script>
 

@@ -39,9 +39,9 @@
       }
     </style>
 
-    <div id="container__progress_bar" on-click="handleClick" class$="[[ifThenElse(border, '', '-no-border')]]">
-      <div id="div__primary_progress" class="progress-overlay" style$="width: [[calcWidth(value, min, max)]]%;"></div>
-      <div id="div__secondary_progress" class="progress-overlay" style$="width: [[calcWidth(secondaryValue, min, max)]]%;"></div>
+    <div id="container__progress_bar" on-click="_handleClick" class$="[[ifThenElse(border, '', '-no-border')]]">
+      <div id="div__primary_progress" class="progress-overlay" style$="width: [[_calcWidth(value, min, max)]]%;"></div>
+      <div id="div__secondary_progress" class="progress-overlay" style$="width: [[_calcWidth(secondaryValue, min, max)]]%;"></div>
     </div>
   </template>
 
@@ -75,7 +75,7 @@
           };
         }
 
-        calcWidth(value, min, max) {
+        _calcWidth(value, min, max) {
           if(max > min && min <= value && max >= value) {
             return (value - min) / max * 100;
           }
@@ -83,13 +83,13 @@
           return 0;
         }
 
-        handleClick(e) {
+        _handleClick(e) {
           // Get x value by substracting offsetleft of control
           let borderLeftWidth = parseInt(getComputedStyle(this.$.container__progress_bar, null).getPropertyValue('border-left-width'), 10);
           let x = e.pageX - this.getBoundingClientRect().left - borderLeftWidth;
 
           // Heuristic to take care the end can be reached
-          if(this.getBoundingClientRect().width - x  <= 1 ) {
+          if(this.getBoundingClientRect().width - x <= 1) {
             x = this.getBoundingClientRect().width;
           }
 

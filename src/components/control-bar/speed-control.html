@@ -13,10 +13,10 @@
 
     <div id="container__speed_control">
       <select-control
-        values="[[playbackRates]]"
+        values="[[_playbackRates]]"
         selected-value="[[state.playbackRate]]"
-        formatter="[[formatPlaybackRate]]"
-        on-change="selectionChanged"
+        formatter="[[_formatPlaybackRate]]"
+        on-change="_selectionChanged"
         icon-classes="fa fa-tachometer">
       </select-control>
     </div>
@@ -32,11 +32,11 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            playbackRates: {
+            _playbackRates: {
               type: Array,
               readOnly: true,
               value: PLAYBACK_RATES,
@@ -44,12 +44,12 @@
           };
         }
 
-        formatPlaybackRate(playbackRate) {
+        _formatPlaybackRate(playbackRate) {
           return this.toFixedOrEmpty(playbackRate, 1) + 'x';
         }
 
-        selectionChanged(e) {
-          this.stateManager.setPlaybackRate(e.target.selectedValue);
+        _selectionChanged(e) {
+          this._stateManager.setPlaybackRate(e.target.selectedValue);
         }
       }
 

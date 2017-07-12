@@ -13,7 +13,7 @@
     </style>
 
     <div id="container__interactive_transcript_switch" class="user_controls">
-      <a id="button__interactive_transcript" class$="button [[ifThenElse(state.isInteractiveTranscriptShown, '', 'inactive')]]" on-click="handleClick">
+      <a id="button__interactive_transcript" class$="button [[ifThenElse(state.isInteractiveTranscriptShown, '', 'inactive')]]" on-click="_handleClick">
         <i class="fa fa-file-text"></i>
       </a>
     </div>
@@ -28,7 +28,7 @@
         static get properties() {
           return {
             state: Object,
-            stateManager: {
+            _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
@@ -37,19 +37,19 @@
 
         static get observers() {
           return [
-            'captionLanguageChanged(state.captionLanguage, isInteractiveTranscriptShown)',
+            '_captionLanguageChanged(state.captionLanguage, isInteractiveTranscriptShown)',
           ];
         }
 
-        handleClick() {
-          if(this.state.activeCaptions) {
-            this.stateManager.toggleInteractiveTranscript();
+        _captionLanguageChanged(captionLanguage, isInteractiveTranscriptShown) {
+          if (captionLanguage === 'off' && isInteractiveTranscriptShown) {
+            this._stateManager.toggleInteractiveTranscript();
           }
         }
 
-        captionLanguageChanged(captionLanguage, isInteractiveTranscriptShown) {
-          if (captionLanguage === 'off' && isInteractiveTranscriptShown) {
-            this.stateManager.toggleInteractiveTranscript();
+        _handleClick() {
+          if(this.state.activeCaptions) {
+            this._stateManager.toggleInteractiveTranscript();
           }
         }
       }
