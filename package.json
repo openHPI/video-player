@@ -41,20 +41,20 @@
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.24.1",
-    "eslint": "^4.0.0",
-    "eslint-plugin-html": "^3.0.0",
+    "eslint": "^4.2.0",
+    "eslint-plugin-html": "^3.1.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-clean": "^0.3.2",
-    "gulp-clean-css": "^3.4.1",
+    "gulp-clean-css": "^3.6.0",
     "gulp-htmlmin": "^3.0.0",
     "gulp-if": "^2.0.2",
     "gulp-ignore": "^2.0.2",
     "gulp-uglify": "^3.0.0",
     "htmlhint": "^0.9.13",
-    "polymer-build": "^1.5.1",
+    "polymer-build": "^1.6.0",
     "polymer-cli": "^1.3.0",
-    "run-sequence": "^1.2.2"
+    "run-sequence": "^2.0.0"
   },
   "scripts": {
     "test": "polymer test",
