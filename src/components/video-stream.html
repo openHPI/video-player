@@ -140,6 +140,12 @@
           if(this.master && !this.initializingVideo) {
             this.stateManager.setPosition(currentTime);
           }
+
+          // Trigger ended event handler manually, since the event is not
+          // triggered correctly on synchronized video streams.
+          if(currentTime >= this.state.duration) {
+            this.handleEnded();
+          }
         }
 
         handleLoadedMetadata() {
@@ -161,7 +167,7 @@
         }
 
         handleEnded() {
-          // Explicitly propagate end position
+          // Explicitly propagate end position (needed for HLS.js)
           if(this.master) {
             this.stateManager.setPosition(this.state.duration);
           }
