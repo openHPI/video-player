@@ -6,7 +6,7 @@
 <link rel="import" href="../../styling/control-bar--style-module.html">
 <link rel="import" href="../base-components/select-control.html">
 
-<dom-module id="quality-switch">
+<dom-module id="quality-control">
 
   <template>
     <style type="text/css" include="control-bar--style-module">
@@ -24,11 +24,11 @@
   </template>
 
   <script>
-    define('quality-switch', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+    define('quality-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {QUALITY_NAMES} = constants;
 
-      class QualitySwitch extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
-        static get is() { return 'quality-switch'; }
+      class QualityControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'quality-control'; }
 
         static get properties() {
           return {
@@ -50,7 +50,7 @@
         }
       }
 
-      window.customElements.define(QualitySwitch.is, QualitySwitch);
+      window.customElements.define(QualityControl.is, QualityControl);
     });
   </script>
 
