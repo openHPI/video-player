@@ -90,13 +90,13 @@
           * Furhter the margin of 4px needs to be substracted each time
           * in order to keep this width.
           */
-          return "(100% - 4px * 2 * " + this._getColumns() + ") / " + this._getColumns();
+          return '(100% - 4px * 2 * ' + this._getColumns() + ') / ' + this._getColumns();
         }
         _getHeight() {
           /*
           * Similar to the flexbasis the margin needs be calculated
           */
-          return "(100% - 4px * 2 * " + this._getRows() + ") / " + this._getRows();
+          return '(100% - 4px * 2 * ' + this._getRows() + ') / ' + this._getRows();
         }
       }
 
