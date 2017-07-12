@@ -43,24 +43,24 @@
     </style>
 
     <div id="container__control_bar">
-      <playpause-control state="{{state}}"></playpause-control>
-      <videotime-display state="{{state}}" class="-flex-grow"></videotime-display>
-      <template is="dom-if" if="{{captionLanguages}}">
-        <caption-control state="{{state}}" languages="{{captionLanguages}}" class="hidden-for-mobile"></caption-control>
+      <playpause-control state="[[state]]"></playpause-control>
+      <videotime-display state="[[state]]" class="-flex-grow"></videotime-display>
+      <template is="dom-if" if="[[captionLanguages]]">
+        <caption-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></caption-control>
       </template>
-      <template is="dom-if" if="{{captionLanguages}}">
-        <interactive-transcript-switch state="{{state}}" class="hidden-for-mobile"></interactive-transcript-switch>
+      <template is="dom-if" if="[[captionLanguages]]">
+        <interactive-transcript-switch state="[[state]]" class="hidden-for-mobile"></interactive-transcript-switch>
       </template>
-      <speed-control state="{{state}}" class="hidden-for-mobile"></speed-control>
-      <template is="dom-if" if="{{_hasMultipleQualities}}">
-        <quality-switch state="{{state}}" qualities="{{availableQualities}}"></quality-switch>
+      <speed-control state="[[state]]" class="hidden-for-mobile"></speed-control>
+      <template is="dom-if" if="[[_hasMultipleQualities]]">
+        <quality-control state="[[state]]" qualities="[[availableQualities]]"></quality-control>
       </template>
-      <template is="dom-if" if="{{hasChapters}}">
-        <chapter-list-switch state="{{state}}" class="hidden-for-mobile"></chapter-list-switch>
+      <template is="dom-if" if="[[hasChapters]]">
+        <chapter-list-switch state="[[state]]" class="hidden-for-mobile"></chapter-list-switch>
       </template>
-      <mute-control state="{{state}}" class="hidden-for-mobile"></mute-control>
-      <sound-control state="{{state}}" class="hidden-for-mobile"></sound-control>
-      <full-screen-control state="{{state}}"></full-screen-control>
+      <mute-control state="[[state]]" class="hidden-for-mobile"></mute-control>
+      <sound-control state="[[state]]" class="hidden-for-mobile"></sound-control>
+      <full-screen-control state="[[state]]"></full-screen-control>
     </div>
   </template>
 

@@ -52,13 +52,13 @@
 
     <div id="container__interactive_transcript" class="container__list">
       <ul class="list">
-          <template is="dom-repeat" items="{{state.activeCaptions}}">
+          <template is="dom-repeat" items="[[state.activeCaptions]]">
             <li class$="list_item [[ifEqualsThen(item, _activeCue, '-active')]]">
               <a class$="list_item__prefix list_item__link [[ifEqualsThen(item, _activeCue, 'active fa-caret-right')]]" on-click="_handleClick">
                 [[secondsToHms(item.startTime, state.duration)]] - [[secondsToHms(item.endTime, state.duration)]]:
               </a>
               <a class="list_item__link" on-click="_handleClick">
-                {{item.text}}
+                [[item.text]]
               </a>
             </li>
           </template>

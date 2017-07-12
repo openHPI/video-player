@@ -44,7 +44,7 @@
 
     <div id="container__select_control" class="user_controls">
 
-      <template is="dom-if" if="{{_isMultiValueSwitch(values)}}">
+      <template is="dom-if" if="[[_isMultiValueSwitch(values)]]">
         <div class="dropdown" on-mouseover="_showDropDown" on-mouseout="_hideDropDown">
           <a id="button__select" class="button">
             <i class$="[[iconClasses]]"></i>
@@ -57,7 +57,7 @@
         </div>
       </template>
 
-      <template is="dom-if" if="{{!_isMultiValueSwitch(values)}}">
+      <template is="dom-if" if="[[!_isMultiValueSwitch(values)]]">
         <a id="button__select" class="button" on-click="_handleButtonClick">
           [[formatter(selectedValue)]]
         </a>

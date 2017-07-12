@@ -39,11 +39,11 @@
     </style>
 
     <div id="container__finished_overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
-      <template is="dom-repeat" items="{{relatedVideos}}">
-        <div class="container__related_video" style$="height: calc({{_getHeight()}}); flex-basis: calc({{_getFlexBasis()}}); background-image: url('{{item.imageUrl}}');">
-          <a href="{{item.url}}">
+      <template is="dom-repeat" items="[[relatedVideos]]">
+        <div class="container__related_video" style$="height: calc([[_getHeight()]]); flex-basis: calc([[_getFlexBasis()]]); background-image: url('[[item.imageUrl]]');">
+          <a href="[[item.url]]">
             <div class="container_related_overlay">
-              <span>{{item.title}}</span>
+              <span>[[item.title]]</span>
             </div>
           </a>
         </div>

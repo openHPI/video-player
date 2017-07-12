@@ -14,9 +14,9 @@
     </style>
 
     <div id="container__lecture_slide" class="progress_indicator">
-        <template is="dom-repeat" items="{{slides}}">
-          <template is="dom-if" if="{{_isValidSlide(item.startPosition, state.duration)}}">
-            <lecture-slide state="{{state}}" slide="{{item}}"></lecture-slide>
+        <template is="dom-repeat" items="[[slides]]">
+          <template is="dom-if" if="[[_isValidSlide(item.startPosition, state.duration)]]">
+            <lecture-slide state="[[state]]" slide="[[item]]"></lecture-slide>
           </template>
         </template>
     </div>

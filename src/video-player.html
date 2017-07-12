@@ -119,52 +119,52 @@
     <div id="video-player-container">
       <div id="video-container">
         <!-- Videos Overlays -->
-        <waiting-overlay state="{{state}}"></waiting-overlay>
-        <template is="dom-if" if="{{configuration.relatedVideos}}">
-          <finished-overlay state="{{state}}" related-videos="{{configuration.relatedVideos}}"></finished-overlay>
+        <waiting-overlay state="[[state]]"></waiting-overlay>
+        <template is="dom-if" if="[[configuration.relatedVideos]]">
+          <finished-overlay state="[[state]]" related-videos="[[configuration.relatedVideos]]"></finished-overlay>
         </template>
 
         <!-- Video Streams -->
         <div id="streams-container">
-          <template is="dom-repeat" items="{{configuration.streams}}">
+          <template is="dom-repeat" items="[[configuration.streams]]">
             <video-stream
-              state="{{state}}"
-              urls="{{item}}"
-              preload="{{configuration.videoPreload}}"
-              master="{{equals(index, 0)}}"
+              state="[[state]]"
+              urls="[[item]]"
+              preload="[[configuration.videoPreload]]"
+              master="[[equals(index, 0)]]"
               class="video-stream"
-              captions="{{configuration.captions}}"
-              style$="height: calc(100% / {{_rowCount(configuration.streams)}});">
+              captions="[[configuration.captions]]"
+              style$="height: calc(100% / [[_rowCount(configuration.streams)]]);">
             </video-stream>
-            <template is="dom-if" if="{{_needResizer(index, configuration.streams.length)}}">
-              <resizer-control state="{{state}}" style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+            <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
+              <resizer-control state="[[state]]" style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"></resizer-control>
             </template>
           </template>
         </div>
-        <captions-display state="{{state}}"></captions-display>
+        <captions-display state="[[state]]"></captions-display>
       </div>
 
       <!-- Progress Bars -->
       <div id="progress-container">
-        <template is="dom-if" if="{{configuration.lectureSlides}}">
-          <lecture-slide-bar state="{{state}}" slides="{{configuration.lectureSlides}}" class="hidden-for-mobile"></lecture-slide-bar>
+        <template is="dom-if" if="[[configuration.lectureSlides]]">
+          <lecture-slide-bar state="[[state]]" slides="[[configuration.lectureSlides]]" class="hidden-for-mobile"></lecture-slide-bar>
         </template>
-        <video-progress state="{{state}}"></video-progress>
+        <video-progress state="[[state]]"></video-progress>
       </div>
 
       <!-- Control Bar -->
       <control-bar
-        state="{{state}}"
-        has-chapters="{{_hasChapters}}"
-        caption-languages="{{_captionLanguages}}"
-        available-qualities="{{_availableQualities}}">
+        state="[[state]]"
+        has-chapters="[[_hasChapters]]"
+        caption-languages="[[_captionLanguages]]"
+        available-qualities="[[_availableQualities]]">
       </control-bar>
 
       <!-- Chapter List -->
-      <chapter-list state="{{state}}" chapters="{{configuration.chapters}}" show-if="{{state.isChapterListShown}}"></chapter-list>
+      <chapter-list state="[[state]]" chapters="[[configuration.chapters]]" show-if="[[state.isChapterListShown]]"></chapter-list>
 
       <!-- Interactive Transcript -->
-      <interactive-transcript state="{{state}}" show-if="[[state.isInteractiveTranscriptShown]]"></interactive-transcript>
+      <interactive-transcript state="[[state]]" show-if="[[state.isInteractiveTranscriptShown]]"></interactive-transcript>
     </div>
 
   </template>

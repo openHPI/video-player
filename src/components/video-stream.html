@@ -49,11 +49,11 @@
         on-ended="_handleEnded"
         on-loadedmetadata="_handleLoadedMetadata"
         on-timeupdate="_handleTimeUpdate">
-        <template is="dom-repeat" items="{{captions}}">
+        <template is="dom-repeat" items="[[captions]]">
           <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
         </template>
       </video>
-      <template is="dom-if" if="{{and(urls.poster, _isPosterVisible)}}">
+      <template is="dom-if" if="[[and(urls.poster, _isPosterVisible)]]">
         <div id="container__poster_overlay">
           <img id="image__poster" src="[[urls.poster]]" alt="Poster" on-click="_handleClick" />
         </div>

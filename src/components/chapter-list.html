@@ -27,10 +27,10 @@
 
     <div id="container__chapter_list" class="container__list">
       <ul class="list">
-          <template is="dom-repeat" items="{{chapters}}">
+          <template is="dom-repeat" items="[[chapters]]">
             <li class="list_item">
               <a class$="link__chapter_bookmark list_item__link [[ifEqualsThen(item, activeChapter, 'active fa-caret-right')]]" on-click="_handleClick">
-                {{item.text}}
+                [[item.text]]
               </a>
             </li>
           </template>
