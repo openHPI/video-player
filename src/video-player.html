@@ -362,10 +362,19 @@
         }
         _themeChanged(name) {
           if(name in THEMES) {
-            this._foregroundColorChanged(THEMES[name].foregroundColor);
-            this._accentColorChanged(THEMES[name].accentColor);
-            this._backgroundColorChanged(THEMES[name].backgroundColor);
-            this._secondaryBackgroundColorChanged(THEMES[name].secondaryBackgroundColor);
+            // Set colors of theme only if not explicitly determined in configuration
+            if(typeof this.configuration.foregroundColor === 'undefined') {
+              this._foregroundColorChanged(THEMES[name].foregroundColor);
+            }
+            if(typeof this.configuration.accentColor === 'undefined') {
+              this._accentColorChanged(THEMES[name].accentColor);
+            }
+            if(typeof this.configuration.backgroundColor === 'undefined') {
+              this._backgroundColorChanged(THEMES[name].backgroundColor);
+            }
+            if(typeof this.configuration.secondaryBackgroundColor === 'undefined') {
+              this._secondaryBackgroundColorChanged(THEMES[name].secondaryBackgroundColor);
+            }
           }
         }
 
