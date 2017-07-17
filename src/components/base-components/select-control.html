@@ -58,7 +58,7 @@
 
     <div id="container__select_control" class="user_controls">
       <div class="dropdown" on-mouseover="_showDropDown" on-mouseout="_hideDropDown">
-        <a id="button__select" class="button" badge-value$="{{formatter(selectedValue)}}">
+        <a id="button__select" class$="button [[ifNotThen(active, 'inactive')]]" badge-value$="{{formatter(selectedValue)}}">
           <i class$="[[iconClasses]]"></i>
         </a>
         <div id="dropdown__select" class$="dropdown-content [[ifNotThen(_isDropDownOpen, '-hidden')]]">
@@ -94,6 +94,10 @@
               type: Boolean,
               value: false,
             },
+            active: {
+              type: Boolean,
+              value: true,
+            }
           };
         }
 
