@@ -1,6 +1,8 @@
+<link rel="import" href="global--style-module.html">
+
 <dom-module id="lists--style-module">
   <template>
-    <style type="text/css">
+    <style type="text/css" include="global--style-module">
       /*
       ** Style module for all kinds of lists
       ** This is for example used for the interactive transcripts or chapters component.
@@ -22,7 +24,7 @@
         padding: 5px 5px 5px 20px;
         -webkit-font-smoothing: antialiased;
       }
-      
+
       .container__list .list_item .list_item__link {
         cursor: pointer;
       }

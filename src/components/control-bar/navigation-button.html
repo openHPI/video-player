@@ -1,6 +1,5 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
-<link rel="import" href="../../base-element.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 
 <dom-module id="navigation-button">
@@ -34,14 +33,17 @@
   </template>
 
   <script>
-    define('navigation-button', ['base-element'], (BaseElement) => {
-      class NavigationButton extends BaseElement {
+    define('navigation-button', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class NavigationButton extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'navigation-button'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
             previousVideo: {
               type: Boolean,
               value: false
@@ -55,30 +57,6 @@
             }
           };
         }
-
-        /*
-        handleClick() {
-
-          var http = new XMLHttpRequest();
-          var url;
-
-          if (this.previousVideo) url  = "/previous_video";
-          if (this.nextVideo) url = "/next_video";
-
-          var params = JSON.stringify(this.content);
-          http.open("POST", url, true);
-
-          //Send the proper header information along with the request
-          http.setRequestHeader("Content-type", "application/json;charset=UTF-8");
-
-          http.onreadystatechange = function() {//Call a function when the state changes.
-            if(http.readyState == 4 && http.status == 200) {
-                alert(http.responseText);
-            }
-          }
-          http.send(params);
-        }
-        */
       }
 
       window.customElements.define(NavigationButton.is, NavigationButton);

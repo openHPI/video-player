@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
 
-<link rel="import" href="../base-element.html">
+<link rel="import" href="../mixins/binding-helpers.html">
+<link rel="import" href="../mixins/ioc-requester.html">
 <link rel="import" href="../styling/lists--style-module.html">
 
 <dom-module id="interactive-transcript">
@@ -51,13 +52,13 @@
 
     <div id="container__interactive_transcript" class="container__list">
       <ul class="list">
-          <template is="dom-repeat" items="{{cues}}">
-            <li class$="list_item [[ifEqualsThen(item, activeTranscript, '-active')]]">
-              <a class$="list_item__prefix list_item__link [[ifEqualsThen(item, activeTranscript, 'active fa-caret-right')]]" on-click="handleClick">
+          <template is="dom-repeat" items="[[state.activeCaptions]]">
+            <li class$="list_item [[ifEqualsThen(item, _activeCue, '-active')]]">
+              <a class$="list_item__prefix list_item__link [[ifEqualsThen(item, _activeCue, 'active fa-caret-right')]]" on-click="_handleClick">
                 [[secondsToHms(item.startTime, state.duration)]] - [[secondsToHms(item.endTime, state.duration)]]:
               </a>
-              <a class="list_item__link" on-click="handleClick">
-                {{item.text}}
+              <a class="list_item__link" on-click="_handleClick">
+                [[item.text]]
               </a>
             </li>
           </template>
@@ -66,61 +67,47 @@
   </template>
 
   <script>
-    define('interactive-transcript', ['base-element'], (BaseElement) => {
-      class InteractiveTranscript extends BaseElement {
+    define('interactive-transcript', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class InteractiveTranscript extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'interactive-transcript'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
-            cues: {
-              type: Array,
-              value: [],
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
             },
-            activeTranscript: Object,
+            _activeCue: {
+              type: Object,
+              computed: '_getActiveCue(state.activeCaptions, state.position)',
+            },
           };
         }
 
         static get observers() {
           return [
-            'getCues(state.cues)',
-            'updateActiveTranscript(cues, state.position)',
+            '_activeCueChanged(_activeCue, state.isInteractiveTranscriptShown)', // Observe isInteractiveTranscriptShown to scroll to current element when element is shown
           ];
         }
 
-
-        getCues(){
-          // flush array
-          this.splice("cues", 0, this.cues.length);
-          // refill it
-          if(this.state.cues) {
-            for(let i = 0; i < this.state.cues.length; i++){
-              this.push('cues', this.state.cues[i]);
-            }
+        _getActiveCue(activeCaptions, position) {
+          if(activeCaptions) {
+            return activeCaptions.slice()
+                                 .reverse()
+                                 .find(cue => cue.startTime <= position);
           }
-          // call update ...because listener on 'cues' does not seem to work
-          this.updateActiveTranscript();
-        }
-        
-        handleClick(e) {
-          let cuePoint = e.model.item;
-          this.stateManager.setPosition(cuePoint.startTime);
         }
 
-        updateActiveTranscript() {
-          let oldTranscript = this.activeTranscript;
-          this.activeTranscript = this.cues.slice()
-                                            .reverse()
-                                            .find(cuePoint => cuePoint.startTime <= this.state.position);
-          this.scrollIntoView(oldTranscript, this.activeTranscript);
-        }
-
-        scrollIntoView(oldElement, newElement) {
+        _activeCueChanged() {
           let activeElement = this.$.container__interactive_transcript.getElementsByClassName('-active')[0];
-          if(activeElement && oldElement !== newElement) {
+          if(activeElement) {
             activeElement.scrollIntoView({behavior: 'smooth'});
           }
+        }
+
+        _handleClick(e) {
+          this._stateManager.setPosition(e.model.item.startTime);
         }
       }
 

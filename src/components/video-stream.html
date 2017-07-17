@@ -1,13 +1,15 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
 
 <link rel="import" href="../constants.html">
-<link rel="import" href="../base-element.html">
 <link rel="import" href="../3rd-imports/hls-js.html">
+<link rel="import" href="../mixins/binding-helpers.html">
+<link rel="import" href="../mixins/ioc-requester.html">
+<link rel="import" href="../styling/global--style-module.html">
 
 
 <dom-module id="video-stream">
   <template>
-    <style type="text/css">
+    <style type="text/css" include="global--style-module">
       #container__video_stream {
         position: relative;
         width: 100%;
@@ -41,146 +43,93 @@
       <video
         id="video"
         preload="[[ifThenElse(preload, 'auto', 'metadata')]]"
-        on-click="handleClick"
-        on-canplay="handleCanPlay"
-        on-playing="handlePlaying"
-        on-ended="handleEnded"
-        on-loadedmetadata="handleLoadedMetadata"
-        on-timeupdate="handleTimeUpdate">
-        <template is="dom-repeat" items="{{captions}}">
-          <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English">
+        on-click="_handleClick"
+        on-canplay="_handleCanPlay">
+        <template is="dom-repeat" items="[[captions]]">
+          <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
         </template>
       </video>
-      <template is="dom-if" if="{{and(urls.poster, isPosterVisible)}}">
+      <template is="dom-if" if="[[and(urls.poster, _isPosterVisible)]]">
         <div id="container__poster_overlay">
-          <img id="image__poster" src="[[urls.poster]]" alt="Poster" />
+          <img id="image__poster" src="[[urls.poster]]" alt="Poster" on-click="_handleClick" />
         </div>
       </template>
     </div>
   </template>
 
   <script>
-    define('video-stream', ['base-element', 'hls-js', 'constants'], (BaseElement, Hls, constants) => {
+    define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, Hls, constants) => {
       const {PLAY_STATES, QUALITY_MODES, HLS_MIME_TYPE, SYNC_DIFF_THRESHOLD} = constants;
 
-      class VideoStream extends BaseElement {
+      class VideoStream extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'video-stream'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
-            synchronizationManager: Object,
-            captions: {
-              type: Object,
-              value: () => ({}),
-            },
             urls: Object,
+            captions: Array,
             preload: {
               type: Boolean,
               value: true,
             },
-            master: {
+            _stateManager: {
+              typeof: Object,
+              inject: 'StateManager',
+            },
+            _synchronizationManager: {
+              typeof: Object,
+              inject: 'SynchronizationManager',
+            },
+            _currentUrl: String,
+            _isInitializingVideo: {
               type: Boolean,
               value: true,
             },
-            qualityUrl: String,
-            initializingVideo: {
-              type: Boolean,
-              value: true,
-            },
-            isPosterVisible: {
-              type: Boolean,
-              value: true,
-            },
-            hlsClient: Object,
-            nativeHlsSupport: {
+            _hlsClient: Object,
+            _nativeHlsSupport: {
               type: Boolean,
               readOnly: true,
-              computed: '_nativeHlsSupport()',
+              computed: '_getNativeHlsSupport()',
+            },
+            _isPosterVisible: {
+              type: Boolean,
+              computed: '_getIsPosterVisible(state.position, state.duration)',
             },
           };
         }
 
-        ready(){
-          super.ready();
-        }
-
         static get observers() {
           return [
-            'playStateChanged(state.playState)',
-            'positionChanged(state.position)',
-            'playbackRateChanged(state.playbackRate)',
-            'volumeChanged(state.volume)',
-            'mutedChanged(state.muted)',
-            'setCaptionLanguage(state.selectedCaption)',
-            'qualityChanged(urls, state.quality)',
+            '_playStateChanged(state.playState)',
+            '_positionChanged(state.position)',
+            '_playbackRateChanged(state.playbackRate)',
+            '_volumeChanged(state.volume)',
+            '_mutedChanged(state.muted)',
+            '_captionLanguageChanged(state.captionLanguage)',
+            '_qualityChanged(urls, state.quality)',
           ];
         }
 
-        _nativeHlsSupport() {
-          return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
-        }
-
-        connectedCallback() {
-          super.connectedCallback();
-          this.synchronizationManager.registerVideo(this.$.video);
+        servicesInjectedCallback() {
+          super.servicesInjectedCallback();
+          this._synchronizationManager.registerVideo(this.$.video);
         }
 
         disconnectedCallback() {
           super.disconnectedCallback();
-          this.synchronizationManager.unregisterVideo(this.$.video);
+          this._synchronizationManager.unregisterVideo(this.$.video);
         }
 
-        handleTimeUpdate() {
-          let currentTime = this.$.video.currentTime;
-          if(0 < currentTime && currentTime < this.state.duration) {
-            this.isPosterVisible = false;
-          }
-          if(this.master && !this.initializingVideo) {
-            this.stateManager.setPosition(currentTime);
-          }
+        _getNativeHlsSupport() {
+          return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
         }
 
-        handleLoadedMetadata() {
-          // Extract duration of the video after metadata have been loaded
-          if(this.master) {
-            this.stateManager.setDuration(this.$.video.duration);
-          }
+        _getIsPosterVisible(position, duration) {
+          return position === 0 || position === duration;
         }
 
-        handleCanPlay() {
-          if(this.initializingVideo) {
-            this.applyState();
-            this.initializingVideo = false;
-          }
-        }
-
-        handlePlaying() {
-          this.isPosterVisible = false;
-        }
-
-        handleEnded() {
-          // Explicitly propagate end position
-          if(this.master) {
-            this.stateManager.setPosition(this.state.duration);
-          }
-          this.isPosterVisible = true;
-        }
-
-        handleClick() {
-          this.stateManager.togglePlayPause();
-        }
-
-        applyState() {
-          this.playStateChanged(this.state.playState);
-          this.positionChanged(this.state.position);
-          this.playbackRateChanged(this.state.playbackRate);
-          this.volumeChanged(this.state.volume);
-          this.mutedChanged(this.state.muted);
-        }
-
-        playStateChanged(playState) {
+        _playStateChanged(playState) {
           if (playState === PLAY_STATES.PLAYING) {
             this.$.video.play();
           } else if (playState === PLAY_STATES.PAUSED) {
@@ -188,62 +137,35 @@
           }
         }
 
-        positionChanged(position) {
+        _positionChanged(position) {
           if(Math.abs(this.$.video.currentTime - position) > SYNC_DIFF_THRESHOLD) {
             this.$.video.currentTime = position;
           }
         }
 
-        playbackRateChanged(playbackRate) {
+        _playbackRateChanged(playbackRate) {
           this.$.video.playbackRate = playbackRate;
         }
 
-        volumeChanged(volume) {
+        _volumeChanged(volume) {
           this.$.video.volume = volume;
         }
 
-        mutedChanged(muted) {
+        _mutedChanged(muted) {
           this.$.video.muted = muted;
         }
 
-        setCaptionLanguage(language){
-          Polymer.RenderStatus.afterNextRender(this, function() {
-            if(this.master && this.captions){
-              // Set cues to null, so that they cannot get toggled by interactive-transcrpt-switch
-              if(language === 'off') this.stateManager.setCues(null);
-              // Get selected language from all tracks, show them and set their cues
-              for (let textTrackElement in this.$.video.textTracks){
-                let trackObject = this.$.video.textTracks[textTrackElement];
-                if( trackObject && trackObject.language && trackObject.language.match(language)) {
-                  trackObject.mode = 'showing';
-                  // Set caption cues for interactive transcript
-                  this.stateManager.setCues(trackObject.cues);
-
-                  // Set current caption cue-point for video subtitles
-                  this.stateManager.setCurrentCaptionCue(trackObject.activeCues[0]);
-                  self = this;
-                  // Subscribe to cue changes as defined in the WebVTT API:
-                  // https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API
-                  trackObject.oncuechange = function () {
-                    self.stateManager.setCurrentCaptionCue(this.activeCues[0]);
-                  };
-                } else if (trackObject && trackObject.language) {
-                  trackObject.mode = 'hidden';
-                }
-              }
-            }
-          });
-        }
-
-        qualityChanged(urls, quality) {
-          let url = urls[quality];
-          this.initializingVideo = true;
+        _qualityChanged(urls, quality) {
+          if(this._synchronizationManager) {
+            this._synchronizationManager.initializing(this.$.video);
+          }
 
           // Change source depending on quality
-          if(this.nativeHlsSupport || quality !== QUALITY_MODES.HLS) {
+          let url = urls[quality];
+          if(this._nativeHlsSupport || quality !== QUALITY_MODES.HLS) {
             // Destroy old hls client
-            if(this.hlsClient) {
-              this.hlsClient.destroy();
+            if(this._hlsClient) {
+              this._hlsClient.destroy();
             }
 
             // The src attribute can not be updated using data bindings
@@ -251,10 +173,56 @@
             this.$.video.setAttribute('src', url);
           } else {
             // Create and configure new hls client for existing video element
-            this.hlsClient = new Hls();
-            this.hlsClient.loadSource(url);
-            this.hlsClient.attachMedia(this.$.video);
+            this._hlsClient = new Hls();
+            this._hlsClient.loadSource(url);
+            this._hlsClient.attachMedia(this.$.video);
           }
+
+          // Reapply current state to video element
+          this._applyState();
+        }
+
+        _captionLanguageChanged(language){
+          if(this.captions && this._stateManager) {
+            // Set cues to null, so that they cannot get toggled by interactive-transcript-switch
+            if(language === 'off') {
+              this._stateManager.setActiveCaptions(null);
+            }
+
+            for(let textTrack of this.$.video.textTracks) {
+              if(textTrack.language === language) {
+                textTrack.mode = 'showing';
+                // If captions are not yet loaded, they will be set in
+                // _handleTrackLoaded when load event is dispatched.
+                this._stateManager.setActiveCaptions(Array.from(textTrack.cues));
+              } else {
+                textTrack.mode = 'hidden';
+              }
+            }
+          }
+        }
+
+        _handleTrackLoaded(e) {
+          let textTrack = e.target.track;
+          if(textTrack.language === this.state.captionLanguage) {
+            this._stateManager.setActiveCaptions(Array.from(textTrack.cues));
+          }
+        }
+
+        _handleCanPlay() {
+          this._synchronizationManager.ready(this.$.video);
+        }
+
+        _handleClick() {
+          this._stateManager.togglePlayPause();
+        }
+
+        _applyState() {
+          this._playStateChanged(this.state.playState);
+          this._positionChanged(this.state.position);
+          this._playbackRateChanged(this.state.playbackRate);
+          this._volumeChanged(this.state.volume);
+          this._mutedChanged(this.state.muted);
         }
       }
 

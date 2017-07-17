@@ -1,10 +1,13 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
-<link rel="import" href="../../base-element.html">
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../styling/overlay--style-module.html">
+<link rel="import" href="../../styling/global--style-module.html">
 
 <dom-module id="captions-display">
   <template>
-    <style type="text/css">
+    <style type="text/css" include="overlay--style-module">
       #container__captions {
         visibility: visible;
         position: absolute;
@@ -26,48 +29,45 @@
       }
     </style>
 
-    <div id="container__captions" style$="visibility: [[ifThenElse(isVisible, 'visible', 'hidden')]];">
-      <div class="caption-cue-text">[[currentCaptionCue.text]]</div>
+    <div id="container__captions" class$="[[ifNotThen(_isVisible, '-hidden')]]">
+      <div class="caption-cue-text">[[_activeCue.text]]</div>
     </div>
   </template>
 
   <script>
-    define('captions-display', ['base-element'], (BaseElement) => {
+    define('captions-display', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
 
-      class CaptionsDisplay extends BaseElement {
+      class CaptionsDisplay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'captions-display'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
-            currentCaptionCue: Object,
-            isVisible: {
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _activeCue: {
+              type: Object,
+              computed: '_getActiveCue(state.activeCaptions, state.position)',
+            },
+            _isVisible: {
               type: Boolean,
-              computed: '_isVisible(state.selectedCaption)',
+              computed: '_getIsVisible(state.captionLanguage)',
             },
           };
         }
 
-        static get observers() {
-          return [
-            'captionCueChanged(state.currentCaptionCue)',
-            // 'captionsChanged(state.selectedCaption)',
-          ];
+        _getActiveCue(activeCaptions, position) {
+          if(activeCaptions) {
+            return activeCaptions.slice()
+                                 .reverse()
+                                 .find(cue => cue.startTime <= position);
+          }
         }
 
-        // If needed later on
-        // captionsChanged(newCaptions) {
-        //   // Here we can make adjustments when the user changes the captions,
-        //   // i.e. by choosing their language or turning them off
-        // }
-
-        captionCueChanged(newCue) {
-          this.currentCaptionCue = newCue;
-        }
-
-        _isVisible(selectedCaption) {
-          return selectedCaption !== 'off';
+        _getIsVisible(captionLanguage) {
+          return captionLanguage !== 'off';
         }
       }
 

@@ -243,32 +243,27 @@
         this.setState('isInteractiveTranscriptShown', !this.state.isInteractiveTranscriptShown);
       }
 
-      setCues(cues){
-        this.setState('cues', cues);
-      }
-
-      /*
-       * Sets the new caption language or turns captions off by sending the
-       * language 'off'
-       * @param {String} language The language to be set
+      /**
+       * Sets the new caption language or turns captions off by setting the
+       * language to 'off'.
+       * @param {string} language The language to be set.
+       * @returns {void}
        */
       setCaptionLanguage(language) {
-        this.setState('selectedCaption', language);
+        this.setState('captionLanguage', language);
       }
 
       /**
-       * Sets the new caption cue
-       * @param {Object} newCaption The new caption object, as provided by the
-       * WebVTT logic
+       * Sets the captions for the selected language.
+       * @param {Array} captions The active captions.
        * @returns {void}
        */
-      setCurrentCaptionCue(newCaption) {
-        this.setState('currentCaptionCue', newCaption);
+      setActiveCaptions(captions){
+        this.setState('activeCaptions', captions);
       }
 
 
-      /*
-       *
+      /**
        *
        *
        */

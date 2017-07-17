@@ -1,11 +1,12 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
-<link rel="import" href="../../base-element.html">
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../styling/global--style-module.html">
 
 <dom-module id="progress-bar">
 
   <template>
-    <style type="text/css">
+    <style type="text/css" include="global--style-module">
       :host {
         flex-basis: 100%;
       }
@@ -38,15 +39,15 @@
       }
     </style>
 
-    <div id="container__progress_bar" on-click="handleClick" class$="[[ifThenElse(border, '', '-no-border')]]">
-      <div id="div__primary_progress" class="progress-overlay" style$="width: [[calcWidth(value, min, max)]]%;"></div>
-      <div id="div__secondary_progress" class="progress-overlay" style$="width: [[calcWidth(secondaryValue, min, max)]]%;"></div>
+    <div id="container__progress_bar" on-click="_handleClick" class$="[[ifThenElse(border, '', '-no-border')]]">
+      <div id="div__primary_progress" class="progress-overlay" style$="width: [[_calcWidth(value, min, max)]]%;"></div>
+      <div id="div__secondary_progress" class="progress-overlay" style$="width: [[_calcWidth(secondaryValue, min, max)]]%;"></div>
     </div>
   </template>
 
   <script>
-    define('progress-bar', ['base-element'], (BaseElement) => {
-      class ProgressBar extends BaseElement {
+    define('progress-bar', ['binding-helpers'], (BindingHelpersMixin) => {
+      class ProgressBar extends BindingHelpersMixin(Polymer.Element) {
         static get is() { return 'progress-bar'; }
 
         static get properties() {
@@ -74,7 +75,7 @@
           };
         }
 
-        calcWidth(value, min, max) {
+        _calcWidth(value, min, max) {
           if(max > min && min <= value && max >= value) {
             return (value - min) / max * 100;
           }
@@ -82,12 +83,18 @@
           return 0;
         }
 
-        handleClick(e) {
+        _handleClick(e) {
           // Get x value by substracting offsetleft of control
           let borderLeftWidth = parseInt(getComputedStyle(this.$.container__progress_bar, null).getPropertyValue('border-left-width'), 10);
           let x = e.pageX - this.getBoundingClientRect().left - borderLeftWidth;
+
+          // Heuristic to take care the end can be reached
+          if(this.getBoundingClientRect().width - x <= 1) {
+            x = this.getBoundingClientRect().width;
+          }
+
           // Calculate value that will be between 0 and the max value
-          let clickedValue = x * this.max / this.offsetWidth;
+          let clickedValue = x * this.max / this.getBoundingClientRect().width;
           // Check if still within borders
           if(clickedValue <= this.max) {
             this.value = clickedValue;

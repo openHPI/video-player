@@ -1,12 +1,14 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
 
-<link rel="import" href="../base-element.html">
+<link rel="import" href="../mixins/binding-helpers.html">
+<link rel="import" href="../mixins/ioc-requester.html">
+<link rel="import" href="../styling/global--style-module.html">
 
 <dom-module id="resizer-control">
   <link rel="import" type="css" href="../../bower_components/components-font-awesome/css/font-awesome.min.css">
 
   <template>
-    <style type="text/css">
+    <style type="text/css" include="global--style-module">
       /*
       * The nested flex boxes are unfortunately neccessary to avoid Safaris 100% height bug
       */
@@ -47,44 +49,44 @@
       <div
         id="resizer"
         draggable="true"
-        on-dragstart="handleDragStart"
-        on-drag="resizeVideos"
-        on-dragend="handleDragEnd">
+        on-dragstart="_handleDragStart"
+        on-drag="_resizeVideos"
+        on-dragend="_handleDragEnd">
       </div>
     </div>
   </template>
 
   <script>
-    define('resizer-control', ['base-element'], (BaseElement) => {
-      class ResizerControl extends BaseElement {
+    define('resizer-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class ResizerControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'resizer-control'; }
 
         static get properties() {
           return {
-            globalFlexBasisGap: {
+            state: Object,
+            _videos: Array,
+            _mousePositionX: Number,
+            _globalFlexBasisGap: {
               type: Array,
               value: () => [0, 0],
             },
-            videos: Array,
-            mousePositionX: Number,
-            state: Object,
           };
         }
 
         static get observers() {
           return [
-            'fullscreenChanged(state.fullscreen)',
+            '_fullscreenChanged(state.fullscreen)',
           ];
         }
 
-        handleDragStart(e) {
+        _handleDragStart(e) {
           // Neccessary for FF to handle Drag'n'Drop
           // Since FF does not support the mouse position within a drag event, it has to be handled with the dragover event
           e.dataTransfer.setData('text', '');
-          this.parentElement.addEventListener('dragover', this.handleDragOver.bind(this));
+          this.parentElement.addEventListener('dragover', this._handleDragOver.bind(this));
 
-          // Get videos to resize
-          this.videos = [this.findPreviousVideo(), this.findNextVideo()];
+          // Get _videos to resize
+          this._videos = [this._findPreviousVideo(), this._findNextVideo()];
 
           // Avoid a dragging ghost image by creating a new element which shall be shown
           // but is hidden per default. Unfortunately this is the only way to do so.
@@ -96,43 +98,43 @@
           e.dataTransfer.setDragImage(dragImage, -10000, -10000);
         }
 
-        handleDragEnd() {
+        _handleDragEnd() {
           // Remove the created ghost element & eventhandler when the dragging ended.
           document.body.removeChild(document.body.lastChild);
-          this.parentElement.removeEventListener('dragover', this.handleDragOver.bind(this));
+          this.parentElement.removeEventListener('dragover', this._handleDragOver.bind(this));
         }
 
-        handleDragOver(e) {
-          this.mousePositionX = e.pageX;
+        _handleDragOver(e) {
+          this._mousePositionX = e.pageX;
         }
 
-        resizeVideos(e) {
+        _resizeVideos(e) {
           let resizerPositionX = (e.originalTarget || e.srcElement).offsetLeft;
-          let direction = this.getMouseDirection(e, resizerPositionX);
-          // MaxGap defines the maximal value by which a videos can be increased or decreased.
-          // Since we change both videos at the same time the number has to be halved.
+          let direction = this._getMouseDirection(e, resizerPositionX);
+          // MaxGap defines the maximal value by which a _videos can be increased or decreased.
+          // Since we change both _videos at the same time the number has to be halved.
           let maxGap = (this.parentElement.offsetWidth * 0.49) / 2;
-          let factor = Math.abs(this.mousePositionX - resizerPositionX);
+          let factor = Math.abs(this._mousePositionX - resizerPositionX);
 
           /*
           * The resizing consists of two parts: One video is increased, while the other one os decreased by the same factor.
-          * This is neccessary to keep these two videos in a row. If only one video is decreased it may be elem videos from the belower row
+          * This is neccessary to keep these two _videos in a row. If only one video is decreased it may be elem _videos from the belower row
           * will shift up.
           */
           if(direction === 'left') {
-            if(this.globalFlexBasisGap[1] < maxGap) {
-              this.changeFlexBasis(this.videos[1], factor, 1, maxGap);
-              this.changeFlexBasis(this.videos[0], -factor, 0, maxGap);
+            if(this._globalFlexBasisGap[1] < maxGap) {
+              this._changeFlexBasis(this._videos[1], factor, 1, maxGap);
+              this._changeFlexBasis(this._videos[0], -factor, 0, maxGap);
             }
           } else if(direction === 'right') {
-            if(this.globalFlexBasisGap[0] < maxGap) {
-              this.changeFlexBasis(this.videos[1], -factor, 1, maxGap);
-              this.changeFlexBasis(this.videos[0], factor, 0, maxGap);
+            if(this._globalFlexBasisGap[0] < maxGap) {
+              this._changeFlexBasis(this._videos[1], -factor, 1, maxGap);
+              this._changeFlexBasis(this._videos[0], factor, 0, maxGap);
             }
           }
         }
 
-        findNextVideo() {
+        _findNextVideo() {
           // Iterate forward through the DOM until the first video element is found
           let elem = this; // eslint-disable-line consistent-this
           while (elem.nodeName !== 'VIDEO-STREAM') {
@@ -141,7 +143,7 @@
           return elem;
         }
 
-        findPreviousVideo() {
+        _findPreviousVideo() {
           // Iterate backward through the DOM until the first video element is found
           let elem = this; // eslint-disable-line consistent-this
           while (elem.nodeName !== 'VIDEO-STREAM') {
@@ -150,45 +152,45 @@
           return elem;
         }
 
-        getMouseDirection(e, resizerPositionX) {
+        _getMouseDirection(e, resizerPositionX) {
           // This handles the special case when ending the drag,
           // where e.pageX is 0
-          if(this.mousePositionX === 0) {
+          if(this._mousePositionX === 0) {
             return '';
           }
 
-          if (this.mousePositionX < resizerPositionX) {
+          if (this._mousePositionX < resizerPositionX) {
             return 'left';
-          } else if (this.mousePositionX > resizerPositionX) {
+          } else if (this._mousePositionX > resizerPositionX) {
             return 'right';
           }
         }
 
-        changeFlexBasis(video, factor, index, maxGap) {
-          let oldValue = this.globalFlexBasisGap[index];
+        _changeFlexBasis(video, factor, index, maxGap) {
+          let oldValue = this._globalFlexBasisGap[index];
 
           // The new value is not allowed to be greater than the maximal gap
           let newValue = oldValue + factor;
           newValue = newValue <= - maxGap ? (- maxGap) : newValue;
           newValue = newValue >= maxGap ? maxGap : newValue;
 
-          this.globalFlexBasisGap[index] = newValue;
+          this._globalFlexBasisGap[index] = newValue;
           video.style.flexBasis = 'calc(49% + ' + newValue + 'px)';
         }
 
-        resetResizer () {
-          // Resizing only makes sense if there are at least two videos
-          if(this.videos && this.videos.length > 1){
-            this.videos[0].style.flexBasis = '49%';
-            this.videos[1].style.flexBasis = '49%';
+        _resetResizer () {
+          // Resizing only makes sense if there are at least two _videos
+          if(this._videos && this._videos.length > 1){
+            this._videos[0].style.flexBasis = '49%';
+            this._videos[1].style.flexBasis = '49%';
           }
         }
 
-        fullscreenChanged (isFullscreen) {
+        _fullscreenChanged (isFullscreen) {
           // When we exit full screen, we will have a lot less screen real estate
           // available which means that sometimes we need to adapt
           if (!isFullscreen) {
-            this.resetResizer();
+            this._resetResizer();
           }
         }
       }

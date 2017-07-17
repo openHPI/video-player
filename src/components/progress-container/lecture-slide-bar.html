@@ -1,0 +1,51 @@
+<link rel="import" href="../../../bower_components/imd/imd.html">
+
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../styling/progress-container--style-module.html">
+<link rel="import" href="lecture-slide.html">
+
+<dom-module id="lecture-slide-bar">
+  <template>
+    <style type="text/css" include="progress-container--style-module">
+    #container__lecture_slide {
+      height: 10px;
+    }
+    </style>
+
+    <div id="container__lecture_slide" class="progress_indicator">
+        <template is="dom-repeat" items="[[slides]]">
+          <template is="dom-if" if="[[_isValidSlide(item.startPosition, state.duration)]]">
+            <lecture-slide state="[[state]]" slide="[[item]]"></lecture-slide>
+          </template>
+        </template>
+    </div>
+
+  </template>
+
+  <script>
+    define('lecture-slide-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class LectureSlideBar extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'lecture-slide-bar'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            slides: Array,
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+          };
+        }
+
+        _isValidSlide(startPosition, duration) {
+          return startPosition < duration;
+        }
+      }
+
+      window.customElements.define(LectureSlideBar.is, LectureSlideBar);
+    });
+  </script>
+
+</dom-module>

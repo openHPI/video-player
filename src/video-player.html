@@ -1,10 +1,13 @@
 <link rel="import" href="../bower_components/imd/imd.html">
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 
-<link rel="import" href="base-element.html">
+<link rel="import" href="mixins/ioc-provider.html">
+<link rel="import" href="mixins/ioc-requester.html">
+<link rel="import" href="mixins/binding-helpers.html">
 <link rel="import" href="3rd-imports/hls-js.html">
 <link rel="import" href="styling/mixins.html">
 <link rel="import" href="styling/font-awesome.html">
+<link rel="import" href="styling/global--style-module.html">
 <link rel="import" href="services/state-manager.html">
 <link rel="import" href="services/fullscreen-manager.html">
 <link rel="import" href="services/synchronization-manager.html">
@@ -17,12 +20,12 @@
 <link rel="import" href="components/overlays/captions-display.html">
 <link rel="import" href="components/control-bar/control-bar.html">
 <link rel="import" href="components/progress-container/video-progress.html">
-<link rel="import" href="components/progress-container/lecture-slide-bar/lecture-slide-bar.html">
+<link rel="import" href="components/progress-container/lecture-slide-bar.html">
 <link rel="import" href="components/resizer-control.html">
 
 <dom-module id="video-player">
   <template>
-    <style type="text/css">
+    <style type="text/css" include="global--style-module">
       :host {
         display: block;
         border: 1px solid grey;
@@ -94,9 +97,9 @@
       @media (max-width: 768px) {
         :host {
           /*
-          * The min-widths are necessary to avoid that the video containter and 
-          * the controlbar have different widths on small screens. 
-          */ 
+          * The min-widths are necessary to avoid that the video containter and
+          * the controlbar have different widths on small screens.
+          */
           min-width: 260px
         }
         .hidden-for-mobile {
@@ -107,7 +110,7 @@
         :host {
           /*
           * Look above
-          */ 
+          */
           min-width: 560px
         }
       }
@@ -116,75 +119,61 @@
     <div id="video-player-container">
       <div id="video-container">
         <!-- Videos Overlays -->
-        <waiting-overlay state="{{state}}" state-manager="{{stateManager}}"></waiting-overlay>
-        <template is="dom-if" if="{{configuration.relatedVideos}}">
-          <finished-overlay state="{{state}}" state-manager="{{stateManager}}" related-videos="{{configuration.relatedVideos}}"></finished-overlay>
+        <waiting-overlay state="[[state]]"></waiting-overlay>
+        <template is="dom-if" if="[[configuration.relatedVideos]]">
+          <finished-overlay state="[[state]]" related-videos="[[configuration.relatedVideos]]"></finished-overlay>
         </template>
 
         <!-- Video Streams -->
         <div id="streams-container">
-          <template is="dom-repeat" items="{{configuration.streams}}">
+          <template is="dom-repeat" items="[[configuration.streams]]">
             <video-stream
-              state="{{state}}"
-              state-manager="{{stateManager}}"
-              synchronization-manager="{{synchronizationManager}}"
-              urls="{{item}}"
-              preload="{{configuration.videoPreload}}"
-              master="{{equals(index, 0)}}"
+              state="[[state]]"
+              urls="[[item]]"
+              preload="[[configuration.videoPreload]]"
               class="video-stream"
-              captions="{{configuration.captions}}"
-              style$="height: calc(100% / {{rowCount(configuration.streams)}});">
+              captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
+              style$="height: calc(100% / [[_rowCount(configuration.streams)]]);">
             </video-stream>
-            <template is="dom-if" if="{{needResizer(index, configuration.streams.length)}}">
-              <resizer-control state="{{state}}" style$="visibility: [[ifThenElse(isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+            <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
+              <resizer-control state="[[state]]" style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"></resizer-control>
             </template>
           </template>
         </div>
-        <captions-display state="{{state}}" state-manager="{{stateManager}}"></captions-display>
+        <captions-display state="[[state]]"></captions-display>
       </div>
 
       <!-- Progress Bars -->
       <div id="progress-container">
-        <template is="dom-if" if="{{configuration.lectureSlides}}">
-          <lecture-slide-bar state="{{state}}" state-manager="{{stateManager}}" slides="{{configuration.lectureSlides}}" class="hidden-for-mobile"></lecture-slide-bar>
+        <template is="dom-if" if="[[configuration.lectureSlides]]">
+          <lecture-slide-bar state="[[state]]" slides="[[configuration.lectureSlides]]" class="hidden-for-mobile"></lecture-slide-bar>
         </template>
-        <video-progress state="{{state}}" state-manager="{{stateManager}}"></video-progress>
+        <video-progress state="[[state]]"></video-progress>
       </div>
 
       <!-- Control Bar -->
       <control-bar
-        state="{{state}}"
-        state-manager="{{stateManager}}"
-        has-chapters="{{hasChapters}}"
-        captions="{{configuration.captions}}"
-        available-qualities="{{availableQualities}}"
+        state="[[state]]"
+        has-chapters="[[_hasChapters]]"
+        caption-languages="[[_captionLanguages]]"
+        available-qualities="[[_availableQualities]]"
         part-of-playlist-or-series="{{configuration.partOfPlaylistOrSeries}}">
       </control-bar>
 
       <!-- Chapter List -->
-      <template is="dom-if" if="{{state.isChapterListShown}}">
-        <chapter-list
-          state="{{state}}"
-          state-manager="{{stateManager}}"
-          chapters="{{configuration.chapters}}">
-        </chapter-list>
-      </template>
+      <chapter-list state="[[state]]" chapters="[[configuration.chapters]]" show-if="[[state.isChapterListShown]]"></chapter-list>
 
-      <interactive-transcript
-        style$="display: [[ifThenElse(state.isInteractiveTranscriptShown, 'initial', 'none')]]"
-        state="{{state}}"
-        state-manager="{{stateManager}}">
-      </interactive-transcript>
-
+      <!-- Interactive Transcript -->
+      <interactive-transcript state="[[state]]" show-if="[[state.isInteractiveTranscriptShown]]"></interactive-transcript>
     </div>
 
   </template>
 
   <script>
-    define(['base-element', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'hls-js', 'constants'], (BaseElement, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, Hls, constants) => {
-      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME} = constants;
+    define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'hls-js', 'constants'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, Hls, constants) => {
+      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES} = constants;
 
-      class VideoPlayer extends BaseElement {
+      class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
         static get is() { return 'video-player'; }
 
         // A function is used to determine default values of properties to
@@ -200,20 +189,33 @@
               type: Object,
               value: () => ({}),
             },
-            stateManager: Object,
-            fullscreenManager: Object,
-            synchronizationManager: Object,
-            isResizerShown: {
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _fullscreenManager: {
+              type: Object,
+              inject: 'FullscreenManager',
+            },
+            _userPreferencesManager: {
+              type: Object,
+              inject: 'UserPreferencesManager',
+            },
+            _isResizerShown: {
               type: Boolean,
               value: false,
             },
-            availableQualities: {
+            _captionLanguages: {
               type: Array,
-              computed: '_availableQualities(configuration.streams)',
+              computed: '_getCaptionLanguages(configuration.captions)',
             },
-            hasChapters: {
+            _availableQualities: {
+              type: Array,
+              computed: '_getAvailableQualities(configuration.streams)',
+            },
+            _hasChapters: {
               type: Boolean,
-              computed: '_hasChapters(configuration.chapters)',
+              computed: '_getHasChapters(configuration.chapters)',
             },
             nextVideoUrl: String,
           };
@@ -221,19 +223,68 @@
 
         static get observers() {
           return [
-            'configurationChanged(configuration)',
-            'availableQualitiesChanged(availableQualities, stateManager)',
-            'foregroundColorChanged(configuration.foregroundColor)',
-            'accentColorChanged(configuration.accentColor)',
-            'backgroundColorChanged(configuration.backgroundColor)',
-            'secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
-            'playStateChanged(state.playState)',
-            'fullscreenChanged(state.fullscreen)',
-            'userPreferencesStateChanged(state.*)',
+            '_configurationChanged(configuration)',
+            '_availableQualitiesChanged(_availableQualities, _stateManager)',
+            '_foregroundColorChanged(configuration.foregroundColor)',
+            '_accentColorChanged(configuration.accentColor)',
+            '_backgroundColorChanged(configuration.backgroundColor)',
+            '_secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
+            '_themeChanged(configuration.themes)',
+            '_playStateChanged(state.playState)',
+            '_fullscreenChanged(state.fullscreen)',
+            '_captionLanguageChanged(state.captionLanguage)',
+            '_userPreferencesStateChanged(state.*)',
           ];
         }
 
-        _availableQualities(streams) {
+        bindServices(iocKernel) {
+          super.bindServices(iocKernel);
+
+          iocKernel.bind(StateManager).toSelf(this, 'state').inSingletonScope();
+          iocKernel.bind(UserPreferencesManager).toSelf().inSingletonScope();
+          iocKernel.bind(SynchronizationManager).toSelf(iocKernel.get(StateManager)).inSingletonScope();
+          iocKernel.bind(FullscreenManager).toSelf(() => this.$['video-player-container']).inSingletonScope();
+        }
+
+        servicesInjectedCallback() {
+          super.servicesInjectedCallback();
+
+          // Build state from provided intial state configuration and default values
+          this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState, this._userPreferencesManager.getPreferences(), this.configuration.userPreferences);
+
+          // Initialize FullscreenManager
+          this._fullscreenManager.onFullscreenChanged((fullscreen) => {
+            this._stateManager.setFullscreen(fullscreen);
+          });
+
+          //
+          if(this.configuration.partOfPlaylistOrSeries){
+            this._stateManager.setPlaylistActive();
+            if (this.configuration.partOfPlaylistOrSeries.nextVideo) this.nextVideoUrl = this.configuration.partOfPlaylistOrSeries.nextVideo;
+          }
+        }
+
+        ready() {
+          super.ready();
+
+          // Add event handlers for mouse events to show/hide resizer
+          this.$['streams-container'].addEventListener('mouseenter', () => this._isResizerShown = true);
+          this.$['streams-container'].addEventListener('mouseleave', () => this._isResizerShown = false);
+
+          // Listen for events from other instances to pause playback when
+          // another instance starts playing
+          window.addEventListener(PLAYING_EVENT_NAME, (e) => {
+            if(e.detail && e.detail.sender !== this) {
+              this._stateManager.pause();
+            }
+          });
+        }
+
+        _getCaptionLanguages(captions) {
+          return captions.map(caption => caption.language);
+        }
+
+        _getAvailableQualities(streams) {
           if (streams) {
             let supportedQualities = Object.values(QUALITY_MODES);
             if(!Hls.isSupported()) {
@@ -246,48 +297,8 @@
           }
         }
 
-        _hasChapters() {
+        _getHasChapters() {
           return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
-        }
-
-        ready() {
-          super.ready();
-
-          // Initialize UserPreferencesManager
-          this.userPreferencesManager = new UserPreferencesManager();
-
-          // Build state from provided intial state configuration and default values
-          this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState, this.userPreferencesManager.getPreferences(), this.configuration.userPreferences);
-
-          // Initialize StateManager
-          this.stateManager = new StateManager(this, 'state');
-
-          // Initialize FullscreenManager
-          this.fullscreenManager = new FullscreenManager(this.$['video-player-container']);
-          this.fullscreenManager.onFullscreenChanged((fullscreen) => {
-            this.stateManager.setFullscreen(fullscreen);
-          });
-
-          // Initialize SynchronizationManager
-          this.synchronizationManager = new SynchronizationManager(this.stateManager);
-
-          // Add event handlers for mouse events to show/hide resizer
-          this.$['streams-container'].addEventListener('mouseenter', () => this.isResizerShown = true);
-          this.$['streams-container'].addEventListener('mouseleave', () => this.isResizerShown = false);
-
-          // Listen for events from other instances to pause playback when
-          // another instance starts playing
-          window.addEventListener(PLAYING_EVENT_NAME, (e) => {
-            if(e.detail && e.detail.sender !== this) {
-              this.stateManager.pause();
-            }
-          });
-
-          //
-          if(this.configuration.partOfPlaylistOrSeries){
-            this.stateManager.setPlaylistActive();
-            if (this.configuration.partOfPlaylistOrSeries.nextVideo) this.nextVideoUrl = this.configuration.partOfPlaylistOrSeries.nextVideo;
-          }
         }
 
         reloadConfiguration() {
@@ -295,23 +306,23 @@
           this.configuration = Object.assign({}, this.configuration);
         }
 
-        configurationChanged(configuration) {
+        _configurationChanged(configuration) {
           // Fill missing properties in provided configuration with default values
           if(Object.keys(DEFAULT_CONFIGURATION).filter(x => !Object.keys(configuration).includes(x)).length > 0) {
             this.configuration = Object.assign({}, DEFAULT_CONFIGURATION, configuration);
           }
         }
 
-        availableQualitiesChanged(availableQualities) {
+        _availableQualitiesChanged(_availableQualities) {
           // If not all streams are available in the specified quality, use default one that is available for all streams
-          if(this.stateManager && !availableQualities.includes(this.state.quality)) {
+          if(this._stateManager && !_availableQualities.includes(this.state.quality)) {
             let defaultQuality = Object.values(QUALITY_MODES)
-                                       .find(quality => availableQualities.includes(quality));
-            this.stateManager.setQuality(defaultQuality);
+                                       .find(quality => _availableQualities.includes(quality));
+            this._stateManager.setQuality(defaultQuality);
           }
         }
 
-        playStateChanged(playState) {
+        _playStateChanged(playState) {
           // Dispatch event if video is playing to stop playback on other instances
           if(playState === PLAY_STATES.PLAYING) {
             let event = new CustomEvent(PLAYING_EVENT_NAME, {
@@ -334,43 +345,74 @@
           }
         }
 
-        fullscreenChanged(fullscreen) {
-          if(this.fullscreenManager) {
+        _fullscreenChanged(fullscreen) {
+          if(this._fullscreenManager) {
             if (fullscreen) {
-              this.fullscreenManager.enterFullscreen();
+              this._fullscreenManager.enterFullscreen();
             } else {
-              this.fullscreenManager.exitFullscreen();
+              this._fullscreenManager.exitFullscreen();
             }
           }
         }
 
         // Since Firefox does not support WebComponents and shadow DOMs, it is not possible to set this in the CSS part.
         // The properties are not correctly evaluated and thus the variable not set.
-        foregroundColorChanged(color) {
-          Polymer.updateStyles({'--foreground-color': color});
+        _foregroundColorChanged(color) {
+          if(color) {
+            Polymer.updateStyles({'--foreground-color': color});
+          }
         }
-        accentColorChanged(color) {
-          Polymer.updateStyles({'--accent-color': color});
+        _accentColorChanged(color) {
+          if(color) {
+            Polymer.updateStyles({'--accent-color': color});
+          }
         }
-        backgroundColorChanged(color) {
-          Polymer.updateStyles({'--background-color': color});
+        _backgroundColorChanged(color) {
+          if(color) {
+            Polymer.updateStyles({'--background-color': color});
+          }
         }
-        secondaryBackgroundColorChanged(color) {
-          Polymer.updateStyles({'--secondary-background-color': color});
+        _secondaryBackgroundColorChanged(color) {
+          if(color) {
+            Polymer.updateStyles({'--secondary-background-color': color});
+          }
         }
-
-        userPreferencesStateChanged(states) {
-          if (this.userPreferencesManager) {
-            this.userPreferencesManager.setPreferences(states);
+        _themeChanged(name) {
+          if(name in THEMES) {
+            // Set colors of theme only if not explicitly determined in configuration
+            if(typeof this.configuration.foregroundColor === 'undefined') {
+              this._foregroundColorChanged(THEMES[name].foregroundColor);
+            }
+            if(typeof this.configuration.accentColor === 'undefined') {
+              this._accentColorChanged(THEMES[name].accentColor);
+            }
+            if(typeof this.configuration.backgroundColor === 'undefined') {
+              this._backgroundColorChanged(THEMES[name].backgroundColor);
+            }
+            if(typeof this.configuration.secondaryBackgroundColor === 'undefined') {
+              this._secondaryBackgroundColorChanged(THEMES[name].secondaryBackgroundColor);
+            }
           }
         }
 
-        needResizer(index, length) {
+        _captionLanguageChanged(language) {
+          if(this.state.isInteractiveTranscriptShown && language === 'off') {
+            this._stateManager.toggleInteractiveTranscript();
+          }
+        }
+
+        _userPreferencesStateChanged(states) {
+          if (this._userPreferencesManager) {
+            this._userPreferencesManager.setPreferences(states);
+          }
+        }
+
+        _needResizer(index, length) {
           // Do not show the resizer when there is no second video to resize
           return (index % 2 === 0) && (index !== length - 1);
         }
 
-        rowCount(streams) {
+        _rowCount(streams) {
           return Math.ceil(streams.length / 2);
         }
       }

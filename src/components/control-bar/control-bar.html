@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
-<link rel="import" href="../../base-element.html">
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
 
 <link rel="import" href="playpause-control.html">
 <link rel="import" href="sound-control.html">
@@ -8,15 +9,17 @@
 <link rel="import" href="speed-control.html">
 <link rel="import" href="chapter-list-switch.html">
 <link rel="import" href="interactive-transcript-switch.html">
-<link rel="import" href="quality-switch.html">
+<link rel="import" href="quality-control.html">
 <link rel="import" href="mute-control.html">
 <link rel="import" href="fullscreen-control.html">
 <link rel="import" href="caption-control.html">
 <link rel="import" href="navigation-button.html">
 
+<link rel="import" href="../../styling/global--style-module.html">
+
 <dom-module id="control-bar">
   <template>
-    <style type="text/css">
+    <style type="text/css" include="global--style-module">
       #container__control_bar {
         display: flex;
         align-items: stretch;
@@ -25,14 +28,14 @@
         background-color: white;
       }
 
-      /* This class shall be used to define from which element on 
+      /* This class shall be used to define from which element on
       the content is shown on the right side of the controlbar */
       .-flex-grow {
         flex-grow: 1;
         justify-content: flex-end;
         background-color: #424242;
         background-color: var(--background-color-for-primary);
-      } 
+      }
 
       @media (max-width: 768px) {
         .hidden-for-mobile {
@@ -42,77 +45,53 @@
     </style>
 
     <div id="container__control_bar">
-      <template is="dom-if" if="{{partOfPlaylistOrSeries.previousVideo}}">
-        <navigation-button 
-          state="{{state}}" 
-          state-manager="{{stateManager}}" 
-          previous-video="true" 
-          video-url="{{partOfPlaylistOrSeries.previousVideo}}">
-        </navigation-button>  
+      <template is="dom-if" if="[[partOfPlaylistOrSeries.previousVideo]]">
+        <navigation-button state="[[state]]" previous-video="true" video-url="[[partOfPlaylistOrSeries.previousVideo]]"></navigation-button>  
       </template>
-      <playpause-control state="{{state}}" state-manager="{{stateManager}}"></playpause-control>
+      <playpause-control state="[[state]]"></playpause-control>
       <template is="dom-if" if="{{partOfPlaylistOrSeries.nextVideo}}">
-        <navigation-button  
-          state="{{state}}" 
-          state-manager="{{stateManager}}" 
-          next-video="true" 
-          video-url="{{partOfPlaylistOrSeries.nextVideo}}">
-        </navigation-button>
+        <navigation-button state="[[state]]" next-video="true" video-url="{{partOfPlaylistOrSeries.nextVideo}}"></navigation-button>
       </template>
-      <videotime-display state="{{state}}" state-manager="{{stateManager}}" class="-flex-grow"></videotime-display>
-      <template is="dom-if" if="{{captions}}">
-        <caption-control 
-          state="{{state}}" 
-          state-manager="{{stateManager}}" 
-          captions="{{captions}}" 
-          class="hidden-for-mobile">
-        </caption-control>
+      <videotime-display state="[[state]]" class="-flex-grow"></videotime-display>
+      <template is="dom-if" if="[[captionLanguages]]">
+        <caption-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></caption-control>
       </template>
-      <template is="dom-if" if="{{captions}}">
-        <interactive-transcript-switch 
-          state="{{state}}" 
-          state-manager="{{stateManager}}" 
-          class="hidden-for-mobile"> 
-        </interactive-transcript-switch>
+      <template is="dom-if" if="[[captionLanguages]]">
+        <interactive-transcript-switch state="[[state]]" class="hidden-for-mobile"></interactive-transcript-switch>
       </template>
-      <speed-control state="{{state}}" state-manager="{{stateManager}}" class="hidden-for-mobile"></speed-control>
-      <template is="dom-if" if="{{hasMultipleQualities}}">
-        <quality-switch 
-          state="{{state}}" 
-          state-manager="{{stateManager}}" 
-          available-qualities="{{availableQualities}}">
-        </quality-switch>
+      <speed-control state="[[state]]" class="hidden-for-mobile"></speed-control>
+      <template is="dom-if" if="[[_hasMultipleQualities]]">
+        <quality-control state="[[state]]" qualities="[[availableQualities]]"></quality-control>
       </template>
-      <template is="dom-if" if="{{hasChapters}}">
-        <chapter-list-switch 
-          state="{{state}}" 
-          state-manager="{{stateManager}}" 
-          class="hidden-for-mobile">
-        </chapter-list-switch>
+      <template is="dom-if" if="[[hasChapters]]">
+        <chapter-list-switch state="[[state]]" class="hidden-for-mobile"></chapter-list-switch>
       </template>
-      <mute-control state="{{state}}" state-manager="{{stateManager}}" class="hidden-for-mobile"></mute-control>
-      <sound-control state="{{state}}" state-manager="{{stateManager}}" class="hidden-for-mobile"></sound-control>
-      <full-screen-control state="{{state}}" state-manager="{{stateManager}}"></full-screen-control>
+      <mute-control state="[[state]]" class="hidden-for-mobile"></mute-control>
+      <sound-control state="[[state]]" class="hidden-for-mobile"></sound-control>
+      <full-screen-control state="[[state]]"></full-screen-control>
     </div>
   </template>
 
   <script>
-    define('control-bar', ['base-element'], (BaseElement) => {
+    define('control-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
       const SKIP_SECONDS = 15;
 
-      class ControlBar extends BaseElement {
+      class ControlBar extends IocRequesterMixin(BindingHelpersMixin(Polymer.Element)) {
         static get is() { return 'control-bar'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
             hasChapters: Boolean,
-            captions: Object,
+            captionLanguages: Array,
             availableQualities: Boolean,
-            hasMultipleQualities: {
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _hasMultipleQualities: {
               type: Boolean,
-              computed: '_hasMultipleQualities(availableQualities)',
+              computed: '_getHasMultipleQualities(availableQualities)',
             },
             nextVideo: Object,
             partOfPlaylistOrSeries: Object,
@@ -121,33 +100,33 @@
 
         ready() {
           super.ready();
-          window.addEventListener('keydown', this.onkeydown.bind(this));
+
+          // Add event listener for keyboard shortcuts
+          window.addEventListener('keydown', (e) => {
+            if (e.defaultPrevented) {
+              // Do nothing if the event was already processed
+              return;
+            }
+
+            if (e.key === 'ArrowRight' || e.key === 'Right') {
+              this._stateManager.skipSeconds(SKIP_SECONDS);
+            } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+              this._stateManager.skipSeconds(-SKIP_SECONDS);
+            } else if (e.key === ' ' || e.key === 'p') {
+              this._stateManager.togglePlayPause();
+            } else if (e.key === 'f') {
+              this._stateManager.toggleFullscreen();
+            } else {
+              return;
+            }
+
+            // Make sure the user doesn't trigger anything else with their
+            // keyboard interaction, like scrolling the page
+            e.preventDefault();
+          });
         }
 
-        onkeydown(e) {
-          if (e.defaultPrevented) {
-            // Do nothing if the event was already processed
-            return;
-          }
-
-          if(e.key === 'ArrowRight') {
-            this.stateManager.skipSeconds(SKIP_SECONDS);
-          } else if (e.key === 'ArrowLeft') {
-            this.stateManager.skipSeconds(-SKIP_SECONDS);
-          } else if (e.key === ' ' || e.key === 'p') {
-            this.stateManager.togglePlayPause();
-          } else if (e.key === 'f') {
-            this.stateManager.toggleFullscreen();
-          } else {
-            return;
-          }
-
-          // Make sure the user doesn't trigger anything else with their
-          // keyboard interaction, like scrolling the page
-          e.preventDefault();
-        }
-
-        _hasMultipleQualities() {
+        _getHasMultipleQualities() {
           return this.availableQualities.length > 1;
         }
       }
