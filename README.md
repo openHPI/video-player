@@ -62,18 +62,48 @@ The player configuration is provided as JSON object:
     * **playbackRate** (Number): `<[0.7, 1.0, 1.3, 1.5, 1.8, 2.0]>` (default: `1.0`)
     * **volume** (Number): `<0..1>` (default: `1.0`)
     * **muted** (Boolean): (default: `false`)
-    * **isChapterListShown** (Boolean): (default: `false`)
+    * **captionLanguage** (String): (default: `off`)
 * **userPreferences** (Object): Override parts of the default/initial/saved state. Meant to be provided by the server based on the current user. See [User Preferences](#user-preferences)
-* **primaryColor** (String): HEX code of the color for text and all other main content (default: `#FFFFFF`)
-* **secondaryColor** (String): HEX code of the highlighting color (default: `#DD6112`)
-* **backgroundColorForPrimary** (String): HEX code of the background for the `primaryColor` (default: `#424242`)
+* **foregroundColor** (String): HEX code of the color for text and all other main content (default: `#FFFFFF`)
+* **accentColor** (String): HEX code of the highlighting color (default: `#DD6112`)
+* **backgroundColor** (String): HEX code of the background for the `foregroundColor` (default: `#424242`)
+* **secondaryBackgroundColor** (String): HEX code of another background color used for example for displaying the buffer (default: `#424242`)
+* **theme** (String): Predefined color theme (can be adjusted by settings the colors explicitly) `<'dark-orange', 'dark-yellow', 'dark-blue', 'light-green'>`
 * **videoPreload** (Boolean): Turns on/off preloading of the videos when the page loads (default: `true`)
-* **chapters** (Array): List of timestamps with chapter names (default: `[]`)
+* **chapters** (Array): List of timestamps with chapter names
     ```JSON
     "chapters": [
       {
         "text": "Chapter 1",
         "seconds": 0
+      }
+    ]
+    ```
+* **captions** (Array): List of caption files for different languages
+    ```JSON
+    "captions": [
+      {
+        "language": "en",
+        "source": "/captions/en.vtt"
+      }
+    ]
+    ```
+* **lectureSlides** (Array): List of lecture slides and corresponding start times in seconds to show below the progress bar
+    ```JSON
+    "lectureSlides": [
+      {
+        "imageUrl": "/image/of/slide.jpg",
+        "startPosition": 0
+      }
+    ]
+    ```
+* **relatedVideos** (Array): List of related videos that are shown after the video has ended
+    ```JSON
+    "relatedVideos": [
+      {
+        "title": "Title of related video",
+        "imageUrl": "/image/of/thumbnail.jpg",
+        "url": "/url/of/video-page"
       }
     ]
     ```
