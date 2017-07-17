@@ -42,26 +42,53 @@
     </style>
 
     <div id="container__control_bar">
-      <template is="dom-if" if="{{previousVideo}}">
-        <navigation-button state="{{state}}" state-manager="{{stateManager}}" previous-video="true" content="{{previousVideo}}"></navigation-button>
+      <template is="dom-if" if="{{partOfPlaylistOrSeries.previousVideo}}">
+        <navigation-button 
+          state="{{state}}" 
+          state-manager="{{stateManager}}" 
+          previous-video="true" 
+          video-url="{{partOfPlaylistOrSeries.previousVideo}}">
+        </navigation-button>  
       </template>
       <playpause-control state="{{state}}" state-manager="{{stateManager}}"></playpause-control>
-      <template is="dom-if" if="{{nextVideo}}">
-        <navigation-button  state="{{state}}" state-manager="{{stateManager}}" next-video="true" content="{{nextVideo}}"></navigation-button>
+      <template is="dom-if" if="{{partOfPlaylistOrSeries.nextVideo}}">
+        <navigation-button  
+          state="{{state}}" 
+          state-manager="{{stateManager}}" 
+          next-video="true" 
+          video-url="{{partOfPlaylistOrSeries.nextVideo}}">
+        </navigation-button>
       </template>
       <videotime-display state="{{state}}" state-manager="{{stateManager}}" class="-flex-grow"></videotime-display>
       <template is="dom-if" if="{{captions}}">
-        <caption-control state="{{state}}" state-manager="{{stateManager}}" captions="{{captions}}" class="hidden-for-mobile"></caption-control>
+        <caption-control 
+          state="{{state}}" 
+          state-manager="{{stateManager}}" 
+          captions="{{captions}}" 
+          class="hidden-for-mobile">
+        </caption-control>
       </template>
       <template is="dom-if" if="{{captions}}">
-        <interactive-transcript-switch state="{{state}}" state-manager="{{stateManager}}" class="hidden-for-mobile"></chapter-list-switch>
+        <interactive-transcript-switch 
+          state="{{state}}" 
+          state-manager="{{stateManager}}" 
+          class="hidden-for-mobile"> 
+        </interactive-transcript-switch>
       </template>
       <speed-control state="{{state}}" state-manager="{{stateManager}}" class="hidden-for-mobile"></speed-control>
       <template is="dom-if" if="{{hasMultipleQualities}}">
-        <quality-switch state="{{state}}" state-manager="{{stateManager}}" available-qualities="{{availableQualities}}"></quality-switch>
+        <quality-switch 
+          state="{{state}}" 
+          state-manager="{{stateManager}}" 
+          available-qualities="{{availableQualities}}">
+        </quality-switch>
       </template>
       <template is="dom-if" if="{{hasChapters}}">
-        <chapter-list-switch state="{{state}}" state-manager="{{stateManager}}" class="hidden-for-mobile"></chapter-list-switch>
+        <chapter-list-switch 
+          state="{{state}}" 
+          state-manager="{{stateManager}}" 
+          class="hidden-for-mobile">
+        </chapter-list-switch>
       </template>
       <mute-control state="{{state}}" state-manager="{{stateManager}}" class="hidden-for-mobile"></mute-control>
       <sound-control state="{{state}}" state-manager="{{stateManager}}" class="hidden-for-mobile"></sound-control>
@@ -88,7 +115,7 @@
               computed: '_hasMultipleQualities(availableQualities)',
             },
             nextVideo: Object,
-            previousVideo: Object,
+            partOfPlaylistOrSeries: Object,
           };
         }
 

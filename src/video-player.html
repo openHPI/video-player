@@ -158,8 +158,7 @@
         has-chapters="{{hasChapters}}"
         captions="{{configuration.captions}}"
         available-qualities="{{availableQualities}}"
-        next-video="{{configuration.nextVideo}}"
-        previous-video="{{configuration.previousVideo}}">
+        part-of-playlist-or-series="{{configuration.partOfPlaylistOrSeries}}">
       </control-bar>
 
       <!-- Chapter List -->
@@ -216,6 +215,7 @@
               type: Boolean,
               computed: '_hasChapters(configuration.chapters)',
             },
+            nextVideoUrl: String,
           };
         }
 
@@ -282,6 +282,12 @@
               this.stateManager.pause();
             }
           });
+
+          //
+          if(this.configuration.partOfPlaylistOrSeries){
+            this.stateManager.setPlaylistActive();
+            if (this.configuration.partOfPlaylistOrSeries.nextVideo) this.nextVideoUrl = this.configuration.partOfPlaylistOrSeries.nextVideo;
+          }
         }
 
         reloadConfiguration() {
@@ -315,6 +321,16 @@
             });
 
             window.dispatchEvent(event);
+          }
+
+          /*
+           * when video has finished and video is part of playlist
+           * start next video after 5 seconds
+           */
+          if (playState === PLAY_STATES.FINISHED && this.state.playlistActive) {
+            if(this.nextVideoUrl){
+              setTimeout(( nextVideoUrl ) => { window.open(this.nextVideoUrl,"_self"); }, 5000);               
+            }
           }
         }
 

@@ -15,10 +15,9 @@
       }
     </style>
 
-
     <template is="dom-if" if="{{previousVideo}}">
       <div id="container__previous_video" class="user_controls">
-        <a id="button__previous_video" class="button" on-click="handleClick">
+        <a id="button__previous_video" class="button" href="{{videoUrl}}">
           <i class="fa fa-step-backward"></i>
         </a>
       </div>
@@ -26,12 +25,11 @@
 
     <template is="dom-if" if="{{nextVideo}}">
       <div id="container__next_video" class="user_controls">
-        <a id="button__next_video" class="button" on-click="handleClick">
+        <a id="button__next_video" class="button" href="{{videoUrl}}">
           <i class="fa fa-step-forward"></i>
         </a>
       </div>
     </template>
-
 
   </template>
 
@@ -52,16 +50,21 @@
               type: Boolean,
               value: false
             },
-            content: {
-              type: Object,
-              value: {}
+            videoUrl: {
+              type: String
             }
           };
         }
 
+        /*
         handleClick() {
+
           var http = new XMLHttpRequest();
-          var url = "/target_function";
+          var url;
+
+          if (this.previousVideo) url  = "/previous_video";
+          if (this.nextVideo) url = "/next_video";
+
           var params = JSON.stringify(this.content);
           http.open("POST", url, true);
 
@@ -69,12 +72,13 @@
           http.setRequestHeader("Content-type", "application/json;charset=UTF-8");
 
           http.onreadystatechange = function() {//Call a function when the state changes.
-              if(http.readyState == 4 && http.status == 200) {
-                  alert(http.responseText);
-              }
+            if(http.readyState == 4 && http.status == 200) {
+                alert(http.responseText);
+            }
           }
           http.send(params);
         }
+        */
       }
 
       window.customElements.define(NavigationButton.is, NavigationButton);

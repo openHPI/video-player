@@ -265,6 +265,16 @@
       setCurrentCaptionCue(newCaption) {
         this.setState('currentCaptionCue', newCaption);
       }
+
+
+      /*
+       *
+       *
+       *
+       */
+      setPlaylistActive() {
+        this.setState('playlistActive', !this.state.playlistActive);
+      }
     }
 
     return StateManager;
