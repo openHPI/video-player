@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
-<link rel="import" href="../../base-element.html">
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 <link rel="import" href="../base-components/select-control.html">
 
@@ -12,53 +13,39 @@
     </style>
 
     <select-control
-      values="[[captionLanguages]]"
-      selected-value="[[state.selectedCaption]]"
-      on-change="selectionChanged"
+      values="[[_values]]"
+      selected-value="[[state.captionLanguage]]"
+      on-change="_selectionChanged"
       icon-classes="fa fa-cc">
     </select-control>
   </template>
 
   <script>
-    define('caption-control', ['base-element'], (BaseElement) => {
-      class CaptionControl extends BaseElement {
+    define('caption-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class CaptionControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'caption-control'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
-            captions: Object,
-            captionLanguages: {
+            languages: Array,
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _values: {
               type: Array,
-              value: ['off'],
+              computed: '_getValues(languages.*)',
             },
           };
         }
 
-        ready() {
-          // Caption languages need to be ready before super.ready() is called
-          this.getCaptionLanguages();
-          super.ready();
+        _getValues() {
+          return ['off'].concat(this.languages);
         }
 
-        dummy(element){
-          return element;
-        }
-
-        getCaptionLanguages() {
-          for (let captionElement in this.captions) {
-            let captionObject = this.captions[captionElement];
-            for (let property in captionObject) {
-              if( ! property.localeCompare('language')){
-                this.push('captionLanguages', captionObject[property]);
-              }
-            }
-          }
-        }
-
-        selectionChanged(e) {
-          this.stateManager.setCaptionLanguage(e.target.selectedValue);
+        _selectionChanged(e) {
+          this._stateManager.setCaptionLanguage(e.target.selectedValue);
         }
       }
 

@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
 
-<link rel="import" href="../base-element.html">
+<link rel="import" href="../mixins/binding-helpers.html">
+<link rel="import" href="../mixins/ioc-requester.html">
 <link rel="import" href="../styling/lists--style-module.html">
 
 <dom-module id="chapter-list">
@@ -26,10 +27,10 @@
 
     <div id="container__chapter_list" class="container__list">
       <ul class="list">
-          <template is="dom-repeat" items="{{chapters}}">
+          <template is="dom-repeat" items="[[chapters]]">
             <li class="list_item">
-              <a class$="link__chapter_bookmark list_item__link [[ifEqualsThen(item, activeChapter, 'active fa-caret-right')]]" on-click="handleClick">
-                {{item.text}}
+              <a class$="link__chapter_bookmark list_item__link [[ifEqualsThen(item, activeChapter, 'active fa-caret-right')]]" on-click="_handleClick">
+                [[item.text]]
               </a>
             </li>
           </template>
@@ -38,38 +39,33 @@
   </template>
 
   <script>
-    define('chapter-list', ['base-element'], (BaseElement) => {
-      class ChapterList extends BaseElement {
+    define('chapter-list', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class ChapterList extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'chapter-list'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
-            chapters: {
+            chapters: Array,
+            _stateManager: {
               type: Object,
-              value: [],
+              inject: 'StateManager',
             },
-            activeChapter: Object,
+            activeChapter: {
+              type: Object,
+              computed: '_getActiveChapter(chapters, state.position)',
+            },
           };
         }
 
-        static get observers() {
-          return [
-            'updateActiveChapter(chapters, state.position)',
-          ];
+        _getActiveChapter(chapters, position) {
+          return chapters.slice()
+                         .reverse()
+                         .find(chapter => chapter.seconds <= position);
         }
 
-        handleClick(e) {
-          let chapter = e.model.item;
-          this.stateManager.setPosition(chapter.seconds);
-        }
-
-        updateActiveChapter() {
-          //console.log(this.state.position);
-          this.activeChapter = this.chapters.slice()
-                                            .reverse()
-                                            .find(chapter => chapter.seconds <= this.state.position);
+        _handleClick(e) {
+          this._stateManager.setPosition(e.model.item.seconds);
         }
       }
 

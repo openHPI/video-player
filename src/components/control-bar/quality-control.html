@@ -1,0 +1,57 @@
+<link rel="import" href="../../../bower_components/imd/imd.html">
+
+<link rel="import" href="../../constants.html">
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
+<link rel="import" href="../base-components/select-control.html">
+
+<dom-module id="quality-control">
+
+  <template>
+    <style type="text/css" include="control-bar--style-module">
+    </style>
+
+    <div id="container__quality_switch">
+      <select-control
+        values="[[qualities]]"
+        selected-value="[[state.quality]]"
+        formatter="[[_getQualityName]]"
+        on-change="_selectionChanged"
+        icon-classes="fa fa-desktop">
+      </select-control>
+    </div>
+  </template>
+
+  <script>
+    define('quality-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {QUALITY_NAMES} = constants;
+
+      class QualityControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'quality-control'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            qualities: Array,
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+          };
+        }
+
+        _getQualityName(quality) {
+          return QUALITY_NAMES[quality];
+        }
+
+        _selectionChanged(e) {
+          this._stateManager.setQuality(e.target.selectedValue);
+        }
+      }
+
+      window.customElements.define(QualityControl.is, QualityControl);
+    });
+  </script>
+
+</dom-module>

@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
-<link rel="import" href="../../base-element.html">
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 <link rel="import" href="../base-components/progress-bar.html">
 
@@ -13,44 +14,47 @@
       }
     </style>
 
-    <div id="container__sound_control" class="user_controls">
+    <div id="container__sound_control" class="user_controls -no-padding-left">
       <progress-bar
         id="progress__sound_control"
-        border
-        value$="[[toStringOrEmpty(effectiveVolume)]]"
-        on-change="handleChange">
+        value$="[[toStringOrEmpty(_effectiveVolume)]]"
+        on-change="_handleChange"
+        border>
       </progress-bar>
     </div>
 
   </template>
 
   <script>
-    define('sound-control', ['base-element'], (BaseElement) => {
-      class SoundControl extends BaseElement {
+    define('sound-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class SoundControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'sound-control'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
-            effectiveVolume: {
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _effectiveVolume: {
               type: Number,
-              computed: '_effectiveVolume(state.volume, state.muted)',
+              computed: '_getEffectiveVolume(state.volume, state.muted)',
             },
           };
         }
 
-        handleChange(e) {
-          this.stateManager.unmute();
-          this.stateManager.setVolume(e.target.value);
-        }
-
-        _effectiveVolume(volume, muted) {
+        _getEffectiveVolume(volume, muted) {
           if(typeof volume === 'undefined') {
             return '';
           }
 
           return muted ? 0 : volume;
+        }
+
+        _handleChange(e) {
+          this._stateManager.unmute();
+          this._stateManager.setVolume(e.target.value);
         }
       }
 

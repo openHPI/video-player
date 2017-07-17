@@ -1,8 +1,12 @@
-<link rel="import" href="../../../../bower_components/imd/imd.html">
+<link rel="import" href="../../../bower_components/imd/imd.html">
+
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../styling/progress-container--style-module.html">
 
 <dom-module id="lecture-slide">
   <template>
-    <style type="text/css">
+  <style type="text/css" include="progress-container--style-module">
       #container__lecture_slide_element {
         position: absolute;
         right: 0;
@@ -36,8 +40,8 @@
       }
     </style>
 
-    <div id="container__lecture_slide_element" 
-         on-click="handleClick" 
+    <div id="container__lecture_slide_element"
+         on-click="_handleClick"
          style$="left: [[_stylePercentage(slide.startPosition, state.duration)]]%;"
          class$="[[_getSlidePosition(slide.startPosition, state.duration)]]">
         <img id="image__slide_preview" src="[[slide.imageUrl]]">
@@ -46,25 +50,28 @@
   </template>
 
   <script>
-    define('lecture-slide', ['base-element'], (BaseElement) => {
-      class LectureSlide extends BaseElement {
+    define('lecture-slide', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class LectureSlide extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'lecture-slide'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
             slide: Object,
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
           };
         }
 
         _stylePercentage(position, duration) {
           return position / duration * 100;
-        }        
+        }
 
         _getSlidePosition(position, duration) {
           let percentage = this._stylePercentage(position, duration);
-          // This is an approximation 
+          // This is an approximation
           // to avoid that the slide image overflows the video container
           if(percentage > 90) {
             return '-right';
@@ -73,8 +80,8 @@
           }
         }
 
-        handleClick(){
-          this.stateManager.setPosition(this.slide.startPosition);
+        _handleClick(){
+          this._stateManager.setPosition(this.slide.startPosition);
         }
       }
 

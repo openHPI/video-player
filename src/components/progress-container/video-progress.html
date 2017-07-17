@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
 
-<link rel="import" href="../../base-element.html">
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/progress-container--style-module.html">
 <link rel="import" href="../base-components/progress-bar.html">
 
@@ -15,25 +16,28 @@
         max="[[toStringOrEmpty(state.duration)]]"
         value$="[[toStringOrEmpty(state.position)]]"
         secondary-value$="[[toStringOrEmpty(state.bufferPosition)]]"
-        on-change="handleChange">
+        on-change="_handleChange">
       </progress-bar>
     </div>
   </template>
 
   <script>
-    define('video-progress', ['base-element'], (BaseElement) => {
-      class VideoProgress extends BaseElement {
+    define('video-progress', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class VideoProgress extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'video-progress'; }
 
         static get properties() {
           return {
             state: Object,
-            stateManager: Object,
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
           };
         }
 
-        handleChange(e) {
-          this.stateManager.setPosition(e.target.value);
+        _handleChange(e) {
+          this._stateManager.setPosition(e.target.value);
         }
       }
 
