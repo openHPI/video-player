@@ -1,0 +1,27 @@
+<link rel="import" href="../constants.html">
+
+<script>
+  define('analytics-manager', ['constants'], (constants) => {
+    const {ANALYTICS_TOPICS} = constants;
+
+    class AnalyticsManager {
+      /**
+       * Initializes a new AnalyticsManager instance.
+       * @param {VideoPlayer} videoPlayer  The VideoPlayer that dispatches the events.
+       * @return {AnalyticsManager}  The new AnalyticsManager instance.
+       */
+      constructor(videoPlayer) {
+        this.videoPlayer = videoPlayer;
+      }
+
+      // TODO: get ref to statemanager function with parameters an call it, then fire event
+      fireEvent() {
+        var event = new CustomEvent('analytics', { 'detail': 'whooooho'});
+        this.videoPlayer.dispatchEvent(event);
+      }
+
+    }
+
+    return AnalyticsManager;
+  });
+</script>
