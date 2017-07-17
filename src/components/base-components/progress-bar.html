@@ -94,7 +94,7 @@
           }
 
           // Calculate value that will be between 0 and the max value
-          let clickedValue = x * this.max / this.getBoundingClientRect().width;
+          let clickedValue = Math.max(0, Math.min(this.max, x * this.max / this.getBoundingClientRect().width));
           // Check if still within borders
           if(clickedValue <= this.max) {
             this.value = clickedValue;
