@@ -84,7 +84,7 @@ The player configuration is provided as JSON object:
     "captions": [
       {
         "language": "en",
-        "source": "<URL OF VTT file>"
+        "source": "/captions/en.vtt"
       }
     ]
     ```
@@ -92,8 +92,8 @@ The player configuration is provided as JSON object:
     ```JSON
     "lectureSlides": [
       {
-        "imageUrl": "<URL OF SLIDE IMAGE>",
-        "startPosition": <START TIME OF SLIDE>
+        "imageUrl": "/image/of/slide.jpg",
+        "startPosition": 0
       }
     ]
     ```
@@ -101,9 +101,9 @@ The player configuration is provided as JSON object:
     ```JSON
     "relatedVideos": [
       {
-        "title": "<TITLE OF VIDEO>",
-        "imageUrl": "<URL OF THUMBNAIL>",
-        "url": "<URL OF VIDEO PAGE>"
+        "title": "Title of related video",
+        "imageUrl": "/image/of/thumbnail.jpg",
+        "url": "/url/of/video-page"
       }
     ]
     ```
