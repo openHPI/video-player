@@ -49,8 +49,8 @@
         <navigation-button state="[[state]]" previous-video="true" video-url="[[partOfPlaylistOrSeries.previousVideo]]"></navigation-button>  
       </template>
       <playpause-control state="[[state]]"></playpause-control>
-      <template is="dom-if" if="{{partOfPlaylistOrSeries.nextVideo}}">
-        <navigation-button state="[[state]]" next-video="true" video-url="{{partOfPlaylistOrSeries.nextVideo}}"></navigation-button>
+      <template is="dom-if" if="[[partOfPlaylistOrSeries.nextVideo]]">
+        <navigation-button state="[[state]]" next-video="true" video-url="[[partOfPlaylistOrSeries.nextVideo]]"></navigation-button>
       </template>
       <videotime-display state="[[state]]" class="-flex-grow"></videotime-display>
       <template is="dom-if" if="[[captionLanguages]]">

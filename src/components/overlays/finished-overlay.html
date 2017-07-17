@@ -65,13 +65,19 @@
             _stateManager: Object,
             _isVisible: {
               type: Boolean,
-              computed: '_getIsVisible(state.playState)',
+              computed: '_getIsVisible(state.playState, state.autoPlayNextVideo)',
             },
           };
         }
 
-        _getIsVisible(playState) {
-          return playState === PLAY_STATES.FINISHED;
+        //
+        _getIsVisible(playState, autoPlayNextVideo) {
+          if(!this.state.playlistActive){
+            return playState === PLAY_STATES.FINISHED;
+          }
+          else {
+            return playState === PLAY_STATES.FINISHED && !autoPlayNextVideo;
+          }
         }
 
         _getRows() {
