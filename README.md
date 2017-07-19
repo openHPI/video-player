@@ -66,8 +66,9 @@ The player configuration is provided as JSON object:
 * **userPreferences** (Object): Override parts of the default/initial/saved state. Meant to be provided by the server based on the current user. See [User Preferences](#user-preferences)
 * **foregroundColor** (String): HEX code of the color for text and all other main content (default: `#FFFFFF`)
 * **accentColor** (String): HEX code of the highlighting color (default: `#DD6112`)
+* **fontColorOnAccentColor** (String): HEX code of the font color on the `accentColor` (default: `#000000`). Take care that the contrast ratio is high enough
 * **backgroundColor** (String): HEX code of the background for the `foregroundColor` (default: `#424242`)
-* **secondaryBackgroundColor** (String): HEX code of another background color used for example for displaying the buffer (default: `#424242`)
+* **secondaryBackgroundColor** (String): HEX code of another background color used for example for displaying the buffer (default: `#424242`). Take care that the `foregroundColor` has a high contrast to both background colors
 * **theme** (String): Predefined color theme (can be adjusted by settings the colors explicitly) `<'dark-orange', 'dark-yellow', 'dark-blue', 'light-green'>`
 * **videoPreload** (Boolean): Turns on/off preloading of the videos when the page loads (default: `true`)
 * **chapters** (Array): List of timestamps with chapter names
