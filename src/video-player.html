@@ -29,7 +29,6 @@
       :host {
         display: block;
         border: 1px solid grey;
-        border-bottom: none;
         background-color: black;
       }
 
@@ -225,9 +224,10 @@
             '_availableQualitiesChanged(_availableQualities, _stateManager)',
             '_foregroundColorChanged(configuration.foregroundColor)',
             '_accentColorChanged(configuration.accentColor)',
+            '_fontColorOnAccentColorChanged(configuration.fontColorOnAccentColor)',
             '_backgroundColorChanged(configuration.backgroundColor)',
             '_secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
-            '_themeChanged(configuration.themes)',
+            '_themeChanged(configuration.theme)',
             '_playStateChanged(state.playState)',
             '_fullscreenChanged(state.fullscreen)',
             '_captionLanguageChanged(state.captionLanguage)',
@@ -349,6 +349,11 @@
             Polymer.updateStyles({'--accent-color': color});
           }
         }
+        _fontColorOnAccentColorChanged(color) {
+          if(color) {
+            Polymer.updateStyles({'--font-color-on-accent-color': color});
+          }
+        }
         _backgroundColorChanged(color) {
           if(color) {
             Polymer.updateStyles({'--background-color': color});
@@ -367,6 +372,9 @@
             }
             if(typeof this.configuration.accentColor === 'undefined') {
               this._accentColorChanged(THEMES[name].accentColor);
+            }
+            if(typeof this.configuration.fontColorOnAccentColor === 'undefined') {
+              this._fontColorOnAccentColorChanged(THEMES[name].fontColorOnAccentColor);
             }
             if(typeof this.configuration.backgroundColor === 'undefined') {
               this._backgroundColorChanged(THEMES[name].backgroundColor);

@@ -84,9 +84,12 @@
     const DEFAULT_CONFIGURATION = {
       streams: [],
       chapters: [],
+      captions: [],
+      lectureSlides: [],
+      relatedVideos: [],
       initialState: {},
       videoPreload: true,
-      themes: 'dark-orange',
+      theme: 'dark-orange',
     };
 
     /**
@@ -97,26 +100,30 @@
       'dark-orange': {
         foregroundColor: '#FFFFFF',
         accentColor: '#DD6112',
+        fontColorOnAccentColor: '#000000',
         backgroundColor: '#424242',
         secondaryBackgroundColor: '#6D6D6D',
       },
       'dark-yellow': {
         foregroundColor: '#FFFFFF',
         accentColor: '#F5A704',
+        fontColorOnAccentColor: '#000000',
         backgroundColor: '#424242',
         secondaryBackgroundColor: '#6D6D6D',
       },
       'dark-blue': {
         foregroundColor: '#FFFFFF',
         accentColor: '#0B72B5',
+        fontColorOnAccentColor: '#FFFFFF',
         backgroundColor: '#424242',
         secondaryBackgroundColor: '#6D6D6D',
       },
       'light-green': {
         foregroundColor: '#001C3B',
         accentColor: '#ABB324',
+        fontColorOnAccentColor: '#000000',
         backgroundColor: '#FFFFFF',
-        secondaryBackgroundColor: '#565656',
+        secondaryBackgroundColor: '#AAAAAA',
       },
     };
 

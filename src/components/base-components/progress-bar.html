@@ -15,8 +15,7 @@
         position: relative;
         width: 100%;
         height: 15px;
-        border: 1px solid #5A6065;
-        border: 1px solid var(--secondary-background-color);
+        border: 1px solid grey;
         @apply --background-color;
       }
       #container__progress_bar.-no-border {
@@ -94,7 +93,7 @@
           }
 
           // Calculate value that will be between 0 and the max value
-          let clickedValue = x * this.max / this.getBoundingClientRect().width;
+          let clickedValue = Math.max(0, Math.min(this.max, x * this.max / this.getBoundingClientRect().width));
           // Check if still within borders
           if(clickedValue <= this.max) {
             this.value = clickedValue;

@@ -189,9 +189,13 @@
           throw new RangeError('Value must be between 0 and 1.');
         }
 
-        // Always unmute first to avoid potential inconsistent states between
+        // Always (un)mute first to avoid potential inconsistent states between
         // e.g. mute button icon and sound-control-bar
-        this.unmute();
+        if(volume === 0) {
+          this.mute();
+        } else {
+          this.unmute();
+        }
         this.setState('volume', volume);
       }
 
