@@ -41,7 +41,7 @@
         }
 
         _handleChange(e) {
-          this._stateManager.setPosition(e.target.value);
+          this._analyticsManager.changeState('setPosition', [e.target.value], {verb: 'video_seek', tack_chnage: true});
         }
       }
 

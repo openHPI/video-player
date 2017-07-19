@@ -245,6 +245,7 @@
 
           iocKernel.bind(StateManager).toSelf(this, 'state').inSingletonScope();
           iocKernel.bind(UserPreferencesManager).toSelf().inSingletonScope();
+          iocKernel.bind(AnalyticsManager).toSelf(this, iocKernel.get(StateManager)).inSingletonScope();
           iocKernel.bind(SynchronizationManager).toSelf(iocKernel.get(StateManager)).inSingletonScope();
           iocKernel.bind(FullscreenManager).toSelf(() => this.$['video-player-container']).inSingletonScope();
         }
@@ -263,9 +264,6 @@
 
         ready() {
           super.ready();
-
-          // Initialize AnalyticsManager
-          this.analyticsManager = new AnalyticsManager(this);
 
           // Add event handlers for mouse events to show/hide resizer
           this.$['streams-container'].addEventListener('mouseenter', () => this._isResizerShown = true);

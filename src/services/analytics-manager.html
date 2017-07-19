@@ -1,4 +1,5 @@
 <link rel="import" href="../constants.html">
+<link rel="import" href="state-manager.html">
 
 <script>
   define('analytics-manager', ['constants'], (constants) => {
@@ -10,13 +11,28 @@
        * @param {VideoPlayer} videoPlayer  The VideoPlayer that dispatches the events.
        * @return {AnalyticsManager}  The new AnalyticsManager instance.
        */
-      constructor(videoPlayer) {
+      constructor(videoPlayer, stateManager) {
         this.videoPlayer = videoPlayer;
+        this.stateManager = stateManager;
       }
 
       // TODO: get ref to statemanager function with parameters an call it, then fire event
       fireEvent() {
         var event = new CustomEvent('analytics', { 'detail': 'whooooho'});
+        this.videoPlayer.dispatchEvent(event);
+      }
+
+      changeState(changeFunction, changeParameters, options) {
+        let eventData = {
+          detail: {
+            verb: options.verb,
+            old_current_time: this.stateManager.state.position,
+          }
+        };
+
+        this.stateManager[changeFunction](...changeParameters);
+        eventData.detail.new_current_time = this.stateManager.state.position;
+        let event = new CustomEvent('analytics', eventData);
         this.videoPlayer.dispatchEvent(event);
       }
 
