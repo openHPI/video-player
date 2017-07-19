@@ -24,16 +24,30 @@
 
       changeState(changeFunction, changeParameters, options) {
         let eventData = {
-          detail: {
-            verb: options.verb,
-            old_current_time: this.stateManager.state.position,
-          }
+          detail: Object.assign(
+            this._getBaseEventData(),
+            {
+              verb: options.verb,
+              old_current_time: this.stateManager.state.position,
+            }),
         };
 
         this.stateManager[changeFunction](...changeParameters);
         eventData.detail.new_current_time = this.stateManager.state.position;
         let event = new CustomEvent('analytics', eventData);
         this.videoPlayer.dispatchEvent(event);
+      }
+
+      _getBaseEventData() {
+        return {
+          current_time: this.stateManager.state.position,
+          current_speed: this.stateManager.state.playbackRate,
+          current_quality: this.stateManager.state.quality,
+          current_source: 'online',
+          current_orientation: 'landscape',
+          current_slide: 0,
+          current_chapter: 0,
+        };
       }
 
     }
