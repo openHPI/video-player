@@ -51,7 +51,7 @@
       <template is="dom-if" if="[[captionLanguages]]">
         <interactive-transcript-switch state="[[state]]" class="hidden-for-mobile"></interactive-transcript-switch>
       </template>
-      <speed-control state="[[state]]" class="hidden-for-mobile"></speed-control>
+      <speed-control state="[[state]]"></speed-control>
       <template is="dom-if" if="[[_hasMultipleQualities]]">
         <quality-control state="[[state]]" qualities="[[availableQualities]]"></quality-control>
       </template>
