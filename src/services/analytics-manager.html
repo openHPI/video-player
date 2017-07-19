@@ -16,12 +16,12 @@
         this.stateManager = stateManager;
       }
 
-      // TODO: get ref to statemanager function with parameters an call it, then fire event
-      fireEvent() {
-        var event = new CustomEvent('analytics', { 'detail': 'whooooho'});
-        this.videoPlayer.dispatchEvent(event);
-      }
-
+      /**
+       * Changes the given state, tracks the change and fire an analytics event.
+       * @param {string} changeFunction The name of ste StateManager's methos to be executed
+       * @param {Object} changeParameters An Array of parameters for the changeFunction
+       * @param {Object} options Further options for tracking the state change
+       */
       changeState(changeFunction, changeParameters, options) {
         let eventData = {
           detail: Object.assign(
@@ -38,13 +38,17 @@
         this.videoPlayer.dispatchEvent(event);
       }
 
+      /**
+       * Gets the minimum set of information for events
+       * @return {Object} Object containing the minimum set of information for events
+       */
       _getBaseEventData() {
         return {
           current_time: this.stateManager.state.position,
           current_speed: this.stateManager.state.playbackRate,
           current_quality: this.stateManager.state.quality,
           current_source: 'online',
-          current_orientation: 'landscape',
+          current_orientation: window.screen.orientation.type,
           current_slide: 0,
           current_chapter: 0,
         };
