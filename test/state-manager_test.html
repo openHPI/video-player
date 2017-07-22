@@ -6,15 +6,14 @@
 
     <title>video-player test</title>
 
+    <script src="/components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="/components/web-component-tester/browser.js"></script>
 
     <link rel="import" href="../video-player.html">
-
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
   </head>
   <body>
 
-    <test-fixture id="BasicTestFixture">
+    <test-fixture id="StateManagerTestFixture">
       <template>
         <video-player
         configuration='{
@@ -72,19 +71,14 @@
         ]
       }'></video-player>
       </template>
-    </test-fixture>
+    </test-fixture> 
 
     <script>
-      suite('state-manager', function() {
+      suite('state-manager-test', function() {
 
         let stateManager;
 
-
         setup(function() {
-          // Testing state-manager via video-player for now because I can't figure
-          // out how to do this by itself.
-          stateManager = fixture('BasicTestFixture').stateManager;
-          stateManager.setDuration(100);
           // We want to run tests with an empty local storage to avoid
           // unintended side effects and to start with a clean slate in each
           // test file.
@@ -93,6 +87,9 @@
           } else if (window.localStorage) {
             window.localStorage.clear();
           }
+          // Testing state-manager via video-player for now because I can't figure
+          // out how to do this by itself.
+          stateManager = fixture('StateManagerTestFixture')._stateManager;
         });
 
         test('testing play and pause', function() {

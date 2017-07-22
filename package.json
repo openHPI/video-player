@@ -57,7 +57,7 @@
     "run-sequence": "^2.0.0"
   },
   "scripts": {
-    "test": "polymer test",
+    "test": "node_modules/web-component-tester/bin/wct test/test-suite.html",
     "test-firefox": "polymer test -l firefox",
     "test-safari": "polymer test -l safari",
     "test-chrome": "polymer test -l chrome",
