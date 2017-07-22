@@ -58,9 +58,9 @@
   },
   "scripts": {
     "test": "node_modules/web-component-tester/bin/wct test/test-suite.html",
-    "test-firefox": "polymer test -l firefox",
-    "test-safari": "polymer test -l safari",
-    "test-chrome": "polymer test -l chrome",
+    "test-firefox": "node_modules/web-component-tester/bin/wct  test/test-suite.html -l firefox",
+    "test-safari": "node_modules/web-component-tester/bin/wct  test/test-suite.html -l safari",
+    "test-chrome": "node_modules/web-component-tester/bin/wct  test/test-suite.html -l chrome",
     "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html && polymer lint",
     "postinstall": "bower install",
     "serve": "polymer serve",
