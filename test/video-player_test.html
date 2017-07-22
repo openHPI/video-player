@@ -14,7 +14,7 @@
   </head>
   <body>
 
-    <test-fixture id="video-player-fixture">
+    <test-fixture id="complex-video-player-fixture">
       <template>
         <video-player
         configuration='{
@@ -28,6 +28,11 @@
             "hd": "/components/video-player/test/BigBuckBunny30s.mp4",
             "sd": "/components/video-player/test/BigBuckBunny30s.mp4",
             "poster": "/components/video-player/demo/poster_2.jpg"
+          },
+          {
+            "hd": "/components/video-player/test/BigBuckBunny30s.mp4",
+            "sd": "/components/video-player/test/BigBuckBunny30s.mp4",
+            "poster": "/components/video-player/demo/poster_1.jpg"
           }
         ],
         "captions" : [
@@ -74,6 +79,21 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="simple-video-player-fixture">
+      <template>
+        <video-player
+        configuration='{
+        "streams" : [
+          {
+            "hd": "/components/video-player/test/BigBuckBunny30s.mp4",
+            "sd": "/components/video-player/test/BigBuckBunny30s.mp4",
+            "poster": "/components/video-player/demo/poster_1.jpg"
+          }
+        ]
+      }'></video-player>
+      </template>
+    </test-fixture>
+
     <script>
 
       suite('video-player', function() {
@@ -88,10 +108,22 @@
           } else if (window.localStorage) {
             window.localStorage.clear();
           }
-          videoPlayer = fixture('video-player-fixture');
         });
 
-        test('instantiating the element with set properties works', function() {
+        test('testing a simple video player setup with one stream', function() {
+          videoPlayer = fixture('simple-video-player-fixture');
+          assert.isNotNull(videoPlayer.configuration, 'there is a configuration');
+          // Testing whether all stateManager values are at their set value
+          assert.equal(videoPlayer.state.position, 0, 'position value is at default');
+          assert.equal(videoPlayer.state.duration, 0, 'duration value is at default');
+          assert.equal(videoPlayer.state.playbackRate, 1.0, 'playback rate value is at default');
+          assert.equal(videoPlayer.state.volume, 1, 'volume value is at default');
+          assert.equal(videoPlayer.state.muted, false, 'muted value is at default');
+          assert.equal(videoPlayer.state.fullScreen, false, 'full screen value is at default');
+        });
+
+        test('testing a complex video player setup with three streams', function() {
+          videoPlayer = fixture('complex-video-player-fixture');
           assert.isNotNull(videoPlayer.configuration, 'there is a configuration');
           // Testing whether all stateManager values are at their set value
           assert.equal(videoPlayer.state.position, 0, 'position value is at default');
