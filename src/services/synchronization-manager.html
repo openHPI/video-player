@@ -54,6 +54,9 @@
        * @return {void}
        */
       unregisterVideo(video) {
+        if(!this.videos || this.videos.indexOf(video) === -1){
+          return;
+        }
         this._videos.splice(this.videos.indexOf(video), 1);
 
         video.removeEventListener('seeking', this._videoWaiting);

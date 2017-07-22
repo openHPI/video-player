@@ -59,9 +59,11 @@
         }
 
         _getActiveChapter(chapters, position) {
-          return chapters.slice()
-                         .reverse()
-                         .find(chapter => chapter.seconds <= position);
+          if(chapters){
+            return chapters.slice()
+                          .reverse()
+                          .find(chapter => chapter.seconds <= position);
+          }
         }
 
         _handleClick(e) {

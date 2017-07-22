@@ -273,7 +273,9 @@
         }
 
         _getCaptionLanguages(captions) {
-          return captions.map(caption => caption.language);
+          if(captions){
+            return captions.map(caption => caption.language);
+          }
         }
 
         _getAvailableQualities(streams) {

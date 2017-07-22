@@ -60,3 +60,4 @@ typings/
 # Build directories
 .tmp
 dist
+wct.conf.json
