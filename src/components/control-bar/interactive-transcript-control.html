@@ -14,7 +14,7 @@
 
     <select-control
       values="[[_values]]"
-      selected-value="[[state.captionLanguage]]"
+      selected-value="[[ifThenElse(state.isInteractiveTranscriptShown, state.captionLanguage, 'off')]]"
       on-change="_selectionChanged"
       icon-classes="fa fa-file-text"
       active="[[state.isInteractiveTranscriptShown]]">
