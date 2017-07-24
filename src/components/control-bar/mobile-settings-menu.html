@@ -4,7 +4,7 @@
 <link rel="import" href="../../mixins/ioc-requester.html">
 
 <link rel="import" href="caption-control.html">
-<link rel="import" href="interactive-transcript-switch.html">
+<link rel="import" href="interactive-transcript-control.html">
 <link rel="import" href="speed-control.html">
 <link rel="import" href="quality-control.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
@@ -37,11 +37,18 @@
         text-align: left;
 
         @apply --foreground-color;
-        @apply --background-color;
+
+        background-color: rgba(255,255,255,0.5);
       }
       
       .open #button__select {
         cursor: default;
+      }
+
+      .user_controls.open {
+        height: 30px;
+        margin: 5px;
+        @apply --accent-color-background;
       }
 
       .dropdown-content a:hover {
@@ -49,6 +56,10 @@
       }
       .dropdown-content a.selected {
         background-color: grey;
+      }
+      #dropdown__select > * {
+        margin: 4px 0;
+        background-color: rgba(255,255,255,0.4);
       }
     </style>
 
@@ -59,12 +70,12 @@
         </a>
         <div id="dropdown__select" class$="dropdown-content [[ifNotThen(_isDropDownOpen, '-hidden')]]">
           <template is="dom-if" if="[[captionLanguages]]">
-            <caption-control is-in-menu="true" state="[[state]]" languages="[[captionLanguages]]">
+          <caption-control is-in-menu="true" state="[[state]]" languages="[[captionLanguages]]">
             </caption-control>
           </template>
           <template is="dom-if" if="[[captionLanguages]]">
-            <interactive-transcript-switch is-in-menu="true" state="[[state]]">
-            </interactive-transcript-switch>
+            <interactive-transcript-control is-in-menu="true" state="[[state]]" languages="[[captionLanguages]]">
+            </interactive-transcript-control>
           </template>
           <speed-control is-in-menu="true" state="[[state]]"></speed-control>
           <template is="dom-if" if="[[_hasMultipleQualities]]">

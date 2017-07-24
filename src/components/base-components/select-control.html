@@ -12,7 +12,7 @@
         width: 100%;
       }
 
-      .dropdown {
+      #inner_container__select_control {
         position: relative;
       }
       .dropdown .dropdown-content {
@@ -60,26 +60,37 @@
         font-weight: lighter;
       }
 
-      .in-menu-entry {
+      #container__select_control.in-menu-entry {
+        height: initial;
+        background-color: rgba(255,255,255,0.5);
+      }
+
+      .in-menu-entry #inner_container__select_control{
         display: flex;
         justify-content: space-between; 
         width: 100%;
       }
       
       .in-menu-entry #button__select {
-         width: initial; 
+        /* Necessary for horizontally aligning all icons */
+         width: 30px;
       }
       .in-menu-entry #dropdown__select {
         display: flex;
         justify-content: flex-end;
       }
-      .in-menu-entry #dropdown__select a {
-        margin: 0 5px;
+      .in-menu-entry #button__select, .in-menu-entry #dropdown__select a {
+        padding: 0 5px;
+        line-height: 30px;
+      }
+
+      .in-menu-entry #dropdown__select a.selected {
+        @apply --accent-color-background;
       }
     </style>
 
-    <div id="container__select_control" class="user_controls">
-      <div class$="[[ifNotThen(isInMenu, 'dropdown')]] [[ifThen(isInMenu, 'in-menu-entry')]]"  on-mouseover="_showDropDown" on-mouseout="_hideDropDown">
+    <div id="container__select_control" class$="user_controls [[ifNotThen(isInMenu, 'dropdown')]] [[ifThen(isInMenu, 'in-menu-entry')]]">
+      <div id="inner_container__select_control" on-mouseover="_showDropDown" on-mouseout="_hideDropDown">
         <a id="button__select" class$="button [[ifNotThen(active, 'inactive')]]" badge-value$="{{formatter(selectedValue)}}">
           <i class$="[[iconClasses]]"></i>
         </a>
