@@ -32,8 +32,19 @@
             }),
         };
 
+        let beforeStates = {};
+        if (options.verb === ANALYTICS_TOPICS.videoSeek) {
+          beforeStates.old_current_time = this.stateManager.state.position;
+        }
+
         this.stateManager[changeFunction](...changeParameters);
-        eventData.detail.new_current_time = this.stateManager.state.position;
+
+        let afterStates = {};
+        if (options.verb === ANALYTICS_TOPICS.videoSeek) {
+          afterStates.new_current_time = this.stateManager.state.position;
+        }
+
+        eventData.details = Object.assign(eventData.detail, beforeStates, afterStates);
         let event = new CustomEvent('analytics', eventData);
         this.videoPlayer.dispatchEvent(event);
       }
