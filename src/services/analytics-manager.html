@@ -28,7 +28,6 @@
             this._getBaseEventData(),
             {
               verb: options.verb,
-              old_current_time: this.stateManager.state.position,
             }),
         };
 
@@ -54,7 +53,7 @@
             break;
         }
 
-        eventData.details = Object.assign(eventData.detail, beforeStates, afterStates);
+        eventData.detail = Object.assign(eventData.detail, beforeStates, afterStates);
         let event = new CustomEvent('analytics', eventData);
         this.videoPlayer.dispatchEvent(event);
       }
