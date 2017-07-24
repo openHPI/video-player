@@ -13,7 +13,7 @@
 <link rel="import" href="mute-control.html">
 <link rel="import" href="fullscreen-control.html">
 <link rel="import" href="caption-control.html">
-<link rel="import" href="navigation-button.html">
+<link rel="import" href="navigation-control.html">
 
 <link rel="import" href="../../styling/global--style-module.html">
 
@@ -46,11 +46,11 @@
 
     <div id="container__control_bar">
       <template is="dom-if" if="[[partOfPlaylistOrSeries.previousVideo]]">
-        <navigation-button state="[[state]]" previous-video="true" video-url="[[partOfPlaylistOrSeries.previousVideo]]"></navigation-button>  
+        <navigation-control state="[[state]]" previous-video="true" video-url="[[partOfPlaylistOrSeries.previousVideo]]"></navigation-control>  
       </template>
       <playpause-control state="[[state]]"></playpause-control>
       <template is="dom-if" if="[[partOfPlaylistOrSeries.nextVideo]]">
-        <navigation-button state="[[state]]" next-video="true" video-url="[[partOfPlaylistOrSeries.nextVideo]]"></navigation-button>
+        <navigation-control state="[[state]]" next-video="true" video-url="[[partOfPlaylistOrSeries.nextVideo]]"></navigation-control>
       </template>
       <videotime-display state="[[state]]" class="-flex-grow"></videotime-display>
       <template is="dom-if" if="[[captionLanguages]]">

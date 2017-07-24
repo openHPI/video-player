@@ -33,9 +33,9 @@
   </template>
 
   <script>
-    define('navigation-button', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
-      class NavigationButton extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
-        static get is() { return 'navigation-button'; }
+    define('navigation-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class NavigationControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'navigation-control'; }
 
         static get properties() {
           return {
@@ -59,7 +59,7 @@
         }
       }
 
-      window.customElements.define(NavigationButton.is, NavigationButton);
+      window.customElements.define(NavigationControl.is, NavigationControl);
     });
   </script>
 
