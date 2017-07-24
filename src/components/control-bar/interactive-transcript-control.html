@@ -5,7 +5,7 @@
 <link rel="import" href="../../styling/control-bar--style-module.html">
 
 
-<dom-module id="interactive-transcript-switch">
+<dom-module id="interactive-transcript-control">
   <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
 
   <template>
@@ -22,9 +22,9 @@
   </template>
 
   <script>
-    define('interactive-transcript-switch', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('interactive-transcript-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
       class InteractiveTranscriptControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
-        static get is() { return 'interactive-transcript-switch'; }
+        static get is() { return 'interactive-transcript-control'; }
 
         static get properties() {
           return {
