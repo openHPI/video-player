@@ -3,7 +3,7 @@
 
 <script>
   define('analytics-manager', ['constants'], (constants) => {
-    const {ANALYTICS_TOPICS} = constants;
+    const {ANALYTICS_TOPICS, PLAY_STATES} = constants;
 
     class AnalyticsManager {
       /**
@@ -33,14 +33,17 @@
         };
 
         let beforeStates = {};
-        if (options.verb === ANALYTICS_TOPICS.videoSeek) {
+        if (options.verb === ANALYTICS_TOPICS.VIDEO_SEEK) {
           beforeStates.old_current_time = this.stateManager.state.position;
+        }
+        if (options.verb === ANALYTICS_TOPICS.PLAY_PAUSE) {
+          beforeStates.verb = (this.stateManager.state.playState === PLAY_STATES.PLAYING) ? ANALYTICS_TOPICS.VIDEO_PAUSE : ANALYTICS_TOPICS.VIDEO_PLAY
         }
 
         this.stateManager[changeFunction](...changeParameters);
 
         let afterStates = {};
-        if (options.verb === ANALYTICS_TOPICS.videoSeek) {
+        if (options.verb === ANALYTICS_TOPICS.VIDEO_SEEK) {
           afterStates.new_current_time = this.stateManager.state.position;
         }
 
