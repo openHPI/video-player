@@ -10,6 +10,9 @@
 
   <template>
     <style type="text/css" include="control-bar--style-module">
+      #container__quality_switch {
+        width: 100%;
+      }
     </style>
 
     <div id="container__quality_switch">
@@ -18,7 +21,8 @@
         selected-value="[[state.quality]]"
         formatter="[[_getQualityName]]"
         on-change="_selectionChanged"
-        icon-classes="fa fa-desktop">
+        icon-classes="fa fa-desktop"
+        is-in-menu="[[isInMenu]]">
       </select-control>
     </div>
   </template>
@@ -37,6 +41,10 @@
             _stateManager: {
               type: Object,
               inject: 'StateManager',
+            },
+            isInMenu: {
+              type: Boolean,
+              value: false,
             },
           };
         }

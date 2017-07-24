@@ -18,6 +18,7 @@
       on-change="_selectionChanged"
       icon-classes="fa fa-cc"
       active="[[_isActive(state.captionLanguage)]]">
+      is-in-menu="[[isInMenu]]">
     </select-control>
   </template>
 
@@ -37,6 +38,10 @@
             _values: {
               type: Array,
               computed: '_getValues(languages.*)',
+            },
+            isInMenu: {
+              type: Boolean,
+              value: false,
             },
           };
         }

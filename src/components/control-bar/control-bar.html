@@ -13,6 +13,7 @@
 <link rel="import" href="mute-control.html">
 <link rel="import" href="fullscreen-control.html">
 <link rel="import" href="caption-control.html">
+<link rel="import" href="mobile-settings-menu.html">
 <link rel="import" href="../../styling/global--style-module.html">
 
 <dom-module id="control-bar">
@@ -40,6 +41,11 @@
           display: none;
         }
       }
+      @media (min-width: 769px) {
+        .hidden-for-desktop {
+          display: none;
+        }
+      }
     </style>
 
     <div id="container__control_bar">
@@ -51,15 +57,18 @@
       <template is="dom-if" if="[[captionLanguages]]">
         <interactive-transcript-switch state="[[state]]" class="hidden-for-mobile"></interactive-transcript-switch>
       </template>
-      <speed-control state="[[state]]"></speed-control>
+      <speed-control state="[[state]]" class="hidden-for-mobile"></speed-control>
       <template is="dom-if" if="[[_hasMultipleQualities]]">
-        <quality-control state="[[state]]" qualities="[[availableQualities]]"></quality-control>
+        <quality-control state="[[state]]" qualities="[[availableQualities]]" class="hidden-for-mobile"></quality-control>
       </template>
       <template is="dom-if" if="[[hasChapters]]">
         <chapter-list-switch state="[[state]]" class="hidden-for-mobile"></chapter-list-switch>
       </template>
       <mute-control state="[[state]]" class="hidden-for-mobile"></mute-control>
       <sound-control state="[[state]]" class="hidden-for-mobile"></sound-control>
+      <mobile-settings-menu state="[[state]]" class="hidden-for-desktop" 
+        caption-languages="[[captionLanguages]]" 
+        available-qualities="[[availableQualities]]"></mobile-settings-menu>
       <full-screen-control state="[[state]]"></full-screen-control>
     </div>
   </template>

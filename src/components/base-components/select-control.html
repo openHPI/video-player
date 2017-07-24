@@ -8,10 +8,14 @@
 
   <template>
     <style type="text/css" include="control-bar--style-module">
+      :host {
+        width: 100%;
+      }
+
       .dropdown {
         position: relative;
       }
-      .dropdown-content {
+      .dropdown .dropdown-content {
         position: absolute;
         /* Equals control bar height. This is set to assure that the dropdown opens to the top. */
         bottom: 40px;
@@ -23,25 +27,25 @@
         @apply --foreground-color;
         @apply --background-color;
       }
-      .dropdown-content a {
+      .dropdown .dropdown-content a {
         display: inline-block;
         line-height: 2;
         cursor: pointer;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .open #button__select {
+      .dropdown .open #button__select {
         cursor: default;
       }
 
-      .dropdown-content a:hover {
+      .dropdown .dropdown-content a:hover {
         background-color: grey;
       }
-      .dropdown-content a.selected {
+      .dropdown .dropdown-content a.selected {
         background-color: grey;
       }
 
-      #button__select:after {
+      .dropdown #button__select:after {
         content: attr(badge-value);
         position: absolute;
         top: 6px;
@@ -55,10 +59,27 @@
         font-size: 9px;
         font-weight: lighter;
       }
+
+      .in-menu-entry {
+        display: flex;
+        justify-content: space-between; 
+        width: 100%;
+      }
+      
+      .in-menu-entry #button__select {
+         width: initial; 
+      }
+      .in-menu-entry #dropdown__select {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .in-menu-entry #dropdown__select a {
+        margin: 0 5px;
+      }
     </style>
 
     <div id="container__select_control" class="user_controls">
-      <div class="dropdown" on-mouseover="_showDropDown" on-mouseout="_hideDropDown">
+      <div class$="[[ifNotThen(isInMenu, 'dropdown')]] [[ifThen(isInMenu, 'in-menu-entry')]]"  on-mouseover="_showDropDown" on-mouseout="_hideDropDown">
         <a id="button__select" class$="button [[ifNotThen(active, 'inactive')]]" badge-value$="{{formatter(selectedValue)}}">
           <i class$="[[iconClasses]]"></i>
         </a>
@@ -98,6 +119,10 @@
             active: {
               type: Boolean,
               value: true,
+            },
+            isInMenu: {
+              type: Boolean,
+              value: false,
             },
           };
         }
