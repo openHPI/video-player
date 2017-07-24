@@ -17,7 +17,7 @@
       selected-value="[[state.captionLanguage]]"
       on-change="_selectionChanged"
       icon-classes="fa fa-cc"
-      active="[[_isActive(state.captionLanguage)]]">
+      active="[[state.isCaptionShown]]">
     </select-control>
   </template>
 
@@ -46,11 +46,16 @@
         }
 
         _selectionChanged(e) {
-          this._stateManager.setCaptionLanguage(e.target.selectedValue);
-        }
+          if (e.target.selectedValue !== 'off') {
+            this._stateManager.setCaptionLanguage(e.target.selectedValue);
+            if(!this.state.isCaptionShown) {
+              this._stateManager.toggleCaptions();
+            }
+          }
 
-        _isActive(language) {
-          return language !== 'off';
+          if (e.target.selectedValue === 'off' && this.state.isCaptionShown) {
+            this._stateManager.toggleCaptions();
+          }
         }
       }
 

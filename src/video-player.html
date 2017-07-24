@@ -225,7 +225,6 @@
             '_themeChanged(configuration.theme)',
             '_playStateChanged(state.playState)',
             '_fullscreenChanged(state.fullscreen)',
-            '_captionLanguageChanged(state.captionLanguage)',
             '_userPreferencesStateChanged(state.*)',
           ];
         }
@@ -379,12 +378,6 @@
             if(typeof this.configuration.secondaryBackgroundColor === 'undefined') {
               this._secondaryBackgroundColorChanged(THEMES[name].secondaryBackgroundColor);
             }
-          }
-        }
-
-        _captionLanguageChanged(language) {
-          if(this.state.isInteractiveTranscriptShown && language === 'off') {
-            this._stateManager.toggleInteractiveTranscript();
           }
         }
 

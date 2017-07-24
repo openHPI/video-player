@@ -12,12 +12,13 @@
     <style type="text/css" include="control-bar--style-module">
     </style>
 
-    <div id="container__interactive_transcript_switch" class="user_controls">
-      <a id="button__interactive_transcript" class$="button [[ifThenElse(state.isInteractiveTranscriptShown, '', 'inactive')]]" on-click="_handleClick">
-        <i class="fa fa-file-text"></i>
-      </a>
-    </div>
-
+    <select-control
+      values="[[_values]]"
+      selected-value="[[state.captionLanguage]]"
+      on-change="_selectionChanged"
+      icon-classes="fa fa-file-text"
+      active="[[state.isInteractiveTranscriptShown]]">
+    </select-control>
   </template>
 
   <script>
@@ -28,30 +29,34 @@
         static get properties() {
           return {
             state: Object,
+            languages: Array,
             _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
+            _values: {
+              type: Array,
+              computed: '_getValues(languages.*)',
+            },
           };
         }
 
-        static get observers() {
-          return [
-            '_captionLanguageChanged(state.captionLanguage, isInteractiveTranscriptShown)',
-          ];
+        _getValues() {
+          return ['off'].concat(this.languages);
         }
 
-        _captionLanguageChanged(captionLanguage, isInteractiveTranscriptShown) {
-          if (captionLanguage === 'off' && isInteractiveTranscriptShown) {
-            this._stateManager.toggleInteractiveTranscript();
-          }
-        }
+        _selectionChanged(e) {
+          if (e.target.selectedValue !== 'off') {
+            this._stateManager.setCaptionLanguage(e.target.selectedValue);
 
-        _handleClick() {
-          if(this.state.activeCaptions) {
+            if(!this.state.isInteractiveTranscriptShown) {
+              this._stateManager.toggleInteractiveTranscript();
+            }
+          }
+          if (e.target.selectedValue === 'off' && this.state.isInteractiveTranscriptShown) {
             this._stateManager.toggleInteractiveTranscript();
           }
-        }
+        }  
       }
 
       window.customElements.define(InteractiveTranscriptControl.is, InteractiveTranscriptControl);
