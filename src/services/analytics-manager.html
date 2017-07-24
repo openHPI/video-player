@@ -39,6 +39,9 @@
           case ANALYTICS_TOPICS.PLAY_PAUSE:
             beforeStates.verb = (this.stateManager.state.playState === PLAY_STATES.PLAYING) ? ANALYTICS_TOPICS.VIDEO_PAUSE : ANALYTICS_TOPICS.VIDEO_PLAY
             break;
+          case ANALYTICS_TOPICS.VIDEO_CHANGE_SPEED:
+            beforeStates.old_current_speed = this.stateManager.state.playbackRate;
+            break;
         }
 
         this.stateManager[changeFunction](...changeParameters);
@@ -50,6 +53,9 @@
             break;
           case ANALYTICS_TOPICS.VIDEO_FULLSCREEN:
             afterStates.new_current_fullscreen = this._getFullscreenMode();
+            break;
+          case ANALYTICS_TOPICS.VIDEO_CHANGE_SPEED:
+            afterStates.new_current_speed = this.stateManager.state.playbackRate;
             break;
         }
 
