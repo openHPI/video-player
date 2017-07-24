@@ -34,20 +34,17 @@
 
       /* For some reason, just chaining those fullscreen selectors into one big
          selector doesn't work so we're stupid-duplicating all the rules. */
-      #video-player-container:-webkit-full-screen #streams-container{
-        display: flex;
+      #video-player-container:-webkit-full-screen #streams-container { 
         align-items: stretch;
       }
-      #video-player-container:-moz-full-screen #streams-container{
-        display: flex;
+      #video-player-container:-moz-full-screen #streams-container {
         align-items: stretch;
       }
-      #video-player-container:-ms-fullscreen #streams-container{
-        display: flex;
+      #video-player-container:-ms-fullscreen #streams-container {
         align-items: stretch;
       }
 
-      #video-player-container:-webkit-full-screen{
+      #video-player-container:-webkit-full-screen {
         width: 100%;
       }
       #video-player-container:-moz-full-screen{
@@ -80,8 +77,6 @@
         display: flex;
         flex-wrap: wrap;
         overflow: hidden;
-        /* Cancel out the control bar height, the progress bar and the lecture slide bar */
-        height: calc(100% - 40px - 16px - 11px);
       }
       .video-stream {
         /* 49 to leave a bit space for the resizer */
@@ -124,7 +119,7 @@
         </template>
 
         <!-- Video Streams -->
-        <div id="streams-container">
+        <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.isInteractiveTranscriptShown, configuration.lectureSlides)]]">
           <template is="dom-repeat" items="[[configuration.streams]]">
             <video-stream
               state="[[state]]"
@@ -406,6 +401,27 @@
 
         _rowCount(streams) {
           return Math.ceil(streams.length / 2);
+        }
+
+        _calculateHeight(fullscreen, isInteractiveTranscriptShown, isLectureSlides) {
+          if(fullscreen) {
+            return "calc(100vh - " + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + "px)";
+          } else {
+            return "calc(100% - " + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + "px)";
+          }
+        }
+
+        _bottomSpace(isInteractiveTranscriptShown, isLectureSlides) {
+          let value; 
+          // Controlbar height & progres bar height
+          value = 40 + 16;
+          if(isInteractiveTranscriptShown) {
+            value += 200;
+          }
+          if(isLectureSlides) {
+            value += 11;
+          }
+          return value;
         }
       }
 
