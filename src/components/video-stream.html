@@ -184,7 +184,7 @@
 
         _captionLanguageChanged(language){
           if(this.captions && this._stateManager) {
-            // Set cues to null, so that they cannot get toggled by interactive-transcript-switch
+            // Set cues to null, so that they cannot get toggled by interactive-transcript-control
             if(language === 'off') {
               this._stateManager.setActiveCaptions(null);
             }

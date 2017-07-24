@@ -35,7 +35,7 @@
       }
     </style>
 
-    <div id="container__captions" class$="[[ifNotThen(_isVisible, '-hidden')]]">
+    <div id="container__captions" class$="[[ifNotThen(state.isCaptionShown, '-hidden')]]">
       <div class="caption-cue-text">[[_activeCue.text]]</div>
     </div>
   </template>
@@ -57,10 +57,6 @@
               type: Object,
               computed: '_getActiveCue(state.activeCaptions, state.position)',
             },
-            _isVisible: {
-              type: Boolean,
-              computed: '_getIsVisible(state.captionLanguage)',
-            },
           };
         }
 
@@ -70,10 +66,6 @@
                                  .reverse()
                                  .find(cue => cue.startTime <= position);
           }
-        }
-
-        _getIsVisible(captionLanguage) {
-          return captionLanguage !== 'off';
         }
       }
 

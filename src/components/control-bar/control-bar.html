@@ -8,7 +8,7 @@
 <link rel="import" href="videotime-display.html">
 <link rel="import" href="speed-control.html">
 <link rel="import" href="chapter-list-switch.html">
-<link rel="import" href="interactive-transcript-switch.html">
+<link rel="import" href="interactive-transcript-control.html">
 <link rel="import" href="quality-control.html">
 <link rel="import" href="mute-control.html">
 <link rel="import" href="fullscreen-control.html">
@@ -55,7 +55,7 @@
         <caption-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></caption-control>
       </template>
       <template is="dom-if" if="[[captionLanguages]]">
-        <interactive-transcript-switch state="[[state]]" class="hidden-for-mobile"></interactive-transcript-switch>
+        <interactive-transcript-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></interactive-transcript-control>
       </template>
       <speed-control state="[[state]]" class="hidden-for-mobile"></speed-control>
       <template is="dom-if" if="[[_hasMultipleQualities]]">
