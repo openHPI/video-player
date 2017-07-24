@@ -124,6 +124,18 @@ The component is set up to be tested via [web-component-tester](https://github.c
 $ npm test
 ```
 
+Note: Safari will fail this test when accessing a fixture because of a bug.
+
+### Debugging Tests
+
+If tests fail, it can be very helpful to see more information about why they fail. To be able to debug tests, you should run the following command:
+
+```
+$ npm run testdebugging
+```
+
+This will leave the browser window open, enabling you to re-run the tests and set breakpoints in your preferred browser.
+
 ## Miscellaneous
 ### User Preferences
 Properties changed by the user are always automatically saved in the browser's LocalStorage. Possible for:
