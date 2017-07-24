@@ -27,7 +27,9 @@
     </template>
 
   <script>
-    define('full-screen-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('full-screen-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
       class FullscreenControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'full-screen-control'; }
 
@@ -38,11 +40,15 @@
               type: Object,
               inject: 'StateManager',
             },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
           };
         }
 
         handleClick() {
-          this._stateManager.toggleFullscreen();
+          this._analyticsManager.changeState('toggleFullscreen', [], {verb: ANALYTICS_TOPICS.VIDEO_FULLSCREEN});
         }
       }
 
