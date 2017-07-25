@@ -189,7 +189,10 @@
               this._stateManager.setActiveCaptions(null);
             }
 
-            for(let textTrack of this.$.video.textTracks) {
+            // Microsoft Edge is old which is why we can't use the following:
+            // for(let textTrack of this.$.video.textTracks) {
+            for(let textTrackIndex = 0; textTrackIndex < this.$.video.textTracks.length; textTrackIndex++) {
+              let textTrack = this.$.video.textTracks[textTrackIndex];
               if(textTrack.language === language) {
                 textTrack.mode = 'showing';
                 // If captions are not yet loaded, they will be set in
