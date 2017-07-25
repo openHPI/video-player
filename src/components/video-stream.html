@@ -19,11 +19,6 @@
         width: inherit;
         height: inherit;
       }
-      /* For all browsers, ::cue is sufficient to hide the caption, only Safari
-         needs ::-webkit-media-text-track-container */
-      ::cue, ::-webkit-media-text-track-container {
-        visibility: hidden;
-      }
 
       #container__poster_overlay {
         position: absolute;
@@ -198,8 +193,13 @@
                 // If captions are not yet loaded, they will be set in
                 // _handleTrackLoaded when load event is dispatched.
                 this._stateManager.setActiveCaptions(Array.from(textTrack.cues));
-              } else {
+                // Change back to 'hidden' since we have our own HTML elements for
+                // displaying captions. Before this, we tried hiding captions
+                // via the CSS ::cue pseudo-class but Firefox and Microsoft Edge
+                // didn't play along. This here works well across browsers.
                 textTrack.mode = 'hidden';
+              } else {
+                textTrack.mode = 'disabled';
               }
             }
           }
