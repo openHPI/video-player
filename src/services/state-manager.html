@@ -273,31 +273,6 @@
       setActiveCaptions(captions){
         this.setState('activeCaptions', captions);
       }
-
-
-      /**
-       * Sets the flag whether current video 
-       * is part of a playlist or a series
-       */
-      setPlaylistActive() {
-        this.setState('playlistActive', !this.state.playlistActive);
-      }
-
-      /**
-       * Sets the flag whether whether next video
-       * gets toggled after end of current video
-       */
-      toggleAutoPlayNextVideo() {
-        this.setState('autoPlayNextVideo', !this.state.autoPlayNextVideo);
-      }
-
-      /**
-       * decrease counter variable in state
-       */
-      decreaseSecondsToNextVideo() {
-        this.setState('secondsToNextVideo', this.state.secondsToNextVideo - 1);
-        console.log(this.state.secondsToNextVideo);
-      }
     }
 
     return StateManager;

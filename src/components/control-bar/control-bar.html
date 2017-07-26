@@ -49,12 +49,12 @@
     </style>
 
     <div id="container__control_bar">
-      <template is="dom-if" if="[[partOfPlaylistOrSeries.previousVideo]]">
-        <navigation-control state="[[state]]" previous-video="true" video-url="[[partOfPlaylistOrSeries.previousVideo]]"></navigation-control>  
+      <template is="dom-if" if="[[playList.previousVideo]]">
+        <navigation-control state="[[state]]" previous-video="true" video-url="[[playList.previousVideo]]"></navigation-control>  
       </template>
       <playpause-control state="[[state]]"></playpause-control>
-      <template is="dom-if" if="[[partOfPlaylistOrSeries.nextVideo]]">
-        <navigation-control state="[[state]]" next-video="true" video-url="[[partOfPlaylistOrSeries.nextVideo]]"></navigation-control>
+      <template is="dom-if" if="[[playList.nextVideo]]">
+        <navigation-control state="[[state]]" next-video="true" video-url="[[playList.nextVideo]]"></navigation-control>
       </template>
       <videotime-display state="[[state]]" class="-flex-grow"></videotime-display>
       <template is="dom-if" if="[[captionLanguages]]">
@@ -101,8 +101,7 @@
               type: Boolean,
               computed: '_getHasMultipleQualities(availableQualities)',
             },
-            nextVideo: Object,
-            partOfPlaylistOrSeries: Object,
+            playList: Object,
           };
         }
 
