@@ -46,7 +46,7 @@
         background-color: grey;
       }
 
-      .dropdown #button__select:after {
+      .dropdown #button__select.with-badge:after {
         content: attr(badge-value);
         position: absolute;
         top: 6px;
@@ -59,6 +59,29 @@
         line-height: 1.5;
         font-size: 9px;
         font-weight: lighter;
+      }
+
+      /* Microsoft Edge does not support CSS variables in pseudo-elements so the colors 
+         we declare for the badge don't work (worse: they get applied to the parent
+         element). That's why we need to treat Edge separately which we do here.
+         We use the dark-orange theme colors for this. This might clash with other 
+         themes but is in our eyes still a workable solution.
+         This workaround should be unnecessary with the upcoming Microsoft Edge that
+         is about to be released in the fall of 2017.
+         Here's a link to the corresponding bug report ("In code review" as of 07/2017):
+         https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12414257/
+         And a link to a similar bug report:
+         https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
+         And here's a link to the CSS selector that targets only Microsoft Edge because 
+         looks for a feature that is only supported in Edge.*/
+      @supports (-ms-ime-align: auto) {
+        .dropdown #button__select.with-badge{
+          background-color: transparent;
+        }
+        .dropdown #button__select.with-badge:after{
+          background-color: #DD6112;
+          color: #000000;
+        }
       }
 
       #container__select_control.in-menu-entry {
@@ -95,8 +118,8 @@
     <div id="container__select_control" class$="user_controls [[ifNotThen(isInMobileMenu, 'dropdown')]] [[ifThen(isInMobileMenu, 'in-menu-entry')]]">
       <div id="inner_container__select_control" on-mouseover="_showDropDown" on-mouseout="_hideDropDown">
         <a id="button__select" 
-           class$="button [[ifNotThen(active, 'inactive')]]" 
-           badge-value$="{{selectedValue === 'off'? '': formatter(selectedValue)}}" 
+           class$="button [[ifNotEqualsThen(selectedValue, 'off', 'with-badge')]] [[ifNotThen(active, 'inactive')]]" 
+           badge-value$="{{formatter(selectedValue)}}" 
            href="javascript:void(0)"
            on-click="_handleClick">
           <i class$="[[iconClasses]]"></i>
