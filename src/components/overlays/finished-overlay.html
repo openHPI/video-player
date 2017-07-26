@@ -43,6 +43,17 @@
         outline: -webkit-focus-ring-color auto 5px;
       }
 
+      .related_video__time {
+        position: absolute;
+        bottom: 3px;
+        right: 3px;
+        background: rgba(0, 0, 0, 0.75);
+        padding: 3px;
+      }
+      .related_video__time.empty {
+        display: none !important;
+      }
+
       @media (max-width: 768px) {
         #container__finished_overlay {
           display: initial;
@@ -72,6 +83,7 @@
           <a href="[[item.url]]">
             <div class="container_related_overlay">
               <span>[[item.title]]</span>
+              <span class$="related_video__time [[ifNotThen(item.length, 'empty')]]">[[item.length]]</span>
             </div>
           </a>
         </div>
