@@ -18,10 +18,20 @@
       }
 
       /**
+       * Fires an event without changin the state.
+       * @param {Object} options Options for the event
+       * @returns {void}
+       */
+      newEvent(options) {
+        let baseEventData = this._getBaseEventData();
+        this._fireEvent(options.verb, baseEventData);
+      }
+
+      /**
        * Changes the given state, tracks the change and fire an analytics event.
        * @param {string} changeFunction The name of ste StateManager's methos to be executed
        * @param {Object} changeParameters An Array of parameters for the changeFunction
-       * @param {Object} options Further options for tracking the state change
+       * @param {Object} options Further options for the state change
        * @returns {void}
        */
       changeState(changeFunction, changeParameters, options) {

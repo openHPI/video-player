@@ -61,6 +61,9 @@
           if(newIcon) {
             this.iconClass = newIcon;
           }
+
+          if (playState === PLAY_STATES.FINISHED)
+            this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_END});
         }
 
         _handleClick() {
