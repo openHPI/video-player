@@ -1,0 +1,110 @@
+<link rel="import" href="../../../bower_components/imd/imd.html">
+
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../styling/overlay--style-module.html">
+
+<dom-module id="nextvideo-overlay">
+  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
+  <template>
+    <style type="text/css" include="overlay--style-module">
+      #container__nextvideo_overlay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background-color: rgba(0, 0, 0, 0.85);
+        color: white;
+      }
+
+      .container__spinner {
+        position: relative;
+      }
+      .container__spinner #timer {
+        position: absolute;
+        top: calc(50% - 8px);
+        left: calc(50% - 3px);
+      }
+
+      #icon_spinner {
+        opacity: 0.9;
+        font-size: 6vw;
+        @apply --accent-color-foreground;
+
+        animation-name: spin;
+        animation-duration: 1500ms;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+
+      #text__next_video {
+        font-size: 20px;
+      }
+
+      #button__toggle_next_video {
+        margin-top: 10px;
+      } 
+
+      @-ms-keyframes spin {
+        from { -ms-transform: rotate(0deg); }
+        to { -ms-transform: rotate(360deg); }
+      }
+      @-moz-keyframes spin {
+          from { -moz-transform: rotate(0deg); }
+          to { -moz-transform: rotate(360deg); }
+      }
+      @-webkit-keyframes spin {
+          from { -webkit-transform: rotate(0deg); }
+          to { -webkit-transform: rotate(360deg); }
+      }
+      @keyframes spin {
+          from { transform:rotate(0deg); }
+          to { transform:rotate(360deg); }
+      }
+    </style>
+
+    <div id="container__nextvideo_overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
+      <p id="text__next_video">Nächstes Video</p> 
+      <div class="container__spinner">
+        <i id="icon_spinner" class="fa fa-spinner" aria-hidden="true"></i>
+        <span id="timer">[[state.secondsToNextVideo]]</span>
+      </div>
+      <a id="button__toggle_next_video" class="button" on-click="_handleClick">Abbrechen</a>
+    </div>
+  </template>
+
+  <script>
+    define('nextvideo-overlay', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {PLAY_STATES} = constants;
+
+      class NextvideoOverlay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'nextvideo-overlay'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _isVisible: {
+              type: Boolean,
+              computed: '_getIsVisible(state.playState, state.autoPlayNextVideo)',
+            },
+          };
+        }
+
+        _getIsVisible(playState, autoPlayNextVideo) {
+            return playState === PLAY_STATES.FINISHED && autoPlayNextVideo;
+        }
+
+        _handleClick(){
+          this._stateManager.toggleAutoPlayNextVideo();
+        }      
+      }
+
+      window.customElements.define(NextvideoOverlay.is, NextvideoOverlay);
+    });
+  </script>
+
+</dom-module>

@@ -16,6 +16,7 @@
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/interactive-transcript.html">
 <link rel="import" href="components/overlays/waiting-overlay.html">
+<link rel="import" href="components/overlays/nextvideo-overlay.html">
 <link rel="import" href="components/overlays/finished-overlay.html">
 <link rel="import" href="components/overlays/captions-display.html">
 <link rel="import" href="components/control-bar/control-bar.html">
@@ -94,7 +95,7 @@
           * The min-widths are necessary to avoid that the video containter and
           * the controlbar have different widths on small screens.
           */
-          min-width: 300px
+          min-width: 360px;
         }
         .hidden-for-mobile {
           display: none;
@@ -105,7 +106,7 @@
           /*
           * Look above
           */
-          min-width: 560px
+          min-width: 660px;
         }
       }
     </style>
@@ -114,6 +115,9 @@
       <div id="video-container">
         <!-- Videos Overlays -->
         <waiting-overlay state="[[state]]"></waiting-overlay>
+        <template is="dom-if" if="[[configuration.partOfPlaylistOrSeries]]">
+          <nextvideo-overlay state="[[state]]" related-videos="[[configuration.partOfPlaylistOrSeries]]"></nextvideo-overlay>
+        </template>
         <template is="dom-if" if="[[configuration.relatedVideos]]">
           <finished-overlay state="[[state]]" related-videos="[[configuration.relatedVideos]]"></finished-overlay>
         </template>
@@ -150,7 +154,8 @@
         state="[[state]]"
         has-chapters="[[_hasChapters]]"
         caption-languages="[[_captionLanguages]]"
-        available-qualities="[[_availableQualities]]">
+        available-qualities="[[_availableQualities]]"
+        part-of-playlist-or-series="[[configuration.partOfPlaylistOrSeries]]">
       </control-bar>
 
       <!-- Chapter List -->
@@ -210,6 +215,13 @@
               type: Boolean,
               computed: '_getHasChapters(configuration.chapters)',
             },
+            nextVideoUrl: {
+              type: String,
+              value: ""
+            },
+            timer: {
+              type: Object,
+            }
           };
         }
 
@@ -226,6 +238,7 @@
             '_playStateChanged(state.playState)',
             '_fullscreenChanged(state.fullscreen)',
             '_userPreferencesStateChanged(state.*)',
+            '_autoPlayNextVideoChanged(state.autoPlayNextVideo)',
           ];
         }
 
@@ -248,6 +261,17 @@
           this._fullscreenManager.onFullscreenChanged((fullscreen) => {
             this._stateManager.setFullscreen(fullscreen);
           });
+
+          // if configuration containts information, current video is part of a playlist or a series
+          if(this.configuration.partOfPlaylistOrSeries){
+            this._stateManager.setPlaylistActive();
+            // if there is no next video url -> parameter remains undefined -> no load of next video
+            if(this.configuration.partOfPlaylistOrSeries.nextVideo) {
+              // if there is a next video, it should be loaded automatically
+              this._stateManager.toggleAutoPlayNextVideo();
+              this.nextVideoUrl = this.configuration.partOfPlaylistOrSeries.nextVideo;
+            }
+          }
         }
 
         ready() {
@@ -320,6 +344,32 @@
             });
 
             window.dispatchEvent(event);
+          }
+
+          // when video has finished and video is part of playlist
+          // start next video after 5 seconds
+          if (playState === PLAY_STATES.FINISHED && this.state.playlistActive && this.state.autoPlayNextVideo) {
+            if(this.nextVideoUrl){
+              this.timer = setInterval( this.myTimerFunction.bind(this), 1000); 
+            }
+          }
+        }
+
+        /**
+         * reduce secondsToNextVideo and load next video when threshold value is reached
+         */
+        myTimerFunction(){
+          if( this.state.secondsToNextVideo > 1) {
+            this._stateManager.decreaseSecondsToNextVideo();
+          } else {
+            window.open(this.nextVideoUrl,"_self");
+          }
+        }
+
+        // clear timer if user aborted auto play of next video after end of current video
+        _autoPlayNextVideoChanged(){
+          if(this.timer) {
+            clearInterval(this.timer);
           }
         }
 

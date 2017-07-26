@@ -13,6 +13,7 @@
 <link rel="import" href="mute-control.html">
 <link rel="import" href="fullscreen-control.html">
 <link rel="import" href="caption-control.html">
+<link rel="import" href="navigation-control.html">
 <link rel="import" href="mobile-settings-menu.html">
 <link rel="import" href="../../styling/global--style-module.html">
 
@@ -32,7 +33,6 @@
       .-flex-grow {
         flex-grow: 1;
         justify-content: flex-end;
-        background-color: #424242;
         background-color: var(--background-color-for-primary);
       }
 
@@ -49,7 +49,13 @@
     </style>
 
     <div id="container__control_bar">
+      <template is="dom-if" if="[[partOfPlaylistOrSeries.previousVideo]]">
+        <navigation-control state="[[state]]" previous-video="true" video-url="[[partOfPlaylistOrSeries.previousVideo]]"></navigation-control>  
+      </template>
       <playpause-control state="[[state]]"></playpause-control>
+      <template is="dom-if" if="[[partOfPlaylistOrSeries.nextVideo]]">
+        <navigation-control state="[[state]]" next-video="true" video-url="[[partOfPlaylistOrSeries.nextVideo]]"></navigation-control>
+      </template>
       <videotime-display state="[[state]]" class="-flex-grow"></videotime-display>
       <template is="dom-if" if="[[captionLanguages]]">
         <caption-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></caption-control>
@@ -68,7 +74,8 @@
       <sound-control state="[[state]]" class="hidden-for-mobile"></sound-control>
       <mobile-settings-menu state="[[state]]" class="hidden-for-desktop" 
         caption-languages="[[captionLanguages]]" 
-        available-qualities="[[availableQualities]]"></mobile-settings-menu>
+        available-qualities="[[availableQualities]]">
+      </mobile-settings-menu>
       <full-screen-control state="[[state]]"></full-screen-control>
     </div>
   </template>
@@ -94,6 +101,8 @@
               type: Boolean,
               computed: '_getHasMultipleQualities(availableQualities)',
             },
+            nextVideo: Object,
+            partOfPlaylistOrSeries: Object,
           };
         }
 
