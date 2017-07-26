@@ -47,6 +47,9 @@
           case ANALYTICS_TOPICS.VIDEO_CHANGE_SPEED:
             beforeStates.old_current_speed = this.stateManager.state.playbackRate;
             break;
+          case ANALYTICS_TOPICS.VIDEO_CHANGE_QUALITY:
+            beforeStates.old_current_quality = this.stateManager.state.quality;
+            break;
         }
 
         this.stateManager[changeFunction](...changeParameters);
@@ -62,6 +65,10 @@
           case ANALYTICS_TOPICS.VIDEO_CHANGE_SPEED:
             afterStates.new_current_speed = this.stateManager.state.playbackRate;
             break;
+          case ANALYTICS_TOPICS.VIDEO_CHANGE_QUALITY:
+            afterStates.new_current_quality = this.stateManager.state.quality;
+            break;
+
         }
 
         this._fireEvent(options.verb, baseEventData, beforeStates, afterStates);

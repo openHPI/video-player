@@ -25,7 +25,7 @@
 
   <script>
     define('quality-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
-      const {QUALITY_NAMES} = constants;
+      const {QUALITY_NAMES, ANALYTICS_TOPICS} = constants;
 
       class QualityControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'quality-control'; }
@@ -38,6 +38,10 @@
               type: Object,
               inject: 'StateManager',
             },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
           };
         }
 
@@ -46,7 +50,7 @@
         }
 
         _selectionChanged(e) {
-          this._stateManager.setQuality(e.target.selectedValue);
+          this._analyticsManager.changeState('setQuality', [e.target.selectedValue], {verb: ANALYTICS_TOPICS.VIDEO_CHANGE_QUALITY});
         }
       }
 
