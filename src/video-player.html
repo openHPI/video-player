@@ -115,8 +115,8 @@
       <div id="video-container">
         <!-- Videos Overlays -->
         <waiting-overlay state="[[state]]"></waiting-overlay>
-        <template is="dom-if" if="[[configuration.partOfPlaylistOrSeries]]">
-          <nextvideo-overlay state="[[state]]" related-videos="[[configuration.partOfPlaylistOrSeries]]"></nextvideo-overlay>
+        <template is="dom-if" if="[[configuration.playList]]">
+          <nextvideo-overlay state="[[state]]" play-list="[[configuration.playList]]"></nextvideo-overlay>
         </template>
         <template is="dom-if" if="[[configuration.relatedVideos]]">
           <finished-overlay state="[[state]]" related-videos="[[configuration.relatedVideos]]"></finished-overlay>
@@ -155,7 +155,7 @@
         has-chapters="[[_hasChapters]]"
         caption-languages="[[_captionLanguages]]"
         available-qualities="[[_availableQualities]]"
-        part-of-playlist-or-series="[[configuration.partOfPlaylistOrSeries]]">
+        play-list="[[configuration.playList]]">
       </control-bar>
 
       <!-- Chapter List -->
@@ -214,13 +214,6 @@
             _hasChapters: {
               type: Boolean,
               computed: '_getHasChapters(configuration.chapters)',
-            },
-            nextVideoUrl: {
-              type: String,
-              value: ""
-            },
-            timer: {
-              type: Object,
             }
           };
         }
@@ -238,7 +231,6 @@
             '_playStateChanged(state.playState)',
             '_fullscreenChanged(state.fullscreen)',
             '_userPreferencesStateChanged(state.*)',
-            '_autoPlayNextVideoChanged(state.autoPlayNextVideo)',
           ];
         }
 
@@ -261,17 +253,6 @@
           this._fullscreenManager.onFullscreenChanged((fullscreen) => {
             this._stateManager.setFullscreen(fullscreen);
           });
-
-          // if configuration containts information, current video is part of a playlist or a series
-          if(this.configuration.partOfPlaylistOrSeries){
-            this._stateManager.setPlaylistActive();
-            // if there is no next video url -> parameter remains undefined -> no load of next video
-            if(this.configuration.partOfPlaylistOrSeries.nextVideo) {
-              // if there is a next video, it should be loaded automatically
-              this._stateManager.toggleAutoPlayNextVideo();
-              this.nextVideoUrl = this.configuration.partOfPlaylistOrSeries.nextVideo;
-            }
-          }
         }
 
         ready() {
@@ -344,32 +325,6 @@
             });
 
             window.dispatchEvent(event);
-          }
-
-          // when video has finished and video is part of playlist
-          // start next video after 5 seconds
-          if (playState === PLAY_STATES.FINISHED && this.state.playlistActive && this.state.autoPlayNextVideo) {
-            if(this.nextVideoUrl){
-              this.timer = setInterval( this.myTimerFunction.bind(this), 1000); 
-            }
-          }
-        }
-
-        /**
-         * reduce secondsToNextVideo and load next video when threshold value is reached
-         */
-        myTimerFunction(){
-          if( this.state.secondsToNextVideo > 1) {
-            this._stateManager.decreaseSecondsToNextVideo();
-          } else {
-            window.open(this.nextVideoUrl,"_self");
-          }
-        }
-
-        // clear timer if user aborted auto play of next video after end of current video
-        _autoPlayNextVideoChanged(){
-          if(this.timer) {
-            clearInterval(this.timer);
           }
         }
 

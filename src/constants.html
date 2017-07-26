@@ -75,9 +75,6 @@
       captionLanguage: 'off',
       activeCaptions: [],
       isInteractiveTranscriptShown: false,
-      playlistActive: false,
-      autoPlayNextVideo: false,
-      secondsToNextVideo: 5,
     };
 
     /**
@@ -131,6 +128,12 @@
     };
 
     /**
+     * Number of second to wait before the next video of a playlist is automatically loaded.
+     * @type {Number}
+     */ 
+    const SECONDS_TO_NEXT_VIDEO = 5;
+
+    /**
      * Contains the possible user preferences properties.
      * @type {String[]}
      */
@@ -159,6 +162,7 @@
       USER_PREFERENCES_KEYS,
       USER_PREFERNECES_STORAGE_KEY,
       THEMES,
+      SECONDS_TO_NEXT_VIDEO,
     };
   });
 </script>

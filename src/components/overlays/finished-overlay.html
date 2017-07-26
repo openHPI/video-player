@@ -110,14 +110,8 @@
           };
         }
 
-        //
         _getIsVisible(playState, autoPlayNextVideo) {
-          if(!this.state.playlistActive){
-            return playState === PLAY_STATES.FINISHED;
-          }
-          else {
-            return playState === PLAY_STATES.FINISHED && !autoPlayNextVideo;
-          }
+          return playState === PLAY_STATES.FINISHED;
         }
 
         _getRows() {
