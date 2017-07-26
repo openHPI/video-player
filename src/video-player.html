@@ -131,10 +131,15 @@
               preload="[[configuration.videoPreload]]"
               class="video-stream"
               captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
-              style$="height: calc(100% / [[_rowCount(configuration.streams)]]);">
+              style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
+              ondragover="return false;"
+              ondrag="return false;">
             </video-stream>
             <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
-              <resizer-control state="[[state]]" style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+              <resizer-control
+                state="[[state]]"
+                style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]">
+              </resizer-control>
             </template>
           </template>
         </div>

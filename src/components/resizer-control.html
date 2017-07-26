@@ -88,20 +88,33 @@
           // Get _videos to resize
           this._videos = [this._findPreviousVideo(), this._findNextVideo()];
 
-          // Avoid a dragging ghost image by creating a new element which shall be shown
-          // but is hidden per default. Unfortunately this is the only way to do so.
+          // Avoid a dragging ghost image by creating a new element which shall be 
+          // shown but is hidden per default. Unfortunately this is the only way to 
+          // do so.
           let dragImage = this.cloneNode(true);
           dragImage.style.visibility = 'hidden';
           document.body.appendChild(dragImage);
-          // If we want to hide the ghost image in fullscreen mode, we have to
-          // move it completely out of view by setting its position as -10000|-10000
-          e.dataTransfer.setDragImage(dragImage, -10000, -10000);
+          // Microsoft Edge does not play well with our solution to hide the ghost
+          // image but somehow needs the code above or it will crash.
+          // Also, Edge does not support setDragImage which we use for our
+          // ghost image solution for fullscreen mode. We use that feature to detect
+          // support and then give Edge its special support.
+          if(!window.StyleMedia) {
+            // If we want to hide the ghost image in fullscreen mode, we have to
+            // move it completely out of view by setting its position as -10000|-10000
+            e.dataTransfer.setDragImage(dragImage, -10000, -10000);
+          } else {
+            // Workaround for Microsoft Edge to hide the ghost image. Unfortunately also
+            // hides the resizer itself
+            this.style.opacity = '0';
+          }
         }
 
         _handleDragEnd() {
           // Remove the created ghost element & eventhandler when the dragging ended.
           document.body.removeChild(document.body.lastChild);
           this.parentElement.removeEventListener('dragover', this._handleDragOver.bind(this));
+          this.style.opacity = '1';
         }
 
         _handleDragOver(e) {
