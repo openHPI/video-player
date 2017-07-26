@@ -1,0 +1,86 @@
+<link rel="import" href="../../../bower_components/imd/imd.html">
+
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
+
+<dom-module id="cast-control">
+  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
+
+  <template>
+    <style type="text/css" include="control-bar--style-module">
+      #container__cast_button {
+        border-right: none;
+      }
+      :host {
+        /* Avoid flickering with changing icons */
+        /* It should be about twice the icon size */
+        min-width: 3rem;
+      }
+    </style>
+
+    <div id="container__cast_button" class$="user_controls [[ifNotThen(_isVisible, '-hidden')]]">
+      <a id="button__cast" class$="button [[ifNotThen(_isConnected, 'inactive')]]" on-click="_handleClick">
+        <i class="fa fa-television"></i>
+      </a>
+      <button is="google-cast-button"></button>
+    </div>
+  </template>
+
+  <script>
+    define('cast-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class CastControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'cast-control'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _chromecastService: {
+              type: Object,
+              inject: 'ChromecastService',
+            },
+            _castState: String,
+            _isVisible: {
+              type: Boolean,
+              computed: '_getIsVisible(_castState)',
+            },
+            _isConnected: {
+              type: Boolean,
+              computed: '_getIsConnected(_castState)',
+            },
+          };
+        }
+
+        servicesInjectedCallback() {
+          super.servicesInjectedCallback();
+
+          this._chromecastService.addEventListener(
+            this._chromecastService.Events.CAST_STATE_CHANGED,
+            (e) => this._castState = e.castState
+          );
+        }
+
+        _getIsVisible(castState) {
+          return castState !== cast.framework.CastState.NO_DEVICES_AVAILABLE;
+        }
+
+        _getIsConnected(castState) {
+          return castState === cast.framework.CastState.CONNECTED;
+        }
+
+        _handleClick() {
+          if(this._chromecastService.isAvailable && this._castState === cast.framework.CastState.NOT_CONNECTED) {
+            this._chromecastService.requestSession();
+          }
+        }
+      }
+
+      window.customElements.define(CastControl.is, CastControl);
+    });
+  </script>
+
+</dom-module>

@@ -41,6 +41,8 @@
   ],
   "globals": {
     "Polymer": false,
-    "define": false
+    "define": false,
+    "cast": false,
+    "chrome": false
   }
 }

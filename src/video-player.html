@@ -12,10 +12,12 @@
 <link rel="import" href="services/fullscreen-manager.html">
 <link rel="import" href="services/synchronization-manager.html">
 <link rel="import" href="services/user-preferences-manager.html">
+<link rel="import" href="services/chromecast-service.html">
 <link rel="import" href="components/video-stream.html">
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/interactive-transcript.html">
 <link rel="import" href="components/overlays/waiting-overlay.html">
+<link rel="import" href="components/overlays/cast-overlay.html">
 <link rel="import" href="components/overlays/finished-overlay.html">
 <link rel="import" href="components/overlays/captions-display.html">
 <link rel="import" href="components/control-bar/control-bar.html">
@@ -34,7 +36,7 @@
 
       /* For some reason, just chaining those fullscreen selectors into one big
          selector doesn't work so we're stupid-duplicating all the rules. */
-      #video-player-container:-webkit-full-screen #streams-container { 
+      #video-player-container:-webkit-full-screen #streams-container {
         align-items: stretch;
       }
       #video-player-container:-moz-full-screen #streams-container {
@@ -114,6 +116,7 @@
       <div id="video-container">
         <!-- Videos Overlays -->
         <waiting-overlay state="[[state]]"></waiting-overlay>
+        <cast-overlay state="[[state]]"></cast-overlay>
         <template is="dom-if" if="[[configuration.relatedVideos]]">
           <finished-overlay state="[[state]]" related-videos="[[configuration.relatedVideos]]"></finished-overlay>
         </template>
@@ -163,7 +166,7 @@
   </template>
 
   <script>
-    define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'hls-js', 'constants'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, Hls, constants) => {
+    define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'chromecast-service', 'hls-js', 'constants'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ChromecastService, Hls, constants) => {
       const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES} = constants;
 
       class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
@@ -236,6 +239,7 @@
           iocKernel.bind(UserPreferencesManager).toSelf().inSingletonScope();
           iocKernel.bind(SynchronizationManager).toSelf(iocKernel.get(StateManager)).inSingletonScope();
           iocKernel.bind(FullscreenManager).toSelf(() => this.$['video-player-container']).inSingletonScope();
+          iocKernel.bind(ChromecastService).toSelf().inSingletonScope();
         }
 
         servicesInjectedCallback() {
@@ -405,7 +409,7 @@
         }
 
         _bottomSpace(isInteractiveTranscriptShown, isLectureSlides) {
-          let value; 
+          let value;
           // Controlbar height & progres bar height
           value = 40 + 16;
           if(isInteractiveTranscriptShown) {

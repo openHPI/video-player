@@ -2,7 +2,7 @@
 
 <script>
   define('state-manager', ['constants'], (constants) => {
-    const {PLAY_STATES, PLAYBACK_RATES, QUALITY_MODES} = constants;
+    const {PLAY_STATES, PLAYBACK_RATES, QUALITY_MODES, PLAYBACK_TARGETS} = constants;
 
     class StateManager {
       /**
@@ -272,6 +272,19 @@
        */
       setActiveCaptions(captions){
         this.setState('activeCaptions', captions);
+      }
+
+      /**
+       * Sets the playback target of the player.
+       * @param {string} target The new target
+       * @returns {void}
+       */
+      setPlaybackTarget(target) {
+        if(!Object.values(PLAYBACK_TARGETS).includes(target)) {
+          throw new RangeError(`Value must be in [${Object.values(PLAYBACK_TARGETS).toString()}].`);
+        }
+
+        this.setState('target', target);
       }
     }
 

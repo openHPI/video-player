@@ -13,6 +13,7 @@
 <link rel="import" href="mute-control.html">
 <link rel="import" href="fullscreen-control.html">
 <link rel="import" href="caption-control.html">
+<link rel="import" href="cast-control.html">
 <link rel="import" href="../../styling/global--style-module.html">
 
 <dom-module id="control-bar">
@@ -51,6 +52,7 @@
       <template is="dom-if" if="[[captionLanguages]]">
         <interactive-transcript-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></interactive-transcript-control>
       </template>
+      <cast-control state="[[state]]"></cast-control>
       <speed-control state="[[state]]"></speed-control>
       <template is="dom-if" if="[[_hasMultipleQualities]]">
         <quality-control state="[[state]]" qualities="[[availableQualities]]"></quality-control>

@@ -38,6 +38,16 @@
     };
 
     /**
+     * Contains the supported playback targets.
+     * @type {Object}
+     */
+    const PLAYBACK_TARGETS = {
+      LOCAL: 'local',
+      CHROMECAST: 'chromecast',
+      AIRPLAY: 'airplay',
+    };
+
+    /**
      * Contains the MIME type of HLS streams.
      * @type {String}
      */
@@ -148,6 +158,7 @@
       PLAYBACK_RATES,
       QUALITY_MODES,
       QUALITY_NAMES,
+      PLAYBACK_TARGETS,
       HLS_MIME_TYPE,
       SYNC_DIFF_THRESHOLD,
       PLAYING_EVENT_NAME,

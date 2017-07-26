@@ -1,0 +1,171 @@
+<link rel="import" href="../3rd-imports/google-cast.html">
+
+<script>
+  define('chromecast-service', ['constants'], (constants) => {
+    const {PLAY_STATES} = constants;
+
+    class ChromecastService {
+      /**
+       * Initializes a new ChromecastService instance.
+       * @return {ChromecastService}  The new ChromecastService instance.
+       */
+      constructor(appId) {
+        this._appId = appId;
+        this._callbacks = {};
+
+        // Initialize google cast callback
+        this.isAvailable = false;
+        window.__onGCastApiAvailable = (isAvailable) => {
+          this.isAvailable = isAvailable;
+          this._dispatchEvent(this.Events.AVAILABILITY_CHANGED, {isAvailable});
+
+          if (this.isAvailable) {
+            this._initializeCastApi();
+          }
+        };
+      }
+
+      get Events() {
+        return {
+          AVAILABILITY_CHANGED: 'availability-changed',
+          CAST_STATE_CHANGED: 'cast-state-changed',
+          IS_CONNECTED_CHANGED: 'is-connected-changed',
+          PLAY_STATE_CHANGED: 'play-state-changed',
+          POSITION_CHANGED: 'position-changed',
+          VOLUME_CHANGED: 'volume-changed',
+          MUTED_CHANGED: 'muted-changed',
+        };
+      }
+
+      _initializeCastApi() {
+        // Setup cast options
+        this._castContext = cast.framework.CastContext.getInstance();
+        this._castContext.setOptions({
+          receiverApplicationId: this._appId || chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+          autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED,
+        });
+
+        this._remotePlayer = new cast.framework.RemotePlayer();
+        this._remotePlayerController = new cast.framework.RemotePlayerController(this._remotePlayer);
+        this._castContext.addEventListener(cast.framework.CastContext.CAST_STATE_CHANGED, (e) => {
+          let castState = e.castState;
+          this._dispatchEvent(this.Events.CAST_STATE_CHANGED, {castState});
+        });
+        this._remotePlayerController.addEventListener(cast.framework.RemotePlayerEventType.IS_CONNECTED_CHANGED, () => {
+          let isConnected = this._remotePlayer.isConnected;
+          this._dispatchEvent(this.Events.IS_CONNECTED_CHANGED, {isConnected});
+
+          if(isConnected) {
+            this._setupDevice();
+          }
+        });
+      }
+
+      _setupDevice() {
+        // Register event listeners on player controller
+        this._remotePlayerController.addEventListener(cast.framework.RemotePlayerEventType.IS_PAUSED_CHANGED, () => {
+          let playState = this._remotePlayer.isPaused ? PLAY_STATES.PAUSED : PLAY_STATES.PLAYING;
+          this._dispatchEvent(this.Events.PLAY_STATE_CHANGED, {playState});
+        });
+        this._remotePlayerController.addEventListener(cast.framework.RemotePlayerEventType.CURRENT_TIME_CHANGED, () => {
+          let position = this._remotePlayer.currentTime;
+          this._dispatchEvent(this.Events.POSITION_CHANGED, {position});
+        });
+        this._remotePlayerController.addEventListener(cast.framework.RemotePlayerEventType.VOLUME_LEVEL_CHANGED, () => {
+          let volume = this._remotePlayer.volumeLevel;
+          this._dispatchEvent(this.Events.VOLUME_CHANGED, {volume});
+        });
+        this._remotePlayerController.addEventListener(cast.framework.RemotePlayerEventType.IS_MUTED_CHANGED, () => {
+          let muted = this._remotePlayer.isMuted;
+          this._dispatchEvent(this.Events.MUTED_CHANGED, {muted});
+        });
+      }
+
+      requestSession() {
+        this._castContext.requestSession();
+      }
+
+      loadMedia(contentId, contentType) {
+        this._assertIsConnected();
+
+        let castSession = cast.framework.CastContext.getInstance().getCurrentSession();
+        let mediaInfo = new chrome.cast.media.MediaInfo(contentId, contentType);
+        let request = new chrome.cast.media.LoadRequest(mediaInfo);
+        return castSession.loadMedia(request)
+          .catch(reason => console.error('Media could not be loaded on Chromecast device. Reason: ' + reason));
+      }
+
+      play() {
+        this._assertIsConnected();
+
+        if (this._remotePlayer.isPaused) {
+          this._remotePlayerController.playOrPause();
+        }
+      }
+
+      pause() {
+        this._assertIsConnected();
+
+        if (!this._remotePlayer.isPaused) {
+          this._remotePlayerController.playOrPause();
+        }
+      }
+
+      seek(position) {
+        this._assertIsConnected();
+
+        this._remotePlayer.currentTime = position;
+        this._remotePlayerController.seek();
+      }
+
+      setVolume(volume) {
+        this._assertIsConnected();
+
+        this._remotePlayer.volumeLevel = volume;
+        this._remotePlayerController.setVolumeLevel();
+      }
+
+      mute() {
+        this._assertIsConnected();
+
+        if(!this._remotePlayer.isMuted) {
+          this._remotePlayerController.muteOrUnmute();
+        }
+      }
+
+      unmute() {
+        this._assertIsConnected();
+        if(this._remotePlayer.isMuted) {
+          this._remotePlayerController.muteOrUnmute();
+        }
+      }
+
+      addEventListener(name, callback) {
+        if(!(name in this._callbacks)) {
+          this._callbacks[name] = [];
+        }
+        this._callbacks[name].push(callback);
+      }
+
+      removeEventListener(name, callback) {
+        if(name in this._callbacks) {
+          this._callbacks[name] = this._callbacks[name].filter(x => x !== callback);
+        }
+      }
+
+      _dispatchEvent(name, e) {
+        if(name in this._callbacks) {
+          this._callbacks[name].forEach(callback => callback(e));
+        }
+      }
+
+      _assertIsConnected() {
+        if(!(this._remotePlayer && this._remotePlayer.isConnected)) {
+          throw new Error('No cast device connected.');
+        }
+      }
+    }
+
+    return ChromecastService;
+  });
+</script>

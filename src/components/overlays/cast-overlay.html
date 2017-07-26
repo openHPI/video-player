@@ -1,0 +1,151 @@
+<link rel="import" href="../../../bower_components/imd/imd.html">
+
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../styling/overlay--style-module.html">
+
+<dom-module id="cast-overlay">
+  <template>
+    <style type="text/css" include="overlay--style-module">
+      #container__cast_overlay {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 25px;
+        background-color: rgba(0, 0, 0, 0.85);
+        @apply --box-sizing-border-box;
+      }
+    </style>
+
+    <div id="container__cast_overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
+    </div>
+  </template>
+
+  <script>
+    define('cast-overlay', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {PLAY_STATES, PLAYBACK_TARGETS} = constants;
+
+      class CastOverlay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'cast-overlay'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            appId: String,
+            contentId: String,
+            contentType: String,
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _chromecastService: {
+              type: Object,
+              inject: 'ChromecastService',
+            },
+            _isVisible: {
+              type: Boolean,
+              computed: '_getIsVisible(state.target)',
+            },
+          };
+        }
+
+        static get observers() {
+          return [
+            '_playStateChanged(state.playState)',
+            '_positionChanged(state.position)',
+            '_volumeChanged(state.volume)',
+            '_mutedChanged(state.muted)',
+          ];
+        }
+
+        servicesInjectedCallback() {
+          super.servicesInjectedCallback();
+
+          this._chromecastService.addEventListener(
+            this._chromecastService.Events.IS_CONNECTED_CHANGED,
+            this._isConnectedChanged.bind(this)
+          );
+        }
+
+        _getIsVisible(target) {
+          return target === PLAYBACK_TARGETS.CHROMECAST;
+        }
+
+        _isConnectedChanged(e) {
+          if(e.isConnected) {
+            this._stateManager.setPlaybackTarget(PLAYBACK_TARGETS.CHROMECAST);
+            this._setupChromecastPlayer();
+          } else {
+            this._stateManager.setPlaybackTarget(PLAYBACK_TARGETS.LOCAL);
+          }
+        }
+
+        _setupChromecastPlayer() {
+          // Add event listeners for propagating state changes on the cast device to the local player
+          this._chromecastService.addEventListener(
+            this._chromecastService.Events.PLAY_STATE_CHANGED,
+            (e) => this._stateManager.setPlayState(e.playState)
+          );
+          this._chromecastService.addEventListener(
+            this._chromecastService.Events.POSITION_CHANGED,
+            (e) => this._stateManager.setPosition(e.position)
+          );
+          this._chromecastService.addEventListener(
+            this._chromecastService.Events.VOLUME_CHANGED,
+            (e) => this._stateManager.setVolume(e.volume)
+          );
+          this._chromecastService.addEventListener(
+            this._chromecastService.Events.MUTED_CHANGED,
+            (e) => e.muted ? this._stateManager.mute() : this._stateManager.unmute()
+          );
+
+          // Load media
+          this._chromecastService.loadMedia(this.contentId, this.contentType).then(this._applyState.bind(this));
+        }
+
+        _playStateChanged(playState) {
+          if(this.state.target === PLAYBACK_TARGETS.CHROMECAST) {
+            if(playState === PLAY_STATES.PLAYING) {
+              this._chromecastService.play();
+            } else if (playState === PLAY_STATES.PAUSED) {
+              this._chromecastService.pause();
+            }
+          }
+        }
+
+        _positionChanged(position) {
+          if(this.state.target === PLAYBACK_TARGETS.CHROMECAST) {
+            this._chromecastService.seek(position);
+          }
+        }
+
+        _volumeChanged(volume) {
+          if(this.state.target === PLAYBACK_TARGETS.CHROMECAST) {
+            this._chromecastService.setVolume(volume);
+          }
+        }
+
+        _mutedChanged(muted) {
+          if(this._remotePlayer && this._remotePlayer.isConnected) {
+            if(this.state.target === PLAYBACK_TARGETS.CHROMECAST) {
+              if(muted) {
+                this._chromecastService.mute();
+              } else {
+                this._chromecastService.unmute();
+              }
+            }
+          }
+        }
+
+        _applyState() {
+          this._playStateChanged(this.state.playState);
+          this._positionChanged(this.state.position);
+          this._volumeChanged(this.state.volume);
+          this._mutedChanged(this.state.muted);
+        }
+      }
+
+      window.customElements.define(CastOverlay.is, CastOverlay);
+    });
+  </script>
+
+</dom-module>
