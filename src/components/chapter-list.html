@@ -20,6 +20,9 @@
       #container__chapter_list .list_item {
         @apply --background-color
       }
+      #container__chapter_list .list_item .list_item__link {
+        @apply --foreground-color;
+      }
       #container__chapter_list li:nth-child(odd) {
         @apply --secondary-background-color
       }
@@ -29,7 +32,7 @@
       <ul class="list">
           <template is="dom-repeat" items="[[chapters]]">
             <li class="list_item">
-              <a class$="link__chapter_bookmark list_item__link [[ifEqualsThen(item, activeChapter, 'active fa-caret-right')]]" on-click="_handleClick">
+              <a class$="link__chapter_bookmark list_item__link [[ifEqualsThen(item, activeChapter, 'active fa-caret-right')]]" on-click="_handleClick" href="javascript:void(0)">
                 [[item.text]]
               </a>
             </li>

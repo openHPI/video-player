@@ -43,6 +43,8 @@
 
       #button__toggle_next_video {
         margin-top: 10px;
+        text-decoration: none;
+        color: white;
       } 
 
       @-ms-keyframes spin {
@@ -69,7 +71,7 @@
         <i id="icon_spinner" class="fa fa-spinner" aria-hidden="true"></i>
         <span id="timer">[[state.secondsToNextVideo]]</span>
       </div>
-      <a id="button__toggle_next_video" class="button" on-click="_handleClick">Abbrechen</a>
+      <a id="button__toggle_next_video" class="button" on-click="_handleClick" href="javascript:void(0)">Abbrechen</a>
     </div>
   </template>
 
@@ -92,6 +94,28 @@
               computed: '_getIsVisible(state.playState, state.autoPlayNextVideo)',
             },
           };
+        }        
+
+        ready() {
+          super.ready();
+
+          // Add event listener for keyboard shortcuts
+          window.addEventListener('keydown', (e) => {
+            if (e.defaultPrevented) {
+              // Do nothing if the event was already processed
+              return;
+            }
+
+            if (e.keyCode === 27) {
+              this._stateManager.toggleAutoPlayNextVideo();
+            } else {
+              return;
+            }
+
+            // Make sure the user doesn't trigger anything else with their
+            // keyboard interaction, like scrolling the page
+            e.preventDefault();
+          });
         }
 
         _getIsVisible(playState, autoPlayNextVideo) {

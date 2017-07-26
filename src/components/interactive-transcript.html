@@ -31,6 +31,9 @@
         overflow: hidden;
         @apply --transition-duration-600;
       }
+      #container__interactive_transcript .list_item .list_item__link {
+        color: black;
+      }
       #container__interactive_transcript .list_item .list_item__prefix {
         white-space: nowrap;
         margin-right: 15px;
@@ -60,7 +63,7 @@
               <a class$="list_item__prefix list_item__link [[ifEqualsThen(item, _activeCue, 'active fa-caret-right')]]" on-click="_handleClick">
                 [[secondsToHms(item.startTime, state.duration)]] - [[secondsToHms(item.endTime, state.duration)]]:
               </a>
-              <a class="list_item__link" on-click="_handleClick">
+              <a class="list_item__link" on-click="_handleClick" href="javascript:void(0)">
                 [[item.text]]
               </a>
             </li>

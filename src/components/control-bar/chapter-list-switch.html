@@ -17,7 +17,10 @@
     </style>
 
     <div id="container__chapter_list_switch" class="user_controls">
-      <a id="button__chapter_list" class$="button [[ifNotThen(state.isChapterListShown, 'inactive')]]" on-click="_handleClick">
+      <a id="button__chapter_list" 
+         class$="button [[ifNotThen(state.isChapterListShown, 'inactive')]]" 
+         on-click="_handleClick" 
+         href="javascript:void(0)">
         <i class="fa fa-list"></i>
       </a>
     </div>
