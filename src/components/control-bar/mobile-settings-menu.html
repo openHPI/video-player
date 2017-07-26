@@ -38,7 +38,7 @@
 
         @apply --foreground-color;
 
-        background-color: rgba(255,255,255,0.5);
+        background-color: rgba(0, 0, 0, 0.7);
       }
       
       .open #button__select {
@@ -46,8 +46,7 @@
       }
 
       .user_controls.open {
-        height: 30px;
-        margin: 5px;
+        height: 40px;
         @apply --accent-color-background;
       }
 
@@ -70,16 +69,16 @@
         </a>
         <div id="dropdown__select" class$="dropdown-content [[ifNotThen(_isDropDownOpen, '-hidden')]]">
           <template is="dom-if" if="[[captionLanguages]]">
-          <caption-control is-in-menu="true" state="[[state]]" languages="[[captionLanguages]]">
+          <caption-control is-in-mobile-menu="true" state="[[state]]" languages="[[captionLanguages]]">
             </caption-control>
           </template>
           <template is="dom-if" if="[[captionLanguages]]">
-            <interactive-transcript-control is-in-menu="true" state="[[state]]" languages="[[captionLanguages]]">
+            <interactive-transcript-control is-in-mobile-menu="true" state="[[state]]" languages="[[captionLanguages]]">
             </interactive-transcript-control>
           </template>
-          <speed-control is-in-menu="true" state="[[state]]"></speed-control>
+          <speed-control is-in-mobile-menu="true" state="[[state]]"></speed-control>
           <template is="dom-if" if="[[_hasMultipleQualities]]">
-            <quality-control is-in-menu="true" state="[[state]]" qualities="[[availableQualities]]">
+            <quality-control is-in-mobile-menu="true" state="[[state]]" qualities="[[availableQualities]]">
             </quality-control>
           </template>
         </div>

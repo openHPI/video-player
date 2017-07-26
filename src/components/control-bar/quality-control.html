@@ -22,7 +22,7 @@
         formatter="[[_getQualityName]]"
         on-change="_selectionChanged"
         icon-classes="fa fa-desktop"
-        is-in-menu="[[isInMenu]]">
+        is-in-mobile-menu="[[isInMobileMenu]]">
       </select-control>
     </div>
   </template>
@@ -42,7 +42,7 @@
               type: Object,
               inject: 'StateManager',
             },
-            isInMenu: {
+            isInMobileMenu: {
               type: Boolean,
               value: false,
             },

@@ -21,7 +21,7 @@
         formatter="[[_formatPlaybackRate]]"
         on-change="_selectionChanged"
         icon-classes="fa fa-tachometer"
-        is-in-menu="[[isInMenu]]">
+        is-in-mobile-menu="[[isInMobileMenu]]">
       </select-control>
     </div>
     </template>
@@ -45,7 +45,7 @@
               readOnly: true,
               value: PLAYBACK_RATES,
             },
-            isInMenu: {
+            isInMobileMenu: {
               type: Boolean,
               value: false,
             },

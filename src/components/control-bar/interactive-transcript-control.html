@@ -17,8 +17,8 @@
       selected-value="[[ifThenElse(state.isInteractiveTranscriptShown, state.captionLanguage, 'off')]]"
       on-change="_selectionChanged"
       icon-classes="fa fa-file-text"
-      active="[[state.isInteractiveTranscriptShown || isInMenu]]"
-      is-in-menu="[[isInMenu]]">
+      active="[[state.isInteractiveTranscriptShown || isInMobileMenu]]"
+      is-in-mobile-menu="[[isInMobileMenu]]">
     </select-control>
   </template>
 
@@ -39,7 +39,7 @@
               type: Array,
               computed: '_getValues(languages.*)',
             },
-            isInMenu: {
+            isInMobileMenu: {
               type: Boolean,
               value: false,
             },
