@@ -9,7 +9,7 @@
       /**
        * Initializes a new AnalyticsManager instance.
        * @param {VideoPlayer} videoPlayer  The VideoPlayer that dispatches the events.
-       * @return {AnalyticsManager}  The new AnalyticsManager instance.
+       * @returns {AnalyticsManager}  The new AnalyticsManager instance.
        */
       constructor(videoPlayer, stateManager) {
         this.videoPlayer = videoPlayer;
@@ -21,16 +21,10 @@
        * @param {string} changeFunction The name of ste StateManager's methos to be executed
        * @param {Object} changeParameters An Array of parameters for the changeFunction
        * @param {Object} options Further options for tracking the state change
+       * @returns {void}
        */
       changeState(changeFunction, changeParameters, options) {
-        let eventData = {
-          detail: Object.assign(
-            this._getBaseEventData(),
-            {
-              verb: options.verb,
-            }),
-        };
-
+        let baseEventData = this._getBaseEventData();
         let beforeStates = {};
         switch (options.verb) {
           case ANALYTICS_TOPICS.VIDEO_SEEK:
@@ -59,14 +53,35 @@
             break;
         }
 
-        eventData.detail = Object.assign(eventData.detail, beforeStates, afterStates);
+        this._fireEvent(options.verb, baseEventData, beforeStates, afterStates);
+      }
+
+      /**
+       * Fires an analytics event
+       * @param {string} verb The verb describing the event type
+       * @param {Object} baseEventData The basic event data for every event
+       * @param {Object} beforeStates Additional event data captured before the state change
+       * @param {Object} afterStates Additional event data captured after the state change
+       * @returns {void}
+       */
+      _fireEvent(verb, baseEventData, beforeStates, afterStates) {
+        let eventData = {
+          detail: Object.assign(
+            baseEventData,
+            {
+              verb: verb,
+            },
+            beforeStates,
+            afterStates),
+        };
+
         let event = new CustomEvent('analytics', eventData);
         this.videoPlayer.dispatchEvent(event);
       }
 
       /**
        * Gets the minimum set of information for events
-       * @return {Object} Object containing the minimum set of information for events
+       * @returns {Object} Object containing the minimum set of information for events
        */
       _getBaseEventData() {
         return {
@@ -83,7 +98,7 @@
 
       /**
        * Gets the active chapter
-       * @return {Object} The active chapter object, undefined if there are no chapters
+       * @returns {Object} The active chapter object, undefined if there are no chapters
        */
       _getActiveChapter() {
         if (this.videoPlayer._hasChapters) {
@@ -98,7 +113,7 @@
 
       /**
        * Gets the active slide
-       * @return {Object} The active slide object, undefined if there are none
+       * @returns {Object} The active slide object, undefined if there are none
        */
       _getActiveSlide() {
         if (this.videoPlayer.configuration.lectureSlides) {
@@ -113,7 +128,7 @@
 
       /**
        * Gets the current fullscreen mode
-       * @return {boolean} Fullscreen state: TRUE if fullscreen is on, FALSE if not
+       * @returns {boolean} Fullscreen state: TRUE if fullscreen is on, FALSE if not
        */
       _getFullscreenMode() {
         return this.stateManager.state.fullscreen == true;
