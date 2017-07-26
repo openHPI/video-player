@@ -50,7 +50,9 @@
   </template>
 
   <script>
-    define('lecture-slide', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('lecture-slide', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
       class LectureSlide extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'lecture-slide'; }
 
@@ -62,7 +64,17 @@
               type: Object,
               inject: 'StateManager',
             },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
           };
+        }
+
+        static get observers() {
+          return [
+            '_checkSlideActivation(state.position)',
+          ];
         }
 
         _stylePercentage(position, duration) {
@@ -82,6 +94,17 @@
 
         _handleClick(){
           this._stateManager.setPosition(this.slide.startPosition);
+        }
+
+        _checkSlideActivation(position) {
+          // This is not working correct, as the oberver event fires every 350 ms
+          // an if startPosition = 90, all position values from 89.5 to 90.4 will
+          // each time cause firing an analytics event
+          // TODO: find a better solution here
+          if (this.slide.startPosition === Math.round(position)) {
+            if (this._analyticsManager)
+              this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SLIDE_CHANGE}, {new_current_slide: this.slide})
+          }
         }
       }
 
