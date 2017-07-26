@@ -14,6 +14,7 @@
       constructor(videoPlayer, stateManager) {
         this.videoPlayer = videoPlayer;
         this.stateManager = stateManager;
+        window.onunload = this._handleWindowUnload.bind(this);
       }
 
       /**
@@ -132,6 +133,17 @@
        */
       _getFullscreenMode() {
         return this.stateManager.state.fullscreen == true;
+      }
+
+      /**
+       * Handles event firing when tab/window is closed
+       * @param {Object} event TThe unload event
+       * @returns {void}
+       */
+      _handleWindowUnload(event) {
+        event.preventDefault();
+        let baseEventData = this._getBaseEventData();
+        this._fireEvent(ANALYTICS_TOPICS.VIDEO_CLOSE, baseEventData);
       }
     }
 
