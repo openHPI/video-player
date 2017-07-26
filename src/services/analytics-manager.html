@@ -14,7 +14,9 @@
       constructor(videoPlayer, stateManager) {
         this.videoPlayer = videoPlayer;
         this.stateManager = stateManager;
+
         window.onunload = this._handleWindowUnload.bind(this);
+        window.screen.orientation.onchange = this._handleOrientationChange.bind(this);
       }
 
       /**
@@ -154,13 +156,23 @@
 
       /**
        * Handles event firing when tab/window is closed
-       * @param {Object} event TThe unload event
+       * @param {Object} event The unload event
        * @returns {void}
        */
       _handleWindowUnload(event) {
         event.preventDefault();
         let baseEventData = this._getBaseEventData();
         this._fireEvent(ANALYTICS_TOPICS.VIDEO_CLOSE, baseEventData);
+      }
+
+      /**
+       * Handles event firing when device orientation changes
+       * @returns {void}
+       */
+      _handleOrientationChange() {
+        let baseEventData = this._getBaseEventData();
+        let verb = (window.screen.orientation.type.includes('landscape') ? ANALYTICS_TOPICS.VIDEO_LANDSCAPE : ANALYTICS_TOPICS.VIDEO_PORTRAIT);
+        this._fireEvent(verb, baseEventData);
       }
     }
 
