@@ -83,7 +83,7 @@
           <a href="[[item.url]]">
             <div class="container_related_overlay">
               <span>[[item.title]]</span>
-              <span class$="related_video__time [[ifNotThen(item.length, 'empty')]]">[[item.length]]</span>
+              <span class$="related_video__time [[ifNotThen(item.length, 'empty')]]">[[secondsToHms(item.length, state.duration)]]</span>
             </div>
           </a>
         </div>
