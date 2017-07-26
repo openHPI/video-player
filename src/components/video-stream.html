@@ -39,7 +39,9 @@
         id="video"
         preload="[[ifThenElse(preload, 'auto', 'metadata')]]"
         on-click="_handleClick"
-        on-canplay="_handleCanPlay">
+        on-canplay="_handleCanPlay"
+        ondragover="return false;"
+        ondrag="return false;">
         <template is="dom-repeat" items="[[captions]]">
           <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
         </template>
