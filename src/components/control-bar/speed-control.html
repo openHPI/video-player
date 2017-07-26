@@ -9,6 +9,9 @@
 
   <template>
     <style type="text/css" include="control-bar--style-module">
+      #container__speed_control {
+        width: 100%;
+      }
     </style>
 
     <div id="container__speed_control">
@@ -17,7 +20,8 @@
         selected-value="[[state.playbackRate]]"
         formatter="[[_formatPlaybackRate]]"
         on-change="_selectionChanged"
-        icon-classes="fa fa-tachometer">
+        icon-classes="fa fa-tachometer"
+        is-in-mobile-menu="[[isInMobileMenu]]">
       </select-control>
     </div>
     </template>
@@ -40,6 +44,10 @@
               type: Array,
               readOnly: true,
               value: PLAYBACK_RATES,
+            },
+            isInMobileMenu: {
+              type: Boolean,
+              value: false,
             },
           };
         }
