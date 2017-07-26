@@ -45,8 +45,16 @@
       return this.ifEqualsThenElse(a, b, thenValue, '');
     }
 
+    ifNotEqualsThen(a, b, thenValue) {
+      return this.ifNotEqualsThenElse(a, b, thenValue, '');
+    }
+
     ifEqualsThenElse(a, b, thenValue, elseValue) {
       return this.equals(a, b) ? thenValue : elseValue;
+    }
+
+    ifNotEqualsThenElse(a, b, thenValue, elseValue) {
+      return this.equals(a, b) ? elseValue : thenValue;
     }
 
     toStringOrEmpty(value) {

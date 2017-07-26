@@ -45,7 +45,7 @@
         background-color: grey;
       }
 
-      .dropdown #button__select:after {
+      .dropdown #button__select.with-badge:after {
         content: attr(badge-value);
         position: absolute;
         top: 6px;
@@ -93,7 +93,7 @@
 
     <div id="container__select_control" class$="user_controls [[ifNotThen(isInMobileMenu, 'dropdown')]] [[ifThen(isInMobileMenu, 'in-menu-entry')]]">
       <div id="inner_container__select_control" on-mouseover="_showDropDown" on-mouseout="_hideDropDown">
-        <a id="button__select" class$="button [[ifNotThen(active, 'inactive')]]" badge-value$="{{selectedValue === 'off'? '': formatter(selectedValue)}}">
+        <a id="button__select" class$="button [[ifNotEqualsThen(selectedValue, 'off', 'with-badge')]] [[ifNotThen(active, 'inactive')]]" badge-value$="{{formatter(selectedValue)}}">
           <i class$="[[iconClasses]]"></i>
         </a>
         <div id="dropdown__select" class$="dropdown-content [[ifNotThen(_isDropDownOpen, '-hidden')]]">
