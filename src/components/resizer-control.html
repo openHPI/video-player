@@ -57,7 +57,9 @@
   </template>
 
   <script>
-    define('resizer-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('resizer-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
       class ResizerControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'resizer-control'; }
 
@@ -69,6 +71,10 @@
             _globalFlexBasisGap: {
               type: Array,
               value: () => [0, 0],
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
             },
           };
         }
@@ -102,6 +108,8 @@
           // Remove the created ghost element & eventhandler when the dragging ended.
           document.body.removeChild(document.body.lastChild);
           this.parentElement.removeEventListener('dragover', this._handleDragOver.bind(this));
+
+          this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_CHANGE_SIZE}, this._getAnalyticsData());
         }
 
         _handleDragOver(e) {
@@ -192,6 +200,16 @@
           if (!isFullscreen) {
             this._resetResizer();
           }
+        }
+
+        _getAnalyticsData() {
+          let sizeRatio = this._videos[0].offsetWidth / this._videos[1].offsetWidth;
+          let resizerControls = Array.from(this.parentElement.querySelectorAll('resizer-control'));
+          return {
+            new_current_ratio: sizeRatio,
+            resizer_index: resizerControls.indexOf(this),
+            resizer_count: resizerControls.length,
+          };
         }
       }
 
