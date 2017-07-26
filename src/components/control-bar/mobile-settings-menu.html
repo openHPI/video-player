@@ -1,0 +1,138 @@
+<link rel="import" href="../../../bower_components/imd/imd.html">
+
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+
+<link rel="import" href="caption-control.html">
+<link rel="import" href="interactive-transcript-control.html">
+<link rel="import" href="speed-control.html">
+<link rel="import" href="quality-control.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
+
+<dom-module id="mobile-settings-menu">
+  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
+
+  <template>
+    <style type="text/css" include="control-bar--style-module">
+      :host {
+        /* Avoid flickering with changing icons */
+        /* It should be about twice the icon size */
+        min-width: 3rem;
+      }
+
+      /* .dropdown {
+         position: relative; 
+      } */
+
+      .dropdown-content {
+        position: absolute;
+        /* Equals control bar height. This is set to assure that the dropdown opens to the top. */
+        top: 0;
+        bottom: 40px;
+        /* Cancel out the padding */
+        left: 0;
+        right: 0;
+        z-index: 10;
+        overflow: scroll;
+        text-align: left;
+
+        @apply --foreground-color;
+
+        background-color: rgba(0, 0, 0, 0.7);
+      }
+      
+      .open #button__select {
+        cursor: default;
+      }
+
+      .user_controls.open {
+        height: 40px;
+        @apply --accent-color-background;
+      }
+
+      .dropdown-content a:hover {
+        background-color: grey;
+      }
+      .dropdown-content a.selected {
+        background-color: grey;
+      }
+      #dropdown__select > * {
+        margin: 4px 0;
+        background-color: rgba(255,255,255,0.4);
+      }
+    </style>
+
+    <div id="container__select_control" class="user_controls">
+      <div class="dropdown">
+        <a id="button__select" class="button" on-click="_toggleDropDown">
+          <i class="fa fa-cog"></i>
+        </a>
+        <div id="dropdown__select" class$="dropdown-content [[ifNotThen(_isDropDownOpen, '-hidden')]]">
+          <template is="dom-if" if="[[captionLanguages]]">
+          <caption-control is-in-mobile-menu="true" state="[[state]]" languages="[[captionLanguages]]">
+            </caption-control>
+          </template>
+          <template is="dom-if" if="[[captionLanguages]]">
+            <interactive-transcript-control is-in-mobile-menu="true" state="[[state]]" languages="[[captionLanguages]]">
+            </interactive-transcript-control>
+          </template>
+          <speed-control is-in-mobile-menu="true" state="[[state]]"></speed-control>
+          <template is="dom-if" if="[[_hasMultipleQualities]]">
+            <quality-control is-in-mobile-menu="true" state="[[state]]" qualities="[[availableQualities]]">
+            </quality-control>
+          </template>
+        </div>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    define('mobile-settings-menu', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+
+      class MobileSettingsMenu extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'mobile-settings-menu'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            captionLanguages: Array,
+            availableQualities: Boolean,
+            _isDropDownOpen: {
+              type: Boolean,
+              value: false,
+            },
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _hasMultipleQualities: {
+              type: Boolean,
+              computed: '_getHasMultipleQualities(availableQualities)',
+            },
+          };
+        }
+
+        ready() {
+          super.ready();
+        }
+
+        _toggleDropDown() {
+          this._isDropDownOpen = !this._isDropDownOpen;
+          if(this._isDropDownOpen) {
+            this.$.container__select_control.classList.add('open');
+          } else {
+            this.$.container__select_control.classList.remove('open');
+          }
+        }
+
+        _getHasMultipleQualities() {
+          return this.availableQualities.length > 1;
+        }
+      }
+
+      window.customElements.define(MobileSettingsMenu.is, MobileSettingsMenu);
+    });
+  </script>
+
+</dom-module>

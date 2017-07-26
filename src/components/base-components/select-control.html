@@ -8,10 +8,14 @@
 
   <template>
     <style type="text/css" include="control-bar--style-module">
-      .dropdown {
+      :host {
+        width: 100%;
+      }
+
+      #inner_container__select_control {
         position: relative;
       }
-      .dropdown-content {
+      .dropdown .dropdown-content {
         position: absolute;
         /* Equals control bar height. This is set to assure that the dropdown opens to the top. */
         bottom: 40px;
@@ -23,25 +27,25 @@
         @apply --foreground-color;
         @apply --background-color;
       }
-      .dropdown-content a {
+      .dropdown .dropdown-content a {
         display: inline-block;
         line-height: 2;
         cursor: pointer;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .open #button__select {
+      .dropdown .open #button__select {
         cursor: default;
       }
 
-      .dropdown-content a:hover {
+      .dropdown .dropdown-content a:hover {
         background-color: grey;
       }
-      .dropdown-content a.selected {
+      .dropdown .dropdown-content a.selected {
         background-color: grey;
       }
 
-      #button__select:after {
+      .dropdown #button__select:after {
         content: attr(badge-value);
         position: absolute;
         top: 6px;
@@ -55,10 +59,40 @@
         font-size: 9px;
         font-weight: lighter;
       }
+
+      #container__select_control.in-menu-entry {
+        height: initial;
+        background-color: transparent;
+      }
+
+      .in-menu-entry #inner_container__select_control{
+        display: flex;
+        justify-content: space-between; 
+        width: 100%;
+      }
+      
+      .in-menu-entry #button__select {
+        /* Necessary for horizontally aligning all icons */
+         width: 30px;
+      }
+      .in-menu-entry #dropdown__select {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .in-menu-entry #button__select, .in-menu-entry #dropdown__select a {
+        padding: 0 5px;
+        line-height: 30px;
+        color: white;
+      }
+
+      .in-menu-entry #dropdown__select a.selected {
+        @apply --accent-color-background;
+        @apply --font-color-on-accent-color;
+      }
     </style>
 
-    <div id="container__select_control" class="user_controls">
-      <div class="dropdown" on-mouseover="_showDropDown" on-mouseout="_hideDropDown">
+    <div id="container__select_control" class$="user_controls [[ifNotThen(isInMobileMenu, 'dropdown')]] [[ifThen(isInMobileMenu, 'in-menu-entry')]]">
+      <div id="inner_container__select_control" on-mouseover="_showDropDown" on-mouseout="_hideDropDown">
         <a id="button__select" class$="button [[ifNotThen(active, 'inactive')]]" badge-value$="{{formatter(selectedValue)}}">
           <i class$="[[iconClasses]]"></i>
         </a>
@@ -98,6 +132,10 @@
             active: {
               type: Boolean,
               value: true,
+            },
+            isInMobileMenu: {
+              type: Boolean,
+              value: false,
             },
           };
         }

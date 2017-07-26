@@ -17,7 +17,8 @@
       selected-value="[[ifThenElse(state.isCaptionShown, state.captionLanguage, 'off')]]"
       on-change="_selectionChanged"
       icon-classes="fa fa-cc"
-      active="[[state.isCaptionShown]]">
+      is-in-mobile-menu="[[isInMobileMenu]]"
+      active="[[state.isCaptionShown || isInMobileMenu]]">
     </select-control>
   </template>
 
@@ -37,6 +38,10 @@
             _values: {
               type: Array,
               computed: '_getValues(languages.*)',
+            },
+            isInMobileMenu: {
+              type: Boolean,
+              value: false,
             },
           };
         }
