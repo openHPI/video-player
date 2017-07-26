@@ -12,6 +12,18 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-direction: column;
+        background-color: rgba(0, 0, 0, 0.85);
+        color: white;
+      }
+
+      .container__spinner {
+        position: relative;
+      }
+      .container__spinner #timer {
+        position: absolute;
+        top: calc(50% - 8px);
+        left: calc(50% - 3px);
       }
 
       #icon_spinner {
@@ -24,6 +36,14 @@
         animation-iteration-count: infinite;
         animation-timing-function: linear;
       }
+
+      #text__next_video {
+        font-size: 20px;
+      }
+
+      #button__toggle_next_video {
+        margin-top: 10px;
+      } 
 
       @-ms-keyframes spin {
         from { -ms-transform: rotate(0deg); }
@@ -44,13 +64,12 @@
     </style>
 
     <div id="container__nextvideo_overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
-      
-      <i id="icon_spinner" class="fa fa-spinner" aria-hidden="true"></i>
-
-      <p id="timer">[[state.secondsToNextVideo]]</p>
-
-      <a id="button__toggle_next_video" class="button" on-click="_handleClick"">Abbrechen</a>
-
+      <p id="text__next_video">Nächstes Video</p> 
+      <div class="container__spinner">
+        <i id="icon_spinner" class="fa fa-spinner" aria-hidden="true"></i>
+        <span id="timer">[[state.secondsToNextVideo]]</span>
+      </div>
+      <a id="button__toggle_next_video" class="button" on-click="_handleClick">Abbrechen</a>
     </div>
   </template>
 
@@ -75,17 +94,13 @@
           };
         }
 
-        // if 
         _getIsVisible(playState, autoPlayNextVideo) {
             return playState === PLAY_STATES.FINISHED && autoPlayNextVideo;
         }
 
         _handleClick(){
           this._stateManager.toggleAutoPlayNextVideo();
-        }
-
-        
-
+        }      
       }
 
       window.customElements.define(NextvideoOverlay.is, NextvideoOverlay);
