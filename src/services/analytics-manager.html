@@ -22,9 +22,9 @@
        * @param {Object} options Options for the event
        * @returns {void}
        */
-      newEvent(options) {
+      newEvent(options, afterStates) {
         let baseEventData = this._getBaseEventData();
-        this._fireEvent(options.verb, baseEventData);
+        this._fireEvent(options.verb, baseEventData, {}, afterStates);
       }
 
       /**
