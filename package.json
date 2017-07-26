@@ -57,10 +57,11 @@
     "run-sequence": "^2.0.0"
   },
   "scripts": {
-    "test": "polymer test",
-    "test-firefox": "polymer test -l firefox",
-    "test-safari": "polymer test -l safari",
-    "test-chrome": "polymer test -l chrome",
+    "test": "node_modules/web-component-tester/bin/wct test/test-suite.html",
+    "test-firefox": "node_modules/web-component-tester/bin/wct  test/test-suite.html -l firefox",
+    "test-safari": "node_modules/web-component-tester/bin/wct  test/test-suite.html -l safari",
+    "test-chrome": "node_modules/web-component-tester/bin/wct  test/test-suite.html -l chrome",
+    "testdebugging": "node_modules/web-component-tester/bin/wct -p test/test-suite.html",
     "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html && polymer lint",
     "postinstall": "bower install",
     "serve": "polymer serve",

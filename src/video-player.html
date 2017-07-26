@@ -30,26 +30,22 @@
       :host {
         display: block;
         border: 1px solid grey;
-        border-bottom: none;
         background-color: black;
       }
 
       /* For some reason, just chaining those fullscreen selectors into one big
          selector doesn't work so we're stupid-duplicating all the rules. */
-      #video-player-container:-webkit-full-screen #streams-container{
-        display: flex;
+      #video-player-container:-webkit-full-screen #streams-container { 
         align-items: stretch;
       }
-      #video-player-container:-moz-full-screen #streams-container{
-        display: flex;
+      #video-player-container:-moz-full-screen #streams-container {
         align-items: stretch;
       }
-      #video-player-container:-ms-fullscreen #streams-container{
-        display: flex;
+      #video-player-container:-ms-fullscreen #streams-container {
         align-items: stretch;
       }
 
-      #video-player-container:-webkit-full-screen{
+      #video-player-container:-webkit-full-screen {
         width: 100%;
       }
       #video-player-container:-moz-full-screen{
@@ -82,8 +78,6 @@
         display: flex;
         flex-wrap: wrap;
         overflow: hidden;
-        /* Cancel out the control bar height, the progress bar and the lecture slide bar */
-        height: calc(100% - 40px - 16px - 11px);
       }
       .video-stream {
         /* 49 to leave a bit space for the resizer */
@@ -101,7 +95,7 @@
           * The min-widths are necessary to avoid that the video containter and
           * the controlbar have different widths on small screens.
           */
-          min-width: 360px
+          min-width: 360px;
         }
         .hidden-for-mobile {
           display: none;
@@ -112,7 +106,7 @@
           /*
           * Look above
           */
-          min-width: 660px
+          min-width: 660px;
         }
       }
     </style>
@@ -129,7 +123,7 @@
         </template>
 
         <!-- Video Streams -->
-        <div id="streams-container">
+        <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.isInteractiveTranscriptShown, configuration.lectureSlides)]]">
           <template is="dom-repeat" items="[[configuration.streams]]">
             <video-stream
               state="[[state]]"
@@ -237,12 +231,12 @@
             '_availableQualitiesChanged(_availableQualities, _stateManager)',
             '_foregroundColorChanged(configuration.foregroundColor)',
             '_accentColorChanged(configuration.accentColor)',
+            '_fontColorOnAccentColorChanged(configuration.fontColorOnAccentColor)',
             '_backgroundColorChanged(configuration.backgroundColor)',
             '_secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
-            '_themeChanged(configuration.themes)',
+            '_themeChanged(configuration.theme)',
             '_playStateChanged(state.playState)',
             '_fullscreenChanged(state.fullscreen)',
-            '_captionLanguageChanged(state.captionLanguage)',
             '_userPreferencesStateChanged(state.*)',
             '_autoPlayNextVideoChanged(state.autoPlayNextVideo)',
           ];
@@ -297,7 +291,9 @@
         }
 
         _getCaptionLanguages(captions) {
-          return captions.map(caption => caption.language);
+          if(captions){
+            return captions.map(caption => caption.language);
+          }
         }
 
         _getAvailableQualities(streams) {
@@ -399,6 +395,11 @@
             Polymer.updateStyles({'--accent-color': color});
           }
         }
+        _fontColorOnAccentColorChanged(color) {
+          if(color) {
+            Polymer.updateStyles({'--font-color-on-accent-color': color});
+          }
+        }
         _backgroundColorChanged(color) {
           if(color) {
             Polymer.updateStyles({'--background-color': color});
@@ -418,18 +419,15 @@
             if(typeof this.configuration.accentColor === 'undefined') {
               this._accentColorChanged(THEMES[name].accentColor);
             }
+            if(typeof this.configuration.fontColorOnAccentColor === 'undefined') {
+              this._fontColorOnAccentColorChanged(THEMES[name].fontColorOnAccentColor);
+            }
             if(typeof this.configuration.backgroundColor === 'undefined') {
               this._backgroundColorChanged(THEMES[name].backgroundColor);
             }
             if(typeof this.configuration.secondaryBackgroundColor === 'undefined') {
               this._secondaryBackgroundColorChanged(THEMES[name].secondaryBackgroundColor);
             }
-          }
-        }
-
-        _captionLanguageChanged(language) {
-          if(this.state.isInteractiveTranscriptShown && language === 'off') {
-            this._stateManager.toggleInteractiveTranscript();
           }
         }
 
@@ -446,6 +444,27 @@
 
         _rowCount(streams) {
           return Math.ceil(streams.length / 2);
+        }
+
+        _calculateHeight(fullscreen, isInteractiveTranscriptShown, isLectureSlides) {
+          if(fullscreen) {
+            return "calc(100vh - " + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + "px)";
+          } else {
+            return "calc(100% - " + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + "px)";
+          }
+        }
+
+        _bottomSpace(isInteractiveTranscriptShown, isLectureSlides) {
+          let value; 
+          // Controlbar height & progres bar height
+          value = 40 + 16;
+          if(isInteractiveTranscriptShown) {
+            value += 200;
+          }
+          if(isLectureSlides) {
+            value += 11;
+          }
+          return value;
         }
       }
 

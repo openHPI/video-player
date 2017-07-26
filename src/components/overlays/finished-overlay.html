@@ -31,10 +31,33 @@
         @apply --box-sizing-border-box;
         font-size: 0.8vw;
         background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0) 75%);
+        color: #FFFFFF;
       }
 
       .container__related_video:hover .container_related_overlay {
         display: initial;
+      }
+
+      @media (max-width: 768px) {
+        #container__finished_overlay {
+          display: initial;
+          white-space: nowrap;
+          overflow-x: auto;
+          overflow-y: hidden;
+        }
+        .container__related_video {
+          display: inline-block;
+          border: 1px solid #FFFFFF;
+          height: calc(100% - 8px) !important;
+          width: 40%;
+        }
+        .container_related_overlay {
+          display: initial;
+          font-size: 12px;
+          white-space: normal;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
     </style>
 

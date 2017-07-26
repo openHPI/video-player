@@ -21,7 +21,7 @@
 
     <div id="container__mute_control" class="user_controls">
       <a id="button__mute" class="button" on-click="_handleClick">
-        <i class$="fa [[ifThenElse(state.muted, 'fa-volume-off', 'fa-volume-up')]]"></i>
+        <i class$="fa [[ifThenElse(_isMuted, 'fa-volume-off', 'fa-volume-up')]]"></i>
       </a>
     </div>
   </template>
@@ -38,7 +38,15 @@
               type: Object,
               inject: 'StateManager',
             },
+            _isMuted: {
+              type: Boolean,
+              computed: '_getIsMuted(state.muted, state.volume)',
+            },
           };
+        }
+
+        _getIsMuted(muted, volume) {
+          return muted || volume === 0;
         }
 
         _handleClick() {

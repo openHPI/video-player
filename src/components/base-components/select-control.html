@@ -40,28 +40,34 @@
       .dropdown-content a.selected {
         background-color: grey;
       }
+
+      #button__select:after {
+        content: attr(badge-value);
+        position: absolute;
+        top: 6px;
+        right: -12px;
+        height: 13px;
+        width: 20px;
+        @apply --accent-color-background;
+        @apply --font-color-on-accent-color;
+        border-radius: 2px;
+        line-height: 1.5;
+        font-size: 9px;
+        font-weight: lighter;
+      }
     </style>
 
     <div id="container__select_control" class="user_controls">
-
-      <template is="dom-if" if="[[_isMultiValueSwitch(values)]]">
-        <div class="dropdown" on-mouseover="_showDropDown" on-mouseout="_hideDropDown">
-          <a id="button__select" class="button">
-            <i class$="[[iconClasses]]"></i>
-          </a>
-          <div id="dropdown__select" class$="dropdown-content [[ifNotThen(_isDropDownOpen, '-hidden')]]">
-            <template is="dom-repeat" items="[[values]]">
-              <a on-click="_handleDropDownElementClick" class$="[[ifEqualsThen(item, selectedValue, 'selected')]]">[[formatter(item)]]</a>
-            </template>
-          </div>
-        </div>
-      </template>
-
-      <template is="dom-if" if="[[!_isMultiValueSwitch(values)]]">
-        <a id="button__select" class="button" on-click="_handleButtonClick">
-          [[formatter(selectedValue)]]
+      <div class="dropdown" on-mouseover="_showDropDown" on-mouseout="_hideDropDown">
+        <a id="button__select" class$="button [[ifNotThen(active, 'inactive')]]" badge-value$="{{formatter(selectedValue)}}">
+          <i class$="[[iconClasses]]"></i>
         </a>
-      </template>
+        <div id="dropdown__select" class$="dropdown-content [[ifNotThen(_isDropDownOpen, '-hidden')]]">
+          <template is="dom-repeat" items="[[values]]">
+            <a on-click="_handleDropDownElementClick" class$="[[ifEqualsThen(item, selectedValue, 'selected')]]">[[formatter(item)]]</a>
+          </template>
+        </div>
+      </div> 
     </div>
   </template>
 
@@ -89,6 +95,10 @@
               type: Boolean,
               value: false,
             },
+            active: {
+              type: Boolean,
+              value: true,
+            },
           };
         }
 
@@ -102,11 +112,6 @@
           this.$.container__select_control.classList.remove('open');
         }
 
-        _handleButtonClick() {
-          let index = (this.values.indexOf(this.selectedValue) + 1) % this.selectedValue.length;
-          this._setSelectedValue(this.values[index]);
-        }
-
         _handleDropDownElementClick(e) {
           this._setSelectedValue(e.model.item);
           this._hideDropDown();
@@ -115,10 +120,6 @@
         _setSelectedValue(value) {
           this.selectedValue = value;
           this.dispatchEvent(new CustomEvent('change'));
-        }
-
-        _isMultiValueSwitch(values) {
-          return values.length > 2;
         }
       }
 

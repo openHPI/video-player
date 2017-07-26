@@ -14,6 +14,7 @@
         color: black;
         height: 200px;
         width: 100%;
+        border-top: 1px solid grey;
       }
 
       #container__interactive_transcript .list {
@@ -27,6 +28,7 @@
         padding: 15px 5px 15px 20px;
         background-color: #eee;
         font-size: 1rem;
+        overflow: hidden;
         @apply --transition-duration-600;
       }
       #container__interactive_transcript .list_item .list_item__prefix {
@@ -36,7 +38,7 @@
 
       #container__interactive_transcript .list_item.-active,
       #container__interactive_transcript .list_item:nth-child(odd).-active {
-        background-color: #999;
+        background-color: #bbb;
       }
 
       #container__interactive_transcript .list_item:nth-child(odd) {
@@ -46,6 +48,7 @@
       #container__interactive_transcript .list_item:hover,
       #container__interactive_transcript .list_item.-active:hover {
         @apply --accent-color-background;
+        @apply --font-color-on-accent-color;
         @apply --transition-duration-200;
       }
     </style>
