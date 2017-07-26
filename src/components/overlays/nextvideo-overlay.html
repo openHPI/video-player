@@ -63,6 +63,15 @@
           from { transform:rotate(0deg); }
           to { transform:rotate(360deg); }
       }
+
+      @media (max-width: 768px) {
+        #text__next_video {
+          font-size: 15px;
+        }
+        #icon_spinner {
+          font-size: 50px;
+        }
+      }
     </style>
 
     <div id="container__nextvideo_overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
