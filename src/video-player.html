@@ -23,6 +23,7 @@
 <link rel="import" href="components/progress-container/video-progress.html">
 <link rel="import" href="components/progress-container/lecture-slide-bar.html">
 <link rel="import" href="components/resizer-control.html">
+<link rel="import" href="components/video-object-renderer.html">
 
 <dom-module id="video-player">
   <template>
@@ -112,6 +113,11 @@
     </style>
 
     <div id="video-player-container">
+      <!-- Render VideoObject as JSON-LD, if provided -->
+      <template is="dom-if" if="[[configuration.videoObject]]">
+        <video-object-renderer video-object="[[configuration.videoObject]]"></video-object-renderer>
+      </template>
+
       <div id="video-container">
         <!-- Videos Overlays -->
         <waiting-overlay state="[[state]]"></waiting-overlay>
