@@ -105,12 +105,12 @@
             _stateManager: Object,
             _isVisible: {
               type: Boolean,
-              computed: '_getIsVisible(state.playState, state.autoPlayNextVideo)',
+              computed: '_getIsVisible(state.playState)',
             },
           };
         }
 
-        _getIsVisible(playState, autoPlayNextVideo) {
+        _getIsVisible(playState) {
           return playState === PLAY_STATES.FINISHED;
         }
 
@@ -131,7 +131,7 @@
           */
           return '(100% - 4px * 2 * ' + this._getColumns() + ') / ' + this._getColumns();
         }
-        
+
         _getHeight() {
           /*
           * Similar to the flexbasis the margin needs be calculated

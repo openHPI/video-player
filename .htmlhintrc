@@ -17,7 +17,6 @@
     "id-class-value": "false",
     "style-disabled": false,
     "inline-style-disabled": true,
-    "inline-script-disabled": true,
     "space-tab-mixed-disabled": "space2",
     "href-abs-or-rel": false,
     "attr-unsafe-chars": true

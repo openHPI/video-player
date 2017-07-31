@@ -2,6 +2,7 @@
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../base-components/select-control.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 
 
@@ -61,7 +62,7 @@
           if (e.target.selectedValue === 'off' && this.state.isInteractiveTranscriptShown) {
             this._stateManager.toggleInteractiveTranscript();
           }
-        }  
+        }
       }
 
       window.customElements.define(InteractiveTranscriptControl.is, InteractiveTranscriptControl);
