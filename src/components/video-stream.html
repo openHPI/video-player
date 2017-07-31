@@ -35,11 +35,7 @@
     </style>
 
     <div id="container__video_stream">
-      <video
-        id="video"
-        preload="[[ifThenElse(preload, 'auto', 'metadata')]]"
-        on-click="_handleClick"
-        on-canplay="_handleCanPlay">
+      <video id="video" preload="[[ifThenElse(preload, 'auto', 'metadata')]]" on-click="_handleClick">
         <template is="dom-repeat" items="[[captions]]">
           <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
         </template>
@@ -54,7 +50,7 @@
 
   <script>
     define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, Hls, constants) => {
-      const {PLAY_STATES, QUALITY_MODES, HLS_MIME_TYPE, SYNC_DIFF_THRESHOLD} = constants;
+      const {PLAY_STATES, QUALITY_MODES, HLS_MIME_TYPE, SEEK_DIFF_THRESHOLD} = constants;
 
       class VideoStream extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'video-stream'; }
@@ -89,7 +85,7 @@
             },
             _isPosterVisible: {
               type: Boolean,
-              computed: '_getIsPosterVisible(state.position, state.duration)',
+              computed: '_getIsPosterVisible(state.playState, state.position, state.duration)',
             },
           };
         }
@@ -120,20 +116,21 @@
           return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
         }
 
-        _getIsPosterVisible(position, duration) {
-          return position === 0 || position === duration;
+        _getIsPosterVisible(playState, position, duration) {
+          return playState === PLAY_STATES.PAUSED && (position === 0 || position === duration);
         }
 
         _playStateChanged(playState) {
           if (playState === PLAY_STATES.PLAYING) {
             this.$.video.play();
-          } else if (playState === PLAY_STATES.PAUSED) {
-            this.$.video.pause();
+          } else if (playState === PLAY_STATES.PAUSED || playState === PLAY_STATES.WAITING) {
+            if(!this.$.video.paused && this.$.video.readyState > 2)
+              this.$.video.pause();
           }
         }
 
         _positionChanged(position) {
-          if(Math.abs(this.$.video.currentTime - position) > SYNC_DIFF_THRESHOLD) {
+          if(Math.abs(this.$.video.currentTime - position) > SEEK_DIFF_THRESHOLD) {
             this.$.video.currentTime = position;
           }
         }
@@ -152,7 +149,7 @@
 
         _qualityChanged(urls, quality) {
           if(this._synchronizationManager) {
-            this._synchronizationManager.initializing(this.$.video);
+            this._synchronizationManager.setWaiting(this.$.video);
           }
 
           // Change source depending on quality
@@ -173,8 +170,10 @@
             this._hlsClient.attachMedia(this.$.video);
           }
 
-          // Reapply current state to video element
-          this._applyState();
+          // Reapply current state to video element after the new source has been loaded
+          if(this._synchronizationManager) {
+            this._synchronizationManager.onVideosReady(() => this._applyState(), true);
+          }
         }
 
         _captionLanguageChanged(language){
@@ -212,20 +211,16 @@
           }
         }
 
-        _handleCanPlay() {
-          this._synchronizationManager.ready(this.$.video);
-        }
-
         _handleClick() {
           this._stateManager.togglePlayPause();
         }
 
         _applyState() {
-          this._playStateChanged(this.state.playState);
           this._positionChanged(this.state.position);
           this._playbackRateChanged(this.state.playbackRate);
           this._volumeChanged(this.state.volume);
           this._mutedChanged(this.state.muted);
+          this._playStateChanged(this.state.playState);
         }
       }
 

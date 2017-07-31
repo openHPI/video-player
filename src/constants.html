@@ -44,12 +44,25 @@
     const HLS_MIME_TYPE = 'application/x-mpegURL';
 
     /**
+     * Contains the interval in seconds between two syncronization procedures.
+     * @type {Number}
+     */
+    const SYNC_INTERVAL = 1;
+
+    /**
      * Contains the difference threshold in seconds between position of the
      * state and position of a single video stream from which the video stream
      * is synced manually.
      * @type {Number}
      */
-    const SYNC_DIFF_THRESHOLD = 0.2;
+    const SYNC_DIFF_THRESHOLD = 0.5;
+
+    /**
+     * Contains the difference threshold in seconds between position of the
+     * state and position of a single video stream from which a seek is performed.
+     * @type {Number}
+     */
+    const SEEK_DIFF_THRESHOLD = 1;
 
     /**
      * Contains the name of the event that is used to pause playback on other
@@ -155,7 +168,9 @@
       QUALITY_MODES,
       QUALITY_NAMES,
       HLS_MIME_TYPE,
+      SYNC_INTERVAL,
       SYNC_DIFF_THRESHOLD,
+      SEEK_DIFF_THRESHOLD,
       PLAYING_EVENT_NAME,
       DEFAULT_STATE,
       DEFAULT_CONFIGURATION,
