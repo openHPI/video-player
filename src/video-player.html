@@ -231,7 +231,7 @@
         static get observers() {
           return [
             '_configurationChanged(configuration)',
-            '_availableQualitiesChanged(_availableQualities, _stateManager)',
+            '_ensureValidQuality(_availableQualities, state.quality)',
             '_foregroundColorChanged(configuration.foregroundColor)',
             '_accentColorChanged(configuration.accentColor)',
             '_fontColorOnAccentColorChanged(configuration.fontColorOnAccentColor)',
@@ -321,12 +321,12 @@
           }
         }
 
-        _availableQualitiesChanged(_availableQualities) {
-          // If not all streams are available in the specified quality, use default one that is available for all streams
-          if(this._stateManager && !_availableQualities.includes(this.state.quality)) {
-            let defaultQuality = Object.values(QUALITY_MODES)
-                                       .find(quality => _availableQualities.includes(quality));
-            this._stateManager.setQuality(defaultQuality);
+        _ensureValidQuality(availableQualities, quality) {
+          // If not all streams are available in the specified quality, use one that is available for all streams
+          if(this._stateManager && !availableQualities.includes(quality)) {
+            let quality = Object.values(QUALITY_MODES)
+                                .find(x => availableQualities.includes(x));
+            this._stateManager.setQuality(quality);
           }
         }
 
