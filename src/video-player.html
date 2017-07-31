@@ -6,7 +6,6 @@
 <link rel="import" href="mixins/binding-helpers.html">
 <link rel="import" href="3rd-imports/hls-js.html">
 <link rel="import" href="styling/mixins.html">
-<link rel="import" href="styling/font-awesome.html">
 <link rel="import" href="styling/global--style-module.html">
 <link rel="import" href="services/state-manager.html">
 <link rel="import" href="services/fullscreen-manager.html">
@@ -268,6 +267,11 @@
 
         ready() {
           super.ready();
+
+          // Load FontAwesome, if specified in configuration
+          if(this.configuration.loadFontAwesome) {
+            Polymer.importHref(this.importPath + 'styling/font-awesome.html');
+          }
 
           // Add event handlers for mouse events to show/hide resizer
           this.$['streams-container'].addEventListener('mouseenter', () => this._isResizerShown = true);
