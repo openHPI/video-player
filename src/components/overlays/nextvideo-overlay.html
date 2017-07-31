@@ -170,6 +170,7 @@
 
         _positionChanged(position, duration) {
           if(position !== duration) {
+            this._isAutoPlayEnabled = true;
             this._abortAutoPlayNext();
           }
         }
