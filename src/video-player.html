@@ -242,10 +242,10 @@
         bindServices(iocKernel) {
           super.bindServices(iocKernel);
 
-          iocKernel.bind(StateManager).toSelf(this, 'state').inSingletonScope();
-          iocKernel.bind(UserPreferencesManager).toSelf().inSingletonScope();
-          iocKernel.bind(SynchronizationManager).toSelf(iocKernel.get(StateManager)).inSingletonScope();
-          iocKernel.bind(FullscreenManager).toSelf(() => this.$['video-player-container']).inSingletonScope();
+          iocKernel.bind('StateManager').toFunction(() => new StateManager(this, 'state')).inSingletonScope();
+          iocKernel.bind('UserPreferencesManager').toFunction(() => new UserPreferencesManager()).inSingletonScope();
+          iocKernel.bind('SynchronizationManager').toFunction(() => new SynchronizationManager(iocKernel.get(StateManager))).inSingletonScope();
+          iocKernel.bind('FullscreenManager').toFunction(() => new FullscreenManager(this.$['video-player-container'])).inSingletonScope();
         }
 
         servicesInjectedCallback() {
