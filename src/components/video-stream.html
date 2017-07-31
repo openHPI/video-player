@@ -19,11 +19,6 @@
         width: inherit;
         height: inherit;
       }
-      /* For all browsers, ::cue is sufficient to hide the caption, only Safari
-         needs ::-webkit-media-text-track-container */
-      ::cue, ::-webkit-media-text-track-container {
-        visibility: hidden;
-      }
 
       #container__poster_overlay {
         position: absolute;
@@ -40,11 +35,7 @@
     </style>
 
     <div id="container__video_stream">
-      <video
-        id="video"
-        preload="[[ifThenElse(preload, 'auto', 'metadata')]]"
-        on-click="_handleClick"
-        on-canplay="_handleCanPlay">
+      <video id="video" preload="[[ifThenElse(preload, 'auto', 'metadata')]]" on-click="_handleClick">
         <template is="dom-repeat" items="[[captions]]">
           <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
         </template>
@@ -59,7 +50,7 @@
 
   <script>
     define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, Hls, constants) => {
-      const {PLAY_STATES, QUALITY_MODES, HLS_MIME_TYPE, SYNC_DIFF_THRESHOLD} = constants;
+      const {PLAY_STATES, QUALITY_MODES, HLS_MIME_TYPE, SEEK_DIFF_THRESHOLD} = constants;
 
       class VideoStream extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'video-stream'; }
@@ -94,7 +85,7 @@
             },
             _isPosterVisible: {
               type: Boolean,
-              computed: '_getIsPosterVisible(state.position, state.duration)',
+              computed: '_getIsPosterVisible(state.playState, state.position, state.duration)',
             },
           };
         }
@@ -125,20 +116,21 @@
           return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
         }
 
-        _getIsPosterVisible(position, duration) {
-          return position === 0 || position === duration;
+        _getIsPosterVisible(playState, position, duration) {
+          return playState === PLAY_STATES.PAUSED && (position === 0 || position === duration);
         }
 
         _playStateChanged(playState) {
           if (playState === PLAY_STATES.PLAYING) {
             this.$.video.play();
-          } else if (playState === PLAY_STATES.PAUSED) {
-            this.$.video.pause();
+          } else if (playState === PLAY_STATES.PAUSED || playState === PLAY_STATES.WAITING) {
+            if(!this.$.video.paused && this.$.video.readyState > 2)
+              this.$.video.pause();
           }
         }
 
         _positionChanged(position) {
-          if(Math.abs(this.$.video.currentTime - position) > SYNC_DIFF_THRESHOLD) {
+          if(Math.abs(this.$.video.currentTime - position) > SEEK_DIFF_THRESHOLD) {
             this.$.video.currentTime = position;
           }
         }
@@ -157,7 +149,7 @@
 
         _qualityChanged(urls, quality) {
           if(this._synchronizationManager) {
-            this._synchronizationManager.initializing(this.$.video);
+            this._synchronizationManager.setWaiting(this.$.video);
           }
 
           // Change source depending on quality
@@ -178,25 +170,35 @@
             this._hlsClient.attachMedia(this.$.video);
           }
 
-          // Reapply current state to video element
-          this._applyState();
+          // Reapply current state to video element after the new source has been loaded
+          if(this._synchronizationManager) {
+            this._synchronizationManager.onVideosReady(() => this._applyState(), true);
+          }
         }
 
         _captionLanguageChanged(language){
           if(this.captions && this._stateManager) {
-            // Set cues to null, so that they cannot get toggled by interactive-transcript-switch
+            // Set cues to null, so that they cannot get toggled by interactive-transcript-control
             if(language === 'off') {
               this._stateManager.setActiveCaptions(null);
             }
 
-            for(let textTrack of this.$.video.textTracks) {
+            // Microsoft Edge is old which is why we can't use the following:
+            // for(let textTrack of this.$.video.textTracks) {
+            for(let textTrackIndex = 0; textTrackIndex < this.$.video.textTracks.length; textTrackIndex++) {
+              let textTrack = this.$.video.textTracks[textTrackIndex];
               if(textTrack.language === language) {
                 textTrack.mode = 'showing';
                 // If captions are not yet loaded, they will be set in
                 // _handleTrackLoaded when load event is dispatched.
                 this._stateManager.setActiveCaptions(Array.from(textTrack.cues));
-              } else {
+                // Change back to 'hidden' since we have our own HTML elements for
+                // displaying captions. Before this, we tried hiding captions
+                // via the CSS ::cue pseudo-class but Firefox and Microsoft Edge
+                // didn't play along. This here works well across browsers.
                 textTrack.mode = 'hidden';
+              } else {
+                textTrack.mode = 'disabled';
               }
             }
           }
@@ -209,20 +211,16 @@
           }
         }
 
-        _handleCanPlay() {
-          this._synchronizationManager.ready(this.$.video);
-        }
-
         _handleClick() {
           this._stateManager.togglePlayPause();
         }
 
         _applyState() {
-          this._playStateChanged(this.state.playState);
           this._positionChanged(this.state.position);
           this._playbackRateChanged(this.state.playbackRate);
           this._volumeChanged(this.state.volume);
           this._mutedChanged(this.state.muted);
+          this._playStateChanged(this.state.playState);
         }
       }
 

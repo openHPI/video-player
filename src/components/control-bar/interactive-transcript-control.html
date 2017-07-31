@@ -3,9 +3,9 @@
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
-<link rel="import" href="../base-components/select-control.html">
 
-<dom-module id="caption-control">
+
+<dom-module id="interactive-transcript-control">
   <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
 
   <template>
@@ -14,18 +14,18 @@
 
     <select-control
       values="[[_values]]"
-      selected-value="[[ifThenElse(state.isCaptionShown, state.captionLanguage, 'off')]]"
+      selected-value="[[ifThenElse(state.isInteractiveTranscriptShown, state.captionLanguage, 'off')]]"
       on-change="_selectionChanged"
-      icon-classes="fa fa-cc"
-      is-in-mobile-menu="[[isInMobileMenu]]"
-      active="[[or(state.isCaptionShown, isInMobileMenu)]]">
+      icon-classes="fa fa-file-text"
+      active="[[or(state.isInteractiveTranscriptShown, isInMobileMenu)]]"
+      is-in-mobile-menu="[[isInMobileMenu]]">
     </select-control>
   </template>
 
   <script>
-    define('caption-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
-      class CaptionControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
-        static get is() { return 'caption-control'; }
+    define('interactive-transcript-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class InteractiveTranscriptControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'interactive-transcript-control'; }
 
         static get properties() {
           return {
@@ -53,18 +53,18 @@
         _selectionChanged(e) {
           if (e.target.selectedValue !== 'off') {
             this._stateManager.setCaptionLanguage(e.target.selectedValue);
-            if(!this.state.isCaptionShown) {
-              this._stateManager.toggleCaptions();
+
+            if(!this.state.isInteractiveTranscriptShown) {
+              this._stateManager.toggleInteractiveTranscript();
             }
           }
-
-          if (e.target.selectedValue === 'off' && this.state.isCaptionShown) {
-            this._stateManager.toggleCaptions();
+          if (e.target.selectedValue === 'off' && this.state.isInteractiveTranscriptShown) {
+            this._stateManager.toggleInteractiveTranscript();
           }
-        }
+        }  
       }
 
-      window.customElements.define(CaptionControl.is, CaptionControl);
+      window.customElements.define(InteractiveTranscriptControl.is, InteractiveTranscriptControl);
     });
   </script>
 

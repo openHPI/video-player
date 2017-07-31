@@ -16,6 +16,7 @@
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/interactive-transcript.html">
 <link rel="import" href="components/overlays/waiting-overlay.html">
+<link rel="import" href="components/overlays/nextvideo-overlay.html">
 <link rel="import" href="components/overlays/finished-overlay.html">
 <link rel="import" href="components/overlays/captions-display.html">
 <link rel="import" href="components/control-bar/control-bar.html">
@@ -34,20 +35,17 @@
 
       /* For some reason, just chaining those fullscreen selectors into one big
          selector doesn't work so we're stupid-duplicating all the rules. */
-      #video-player-container:-webkit-full-screen #streams-container{
-        display: flex;
+      #video-player-container:-webkit-full-screen #streams-container { 
         align-items: stretch;
       }
-      #video-player-container:-moz-full-screen #streams-container{
-        display: flex;
+      #video-player-container:-moz-full-screen #streams-container {
         align-items: stretch;
       }
-      #video-player-container:-ms-fullscreen #streams-container{
-        display: flex;
+      #video-player-container:-ms-fullscreen #streams-container {
         align-items: stretch;
       }
 
-      #video-player-container:-webkit-full-screen{
+      #video-player-container:-webkit-full-screen {
         width: 100%;
       }
       #video-player-container:-moz-full-screen{
@@ -80,8 +78,6 @@
         display: flex;
         flex-wrap: wrap;
         overflow: hidden;
-        /* Cancel out the control bar height, the progress bar and the lecture slide bar */
-        height: calc(100% - 40px - 16px - 11px);
       }
       .video-stream {
         /* 49 to leave a bit space for the resizer */
@@ -99,7 +95,7 @@
           * The min-widths are necessary to avoid that the video containter and
           * the controlbar have different widths on small screens.
           */
-          min-width: 260px
+          min-width: 360px;
         }
         .hidden-for-mobile {
           display: none;
@@ -110,7 +106,7 @@
           /*
           * Look above
           */
-          min-width: 560px
+          min-width: 660px;
         }
       }
     </style>
@@ -119,12 +115,15 @@
       <div id="video-container">
         <!-- Videos Overlays -->
         <waiting-overlay state="[[state]]"></waiting-overlay>
+        <template is="dom-if" if="[[configuration.playList]]">
+          <nextvideo-overlay state="[[state]]" play-list="[[configuration.playList]]"></nextvideo-overlay>
+        </template>
         <template is="dom-if" if="[[configuration.relatedVideos]]">
           <finished-overlay state="[[state]]" related-videos="[[configuration.relatedVideos]]"></finished-overlay>
         </template>
 
         <!-- Video Streams -->
-        <div id="streams-container">
+        <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.isInteractiveTranscriptShown, configuration.lectureSlides)]]">
           <template is="dom-repeat" items="[[configuration.streams]]">
             <video-stream
               state="[[state]]"
@@ -132,10 +131,15 @@
               preload="[[configuration.videoPreload]]"
               class="video-stream"
               captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
-              style$="height: calc(100% / [[_rowCount(configuration.streams)]]);">
+              style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
+              ondragover="return false;"
+              ondrag="return false;">
             </video-stream>
             <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
-              <resizer-control state="[[state]]" style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+              <resizer-control
+                state="[[state]]"
+                style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]">
+              </resizer-control>
             </template>
           </template>
         </div>
@@ -155,7 +159,8 @@
         state="[[state]]"
         has-chapters="[[_hasChapters]]"
         caption-languages="[[_captionLanguages]]"
-        available-qualities="[[_availableQualities]]">
+        available-qualities="[[_availableQualities]]"
+        play-list="[[configuration.playList]]">
       </control-bar>
 
       <!-- Chapter List -->
@@ -214,7 +219,7 @@
             _hasChapters: {
               type: Boolean,
               computed: '_getHasChapters(configuration.chapters)',
-            },
+            }
           };
         }
 
@@ -230,7 +235,6 @@
             '_themeChanged(configuration.theme)',
             '_playStateChanged(state.playState)',
             '_fullscreenChanged(state.fullscreen)',
-            '_captionLanguageChanged(state.captionLanguage)',
             '_userPreferencesStateChanged(state.*)',
           ];
         }
@@ -273,7 +277,9 @@
         }
 
         _getCaptionLanguages(captions) {
-          return captions.map(caption => caption.language);
+          if(captions){
+            return captions.map(caption => caption.language);
+          }
         }
 
         _getAvailableQualities(streams) {
@@ -385,12 +391,6 @@
           }
         }
 
-        _captionLanguageChanged(language) {
-          if(this.state.isInteractiveTranscriptShown && language === 'off') {
-            this._stateManager.toggleInteractiveTranscript();
-          }
-        }
-
         _userPreferencesStateChanged(states) {
           if (this._userPreferencesManager) {
             this._userPreferencesManager.setPreferences(states);
@@ -404,6 +404,27 @@
 
         _rowCount(streams) {
           return Math.ceil(streams.length / 2);
+        }
+
+        _calculateHeight(fullscreen, isInteractiveTranscriptShown, isLectureSlides) {
+          if(fullscreen) {
+            return "calc(100vh - " + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + "px)";
+          } else {
+            return "calc(100% - " + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + "px)";
+          }
+        }
+
+        _bottomSpace(isInteractiveTranscriptShown, isLectureSlides) {
+          let value; 
+          // Controlbar height & progres bar height
+          value = 40 + 16;
+          if(isInteractiveTranscriptShown) {
+            value += 200;
+          }
+          if(isLectureSlides) {
+            value += 11;
+          }
+          return value;
         }
       }
 

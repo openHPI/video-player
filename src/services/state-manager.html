@@ -248,6 +248,14 @@
       }
 
       /**
+       * Toggles the visibility of the captions.
+       * @returns {void}
+       */
+      toggleCaptions() {
+        this.setState('isCaptionShown', !this.state.isCaptionShown);
+      }
+
+      /**
        * Sets the new caption language or turns captions off by setting the
        * language to 'off'.
        * @param {string} language The language to be set.

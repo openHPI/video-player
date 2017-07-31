@@ -37,6 +37,44 @@
       .container__related_video:hover .container_related_overlay {
         display: initial;
       }
+
+      .container__related_video a:focus .container_related_overlay {
+        display: initial;
+        outline: -webkit-focus-ring-color auto 5px;
+      }
+
+      .related_video__time {
+        position: absolute;
+        bottom: 3px;
+        right: 3px;
+        background: rgba(0, 0, 0, 0.75);
+        padding: 3px;
+      }
+      .related_video__time.empty {
+        display: none !important;
+      }
+
+      @media (max-width: 768px) {
+        #container__finished_overlay {
+          display: initial;
+          white-space: nowrap;
+          overflow-x: auto;
+          overflow-y: hidden;
+        }
+        .container__related_video {
+          display: inline-block;
+          border: 1px solid #FFFFFF;
+          height: calc(100% - 8px) !important;
+          width: 40%;
+        }
+        .container_related_overlay {
+          display: initial;
+          font-size: 12px;
+          white-space: normal;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
     </style>
 
     <div id="container__finished_overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
@@ -45,6 +83,7 @@
           <a href="[[item.url]]">
             <div class="container_related_overlay">
               <span>[[item.title]]</span>
+              <span class$="related_video__time [[ifNotThen(item.length, 'empty')]]">[[secondsToHms(item.length, state.duration)]]</span>
             </div>
           </a>
         </div>
@@ -66,12 +105,12 @@
             _stateManager: Object,
             _isVisible: {
               type: Boolean,
-              computed: '_getIsVisible(state.playState)',
+              computed: '_getIsVisible(state.playState, state.autoPlayNextVideo)',
             },
           };
         }
 
-        _getIsVisible(playState) {
+        _getIsVisible(playState, autoPlayNextVideo) {
           return playState === PLAY_STATES.FINISHED;
         }
 
