@@ -83,6 +83,7 @@
   <script>
     define('control-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
       const SKIP_SECONDS = 15;
+      const TEXT_ELEMENT_TAG_NAMES = ['INPUT', 'TEXTAREA'];
 
       class ControlBar extends IocRequesterMixin(BindingHelpersMixin(Polymer.Element)) {
         static get is() { return 'control-bar'; }
@@ -110,8 +111,8 @@
 
           // Add event listener for keyboard shortcuts
           window.addEventListener('keydown', (e) => {
-            if (e.defaultPrevented) {
-              // Do nothing if the event was already processed
+            if (e.defaultPrevented || TEXT_ELEMENT_TAG_NAMES.includes(document.activeElement.tagName)) {
+              // Do nothing, if the event was already processed or an text input is focussed
               return;
             }
 
