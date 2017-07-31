@@ -8,7 +8,7 @@
         return {
           _iocKernel: {
             type: Object,
-            value: new IocKernel(),
+            value: () => new IocKernel(),
             readOnly: true,
           },
         };
