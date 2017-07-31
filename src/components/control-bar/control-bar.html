@@ -50,17 +50,17 @@
 
     <div id="container__control_bar">
       <template is="dom-if" if="[[playList.previousVideo]]">
-        <navigation-control state="[[state]]" previous-video="true" video-url="[[playList.previousVideo]]"></navigation-control>  
+        <navigation-control state="[[state]]" previous-video="true" video-url="[[playList.previousVideo]]"></navigation-control>
       </template>
       <playpause-control state="[[state]]"></playpause-control>
       <template is="dom-if" if="[[playList.nextVideo]]">
         <navigation-control state="[[state]]" next-video="true" video-url="[[playList.nextVideo]]"></navigation-control>
       </template>
       <videotime-display state="[[state]]" class="-flex-grow"></videotime-display>
-      <template is="dom-if" if="[[captionLanguages]]">
+      <template is="dom-if" if="[[_hasCaptions]]">
         <caption-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></caption-control>
       </template>
-      <template is="dom-if" if="[[captionLanguages]]">
+      <template is="dom-if" if="[[_hasCaptions]]">
         <interactive-transcript-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></interactive-transcript-control>
       </template>
       <speed-control state="[[state]]" class="hidden-for-mobile"></speed-control>
@@ -72,8 +72,8 @@
       </template>
       <mute-control state="[[state]]" class="hidden-for-mobile"></mute-control>
       <sound-control state="[[state]]" class="hidden-for-mobile"></sound-control>
-      <mobile-settings-menu state="[[state]]" class="hidden-for-desktop" 
-        caption-languages="[[captionLanguages]]" 
+      <mobile-settings-menu state="[[state]]" class="hidden-for-desktop"
+        caption-languages="[[captionLanguages]]"
         available-qualities="[[availableQualities]]">
       </mobile-settings-menu>
       <full-screen-control state="[[state]]"></full-screen-control>
@@ -83,6 +83,7 @@
   <script>
     define('control-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
       const SKIP_SECONDS = 15;
+      const TEXT_ELEMENT_TAG_NAMES = ['INPUT', 'TEXTAREA'];
 
       class ControlBar extends IocRequesterMixin(BindingHelpersMixin(Polymer.Element)) {
         static get is() { return 'control-bar'; }
@@ -101,6 +102,10 @@
               type: Boolean,
               computed: '_getHasMultipleQualities(availableQualities)',
             },
+            _hasCaptions: {
+              type: Boolean,
+              computed: '_getHasCaptions(captionLanguages)',
+            },
             playList: Object,
           };
         }
@@ -110,8 +115,8 @@
 
           // Add event listener for keyboard shortcuts
           window.addEventListener('keydown', (e) => {
-            if (e.defaultPrevented) {
-              // Do nothing if the event was already processed
+            if (e.defaultPrevented || TEXT_ELEMENT_TAG_NAMES.includes(document.activeElement.tagName)) {
+              // Do nothing, if the event was already processed or an text input is focussed
               return;
             }
 
@@ -133,8 +138,12 @@
           });
         }
 
-        _getHasMultipleQualities() {
-          return this.availableQualities.length > 1;
+        _getHasMultipleQualities(availableQualities) {
+          return availableQualities.length > 1;
+        }
+
+        _getHasCaptions(captions) {
+          return captions.length > 0;
         }
       }
 

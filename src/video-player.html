@@ -6,7 +6,6 @@
 <link rel="import" href="mixins/binding-helpers.html">
 <link rel="import" href="3rd-imports/hls-js.html">
 <link rel="import" href="styling/mixins.html">
-<link rel="import" href="styling/font-awesome.html">
 <link rel="import" href="styling/global--style-module.html">
 <link rel="import" href="services/state-manager.html">
 <link rel="import" href="services/fullscreen-manager.html">
@@ -23,6 +22,7 @@
 <link rel="import" href="components/progress-container/video-progress.html">
 <link rel="import" href="components/progress-container/lecture-slide-bar.html">
 <link rel="import" href="components/resizer-control.html">
+<link rel="import" href="components/video-object-renderer.html">
 
 <dom-module id="video-player">
   <template>
@@ -112,6 +112,11 @@
     </style>
 
     <div id="video-player-container">
+      <!-- Render VideoObject as JSON-LD, if provided -->
+      <template is="dom-if" if="[[configuration.videoObject]]">
+        <video-object-renderer video-object="[[configuration.videoObject]]"></video-object-renderer>
+      </template>
+
       <div id="video-container">
         <!-- Videos Overlays -->
         <waiting-overlay state="[[state]]"></waiting-overlay>
@@ -226,7 +231,7 @@
         static get observers() {
           return [
             '_configurationChanged(configuration)',
-            '_availableQualitiesChanged(_availableQualities, _stateManager)',
+            '_ensureValidQuality(_availableQualities, state.quality)',
             '_foregroundColorChanged(configuration.foregroundColor)',
             '_accentColorChanged(configuration.accentColor)',
             '_fontColorOnAccentColorChanged(configuration.fontColorOnAccentColor)',
@@ -262,6 +267,11 @@
 
         ready() {
           super.ready();
+
+          // Load FontAwesome, if specified in configuration
+          if(this.configuration.loadFontAwesome) {
+            Polymer.importHref(this.importPath + 'styling/font-awesome.html');
+          }
 
           // Add event handlers for mouse events to show/hide resizer
           this.$['streams-container'].addEventListener('mouseenter', () => this._isResizerShown = true);
@@ -311,12 +321,12 @@
           }
         }
 
-        _availableQualitiesChanged(_availableQualities) {
-          // If not all streams are available in the specified quality, use default one that is available for all streams
-          if(this._stateManager && !_availableQualities.includes(this.state.quality)) {
-            let defaultQuality = Object.values(QUALITY_MODES)
-                                       .find(quality => _availableQualities.includes(quality));
-            this._stateManager.setQuality(defaultQuality);
+        _ensureValidQuality(availableQualities, quality) {
+          // If not all streams are available in the specified quality, use one that is available for all streams
+          if(this._stateManager && !availableQualities.includes(quality)) {
+            let quality = Object.values(QUALITY_MODES)
+                                .find(x => availableQualities.includes(x));
+            this._stateManager.setQuality(quality);
           }
         }
 
