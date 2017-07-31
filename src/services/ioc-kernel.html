@@ -174,7 +174,7 @@
        * @return {void}
        */
       inTransientScope() {
-        this._iocKernel._createBinding(this._resolveFunction);
+        this._iocKernel._createBinding(this._key, this._resolveFunction);
       }
 
       /**

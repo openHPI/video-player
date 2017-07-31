@@ -35,7 +35,7 @@
 
       /* For some reason, just chaining those fullscreen selectors into one big
          selector doesn't work so we're stupid-duplicating all the rules. */
-      #video-player-container:-webkit-full-screen #streams-container { 
+      #video-player-container:-webkit-full-screen #streams-container {
         align-items: stretch;
       }
       #video-player-container:-moz-full-screen #streams-container {
@@ -219,7 +219,7 @@
             _hasChapters: {
               type: Boolean,
               computed: '_getHasChapters(configuration.chapters)',
-            }
+            },
           };
         }
 
@@ -242,10 +242,10 @@
         bindServices(iocKernel) {
           super.bindServices(iocKernel);
 
-          iocKernel.bind(StateManager).toSelf(this, 'state').inSingletonScope();
-          iocKernel.bind(UserPreferencesManager).toSelf().inSingletonScope();
-          iocKernel.bind(SynchronizationManager).toSelf(iocKernel.get(StateManager)).inSingletonScope();
-          iocKernel.bind(FullscreenManager).toSelf(() => this.$['video-player-container']).inSingletonScope();
+          iocKernel.bind('StateManager').toFunction(() => new StateManager(this, 'state')).inSingletonScope();
+          iocKernel.bind('UserPreferencesManager').toFunction(() => new UserPreferencesManager()).inSingletonScope();
+          iocKernel.bind('SynchronizationManager').toFunction(() => new SynchronizationManager(iocKernel.get(StateManager))).inSingletonScope();
+          iocKernel.bind('FullscreenManager').toFunction(() => new FullscreenManager(this.$['video-player-container'])).inSingletonScope();
         }
 
         servicesInjectedCallback() {
@@ -408,14 +408,14 @@
 
         _calculateHeight(fullscreen, isInteractiveTranscriptShown, isLectureSlides) {
           if(fullscreen) {
-            return "calc(100vh - " + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + "px)";
+            return 'calc(100vh - ' + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + 'px)';
           } else {
-            return "calc(100% - " + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + "px)";
+            return 'calc(100% - ' + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + 'px)';
           }
         }
 
         _bottomSpace(isInteractiveTranscriptShown, isLectureSlides) {
-          let value; 
+          let value;
           // Controlbar height & progres bar height
           value = 40 + 16;
           if(isInteractiveTranscriptShown) {
