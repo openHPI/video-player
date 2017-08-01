@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>synchronization-manager test</title>
+
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../bower_components/web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../bower_components/imd/imd.html">
+    <link rel="import" href="../src/services/synchronization-manager.html"> 
+  </head>
+  <body>
+
+    <video id="video1" src="/components/videoplayer/test/BigBuckBunny30s.mp4">
+    </video>
+    <video id="video2" src="/components/videoplayer/test/BigBuckBunny30s.mp4">
+    </video>
+
+    <script>
+      define('synchronization-manager-test', ['synchronization-manager'], (SynchronizationManager) => {
+        let synchronizationManager = new SynchronizationManager(
+          // Mocking a state manager with basic functionality
+          // needed for testing synchronization manager.
+          {
+          setPosition: function(){},
+          state: {
+            playState: 'PAUSED',
+            duration: 30
+          }
+        });
+
+        // This function gets run before every test function
+        setup(function() {
+          // We want to run tests with an empty local storage to avoid
+          // unintended side effects and to start with a clean slate in each
+          // test file.
+          if (localStorage) {
+            localStorage.clear();
+          } else if (window.localStorage) {
+            window.localStorage.clear();
+          }
+        });
+
+        test('testing synchronization features', function() {
+          let video1 = document.getElementById("video1"), video2 = document.getElementById("video2");
+          synchronizationManager.registerVideo(video1);
+          synchronizationManager.registerVideo(video2);
+          assert.isTrue(synchronizationManager._isMaster(video1), true, 'first video is master video');
+          video1.currentTime = 10;
+          assert.equal(video2.currentTime, 0, 'videos are de-synchronized!');
+          synchronizationManager._syncVideos();
+          assert.equal(video2.currentTime, 10, 'time synchronizing works!');
+        });
+      });
+    </script>
+
+  </body>
+</html>
