@@ -250,7 +250,7 @@
 
           iocKernel.bind('StateManager').toFunction(() => new StateManager(this, 'state')).inSingletonScope();
           iocKernel.bind('UserPreferencesManager').toFunction(() => new UserPreferencesManager()).inSingletonScope();
-          iocKernel.bind('SynchronizationManager').toFunction(() => new SynchronizationManager(iocKernel.get(StateManager))).inSingletonScope();
+          iocKernel.bind('SynchronizationManager').toFunction(() => new SynchronizationManager(iocKernel.get('StateManager'))).inSingletonScope();
           iocKernel.bind('FullscreenManager').toFunction(() => new FullscreenManager(this.$['video-player-container'])).inSingletonScope();
         }
 
