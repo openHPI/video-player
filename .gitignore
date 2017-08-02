@@ -59,5 +59,6 @@ typings/
 
 # Build directories
 .tmp
+build
 dist
 wct.conf.json

@@ -39,6 +39,9 @@
   "directories": {
     "test": "test"
   },
+  "dependencies": {
+    "polymer-font-awesome": "^1.0.0"
+  },
   "devDependencies": {
     "babel-preset-es2015": "^6.24.1",
     "eslint": "^4.2.0",
@@ -52,7 +55,7 @@
     "gulp-ignore": "^2.0.2",
     "gulp-uglify": "^3.0.0",
     "htmlhint": "^0.9.13",
-    "polymer-build": "^1.6.0",
+    "polymer-build": "^2.0.0",
     "polymer-cli": "^1.3.0",
     "run-sequence": "^2.0.0"
   },
@@ -65,7 +68,7 @@
     "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html && polymer lint",
     "postinstall": "bower install",
     "serve": "polymer serve",
-    "bundle": "gulp bundle",
+    "bundle": "polymer build",
     "deploy": "./deploy.sh"
   }
 }
