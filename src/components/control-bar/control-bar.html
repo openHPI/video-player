@@ -83,6 +83,7 @@
   <script>
     define('control-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
       const SKIP_SECONDS = 15;
+      const VOLUME_CHANGE_AMMOUNT = 0.05;
       const TEXT_ELEMENT_TAG_NAMES = ['INPUT', 'TEXTAREA'];
 
       class ControlBar extends IocRequesterMixin(BindingHelpersMixin(Polymer.Element)) {
@@ -116,6 +117,10 @@
               this._stateManager.skipSeconds(SKIP_SECONDS);
             } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
               this._stateManager.skipSeconds(-SKIP_SECONDS);
+            } else if (e.key === 'ArrowUp' || e.key === 'Up') {
+              this._stateManager.setVolume(Math.min(1, this.state.volume + VOLUME_CHANGE_AMMOUNT));
+            } else if (e.key === 'ArrowDown' || e.key === 'Down') {
+              this._stateManager.setVolume(Math.max(0, this.state.volume - VOLUME_CHANGE_AMMOUNT));
             } else if (e.key === ' ' || e.key === 'p') {
               this._stateManager.togglePlayPause();
             } else if (e.key === 'f') {
