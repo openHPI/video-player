@@ -1,14 +1,13 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
+<link rel="import" href="../../node_modules/polymer-font-awesome/dist/font-awesome.html">
 
 <link rel="import" href="../mixins/binding-helpers.html">
 <link rel="import" href="../mixins/ioc-requester.html">
 <link rel="import" href="../styling/global--style-module.html">
 
 <dom-module id="resizer-control">
-  <link rel="import" type="css" href="../../bower_components/components-font-awesome/css/font-awesome.min.css">
-
   <template>
-    <style type="text/css" include="global--style-module">
+    <style type="text/css" include="global--style-module font-awesome">
       /*
       * The nested flex boxes are unfortunately neccessary to avoid Safaris 100% height bug
       */
@@ -88,8 +87,8 @@
           // Get _videos to resize
           this._videos = [this._findPreviousVideo(), this._findNextVideo()];
 
-          // Avoid a dragging ghost image by creating a new element which shall be 
-          // shown but is hidden per default. Unfortunately this is the only way to 
+          // Avoid a dragging ghost image by creating a new element which shall be
+          // shown but is hidden per default. Unfortunately this is the only way to
           // do so.
           let dragImage = this.cloneNode(true);
           dragImage.style.visibility = 'hidden';

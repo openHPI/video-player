@@ -1,13 +1,12 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
+<link rel="import" href="../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 
 <dom-module id="select-control">
-  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
-
   <template>
-    <style type="text/css" include="control-bar--style-module">
+    <style type="text/css" include="control-bar--style-module font-awesome">
       :host {
         width: 100%;
       }
@@ -61,10 +60,10 @@
         font-weight: lighter;
       }
 
-      /* Microsoft Edge does not support CSS variables in pseudo-elements so the colors 
+      /* Microsoft Edge does not support CSS variables in pseudo-elements so the colors
          we declare for the badge don't work (worse: they get applied to the parent
          element). That's why we need to treat Edge separately which we do here.
-         We use the dark-orange theme colors for this. This might clash with other 
+         We use the dark-orange theme colors for this. This might clash with other
          themes but is in our eyes still a workable solution.
          This workaround should be unnecessary with the upcoming Microsoft Edge that
          is about to be released in the fall of 2017.
@@ -72,7 +71,7 @@
          https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12414257/
          And a link to a similar bug report:
          https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
-         And here's a link to the CSS selector that targets only Microsoft Edge because 
+         And here's a link to the CSS selector that targets only Microsoft Edge because
          looks for a feature that is only supported in Edge.*/
       @supports (-ms-ime-align: auto) {
         .dropdown #button__select.with-badge{
@@ -80,7 +79,7 @@
           color: black;
         }
         .dropdown #button__select.with-badge:after{
-           background-color: #DD6112; 
+           background-color: #DD6112;
            color: #000000;
         }
       }
@@ -92,10 +91,10 @@
 
       .in-menu-entry #inner_container__select_control{
         display: flex;
-        justify-content: space-between; 
+        justify-content: space-between;
         width: 100%;
       }
-      
+
       .in-menu-entry #button__select {
         /* Necessary for horizontally aligning all icons */
          width: 30px;
@@ -119,9 +118,9 @@
 
     <div id="container__select_control" class$="user_controls [[ifNotThen(isInMobileMenu, 'dropdown')]] [[ifThen(isInMobileMenu, 'in-menu-entry')]]">
       <div id="inner_container__select_control" on-mouseover="_showDropDown" on-mouseout="_hideDropDown">
-        <a id="button__select" 
-           class$="button [[ifNotEqualsThen(selectedValue, 'off', 'with-badge')]] [[ifNotThen(active, 'inactive')]]" 
-           badge-value$="{{formatter(selectedValue)}}" 
+        <a id="button__select"
+           class$="button [[ifNotEqualsThen(selectedValue, 'off', 'with-badge')]] [[ifNotThen(active, 'inactive')]]"
+           badge-value$="{{formatter(selectedValue)}}"
            href="javascript:void(0)"
            on-click="_handleClick">
           <i class$="[[iconClasses]]"></i>
@@ -133,7 +132,7 @@
             </a>
           </template>
         </div>
-      </div> 
+      </div>
     </div>
   </template>
 
