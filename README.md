@@ -119,7 +119,7 @@ The player configuration is provided as JSON object:
     "nextVideo": "/url/of/next/video"
   }
   ```
-* **videoObject** (Objet): Video metadata defined in the [VideoObject](http://schema.org/VideoObject) schema as JSON-LD, which is rendered by the player.
+* **videoObject** (Object): Video metadata defined in the [VideoObject](http://schema.org/VideoObject) schema as JSON-LD, which is rendered by the player.
   ```JSON
   "videoObject": {
     "@context": "http://schema.org/",
