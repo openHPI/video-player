@@ -18,7 +18,7 @@
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/interactive-transcript.html">
 <link rel="import" href="components/overlays/waiting-overlay.html">
-<link rel="import" href="components/overlays/nextvideo-overlay.html">
+<link rel="import" href="components/overlays/next-video-overlay.html">
 <link rel="import" href="components/overlays/finished-overlay.html">
 <link rel="import" href="components/overlays/captions-display.html">
 <link rel="import" href="components/control-bar/control-bar.html">
@@ -123,8 +123,8 @@
       <div id="video-container">
         <!-- Videos Overlays -->
         <waiting-overlay state="[[state]]"></waiting-overlay>
-        <template is="dom-if" if="[[configuration.playList]]">
-          <nextvideo-overlay state="[[state]]" play-list="[[configuration.playList]]"></nextvideo-overlay>
+        <template is="dom-if" if="[[and(configuration.playlist.autoPlay, configuration.playlist.nextVideo)]]">
+          <next-video-overlay state="[[state]]" next-video="[[configuration.playlist.nextVideo]]"></next-video-overlay>
         </template>
         <template is="dom-if" if="[[hasItems(configuration.relatedVideos)]]">
           <finished-overlay state="[[state]]" related-videos="[[configuration.relatedVideos]]"></finished-overlay>
@@ -168,7 +168,7 @@
         has-chapters="[[hasItems(configuration.chapters)]]"
         caption-languages="[[_captionLanguages]]"
         available-qualities="[[_availableQualities]]"
-        play-list="[[configuration.playList]]">
+        playlist="[[configuration.playlist]]">
       </control-bar>
 
       <!-- Chapter List -->

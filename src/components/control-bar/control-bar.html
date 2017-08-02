@@ -13,7 +13,7 @@
 <link rel="import" href="mute-control.html">
 <link rel="import" href="fullscreen-control.html">
 <link rel="import" href="caption-control.html">
-<link rel="import" href="navigation-control.html">
+<link rel="import" href="playlist-navigation-control.html">
 <link rel="import" href="mobile-settings-menu.html">
 <link rel="import" href="../../styling/global--style-module.html">
 
@@ -49,14 +49,19 @@
     </style>
 
     <div id="container__control_bar">
-      <template is="dom-if" if="[[playList.previousVideo]]">
-        <navigation-control state="[[state]]" previous-video="true" video-url="[[playList.previousVideo]]"></navigation-control>
+      <!-- Left button section -->
+      <template is="dom-if" if="[[playlist.previousVideo]]">
+        <playlist-navigation-control direction="backward" video-url="[[playlist.previousVideo]]"></playlist-navigation-control>
       </template>
       <playpause-control state="[[state]]"></playpause-control>
-      <template is="dom-if" if="[[playList.nextVideo]]">
-        <navigation-control state="[[state]]" next-video="true" video-url="[[playList.nextVideo]]"></navigation-control>
+      <template is="dom-if" if="[[playlist.nextVideo]]">
+        <playlist-navigation-control direction="forward" video-url="[[playlist.nextVideo]]"></playlist-navigation-control>
       </template>
+
+      <!-- Video Time -->
       <videotime-display state="[[state]]" class="-flex-grow"></videotime-display>
+
+      <!-- Right button section -->
       <template is="dom-if" if="[[hasItems(captionLanguages)]]">
         <caption-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></caption-control>
       </template>
@@ -70,12 +75,20 @@
       <template is="dom-if" if="[[hasChapters]]">
         <chapter-list-switch state="[[state]]" class="hidden-for-mobile"></chapter-list-switch>
       </template>
+
+      <!-- Sound controls -->
       <mute-control state="[[state]]" class="hidden-for-mobile"></mute-control>
       <sound-control state="[[state]]" class="hidden-for-mobile"></sound-control>
-      <mobile-settings-menu state="[[state]]" class="hidden-for-desktop"
+
+      <!-- Settings menu for mobile devices -->
+      <mobile-settings-menu
+        state="[[state]]"
+        class="hidden-for-desktop"
         caption-languages="[[captionLanguages]]"
         available-qualities="[[availableQualities]]">
       </mobile-settings-menu>
+
+      <!-- Fullscreen -->
       <full-screen-control state="[[state]]"></full-screen-control>
     </div>
   </template>
@@ -92,7 +105,7 @@
           return {
             state: Object,
             hasChapters: Boolean,
-            playList: Object,
+            playlist: Object,
             captionLanguages: Array,
             availableQualities: Boolean,
             _stateManager: {
