@@ -3,20 +3,20 @@
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/progress-container--style-module.html">
-<link rel="import" href="lecture-slide.html">
+<link rel="import" href="slide-thumbnail.html">
 
-<dom-module id="lecture-slide-bar">
+<dom-module id="slide-preview-bar">
   <template>
     <style type="text/css" include="progress-container--style-module">
-    #container__lecture_slide {
+    #container__slide_preview_bar {
       height: 10px;
     }
     </style>
 
-    <div id="container__lecture_slide" class="progress_indicator">
+    <div id="container__slide_preview_bar" class="progress_indicator">
         <template is="dom-repeat" items="[[slides]]">
-          <template is="dom-if" if="[[_isValidSlide(item.startPosition, state.duration)]]">
-            <lecture-slide state="[[state]]" slide="[[item]]"></lecture-slide>
+          <template is="dom-if" if="[[less(item.startPosition, state.duration)]]">
+            <slide-thumbnail state="[[state]]" slide="[[item]]"></slide-thumbnail>
           </template>
         </template>
     </div>
@@ -24,9 +24,9 @@
   </template>
 
   <script>
-    define('lecture-slide-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
-      class LectureSlideBar extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
-        static get is() { return 'lecture-slide-bar'; }
+    define('slide-preview-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class SlidePreviewBar extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'slide-preview-bar'; }
 
         static get properties() {
           return {
@@ -38,13 +38,9 @@
             },
           };
         }
-
-        _isValidSlide(startPosition, duration) {
-          return startPosition < duration;
-        }
       }
 
-      window.customElements.define(LectureSlideBar.is, LectureSlideBar);
+      window.customElements.define(SlidePreviewBar.is, SlidePreviewBar);
     });
   </script>
 

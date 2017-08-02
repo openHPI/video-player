@@ -91,9 +91,9 @@ The player configuration is provided as JSON object:
       }
     ]
     ```
-* **lectureSlides** (Array): List of lecture slides and corresponding start times in seconds to show below the progress bar
+* **slides** (Array): List of lecture slides and corresponding start times in seconds to show below the progress bar
     ```JSON
-    "lectureSlides": [
+    "slides": [
       {
         "imageUrl": "/image/of/slide.jpg",
         "startPosition": 0

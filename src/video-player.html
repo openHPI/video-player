@@ -23,7 +23,7 @@
 <link rel="import" href="components/overlays/captions-display.html">
 <link rel="import" href="components/control-bar/control-bar.html">
 <link rel="import" href="components/progress-container/video-progress.html">
-<link rel="import" href="components/progress-container/lecture-slide-bar.html">
+<link rel="import" href="components/progress-container/slide-preview-bar.html">
 <link rel="import" href="components/resizer-control.html">
 <link rel="import" href="components/video-object-renderer.html">
 
@@ -131,7 +131,7 @@
         </template>
 
         <!-- Video Streams -->
-        <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.isInteractiveTranscriptShown, configuration.lectureSlides)]]">
+        <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.isInteractiveTranscriptShown, configuration.slides)]]">
           <template is="dom-repeat" items="[[configuration.streams]]">
             <video-stream
               state="[[state]]"
@@ -156,8 +156,8 @@
 
       <!-- Progress Bars -->
       <div id="progress-container">
-        <template is="dom-if" if="[[hasItems(configuration.lectureSlides)]]">
-          <lecture-slide-bar state="[[state]]" slides="[[configuration.lectureSlides]]" class="hidden-for-mobile"></lecture-slide-bar>
+        <template is="dom-if" if="[[hasItems(configuration.slides)]]">
+          <slide-preview-bar state="[[state]]" slides="[[configuration.slides]]" class="hidden-for-mobile"></slide-preview-bar>
         </template>
         <video-progress state="[[state]]"></video-progress>
       </div>
