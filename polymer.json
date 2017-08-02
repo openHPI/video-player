@@ -7,7 +7,8 @@
   "extraDependencies": [
       "bower_components/webcomponentsjs/webcomponents-lite.js",
       "bower_components/webcomponentsjs/custom-elements-es5-adapter.js",
-      "bower_components/components-font-awesome/fonts/*"
+      "node_modules/polymer-font-awesome/dist/font-face.html",
+      "node_modules/polymer-font-awesome/dist/fonts/*"
   ],
   "lint": {
     "rules": [
@@ -19,5 +20,21 @@
       "databinding-calls-must-be-functions",
       "databind-with-unknown-property"
     ]
-  }
+  },
+  "builds": [
+    {
+      "name": "es6",
+      "bundle": true,
+      "js": {"minify": true},
+      "css": {"minify": true},
+      "html": {"minify": true}
+    },
+    {
+      "name": "es5",
+      "bundle": true,
+      "js": {"minify": true, "compile": true},
+      "css": {"minify": true},
+      "html": {"minify": true}
+    }
+  ]
 }

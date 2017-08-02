@@ -1,4 +1,5 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
+<link rel="import" href="../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
@@ -10,10 +11,8 @@
 <link rel="import" href="../../styling/control-bar--style-module.html">
 
 <dom-module id="mobile-settings-menu">
-  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
-
   <template>
-    <style type="text/css" include="control-bar--style-module">
+    <style type="text/css" include="control-bar--style-module font-awesome">
       :host {
         /* Avoid flickering with changing icons */
         /* It should be about twice the icon size */
@@ -21,7 +20,7 @@
       }
 
       /* .dropdown {
-         position: relative; 
+         position: relative;
       } */
 
       .dropdown-content {
@@ -40,7 +39,7 @@
 
         background-color: rgba(0, 0, 0, 0.7);
       }
-      
+
       .open #button__select {
         cursor: default;
       }
