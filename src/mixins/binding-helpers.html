@@ -31,6 +31,14 @@
         return values.reduce((x, y) => x || y);
       }
 
+      hasItems(arr, min = 1) {
+        if(typeof arr === 'undefined') {
+          return false;
+        }
+
+        return arr.length >= min;
+      }
+
       ifThen(condition, thenValue) {
         return this.ifThenElse(condition, thenValue, '');
       }

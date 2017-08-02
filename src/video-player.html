@@ -126,7 +126,7 @@
         <template is="dom-if" if="[[configuration.playList]]">
           <nextvideo-overlay state="[[state]]" play-list="[[configuration.playList]]"></nextvideo-overlay>
         </template>
-        <template is="dom-if" if="[[configuration.relatedVideos]]">
+        <template is="dom-if" if="[[hasItems(configuration.relatedVideos)]]">
           <finished-overlay state="[[state]]" related-videos="[[configuration.relatedVideos]]"></finished-overlay>
         </template>
 
@@ -156,7 +156,7 @@
 
       <!-- Progress Bars -->
       <div id="progress-container">
-        <template is="dom-if" if="[[configuration.lectureSlides]]">
+        <template is="dom-if" if="[[hasItems(configuration.lectureSlides)]]">
           <lecture-slide-bar state="[[state]]" slides="[[configuration.lectureSlides]]" class="hidden-for-mobile"></lecture-slide-bar>
         </template>
         <video-progress state="[[state]]"></video-progress>
@@ -165,7 +165,7 @@
       <!-- Control Bar -->
       <control-bar
         state="[[state]]"
-        has-chapters="[[_hasChapters]]"
+        has-chapters="[[hasItems(configuration.chapters)]]"
         caption-languages="[[_captionLanguages]]"
         available-qualities="[[_availableQualities]]"
         play-list="[[configuration.playList]]">
@@ -223,10 +223,6 @@
             _availableQualities: {
               type: Array,
               computed: '_getAvailableQualities(configuration.streams)',
-            },
-            _hasChapters: {
-              type: Boolean,
-              computed: '_getHasChapters(configuration.chapters)',
             },
           };
         }
@@ -306,10 +302,6 @@
                      .filter(quality => streams.every(stream => Object.keys(stream)
                                                                       .includes(quality)));
           }
-        }
-
-        _getHasChapters() {
-          return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
         }
 
         reloadConfiguration() {

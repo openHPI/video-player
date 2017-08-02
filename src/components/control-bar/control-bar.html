@@ -57,14 +57,14 @@
         <navigation-control state="[[state]]" next-video="true" video-url="[[playList.nextVideo]]"></navigation-control>
       </template>
       <videotime-display state="[[state]]" class="-flex-grow"></videotime-display>
-      <template is="dom-if" if="[[_hasCaptions]]">
+      <template is="dom-if" if="[[hasItems(captionLanguages)]]">
         <caption-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></caption-control>
       </template>
-      <template is="dom-if" if="[[_hasCaptions]]">
+      <template is="dom-if" if="[[hasItems(captionLanguages)]]">
         <interactive-transcript-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></interactive-transcript-control>
       </template>
       <speed-control state="[[state]]" class="hidden-for-mobile"></speed-control>
-      <template is="dom-if" if="[[_hasMultipleQualities]]">
+      <template is="dom-if" if="[[hasItems(availableQualities, 2)]]">
         <quality-control state="[[state]]" qualities="[[availableQualities]]" class="hidden-for-mobile"></quality-control>
       </template>
       <template is="dom-if" if="[[hasChapters]]">
@@ -83,6 +83,7 @@
   <script>
     define('control-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
       const SKIP_SECONDS = 15;
+      const VOLUME_CHANGE_AMMOUNT = 0.05;
       const TEXT_ELEMENT_TAG_NAMES = ['INPUT', 'TEXTAREA'];
 
       class ControlBar extends IocRequesterMixin(BindingHelpersMixin(Polymer.Element)) {
@@ -92,21 +93,13 @@
           return {
             state: Object,
             hasChapters: Boolean,
+            playList: Object,
             captionLanguages: Array,
             availableQualities: Boolean,
             _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            _hasMultipleQualities: {
-              type: Boolean,
-              computed: '_getHasMultipleQualities(availableQualities)',
-            },
-            _hasCaptions: {
-              type: Boolean,
-              computed: '_getHasCaptions(captionLanguages)',
-            },
-            playList: Object,
           };
         }
 
@@ -124,6 +117,10 @@
               this._stateManager.skipSeconds(SKIP_SECONDS);
             } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
               this._stateManager.skipSeconds(-SKIP_SECONDS);
+            } else if (e.key === 'ArrowUp' || e.key === 'Up') {
+              this._stateManager.setVolume(Math.min(1, this.state.volume + VOLUME_CHANGE_AMMOUNT));
+            } else if (e.key === 'ArrowDown' || e.key === 'Down') {
+              this._stateManager.setVolume(Math.max(0, this.state.volume - VOLUME_CHANGE_AMMOUNT));
             } else if (e.key === ' ' || e.key === 'p') {
               this._stateManager.togglePlayPause();
             } else if (e.key === 'f') {
@@ -136,14 +133,6 @@
             // keyboard interaction, like scrolling the page
             e.preventDefault();
           });
-        }
-
-        _getHasMultipleQualities(availableQualities) {
-          return availableQualities.length > 1;
-        }
-
-        _getHasCaptions(captions) {
-          return captions.length > 0;
         }
       }
 
