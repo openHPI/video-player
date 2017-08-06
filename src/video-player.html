@@ -68,9 +68,12 @@
            the browser is able to display so we have to use 100% instead.
            For more information, see https://nicolas-hoizey.com/2015/02/viewport-height-is-taller-than-the-visible-part-of-the-document-in-some-mobile-browsers.html */
         width: 100vw;
-        position: absolute;
+        position: fixed;
         left: 0;
         top: 0;
+        /* Should be displayed above every other content on the given website */
+        z-index: 1050;
+        background-color: white;
       }
 
       #video-container {
@@ -131,7 +134,7 @@
         </template>
 
         <!-- Video Streams -->
-        <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.isInteractiveTranscriptShown, configuration.slides)]]">
+        <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.isInteractiveTranscriptShown, configuration.slides)]];">
           <template is="dom-repeat" items="[[configuration.streams]]">
             <video-stream
               state="[[state]]"
@@ -428,6 +431,17 @@
           }
           if(isLectureSlides) {
             value += 11;
+          }
+          // iPads in full screen mode permanently display the navigation
+          // bar so we have to subtract even more for them.
+          if(window.navigator.platform === 'iPad') {
+            value += 23;
+          } else if (window.navigator.platform === 'iPhone') {
+            if(window.orientation === 90 || window.orientation === -90) {
+              value += 33;
+            } else {
+              value += 55;
+            }
           }
           return value;
         }
