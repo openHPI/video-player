@@ -10,6 +10,8 @@
         this.fullscreenElement = fullscreenElement;
         this.fullscreenChangedCallbacks = new Set();
 
+        this._oldBodyPosition = '';
+
         // Attatch event handler for fullscreenchange
         this.fullscreenElement.addEventListener('fullscreenchange', () => {
           this._fullScreenChanged(document.fullscreen);
@@ -44,6 +46,8 @@
           // mode so we have to fake it by appending a special iOS class that just
           // stretches the fullscreenElement to occupy 100% of width and height
           this.fullscreenElement.classList.add('fake-fullscreen');
+          this._oldBodyPosition = document.body.style.position;
+          document.body.style.position = 'fixed'; 
         }
       }
 
@@ -62,6 +66,7 @@
           document.msExitFullscreen();
         } else {
           this.fullscreenElement.classList.remove('fake-fullscreen');
+          document.body.style.position = this._oldBodyPosition;
         }
       }
 

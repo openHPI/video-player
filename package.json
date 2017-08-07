@@ -43,21 +43,14 @@
     "polymer-font-awesome": "^1.0.0"
   },
   "devDependencies": {
-    "babel-preset-es2015": "^6.24.1",
+    "babel-polyfill": "^6.23.0",
     "eslint": "^4.2.0",
     "eslint-plugin-html": "^3.1.0",
     "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2",
-    "gulp-clean": "^0.3.2",
-    "gulp-clean-css": "^3.6.0",
-    "gulp-htmlmin": "^3.0.0",
-    "gulp-if": "^2.0.2",
-    "gulp-ignore": "^2.0.2",
-    "gulp-uglify": "^3.0.0",
+    "gulp-concat": "^2.6.1",
     "htmlhint": "^0.9.13",
-    "polymer-build": "^2.0.0",
     "polymer-cli": "^1.3.0",
-    "run-sequence": "^2.0.0"
+    "url-polyfill": "^1.0.7"
   },
   "scripts": {
     "test": "node_modules/web-component-tester/bin/wct test/test-suite.html",
@@ -68,7 +61,7 @@
     "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html && polymer lint",
     "postinstall": "bower install",
     "serve": "polymer serve",
-    "bundle": "polymer build",
+    "bundle": "polymer build && gulp polyfills",
     "deploy": "./deploy.sh"
   }
 }

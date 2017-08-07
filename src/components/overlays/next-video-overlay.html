@@ -5,10 +5,10 @@
 <link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/overlay--style-module.html">
 
-<dom-module id="nextvideo-overlay">
+<dom-module id="next-video-overlay">
   <template>
     <style type="text/css" include="overlay--style-module font-awesome">
-      #container__nextvideo_overlay {
+      #container__next-video_overlay {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -30,7 +30,7 @@
       #icon_spinner {
         opacity: 0.9;
         font-size: 6vw;
-        @apply --accent-color-foreground;
+        @apply --set-accent-color-foreground;
 
         animation-name: spin;
         animation-duration: 1500ms;
@@ -75,7 +75,7 @@
       }
     </style>
 
-    <div id="container__nextvideo_overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
+    <div id="container__next-video_overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
       <p id="text__next_video">Nächstes Video</p>
       <div class="container__spinner">
         <i id="icon_spinner" class="fa fa-spinner" aria-hidden="true"></i>
@@ -86,32 +86,30 @@
   </template>
 
   <script>
-    define('nextvideo-overlay', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+    define('next-video-overlay', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {PLAY_STATES, SECONDS_TO_NEXT_VIDEO} = constants;
 
-      class NextvideoOverlay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
-        static get is() { return 'nextvideo-overlay'; }
+      class NextVideoOverlay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'next-video-overlay'; }
 
         static get properties() {
           return {
-            playList: Object,
             state: Object,
+            nextVideo: Object,
             _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
             _isVisible: {
               type: Boolean,
-              computed: '_getIsVisible(state.playState, _isAutoPlayEnabled)',
+              computed: '_getIsVisible(state.playState, _isEnabled)',
             },
-            _isAutoPlayEnabled: {
+            _isEnabled: {
               type: Boolean,
               value: true,
             },
+            _timer: Object,
             _secondsToNextVideo: Number,
-            _timer: {
-              type: Object,
-            },
           };
         }
 
@@ -127,20 +125,10 @@
 
           // Add event listener for keyboard shortcuts
           window.addEventListener('keydown', (e) => {
-            if (e.defaultPrevented) {
-              // Do nothing if the event was already processed
-              return;
+            if (!e.defaultPrevented && e.key === 'Escape') {
+              this._clearTimer();
+              e.preventDefault();
             }
-
-            if (e.keyCode === 27) {
-              this._abortAutoPlayNext();
-            } else {
-              return;
-            }
-
-            // Make sure the user doesn't trigger anything else with their
-            // keyboard interaction, like scrolling the page
-            e.preventDefault();
           });
         }
 
@@ -149,48 +137,39 @@
         }
 
         _handleClick(){
-          this._isAutoPlayEnabled = false;
-          this._abortAutoPlayNext();
+          this._clearTimer();
+          this._isEnabled = false;
         }
 
         _playStateChanged(playState) {
-          // When video has finished and video is part of playlist
-          // start next video after X seconds
-          if (playState === PLAY_STATES.FINISHED) {
-            if(this.playList.nextVideo){
-              if(!this._timer) {
-                this._secondsToNextVideo = SECONDS_TO_NEXT_VIDEO;
-                this._timer = setInterval( this._timerFunction.bind(this), 1000);
-              }
-            }
+          if (playState === PLAY_STATES.FINISHED && this._isEnabled) {
+            this._startTimer();
           } else if(playState === PLAY_STATES.PLAYING) {
-            this._abortAutoPlayNext();
+            this._clearTimer();
           }
         }
 
         _positionChanged(position, duration) {
           if(position !== duration) {
-            this._isAutoPlayEnabled = true;
-            this._abortAutoPlayNext();
+            this._clearTimer();
           }
         }
 
-        /**
-         * Reduces secondsToNextVideo and load next video when threshold value is reached
-         * @returns {void}
-         */
-        _timerFunction(){
-          if( this._secondsToNextVideo > 1) {
-            // Decrease timer
+        _startTimer() {
+          // Do nothing, if timer is already running
+          if(this._timer)
+            return;
+
+          this._secondsToNextVideo = SECONDS_TO_NEXT_VIDEO;
+          this._timer = setInterval(() => {
             this._secondsToNextVideo = this._secondsToNextVideo - 1;
-          } else {
-            window.open(this.playList.nextVideo, '_self');
-          }
+            if(this._secondsToNextVideo === 0) {
+              window.open(this.nextVideo, '_self');
+            }
+          }, 1000);
         }
 
-        // Abort the timer
-        // The next video of the playlist is thus not automatically loaded
-        _abortAutoPlayNext() {
+        _clearTimer() {
           if(this._timer) {
             clearInterval(this._timer);
             this._timer = null;
@@ -199,7 +178,7 @@
 
       }
 
-      window.customElements.define(NextvideoOverlay.is, NextvideoOverlay);
+      window.customElements.define(NextVideoOverlay.is, NextVideoOverlay);
     });
   </script>
 

@@ -13,7 +13,7 @@
       #container__video_stream {
         position: relative;
         width: 100%;
-        height: 100%;
+        height: auto; /* TODO: changed from 100% to fix resizer quickly */
       }
       video {
         width: inherit;
@@ -35,7 +35,8 @@
     </style>
 
     <div id="container__video_stream">
-      <video id="video" preload="[[ifThenElse(preload, 'auto', 'metadata')]]" on-click="_handleClick">
+      <!-- "playsinline" is for iOS to not use its native video player -->
+      <video id="video" preload="[[ifThenElse(preload, 'auto', 'metadata')]]" on-click="_handleClick" playsinline>
         <template is="dom-repeat" items="[[captions]]">
           <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
         </template>
