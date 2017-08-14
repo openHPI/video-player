@@ -55,7 +55,7 @@ const configurationSchema = {
       },
       poster: {
         type: 'string',
-        description: 'URL of the poster image',
+        description: 'URL of the poster image.',
       },
     },
     example: [
@@ -106,7 +106,7 @@ const configurationSchema = {
     type: 'string',
     options: ['dark-orange', 'dark-yellow', 'dark-blue', 'light-green'],
     default: 'dark-orange',
-    description: 'Predefined color theme (can be adjusted by settings the colors explicitly)',
+    description: 'Predefined color theme (can be adjusted by settings the colors explicitly).',
   },
   videoPreload: {
     type: 'boolean',
@@ -125,12 +125,12 @@ const configurationSchema = {
       title: {
         required: true,
         type: 'string',
-        description: 'Title of the chapter',
+        description: 'Title of the chapter.',
       },
       startPosition: {
         required: true,
         type: 'number',
-        description: 'Start position of the chapter in seconds',
+        description: 'Start position of the chapter in seconds.',
       },
     },
     example: [
@@ -147,12 +147,12 @@ const configurationSchema = {
       language: {
         required: true,
         type: 'string',
-        description: 'Language of the captions',
+        description: 'Language of the captions.',
       },
       url: {
         required: true,
         type: 'string',
-        description: 'URL of the captions WebVTT file',
+        description: 'URL of the captions WebVTT file.',
       },
     },
     example: [
@@ -169,12 +169,12 @@ const configurationSchema = {
       thumbnail: {
         required: true,
         type: 'string',
-        description: 'URL of the slide thumbnail',
+        description: 'URL of the slide thumbnail.',
       },
       startPosition: {
         required: true,
         type: 'number',
-        description: 'Start position of the slide in seconds',
+        description: 'Start position of the slide in seconds.',
       },
     },
     example: [
@@ -191,26 +191,26 @@ const configurationSchema = {
       title: {
         required: true,
         type: 'string',
-        description: 'Title of the video',
+        description: 'Title of the video.',
       },
       url: {
         required: true,
         type: 'string',
-        description: 'URL of the video page',
+        description: 'URL of the video page.',
       },
       thumbnail: {
         required: true,
         type: 'string',
-        description: 'URL of the video thumbnail',
+        description: 'URL of the video thumbnail.',
       },
       duration: {
         type: 'number',
-        description: 'Duration of the video in seconds',
+        description: 'Duration of the video in seconds.',
       },
     },
     example: [
       {
-        title: 'Title of related video',
+        title: 'Title of related video.',
         url: '/url/of/video-page',
         thumbnail: '/image/of/thumbnail.jpg',
         duration: 2259,
@@ -228,11 +228,11 @@ const configurationSchema = {
       },
       previousVideo: {
         type: 'string',
-        description: 'The URL of the previous video in the playlist',
+        description: 'The URL of the previous video in the playlist.',
       },
       nextVideo: {
         type: 'string',
-        description: 'The URL of the next video in the playlist',
+        description: 'The URL of the next video in the playlist.',
       },
     },
     example: {
