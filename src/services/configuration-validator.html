@@ -103,8 +103,16 @@
           }
 
           // Validate sub schema, if present
-          if(schema[key].type === 'object' && schema[key].schema) {
-            isValid = this._validateSubSchema(value, schema[key].schema, propertyPath) && isValid;
+          if(schema[key].schema) {
+            if(schema[key].type === 'object') {
+              // Check, if value matches schema
+              isValid = this._validateSubSchema(value, schema[key].schema, propertyPath) && isValid;
+            } else if(schema[key].type === 'array') {
+              // Check, if each value matches schema
+              for(let i = 0; i < value.length; i++) {
+                isValid = this._validateSubSchema(value[i], schema[key].schema, `${propertyPath}[${i}]`) && isValid;
+              }
+            }
           }
         }
 
