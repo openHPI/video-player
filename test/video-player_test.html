@@ -10,7 +10,7 @@
     <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../bower_components/web-component-tester/browser.js"></script>
 
-    <link rel="import" href="../src/video-player.html"> 
+    <link rel="import" href="../src/video-player.html">
   </head>
   <body>
 
@@ -119,7 +119,7 @@
           assert.equal(videoPlayer.state.playbackRate, 1.0, 'playback rate value is at default');
           assert.equal(videoPlayer.state.volume, 1, 'volume value is at default');
           assert.equal(videoPlayer.state.muted, false, 'muted value is at default');
-          assert.equal(videoPlayer.state.fullScreen, false, 'full screen value is at default');
+          assert.equal(videoPlayer.state.fullscreen, false, 'full screen value is at default');
         });
 
         test('testing a complex video player setup with three streams', function() {
@@ -131,7 +131,7 @@
           assert.equal(videoPlayer.state.playbackRate, 1.3, 'playback rate value is at set value');
           assert.equal(videoPlayer.state.volume, 0.75, 'volume value is at set value');
           assert.equal(videoPlayer.state.muted, false, 'muted value is at default');
-          assert.equal(videoPlayer.state.fullScreen, false, 'full screen value is at default');
+          assert.equal(videoPlayer.state.fullscreen, false, 'full screen value is at default');
         });
 
       });
