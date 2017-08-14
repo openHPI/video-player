@@ -50,7 +50,8 @@
         draggable="true"
         on-dragstart="_handleDragStart"
         on-drag="_resizeVideos"
-        on-dragend="_handleDragEnd">
+        on-dragend="_handleDragEnd"
+        on-click="_handleClick">
       </div>
     </div>
   </template>
@@ -78,14 +79,18 @@
           ];
         }
 
+        connectedCallback() {
+          super.connectedCallback();
+
+          // Get _videos to resize
+          this._videos = [this._findPreviousVideo(), this._findNextVideo()];
+        }
+
         _handleDragStart(e) {
           // Neccessary for FF to handle Drag'n'Drop
           // Since FF does not support the mouse position within a drag event, it has to be handled with the dragover event
           e.dataTransfer.setData('text', '');
           this.parentElement.addEventListener('dragover', this._handleDragOver.bind(this));
-
-          // Get _videos to resize
-          this._videos = [this._findPreviousVideo(), this._findNextVideo()];
 
           // Avoid a dragging ghost image by creating a new element which shall be
           // shown but is hidden per default. Unfortunately this is the only way to
@@ -120,6 +125,19 @@
           this._mousePositionX = e.pageX;
         }
 
+        _handleClick(e) {
+          let maxGap = (this.parentElement.offsetWidth * 0.49) / 2;
+          let factor = 30;
+
+          if (e.offsetX >= 15) {
+            // after element clicked
+            this._resizeToRight(maxGap, factor);
+          } else if (e.offsetX <= -15) {
+            // before element clicked
+            this._resizeToLeft(maxGap, factor);
+          }
+        }
+
         _resizeVideos(e) {
           let resizerPositionX = (e.originalTarget || e.srcElement).offsetLeft;
           let direction = this._getMouseDirection(e, resizerPositionX);
@@ -134,15 +152,9 @@
           * will shift up.
           */
           if(direction === 'left') {
-            if(this._globalFlexBasisGap[1] < maxGap) {
-              this._changeFlexBasis(this._videos[1], factor, 1, maxGap);
-              this._changeFlexBasis(this._videos[0], -factor, 0, maxGap);
-            }
+            this._resizeToLeft(maxGap, factor);
           } else if(direction === 'right') {
-            if(this._globalFlexBasisGap[0] < maxGap) {
-              this._changeFlexBasis(this._videos[1], -factor, 1, maxGap);
-              this._changeFlexBasis(this._videos[0], factor, 0, maxGap);
-            }
+            this._resizeToRight(maxGap, factor);
           }
         }
 
@@ -188,6 +200,20 @@
 
           this._globalFlexBasisGap[index] = newValue;
           video.style.flexBasis = 'calc(49% + ' + newValue + 'px)';
+        }
+
+        _resizeToLeft(maxGap, factor) {
+          if(this._globalFlexBasisGap[1] < maxGap) {
+            this._changeFlexBasis(this._videos[1], factor, 1, maxGap);
+            this._changeFlexBasis(this._videos[0], -factor, 0, maxGap);
+          }
+        }
+
+        _resizeToRight(maxGap, factor) {
+          if(this._globalFlexBasisGap[0] < maxGap) {
+            this._changeFlexBasis(this._videos[1], -factor, 1, maxGap);
+            this._changeFlexBasis(this._videos[0], factor, 0, maxGap);
+          }
         }
 
         _resetResizer () {
