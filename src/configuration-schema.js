@@ -122,12 +122,12 @@ const configurationSchema = {
     type: 'array',
     description: 'List of timestamps with chapter names.',
     schema: {
-      text: {
+      title: {
         required: true,
         type: 'string',
         description: 'Title of the chapter',
       },
-      seconds: {
+      startPosition: {
         required: true,
         type: 'number',
         description: 'Start position of the chapter in seconds',
@@ -135,8 +135,8 @@ const configurationSchema = {
     },
     example: [
       {
-        text: 'Chapter 1',
-        seconds: 0,
+        title: 'Chapter 1',
+        startPosition: 0,
       },
     ],
   },
@@ -149,7 +149,7 @@ const configurationSchema = {
         type: 'string',
         description: 'Language of the captions',
       },
-      source: {
+      url: {
         required: true,
         type: 'string',
         description: 'URL of the captions WebVTT file',
@@ -158,7 +158,7 @@ const configurationSchema = {
     example: [
       {
         language: 'en',
-        source: '/captions/en.vtt',
+        url: '/captions/en.vtt',
       },
     ],
   },
@@ -166,7 +166,7 @@ const configurationSchema = {
     type: 'array',
     description: 'List of presentation slides and corresponding start times in seconds to show below the progress.',
     schema: {
-      imageUrl: {
+      thumbnail: {
         required: true,
         type: 'string',
         description: 'URL of the slide thumbnail',
@@ -179,7 +179,7 @@ const configurationSchema = {
     },
     example: [
       {
-        imageUrl: '/image/of/slide.jpg',
+        thumbnail: '/image/of/slide.jpg',
         startPosition: 0,
       },
     ],
@@ -193,17 +193,17 @@ const configurationSchema = {
         type: 'string',
         description: 'Title of the video',
       },
-      imageUrl: {
-        required: true,
-        type: 'string',
-        description: 'URL of the video thumbnail',
-      },
       url: {
         required: true,
         type: 'string',
         description: 'URL of the video page',
       },
-      length: {
+      thumbnail: {
+        required: true,
+        type: 'string',
+        description: 'URL of the video thumbnail',
+      },
+      duration: {
         type: 'number',
         description: 'Duration of the video in seconds',
       },
@@ -211,8 +211,9 @@ const configurationSchema = {
     example: [
       {
         title: 'Title of related video',
-        imageUrl: '/image/of/thumbnail.jpg',
         url: '/url/of/video-page',
+        thumbnail: '/image/of/thumbnail.jpg',
+        duration: 2259,
       },
     ],
   },
@@ -225,11 +226,11 @@ const configurationSchema = {
         description: 'If enabled, the user is redirected to the next video page after the video has ended.',
         default: false,
       },
-      previousVideo : {
+      previousVideo: {
         type: 'string',
         description: 'The URL of the previous video in the playlist',
       },
-      nextVideo : {
+      nextVideo: {
         type: 'string',
         description: 'The URL of the next video in the playlist',
       },

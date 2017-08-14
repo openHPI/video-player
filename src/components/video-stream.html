@@ -38,7 +38,7 @@
       <!-- "playsinline" is for iOS to not use its native video player -->
       <video id="video" preload="[[ifThenElse(preload, 'auto', 'metadata')]]" on-click="_handleClick" playsinline>
         <template is="dom-repeat" items="[[captions]]">
-          <track src="[[item.source]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
+          <track src="[[item.url]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
         </template>
       </video>
       <template is="dom-if" if="[[and(urls.poster, _isPosterVisible)]]">

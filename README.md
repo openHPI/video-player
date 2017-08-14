@@ -78,8 +78,8 @@ The player configuration is provided as JSON object:
     ```JSON
     "chapters": [
       {
-        "text": "Chapter 1",
-        "seconds": 0
+        "title": "Chapter 1",
+        "startPosition": 0
       }
     ]
     ```
@@ -88,7 +88,7 @@ The player configuration is provided as JSON object:
     "captions": [
       {
         "language": "en",
-        "source": "/captions/en.vtt"
+        "url": "/captions/en.vtt"
       }
     ]
     ```
@@ -96,7 +96,7 @@ The player configuration is provided as JSON object:
     ```JSON
     "slides": [
       {
-        "imageUrl": "/image/of/slide.jpg",
+        "thumbnail": "/image/of/slide.jpg",
         "startPosition": 0
       }
     ]
@@ -106,8 +106,9 @@ The player configuration is provided as JSON object:
     "relatedVideos": [
       {
         "title": "Title of related video",
-        "imageUrl": "/image/of/thumbnail.jpg",
-        "url": "/url/of/video-page"
+        "thumbnail": "/image/of/thumbnail.jpg",
+        "url": "/url/of/video-page",
+        "duration": 2259
       }
     ]
     ```
