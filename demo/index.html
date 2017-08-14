@@ -6,6 +6,16 @@
 
     <title>video-player demo</title>
 
+    <!-- IE Polyfills -->
+    <script>
+      if(!('ActiveXObject' in window)) {
+        document.write('<!--');
+      }
+    </script>
+    <script src="../node_modules/url-polyfill/url-polyfill.min.js"></script>
+    <script src="../node_modules/babel-polyfill/dist/polyfill.min.js"></script>
+    <!-- DO NOT REMOVE -->
+
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../video-player.html">
 

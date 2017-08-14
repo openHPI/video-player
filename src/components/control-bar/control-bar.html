@@ -129,10 +129,15 @@
               this._stateManager.skipSeconds(SKIP_SECONDS);
             } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
               this._stateManager.skipSeconds(-SKIP_SECONDS);
-            } else if (e.key === ' ' || e.key === 'p') {
+            } else if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'p') {
               this._stateManager.togglePlayPause();
             } else if (e.key === 'f') {
-              this._stateManager.toggleFullscreen();
+              // In IE, fullscreen cannot be enabled by keyboard events.
+              // Therefore, fullscreen is only enabled in other browsers.
+              // However, disabling fullscreen works in IE.
+              if(!('ActiveXObject' in window) || this.state.fullscreen) {
+                this._stateManager.toggleFullscreen();
+              }
             } else {
               return;
             }

@@ -103,8 +103,17 @@
           */
           min-width: 360px;
         }
+
         .hidden-for-mobile {
           display: none;
+        }
+
+        /* On vertical mobile screens the videos should be shown below each other */ 
+        @media screen and (orientation:portrait) {
+          .video-stream {
+            flex-basis: 100% !important;
+            height: 100% !important;
+          }
         }
       }
       @media (min-width: 769px) {
@@ -149,7 +158,8 @@
             <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
               <resizer-control
                 state="[[state]]"
-                style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]">
+                style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"
+                class="hidden-for-mobile">
               </resizer-control>
             </template>
           </template>

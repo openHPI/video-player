@@ -13,6 +13,7 @@
 
       #inner_container__select_control {
         position: relative;
+        height: 40px;
       }
       .dropdown .dropdown-content {
         position: absolute;
@@ -22,6 +23,9 @@
         left: -10px;
         right: -10px;
         z-index: 10;
+
+        border: 1px solid black;
+        border-bottom: none;
 
         @apply --set-foreground-color;
         @apply --set-background-color;
@@ -43,6 +47,10 @@
       }
       .dropdown .dropdown-content a.selected {
         background-color: grey;
+      }
+
+      .dropdown #button__select {
+        text-decoration: none;
       }
 
       .dropdown #button__select.with-badge:after {
@@ -85,7 +93,6 @@
       }
 
       #container__select_control.in-menu-entry {
-        height: initial;
         background-color: transparent;
       }
 
@@ -105,7 +112,7 @@
       }
       .in-menu-entry #button__select, .in-menu-entry #dropdown__select a {
         padding: 0 5px;
-        line-height: 30px;
+        line-height: 40px;
         color: white;
         text-decoration: none;
       }
