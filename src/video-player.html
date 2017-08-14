@@ -104,13 +104,16 @@
           min-width: 360px;
         }
 
-        .video-stream {
-          flex-basis: 100% !important;
-          height: 100% !important;
-        }
-
         .hidden-for-mobile {
           display: none;
+        }
+
+        /* On vertical mobile screens the videos should be shown below each other */ 
+        @media screen and (orientation:portrait) {
+          .video-stream {
+            flex-basis: 100% !important;
+            height: 100% !important;
+          }
         }
       }
       @media (min-width: 769px) {
