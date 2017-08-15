@@ -36,18 +36,11 @@
         cursor: pointer;
         overflow: hidden;
         text-overflow: ellipsis;
-        text-decoration: none;
       }
 
-      .dropdown .dropdown-content a:hover {
-        background-color: grey;
-      }
+      .dropdown .dropdown-content a:hover,
       .dropdown .dropdown-content a.selected {
         background-color: grey;
-      }
-
-      .dropdown #button__select {
-        text-decoration: none;
       }
 
       .dropdown #button__select.with-badge:after {
@@ -55,7 +48,6 @@
         position: absolute;
         top: 6px;
         right: -12px;
-        height: 13px;
         width: 20px;
         @apply --set-accent-color-background;
         @apply --set-font-color-on-accent-color;
@@ -105,13 +97,10 @@
       }
       .in-menu-entry #dropdown__select {
         display: flex;
-        justify-content: flex-end;
       }
       .in-menu-entry #button__select, .in-menu-entry #dropdown__select a {
         padding: 0 5px;
-        line-height: 40px;
         color: white;
-        text-decoration: none;
       }
 
       .in-menu-entry #dropdown__select a.selected {
