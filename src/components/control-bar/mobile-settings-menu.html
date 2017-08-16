@@ -28,32 +28,17 @@
         left: 0;
         right: 0;
         z-index: 10;
-        overflow: scroll;
-        text-align: left;
-
-        @apply --set-foreground-color;
-
+        overflow: auto;
         background-color: rgba(0, 0, 0, 0.7);
       }
 
-      .open #button__select {
-        cursor: default;
-      }
-
       .user_controls.open {
-        height: 40px;
         @apply --set-accent-color-background;
       }
 
-      .mobile-settings-menu-content a:hover {
-        background-color: grey;
-      }
-      .mobile-settings-menu-content a.selected {
-        background-color: grey;
-      }
-      #mobile-settings-menu__select > * {
+      #mobile-settings-menu__select > [is-in-mobile-menu="true"] {
         margin: 4px 0;
-        background-color: rgba(255,255,255,0.4);
+        background-color: rgba(255, 255, 255, 0.4);
       }
     </style>
 

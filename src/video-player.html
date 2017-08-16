@@ -48,13 +48,13 @@
         align-items: stretch;
       }
 
-      #video-player-container:-webkit-full-screen {
+      #video-player-container:-webkit-full-screen { 
         width: 100%;
       }
-      #video-player-container:-moz-full-screen{
+      #video-player-container:-moz-full-screen {
         width: 100%;
       }
-      #video-player-container:-ms-fullscreen{
+      #video-player-container:-ms-fullscreen {
         width: 100%;
       }
 
@@ -91,7 +91,6 @@
       }
 
       #progress-container {
-        border-top: 1px solid black;
         border-bottom: 1px solid black;
       }
 
@@ -275,6 +274,13 @@
           this._fullscreenManager.onFullscreenChanged((fullscreen) => {
             this._stateManager.setFullscreen(fullscreen);
           });
+
+          // Set volume to 1 for mobile devices
+          // Since I had no mobile device I had no chance to test this. However it should work according to 
+          // https://coderwall.com/p/i817wa/one-line-function-to-detect-mobile-devices-with-javascript
+          if(window.orientation) {
+            this._stateManager.setVolume(1.0);
+          }
         }
 
         ready() {
