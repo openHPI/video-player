@@ -178,6 +178,12 @@
           };
         }
 
+        static get observers() {
+          return [
+            '_mobileSettingsMenuChanged(state.mobileSettigsMenuOpen)',
+          ];
+        }
+
         _showDropDown() {
           this._isDropDownOpen = true;
           this.$.container__select_control.classList.add('open');
@@ -204,6 +210,14 @@
         _setSelectedValue(value) {
           this.selectedValue = value;
           this.dispatchEvent(new CustomEvent('change'));
+        }
+
+        _mobileSettingsMenuChanged(menuOpen) {
+          if (this.isInMobileMenu) {
+            this._showDropDown();
+          } else {
+            this._hideDropDown();
+          }
         }
       }
 

@@ -19,13 +19,9 @@
         min-width: 48px;
       }
 
-      /* .dropdown {
-         position: relative;
-      } */
-
-      .dropdown-content {
+      .mobile-settings-menu-content {
         position: absolute;
-        /* Equals control bar height. This is set to assure that the dropdown opens to the top. */
+        /* Equals control bar height. This is set to assure that the mobile-settings-menu opens to the top. */
         top: 0;
         bottom: 40px;
         /* Cancel out the padding */
@@ -49,24 +45,24 @@
         @apply --set-accent-color-background;
       }
 
-      .dropdown-content a:hover {
+      .mobile-settings-menu-content a:hover {
         background-color: grey;
       }
-      .dropdown-content a.selected {
+      .mobile-settings-menu-content a.selected {
         background-color: grey;
       }
-      #dropdown__select > * {
+      #mobile-settings-menu__select > * {
         margin: 4px 0;
         background-color: rgba(255,255,255,0.4);
       }
     </style>
 
-    <div id="container__select_control" class="user_controls">
-      <div class="dropdown">
-        <a id="button__select" class="button" on-click="_toggleDropDown">
+    <div id="mobile-settings-menu" class="user_controls">
+      <div class="mobile-settings-menu-container">
+        <a id="button__select" class="button" on-click="_toggleMobileSettingsMenu">
           <i class="fa fa-cog"></i>
         </a>
-        <div id="dropdown__select" class$="dropdown-content [[ifNotThen(_isDropDownOpen, '-hidden')]]">
+        <div id="mobile-settings-menu__select" class$="mobile-settings-menu-content [[ifNotThen(_isMobileSettingsMenuOpen, '-hidden')]]">
           <template is="dom-if" if="[[captionLanguages]]">
           <caption-control is-in-mobile-menu="true" state="[[state]]" languages="[[captionLanguages]]">
             </caption-control>
@@ -97,7 +93,7 @@
             state: Object,
             captionLanguages: Array,
             availableQualities: Boolean,
-            _isDropDownOpen: {
+            _isMobileSettingsMenuOpen: {
               type: Boolean,
               value: false,
             },
@@ -112,16 +108,26 @@
           };
         }
 
+        static get observers() {
+          return [
+            '_mobileSettingsMenuChanged(state.mobileSettigsMenuOpen)',
+          ];
+        }
+
         ready() {
           super.ready();
         }
 
-        _toggleDropDown() {
-          this._isDropDownOpen = !this._isDropDownOpen;
-          if(this._isDropDownOpen) {
-            this.$.container__select_control.classList.add('open');
+        _toggleMobileSettingsMenu() {
+          this._stateManager.setMobileSettingsMenuOpen(!this._isMobileSettingsMenuOpen);
+        }
+
+        _mobileSettingsMenuChanged(menuOpen) {
+          this._isMobileSettingsMenuOpen = menuOpen;
+          if(this._isMobileSettingsMenuOpen) {
+            this.$['mobile-settings-menu'].classList.add('open');
           } else {
-            this.$.container__select_control.classList.remove('open');
+            this.$['mobile-settings-menu'].classList.remove('open');
           }
         }
 

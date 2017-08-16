@@ -273,6 +273,15 @@
       setActiveCaptions(captions){
         this.setState('activeCaptions', captions);
       }
+
+      /**
+       * Sets whether the mobile settings menu is open or not
+       * @param {Boolean} menuOpen Whether the menu is open
+       * @returns {void}
+       */
+      setMobileSettingsMenuOpen(menuOpen) {
+        this.setState('mobileSettigsMenuOpen', menuOpen);
+      }
     }
 
     return StateManager;
