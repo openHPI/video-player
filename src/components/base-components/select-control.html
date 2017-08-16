@@ -203,7 +203,9 @@
 
         _handleDropDownElementClick(e) {
           this._setSelectedValue(e.model.item);
-          this._hideDropDown();
+          if(!this.state.mobileSettingsMenuOpen) {
+            this._hideDropDown();
+          }
         }
 
         _setSelectedValue(value) {
