@@ -79,13 +79,6 @@
           ];
         }
 
-        connectedCallback() {
-          super.connectedCallback();
-
-          // Get _videos to resize
-          this._videos = [this._findPreviousVideo(), this._findNextVideo()];
-        }
-
         _handleDragStart(e) {
           // Neccessary for FF to handle Drag'n'Drop
           // Since FF does not support the mouse position within a drag event, it has to be handled with the dragover event
@@ -98,6 +91,10 @@
           let dragImage = this.cloneNode(true);
           dragImage.style.visibility = 'hidden';
           document.body.appendChild(dragImage);
+
+          // Get _videos to resize
+          this._videos = [this._findPreviousVideo(), this._findNextVideo()];
+
           // Microsoft Edge does not play well with our solution to hide the ghost
           // image but somehow needs the code above or it will crash.
           // Also, Edge does not support setDragImage which we use for our
@@ -122,10 +119,15 @@
         }
 
         _handleDragOver(e) {
-          this._mousePositionX = e.pageX;
+          this._mousePositionX = e.pageX - this.parentElement.getBoundingClientRect().left;
         }
 
         _handleClick(e) {
+          // Get _videos to resize
+          if(!this._videos) {
+            this._videos = [this._findPreviousVideo(), this._findNextVideo()];
+          }
+
           let maxGap = (this.parentElement.offsetWidth * 0.49) / 2;
           let factor = 30;
 
