@@ -58,6 +58,7 @@ The player configuration is provided as JSON object:
     ```
 
 ### Optional Parameters
+* **fallbackStream** (Object): Contains a fallback stream that the user can switch to, i.e. a single stream source. The Object content is built up in the same way as a stream under **streams**.
 * **initialState** (Object): The initial state the player has when loaded. The following options are available:
     * **playState** (String): `<'PLAYING'|'PAUSED'>` (default: `PAUSED`)
     * **position** (Number): Seconds (default: `0`)

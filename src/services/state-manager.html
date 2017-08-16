@@ -282,6 +282,14 @@
       setMobileSettingsMenuOpen(menuOpen) {
         this.setState('mobileSettingsMenuOpen', menuOpen);
       }
+      
+      toggleFallbackStream() {
+        if (this.state.fallbackStreamActive) {
+          this.setState('fallbackStreamActive', false);
+        } else {
+          this.setState('fallbackStreamActive', true);
+        }
+      }
     }
 
     return StateManager;

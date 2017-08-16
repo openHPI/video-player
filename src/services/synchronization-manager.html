@@ -51,7 +51,7 @@
        * @return {void}
        */
       unregisterVideo(video) {
-        this.videos = this._videos.filter(x => x !== video);
+        this._videos = this._videos.filter(x => x !== video);
 
         video.removeEventListener('waiting', this._videoWaiting);
         video.removeEventListener('stalled', this._videoWaiting);

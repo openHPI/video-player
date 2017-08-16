@@ -143,24 +143,37 @@
 
         <!-- Video Streams -->
         <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.isInteractiveTranscriptShown, configuration.slides)]];">
-          <template is="dom-repeat" items="[[configuration.streams]]">
-            <video-stream
-              state="[[state]]"
-              urls="[[item]]"
-              preload="[[configuration.videoPreload]]"
-              class="video-stream"
-              captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
-              style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
-              ondragover="return false;"
-              ondrag="return false;">
-            </video-stream>
-            <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
-              <resizer-control
+          <template is="dom-if" if="[[!_isFallbackStream]]" restamp="true">
+            <template is="dom-repeat" items="[[configuration.streams]]">
+              <video-stream
                 state="[[state]]"
-                style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"
-                class="hidden-for-mobile">
-              </resizer-control>
+                urls="[[item]]"
+                preload="[[configuration.videoPreload]]"
+                class="video-stream"
+                captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
+                style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
+                ondragover="return false;"
+                ondrag="return false;">
+              </video-stream>
+              <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
+                <resizer-control
+                  state="[[state]]"
+                  style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"
+                  class="hidden-for-mobile">
+                </resizer-control>
+              </template>
             </template>
+          </template>
+          <template is="dom-if" if="[[_isFallbackStream]]" restamp="true">
+            <video-stream
+            state="[[state]]"
+            urls="[[configuration.fallbackStream]]"
+            preload="[[configuration.videoPreload]]"
+            class="video-stream"
+            captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
+            style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
+            is-fallback="true">
+            </video-stream>
           </template>
         </div>
         <captions-display state="[[state]]"></captions-display>
@@ -227,6 +240,10 @@
             _isResizerShown: {
               type: Boolean,
               value: false,
+            },
+            _isFallbackStream: {
+              type: Boolean,
+              computed: '_getIsFallbackStream(state.fallbackStreamActive)',
             },
             _captionLanguages: {
               type: Array,
@@ -308,6 +325,14 @@
               this._stateManager.pause();
             }
           });
+        }
+
+        _getIsFallbackStream(isFallbackStream) {
+          if(isFallbackStream) {
+            return true;
+          } else {
+            return false;
+          }
         }
 
         _getCaptionLanguages(captions) {
