@@ -22,8 +22,6 @@
       .mobile-settings-menu-content {
         position: absolute;
         top: 0;
-        /* Equals control bar height. This is set to assure that the mobile-settings-menu opens to the top. */
-        bottom: 40px;
         left: 0;
         right: 0;
         z-index: 10;
@@ -50,7 +48,9 @@
         <a id="button__select" class="button" on-click="_toggleMobileSettingsMenu">
           <i class="fa fa-cog"></i>
         </a>
-        <div id="mobile-settings-menu__select" class$="mobile-settings-menu-content [[ifNotThen(_isMobileSettingsMenuOpen, '-hidden')]]">
+        <div id="mobile-settings-menu__select" 
+             class$="mobile-settings-menu-content [[ifNotThen(_isMobileSettingsMenuOpen, '-hidden')]]"
+             style$="bottom: [[_calcBottomValue(state.isInteractiveTranscriptShown)]];">
           <template is="dom-if" if="[[captionLanguages]]">
           <caption-control is-in-mobile-menu="true" state="[[state]]" languages="[[captionLanguages]]">
             </caption-control>
@@ -121,6 +121,14 @@
 
         _getHasMultipleQualities() {
           return this.availableQualities.length > 1;
+        }
+
+        _calcBottomValue(isInteractiveTranscriptShown) {
+          if(isInteractiveTranscriptShown) {
+            return '240px';
+          } else {
+            return '40px';
+          }
         }
       }
 
