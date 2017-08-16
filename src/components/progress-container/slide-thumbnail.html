@@ -24,7 +24,7 @@
         position: absolute;
         /* Cancel out the top border */
         bottom: calc(100% + 1px);
-        max-width: 100px;
+        max-width: 170px;
         border: 1px solid black;;
         background-color: white;
       }
@@ -73,7 +73,7 @@
           let percentage = this._stylePercentage(position, duration);
           // This is an approximation
           // to avoid that the slide image overflows the video container
-          if(percentage > 90) {
+          if(percentage > 85) {
             return '-right';
           } else {
             return '-left';
