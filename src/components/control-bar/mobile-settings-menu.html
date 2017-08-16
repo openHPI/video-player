@@ -21,15 +21,18 @@
 
       .mobile-settings-menu-content {
         position: absolute;
-        /* Equals control bar height. This is set to assure that the mobile-settings-menu opens to the top. */
         top: 0;
+        /* Equals control bar height. This is set to assure that the mobile-settings-menu opens to the top. */
         bottom: 40px;
-        /* Cancel out the padding */
         left: 0;
         right: 0;
         z-index: 10;
         overflow: auto;
         background-color: rgba(0, 0, 0, 0.7);
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
       }
 
       .user_controls.open {
@@ -95,7 +98,7 @@
 
         static get observers() {
           return [
-            '_mobileSettingsMenuChanged(state.mobileSettigsMenuOpen)',
+            '_mobileSettingsMenuChanged(state.mobileSettingsMenuOpen)',
           ];
         }
 
