@@ -14,6 +14,8 @@
         position: relative;
         width: 100%;
         height: auto; /* TODO: changed from 100% to fix resizer quickly */
+        /* Without line-height: 0, there will be a black bar underneath videos for unknown reasons. */
+        line-height: 0;
       }
       video {
         width: inherit;
