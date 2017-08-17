@@ -83,11 +83,12 @@
       playbackRate: 1.0,
       volume: 1.0,
       muted: false,
-      fullScreen: false,
+      fullscreen: false,
       isChapterListShown: false,
       captionLanguage: 'off',
       activeCaptions: [],
       isInteractiveTranscriptShown: false,
+      mobileSettingsMenuOpen: false,
     };
 
     /**
@@ -96,14 +97,10 @@
      */
     const DEFAULT_CONFIGURATION = {
       streams: [],
-      chapters: [],
-      captions: [],
-      lectureSlides: [],
-      relatedVideos: [],
       initialState: {},
       videoPreload: true,
-      theme: 'dark-orange',
       loadFontAwesome: true,
+      theme: 'dark-orange',
     };
 
     /**

@@ -25,8 +25,8 @@
         /* ------ General styling of the control section ------ */
         padding: 0 10px;
         height: 40px;
-        @apply --foreground-color;
-        @apply --background-color;
+        @apply --set-foreground-color;
+        @apply --set-background-color;
         user-select: none;
         cursor: default;
       }
@@ -37,11 +37,11 @@
 
       .user_controls a {
         line-height: 40px;
-        height: 100%;
         vertical-align: middle;
         width: 100%;
         text-align: center;
-        @apply --foreground-color;
+        text-decoration: none;
+        @apply --set-foreground-color;
       }
 
       .user_controls a:hover {
@@ -56,6 +56,7 @@
 
       .button {
         cursor: pointer;
+        text-decoration: none;
       }
       .button.inactive {
         /* Override default color when the button is inactive */

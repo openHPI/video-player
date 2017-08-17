@@ -1,4 +1,5 @@
 <link rel="import" href="../../../bower_components/imd/imd.html">
+<link rel="import" href="../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
@@ -7,13 +8,12 @@
 
 
 <dom-module id="interactive-transcript-control">
-  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
-
   <template>
-    <style type="text/css" include="control-bar--style-module">
+    <style type="text/css" include="control-bar--style-module font-awesome">
     </style>
 
     <select-control
+      state="[[state]]"
       values="[[_values]]"
       selected-value="[[ifThenElse(state.isInteractiveTranscriptShown, state.captionLanguage, 'off')]]"
       on-change="_selectionChanged"

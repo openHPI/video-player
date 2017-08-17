@@ -1,13 +1,13 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
+<link rel="import" href="../../node_modules/polymer-font-awesome/dist/font-awesome.html">
 
 <link rel="import" href="../mixins/binding-helpers.html">
 <link rel="import" href="../mixins/ioc-requester.html">
 <link rel="import" href="../styling/lists--style-module.html">
 
 <dom-module id="interactive-transcript">
-  <link rel="import" type="css" href="../../bower_components/components-font-awesome/css/font-awesome.min.css">
   <template>
-    <style type="text/css" include="lists--style-module">
+    <style type="text/css" include="lists--style-module font-awesome">
 
       #container__interactive_transcript {
         overflow: hidden;
@@ -18,7 +18,6 @@
       }
 
       #container__interactive_transcript .list {
-        perspective: 400px;
         perspective: 300px;
         perspective-origin: 50% 50%;
       }
@@ -27,7 +26,7 @@
         display: flex;
         padding: 15px 5px 15px 20px;
         background-color: #eee;
-        font-size: 1rem;
+        font-size: 18px;
         overflow: hidden;
         @apply --transition-duration-600;
       }
@@ -50,8 +49,8 @@
 
       #container__interactive_transcript .list_item:hover,
       #container__interactive_transcript .list_item.-active:hover {
-        @apply --accent-color-background;
-        @apply --font-color-on-accent-color;
+        @apply --set-accent-color-background;
+        @apply --set-font-color-on-accent-color;
         @apply --transition-duration-200;
       }
     </style>

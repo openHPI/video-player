@@ -5,9 +5,8 @@
 <link rel="import" href="../../styling/overlay--style-module.html">
 
 <dom-module id="waiting-overlay">
-  <link rel="import" type="css" href="../../../bower_components/components-font-awesome/css/font-awesome.min.css">
   <template>
-    <style type="text/css" include="overlay--style-module">
+    <style type="text/css" include="overlay--style-module font-awesome">
       #container__waiting_overlay {
         display: flex;
         align-items: center;
@@ -17,7 +16,7 @@
       #icon_spinner {
         opacity: 0.9;
         font-size: 6vw;
-        @apply --accent-color-foreground;
+        @apply --set-accent-color-foreground;
 
         animation-name: spin;
         animation-duration: 1500ms;

@@ -23,12 +23,36 @@
         return values.reduce((x, y) => x === y);
       }
 
+      less(a, b) {
+        return a < b;
+      }
+
+      lessEquals(a, b) {
+        return a <= b;
+      }
+
+      greater(a, b) {
+        return a > b;
+      }
+
+      greaterEquals(a, b) {
+        return a >= b;
+      }
+
       and(...values) {
         return values.reduce((x, y) => x && y);
       }
 
       or(...values) {
         return values.reduce((x, y) => x || y);
+      }
+
+      hasItems(arr, min = 1) {
+        if(typeof arr === 'undefined') {
+          return false;
+        }
+
+        return arr.length >= min;
       }
 
       ifThen(condition, thenValue) {

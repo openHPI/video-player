@@ -11,9 +11,10 @@
 <link rel="import" href="interactive-transcript-control.html">
 <link rel="import" href="quality-control.html">
 <link rel="import" href="mute-control.html">
+<link rel="import" href="stream-switch-control.html">
 <link rel="import" href="fullscreen-control.html">
 <link rel="import" href="caption-control.html">
-<link rel="import" href="navigation-control.html">
+<link rel="import" href="playlist-navigation-control.html">
 <link rel="import" href="mobile-settings-menu.html">
 <link rel="import" href="../../styling/global--style-module.html">
 
@@ -49,33 +50,47 @@
     </style>
 
     <div id="container__control_bar">
-      <template is="dom-if" if="[[playList.previousVideo]]">
-        <navigation-control state="[[state]]" previous-video="true" video-url="[[playList.previousVideo]]"></navigation-control>
+      <!-- Left button section -->
+      <template is="dom-if" if="[[playlist.previousVideo]]">
+        <playlist-navigation-control direction="backward" video-url="[[playlist.previousVideo]]"></playlist-navigation-control>
       </template>
       <playpause-control state="[[state]]"></playpause-control>
-      <template is="dom-if" if="[[playList.nextVideo]]">
-        <navigation-control state="[[state]]" next-video="true" video-url="[[playList.nextVideo]]"></navigation-control>
+      <template is="dom-if" if="[[playlist.nextVideo]]">
+        <playlist-navigation-control direction="forward" video-url="[[playlist.nextVideo]]"></playlist-navigation-control>
       </template>
+
+      <!-- Video Time -->
       <videotime-display state="[[state]]" class="-flex-grow"></videotime-display>
-      <template is="dom-if" if="[[_hasCaptions]]">
+
+      <!-- Right button section -->
+      <template is="dom-if" if="[[hasItems(captionLanguages)]]">
         <caption-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></caption-control>
       </template>
-      <template is="dom-if" if="[[_hasCaptions]]">
+      <template is="dom-if" if="[[hasItems(captionLanguages)]]">
         <interactive-transcript-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></interactive-transcript-control>
       </template>
       <speed-control state="[[state]]" class="hidden-for-mobile"></speed-control>
-      <template is="dom-if" if="[[_hasMultipleQualities]]">
+      <template is="dom-if" if="[[hasItems(availableQualities, 2)]]">
         <quality-control state="[[state]]" qualities="[[availableQualities]]" class="hidden-for-mobile"></quality-control>
       </template>
       <template is="dom-if" if="[[hasChapters]]">
         <chapter-list-switch state="[[state]]" class="hidden-for-mobile"></chapter-list-switch>
       </template>
+      <stream-switch-control state="[[state]]" class="hidden-for-mobile"></stream-switch-control>
+
+      <!-- Sound controls -->
       <mute-control state="[[state]]" class="hidden-for-mobile"></mute-control>
       <sound-control state="[[state]]" class="hidden-for-mobile"></sound-control>
-      <mobile-settings-menu state="[[state]]" class="hidden-for-desktop"
+
+      <!-- Settings menu for mobile devices -->
+      <mobile-settings-menu
+        state="[[state]]"
+        class="hidden-for-desktop"
         caption-languages="[[captionLanguages]]"
         available-qualities="[[availableQualities]]">
       </mobile-settings-menu>
+
+      <!-- Fullscreen -->
       <full-screen-control state="[[state]]"></full-screen-control>
     </div>
   </template>
@@ -92,21 +107,13 @@
           return {
             state: Object,
             hasChapters: Boolean,
+            playlist: Object,
             captionLanguages: Array,
             availableQualities: Boolean,
             _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            _hasMultipleQualities: {
-              type: Boolean,
-              computed: '_getHasMultipleQualities(availableQualities)',
-            },
-            _hasCaptions: {
-              type: Boolean,
-              computed: '_getHasCaptions(captionLanguages)',
-            },
-            playList: Object,
           };
         }
 
@@ -124,10 +131,15 @@
               this._stateManager.skipSeconds(SKIP_SECONDS);
             } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
               this._stateManager.skipSeconds(-SKIP_SECONDS);
-            } else if (e.key === ' ' || e.key === 'p') {
+            } else if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'p') {
               this._stateManager.togglePlayPause();
             } else if (e.key === 'f') {
-              this._stateManager.toggleFullscreen();
+              // In IE, fullscreen cannot be enabled by keyboard events.
+              // Therefore, fullscreen is only enabled in other browsers.
+              // However, disabling fullscreen works in IE.
+              if(!('ActiveXObject' in window) || this.state.fullscreen) {
+                this._stateManager.toggleFullscreen();
+              }
             } else {
               return;
             }
@@ -136,14 +148,6 @@
             // keyboard interaction, like scrolling the page
             e.preventDefault();
           });
-        }
-
-        _getHasMultipleQualities(availableQualities) {
-          return availableQualities.length > 1;
-        }
-
-        _getHasCaptions(captions) {
-          return captions.length > 0;
         }
       }
 

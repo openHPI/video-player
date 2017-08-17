@@ -1,30 +1,32 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
+<link rel="import" href="../../node_modules/polymer-font-awesome/dist/font-awesome.html">
 
 <link rel="import" href="../mixins/binding-helpers.html">
 <link rel="import" href="../mixins/ioc-requester.html">
 <link rel="import" href="../styling/lists--style-module.html">
 
 <dom-module id="chapter-list">
-  <link rel="import" type="css" href="../../bower_components/components-font-awesome/css/font-awesome.min.css">
   <template>
-    <style type="text/css" include="lists--style-module">
+    <style type="text/css" include="lists--style-module font-awesome">
       #container__chapter_list {
+        position: absolute;
         top: 0;
         right: 0;
         border: 3px solid black;
-        @apply --foreground-color;
+        @apply --set-foreground-color;
       }
       #container__chapter_list .list {
         max-width: 250px;
+        max-height: 220px;
       }
       #container__chapter_list .list_item {
-        @apply --background-color
+        @apply --set-background-color;
       }
       #container__chapter_list .list_item .list_item__link {
-        @apply --foreground-color;
+        @apply --set-foreground-color;
       }
       #container__chapter_list li:nth-child(odd) {
-        @apply --secondary-background-color
+        @apply --set-secondary-background-color;
       }
     </style>
 

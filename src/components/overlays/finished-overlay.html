@@ -35,11 +35,11 @@
       }
 
       .container__related_video:hover .container_related_overlay {
-        display: initial;
+        display: block;
       }
 
       .container__related_video a:focus .container_related_overlay {
-        display: initial;
+        display: block;
         outline: -webkit-focus-ring-color auto 5px;
       }
 
@@ -56,7 +56,7 @@
 
       @media (max-width: 768px) {
         #container__finished_overlay {
-          display: initial;
+          display: block;
           white-space: nowrap;
           overflow-x: auto;
           overflow-y: hidden;
@@ -65,10 +65,12 @@
           display: inline-block;
           border: 1px solid #FFFFFF;
           height: calc(100% - 8px) !important;
-          width: 40%;
+          width: 50%;
+          max-height: 200px;
+          top: calc(50% - 100px);
         }
         .container_related_overlay {
-          display: initial;
+          display: block;
           font-size: 12px;
           white-space: normal;
           overflow: hidden;
@@ -125,17 +127,17 @@
           /*
           * Calculate the flex-basis for each element.
           * Each element has 100% divided by the number of columns.
-          * Furhter the margin of 4px needs to be substracted each time
-          * in order to keep this width.
+          * Further the margin of 4px (and an additional px for IE 🙄) needs to
+          * be substracted each time in order to keep this width.
           */
-          return '(100% - 4px * 2 * ' + this._getColumns() + ') / ' + this._getColumns();
+          return '(100% - 5px * 2 * ' + this._getColumns() + ') / ' + this._getColumns();
         }
 
         _getHeight() {
           /*
           * Similar to the flexbasis the margin needs be calculated
           */
-          return '(100% - 4px * 2 * ' + this._getRows() + ') / ' + this._getRows();
+          return '(100% - 5px * 2 * ' + this._getRows() + ') / ' + this._getRows();
         }
       }
 
