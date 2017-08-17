@@ -24,13 +24,7 @@
   </template>
 
   <script>
-    define('stream-switch-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
-      const {PLAY_STATES} = constants;
-      const PLAY_STATE_ICONS = {
-        [PLAY_STATES.PLAYING]: 'fa-pause',
-        [PLAY_STATES.PAUSED]: 'fa-play',
-        [PLAY_STATES.FINISHED]: 'fa-refresh',
-      };
+    define('stream-switch-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
 
       class streamSwitchControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'stream-switch-control'; }

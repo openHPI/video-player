@@ -479,8 +479,8 @@
           if(isLectureSlides) {
             value += 11;
           }
-          // iPads in full screen mode permanently display the navigation
-          // bar so we have to subtract even more for them.
+          // On iPads in full screen mode, the navigation bar is permanently 
+          // displayed so we have to subtract even more for them.
           if(window.navigator.platform === 'iPad') {
             value += 63;
           } else if (window.navigator.platform === 'iPhone') {
