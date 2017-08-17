@@ -58,6 +58,7 @@ The player configuration is provided as JSON object:
     ```
 
 ### Optional Parameters
+* **fallbackStream** (Object): Contains a fallback stream that the user can switch to, i.e. a single stream source. The Object content is built up in the same way as a stream under **streams**.
 * **initialState** (Object): The initial state the player has when loaded. The following options are available:
     * **playState** (String): `<'PLAYING'|'PAUSED'>` (default: `PAUSED`)
     * **position** (Number): Seconds (default: `0`)
@@ -153,7 +154,14 @@ If tests fail, it can be very helpful to see more information about why they fai
 $ npm run testdebugging
 ```
 
-This will leave the browser window open, enabling you to re-run the tests and set breakpoints in your preferred browser.
+This will leave the browser window open, enabling you to re-run the tests and set breakpoints in your preferred browser. Unfortunately, if you open the Developer Tools, the testing environment decides to close them repeatedly, pretty much defeating the purpose of the persistent environment. Fret not, dear friend, as there is a shitty workaround you can use, described [in the bug report for this problem](https://github.com/Polymer/web-component-tester/issues/242):
+
+- polymer test -p
+- copy URL
+- close chrome
+- open a new chrome manually
+- paste url + enter
+- Voilà, devtools now stays open, but becomes more slow over time (seems like a memory leak), you'll have to reboot it after some time
 
 ## Miscellaneous
 ### User Preferences

@@ -13,6 +13,7 @@
     </style>
 
     <select-control
+      state="[[state]]"
       values="[[_values]]"
       selected-value="[[ifThenElse(state.isInteractiveTranscriptShown, state.captionLanguage, 'off')]]"
       on-change="_selectionChanged"

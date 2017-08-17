@@ -48,13 +48,13 @@
         align-items: stretch;
       }
 
-      #video-player-container:-webkit-full-screen {
+      #video-player-container:-webkit-full-screen { 
         width: 100%;
       }
-      #video-player-container:-moz-full-screen{
+      #video-player-container:-moz-full-screen {
         width: 100%;
       }
-      #video-player-container:-ms-fullscreen{
+      #video-player-container:-ms-fullscreen {
         width: 100%;
       }
 
@@ -91,7 +91,6 @@
       }
 
       #progress-container {
-        border-top: 1px solid black;
         border-bottom: 1px solid black;
       }
 
@@ -144,24 +143,37 @@
 
         <!-- Video Streams -->
         <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.isInteractiveTranscriptShown, configuration.slides)]];">
-          <template is="dom-repeat" items="[[configuration.streams]]">
-            <video-stream
-              state="[[state]]"
-              urls="[[item]]"
-              preload="[[configuration.videoPreload]]"
-              class="video-stream"
-              captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
-              style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
-              ondragover="return false;"
-              ondrag="return false;">
-            </video-stream>
-            <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
-              <resizer-control
+          <template is="dom-if" if="[[!_isFallbackStream]]" restamp="true">
+            <template is="dom-repeat" items="[[configuration.streams]]">
+              <video-stream
                 state="[[state]]"
-                style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"
-                class="hidden-for-mobile">
-              </resizer-control>
+                urls="[[item]]"
+                preload="[[configuration.videoPreload]]"
+                class="video-stream"
+                captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
+                style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
+                ondragover="return false;"
+                ondrag="return false;">
+              </video-stream>
+              <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
+                <resizer-control
+                  state="[[state]]"
+                  style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"
+                  class="hidden-for-mobile">
+                </resizer-control>
+              </template>
             </template>
+          </template>
+          <template is="dom-if" if="[[_isFallbackStream]]" restamp="true">
+            <video-stream
+            state="[[state]]"
+            urls="[[configuration.fallbackStream]]"
+            preload="[[configuration.videoPreload]]"
+            class="video-stream"
+            captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
+            style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
+            is-fallback="true">
+            </video-stream>
           </template>
         </div>
         <captions-display state="[[state]]"></captions-display>
@@ -229,6 +241,10 @@
               type: Boolean,
               value: false,
             },
+            _isFallbackStream: {
+              type: Boolean,
+              computed: '_getIsFallbackStream(state.fallbackStreamActive)',
+            },
             _captionLanguages: {
               type: Array,
               computed: '_getCaptionLanguages(configuration.captions)',
@@ -275,9 +291,22 @@
           this._fullscreenManager.onFullscreenChanged((fullscreen) => {
             this._stateManager.setFullscreen(fullscreen);
           });
+
+          // Set volume to 1 for mobile devices
+          // Since I had no mobile device I had no chance to test this. However it should work according to 
+          // https://coderwall.com/p/i817wa/one-line-function-to-detect-mobile-devices-with-javascript
+          if(window.orientation) {
+            this._stateManager.setVolume(1.0);
+          }
         }
 
         ready() {
+          // Make sure our player doesn't crash if somebody passes in null values
+          for (let value in this.configuration) {
+            if(!this.configuration[value]) {
+              delete this.configuration[value];
+            }
+          }
           super.ready();
 
           // Load FontAwesome, if specified in configuration
@@ -296,6 +325,14 @@
               this._stateManager.pause();
             }
           });
+        }
+
+        _getIsFallbackStream(isFallbackStream) {
+          if(isFallbackStream) {
+            return true;
+          } else {
+            return false;
+          }
         }
 
         _getCaptionLanguages(captions) {

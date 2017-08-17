@@ -12,6 +12,7 @@
     </style>
 
     <select-control
+      state="[[state]]"
       values="[[_values]]"
       selected-value="[[ifThenElse(state.isCaptionShown, state.captionLanguage, 'off')]]"
       on-change="_selectionChanged"

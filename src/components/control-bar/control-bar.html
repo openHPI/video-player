@@ -11,6 +11,7 @@
 <link rel="import" href="interactive-transcript-control.html">
 <link rel="import" href="quality-control.html">
 <link rel="import" href="mute-control.html">
+<link rel="import" href="stream-switch-control.html">
 <link rel="import" href="fullscreen-control.html">
 <link rel="import" href="caption-control.html">
 <link rel="import" href="playlist-navigation-control.html">
@@ -75,6 +76,7 @@
       <template is="dom-if" if="[[hasChapters]]">
         <chapter-list-switch state="[[state]]" class="hidden-for-mobile"></chapter-list-switch>
       </template>
+      <stream-switch-control state="[[state]]" class="hidden-for-mobile"></stream-switch-control>
 
       <!-- Sound controls -->
       <mute-control state="[[state]]" class="hidden-for-mobile"></mute-control>
