@@ -95,8 +95,30 @@
           return minutes + ':' + seconds2;
         }
       }
-    };
 
+
+      hmsToSeconds(timeString){
+        let array = timeString.split(':');
+        // just seconds
+        if (array.length == 1){
+          return parseInt(array[0]); 
+        } 
+        // minutes + seconds
+        else if (array.length == 2) {
+          let m = parseInt(array[0]) * 60;
+          let s = parseInt(array[1]);
+          return m + s;
+        }
+        // hours + minutes + seconds
+        else if (array.length == 3) {
+          let h = parseInt(array[0]) * 3600;
+          let m = parseInt(array[1]) * 60;
+          let s = parseInt(array[2]);
+          return h + m + s; 
+        }
+      }
+    };
+    
     return BindingHelpersMixin;
   });
 </script>
