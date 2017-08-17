@@ -47,6 +47,14 @@
         return values.reduce((x, y) => x || y);
       }
 
+      exists(value) {
+        if (value) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
       hasItems(arr, min = 1) {
         if(typeof arr === 'undefined') {
           return false;

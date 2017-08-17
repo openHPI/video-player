@@ -193,7 +193,8 @@
         has-chapters="[[hasItems(configuration.chapters)]]"
         caption-languages="[[_captionLanguages]]"
         available-qualities="[[_availableQualities]]"
-        playlist="[[configuration.playlist]]">
+        playlist="[[configuration.playlist]]"
+        has-fallback-stream="[[exists(configuration.fallbackStream)]]">
       </control-bar>
 
       <!-- Chapter List -->
