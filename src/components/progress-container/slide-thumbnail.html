@@ -50,7 +50,7 @@
   </template>
 
   <script>
-    define('slide-thumbnail', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants => {
+    define('slide-thumbnail', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {ANALYTICS_TOPICS} = constants;
 
       class SlideThumbnail extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
@@ -95,7 +95,7 @@
         _handleClick(){
           this._stateManager.setPosition(this.slide.startPosition);
         }
-
+        
         _checkSlideActivation(position) {
           // This is not working correct, as the oberver event fires every 350 ms
           // an if startPosition = 90, all position values from 89.5 to 90.4 will
@@ -109,7 +109,7 @@
       }
 
       window.customElements.define(SlideThumbnail.is, SlideThumbnail);
-    }));
+    });
   </script>
 
 </dom-module>
