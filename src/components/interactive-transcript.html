@@ -106,7 +106,7 @@
         _activeCueChanged() {
           let activeElement = this.$.container__interactive_transcript.getElementsByClassName('-active')[0];
           if(activeElement) {
-            activeElement.scrollIntoView({behavior: 'smooth'});
+            activeElement.parentNode.scrollTop = activeElement.offsetTop;
           }
         }
 
