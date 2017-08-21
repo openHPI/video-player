@@ -81,11 +81,11 @@
 
     <div id="container__finished_overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
       <template is="dom-repeat" items="[[relatedVideos]]">
-        <div class="container__related_video" style$="height: calc([[_getHeight()]]); flex-basis: calc([[_getFlexBasis()]]); background-image: url('[[item.imageUrl]]');">
+        <div class="container__related_video" style$="height: calc([[_getHeight()]]); flex-basis: calc([[_getFlexBasis()]]); background-image: url('[[item.thumbnail]]');">
           <a href="[[item.url]]">
             <div class="container_related_overlay">
               <span>[[item.title]]</span>
-              <span class$="related_video__time [[ifNotThen(item.length, 'empty')]]">[[secondsToHms(item.length, state.duration)]]</span>
+              <span class$="related_video__time [[ifNotThen(item.duration, 'empty')]]">[[secondsToHms(item.duration)]]</span>
             </div>
           </a>
         </div>

@@ -108,6 +108,8 @@
       }
 
       secondsToHms(totalSeconds, maxSeconds) {
+        maxSeconds = maxSeconds || totalSeconds;
+
         let seconds = Number(totalSeconds);
         let hours = Math.floor(seconds / 3600);
         let minutes = Math.floor(seconds % 3600 / 60);

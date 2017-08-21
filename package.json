@@ -58,10 +58,11 @@
     "test-safari": "node_modules/web-component-tester/bin/wct  test/test-suite.html -l safari",
     "test-chrome": "node_modules/web-component-tester/bin/wct  test/test-suite.html -l chrome",
     "testdebugging": "node_modules/web-component-tester/bin/wct -p test/test-suite.html",
+    "generate-docs": "node ./utils/generate-docs.js",
     "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html && polymer lint",
     "postinstall": "bower install",
     "serve": "polymer serve",
     "bundle": "polymer build && gulp polyfills",
-    "deploy": "./deploy.sh"
+    "deploy": "./utils/deploy.sh"
   }
 }
