@@ -70,6 +70,7 @@ The player configuration is provided as JSON object:
    * **hd** (string): URL of the HD video stream.
    * **sd** (string): URL of the SD video stream.
    * **poster** (string): URL of the poster image.
+* **language** (string): Language used for localizing messages. (default: `"en"`)
 * **initialState** (object): The initial state the player has when loaded.
    * **playState** (string):`<["PLAYING","PAUSED"]>` (default: `"PAUSED"`)
    * **position** (number): Video position in seconds. (default: `0`)

@@ -73,6 +73,11 @@ const configurationSchema = {
     description: 'Contains a fallback stream that the user can switch to, i.e. a single stream source.',
     schema: streamSchema,
   },
+  language: {
+    type: 'string',
+    default: 'en',
+    description: 'Language used for localizing messages.',
+  },
   initialState: {
     type: 'object',
     description: 'The initial state the player has when loaded.',

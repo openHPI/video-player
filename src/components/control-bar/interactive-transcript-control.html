@@ -3,6 +3,7 @@
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../mixins/localization.html">
 <link rel="import" href="../base-components/select-control.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 
@@ -14,8 +15,8 @@
 
     <select-control
       state="[[state]]"
-      values="[[_values]]"
-      selected-value="[[ifThenElse(state.isInteractiveTranscriptShown, state.captionLanguage, 'off')]]"
+      items="[[_items]]"
+      selected-value="[[ifThenElse(state.isInteractiveTranscriptShown, state.captionLanguage, _offValue)]]"
       on-change="_selectionChanged"
       icon-classes="fa fa-file-text"
       active="[[or(state.isInteractiveTranscriptShown, isInMobileMenu)]]"
@@ -24,42 +25,57 @@
   </template>
 
   <script>
-    define('interactive-transcript-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
-      class InteractiveTranscriptControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+    define('interactive-transcript-control', ['binding-helpers', 'ioc-requester', 'localization'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin) => {
+      class InteractiveTranscriptControl extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
         static get is() { return 'interactive-transcript-control'; }
 
         static get properties() {
           return {
             state: Object,
             languages: Array,
-            _stateManager: {
-              type: Object,
-              inject: 'StateManager',
-            },
-            _values: {
-              type: Array,
-              computed: '_getValues(languages.*)',
-            },
             isInMobileMenu: {
               type: Boolean,
               value: false,
             },
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _items: {
+              type: Array,
+              computed: '_getItems(languages.*, localize)',
+            },
+            _offValue: {
+              readOnly: true,
+              value: null,
+            },
           };
         }
 
-        _getValues() {
-          return ['off'].concat(this.languages);
+        _getItems() {
+          if(this.localize) {
+            let languageItems = this.languages.map(language => ({
+              text: language,
+              value: language,
+            }));
+            let offItem = {
+              text: this.localize('general--off'),
+              value: this._offValue,
+            };
+
+            return [offItem].concat(languageItems);
+          }
         }
 
         _selectionChanged(e) {
-          if (e.target.selectedValue !== 'off') {
+          if (e.target.selectedValue !== this._offValue) {
             this._stateManager.setCaptionLanguage(e.target.selectedValue);
 
             if(!this.state.isInteractiveTranscriptShown) {
               this._stateManager.toggleInteractiveTranscript();
             }
           }
-          if (e.target.selectedValue === 'off' && this.state.isInteractiveTranscriptShown) {
+          if (e.target.selectedValue === this._offValue && this.state.isInteractiveTranscriptShown) {
             this._stateManager.toggleInteractiveTranscript();
           }
         }
