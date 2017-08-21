@@ -26,10 +26,17 @@
         padding: 3px 10px;
         background-color: rgba(0,0,0,0.7);
         border-radius: 5px;
+        font-size: 18px;
+      }
+
+      @media (max-width: 769px) {
+        .caption-cue-text {
+          font-size: 12px;
+        }
       }
     </style>
 
-    <div id="container__captions" class$="[[ifNotThen(_isVisible, '-hidden')]]">
+    <div id="container__captions" class$="[[ifNotThen(state.isCaptionShown, '-hidden')]]">
       <div class="caption-cue-text">[[_activeCue.text]]</div>
     </div>
   </template>
@@ -51,10 +58,6 @@
               type: Object,
               computed: '_getActiveCue(state.activeCaptions, state.position)',
             },
-            _isVisible: {
-              type: Boolean,
-              computed: '_getIsVisible(state.captionLanguage)',
-            },
           };
         }
 
@@ -64,10 +67,6 @@
                                  .reverse()
                                  .find(cue => cue.startTime <= position);
           }
-        }
-
-        _getIsVisible(captionLanguage) {
-          return captionLanguage !== 'off';
         }
       }
 

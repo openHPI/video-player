@@ -1,12 +1,14 @@
 <link rel="import" href="../bower_components/imd/imd.html">
+<link rel="import" href="../bower_components/shadycss/apply-shim.html">
+<link rel="import" href="../bower_components/polymer/lib/utils/import-href.html">
 <link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/custom-style.html">
 
 <link rel="import" href="mixins/ioc-provider.html">
 <link rel="import" href="mixins/ioc-requester.html">
 <link rel="import" href="mixins/binding-helpers.html">
 <link rel="import" href="3rd-imports/hls-js.html">
 <link rel="import" href="styling/mixins.html">
-<link rel="import" href="styling/font-awesome.html">
 <link rel="import" href="styling/global--style-module.html">
 <link rel="import" href="services/state-manager.html">
 <link rel="import" href="services/fullscreen-manager.html">
@@ -17,12 +19,14 @@
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/interactive-transcript.html">
 <link rel="import" href="components/overlays/waiting-overlay.html">
+<link rel="import" href="components/overlays/next-video-overlay.html">
 <link rel="import" href="components/overlays/finished-overlay.html">
 <link rel="import" href="components/overlays/captions-display.html">
 <link rel="import" href="components/control-bar/control-bar.html">
 <link rel="import" href="components/progress-container/video-progress.html">
-<link rel="import" href="components/progress-container/lecture-slide-bar.html">
+<link rel="import" href="components/progress-container/slide-preview-bar.html">
 <link rel="import" href="components/resizer-control.html">
+<link rel="import" href="components/video-object-renderer.html">
 
 <dom-module id="video-player">
   <template>
@@ -30,32 +34,28 @@
       :host {
         display: block;
         border: 1px solid grey;
-        border-bottom: none;
         background-color: black;
       }
 
       /* For some reason, just chaining those fullscreen selectors into one big
          selector doesn't work so we're stupid-duplicating all the rules. */
-      #video-player-container:-webkit-full-screen #streams-container{
-        display: flex;
+      #video-player-container:-webkit-full-screen #streams-container {
         align-items: stretch;
       }
-      #video-player-container:-moz-full-screen #streams-container{
-        display: flex;
+      #video-player-container:-moz-full-screen #streams-container {
         align-items: stretch;
       }
-      #video-player-container:-ms-fullscreen #streams-container{
-        display: flex;
+      #video-player-container:-ms-fullscreen #streams-container {
         align-items: stretch;
       }
 
-      #video-player-container:-webkit-full-screen{
+      #video-player-container:-webkit-full-screen { 
         width: 100%;
       }
-      #video-player-container:-moz-full-screen{
+      #video-player-container:-moz-full-screen {
         width: 100%;
       }
-      #video-player-container:-ms-fullscreen{
+      #video-player-container:-ms-fullscreen {
         width: 100%;
       }
 
@@ -66,12 +66,15 @@
       #video-player-container.fake-fullscreen {
         /* Actually, what we would want here is to set the height to 100vh...but
            in mobile browsers this results in the content being bigger than what
-           the browser is able to display so we have to use 100% instead.
-           For more information, see https://nicolas-hoizey.com/2015/02/viewport-height-is-taller-than-the-visible-part-of-the-document-in-some-mobile-browsers.html */
+           the browser is able to display. For more information, see 
+           https://nicolas-hoizey.com/2015/02/viewport-height-is-taller-than-the-visible-part-of-the-document-in-some-mobile-browsers.html */
         width: 100vw;
-        position: absolute;
+        position: fixed;
         left: 0;
         top: 0;
+        /* Should be displayed above every other content on the given website */
+        z-index: 1050;
+        background-color: white;
       }
 
       #video-container {
@@ -82,8 +85,6 @@
         display: flex;
         flex-wrap: wrap;
         overflow: hidden;
-        /* Cancel out the control bar height, the progress bar and the lecture slide bar */
-        height: calc(100% - 40px - 16px - 11px);
       }
       .video-stream {
         /* 49 to leave a bit space for the resizer */
@@ -91,7 +92,6 @@
       }
 
       #progress-container {
-        border-top: 1px solid black;
         border-bottom: 1px solid black;
       }
 
@@ -101,10 +101,19 @@
           * The min-widths are necessary to avoid that the video containter and
           * the controlbar have different widths on small screens.
           */
-          min-width: 260px
+          min-width: 360px;
         }
+
         .hidden-for-mobile {
           display: none;
+        }
+
+        /* On vertical mobile screens the videos should be shown below each other */ 
+        @media screen and (orientation:portrait) {
+          .video-stream {
+            flex-basis: 100% !important;
+            height: 100% !important;
+          }
         }
       }
       @media (min-width: 769px) {
@@ -112,33 +121,60 @@
           /*
           * Look above
           */
-          min-width: 560px
+          min-width: 660px;
         }
       }
     </style>
 
     <div id="video-player-container">
+      <!-- Render VideoObject as JSON-LD, if provided -->
+      <template is="dom-if" if="[[configuration.videoObject]]">
+        <video-object-renderer video-object="[[configuration.videoObject]]"></video-object-renderer>
+      </template>
+
       <div id="video-container">
         <!-- Videos Overlays -->
         <waiting-overlay state="[[state]]"></waiting-overlay>
-        <template is="dom-if" if="[[configuration.relatedVideos]]">
+        <template is="dom-if" if="[[and(configuration.playlist.autoPlay, configuration.playlist.nextVideo)]]">
+          <next-video-overlay state="[[state]]" next-video="[[configuration.playlist.nextVideo]]"></next-video-overlay>
+        </template>
+        <template is="dom-if" if="[[hasItems(configuration.relatedVideos)]]">
           <finished-overlay state="[[state]]" related-videos="[[configuration.relatedVideos]]"></finished-overlay>
         </template>
 
         <!-- Video Streams -->
-        <div id="streams-container">
-          <template is="dom-repeat" items="[[configuration.streams]]">
-            <video-stream
-              state="[[state]]"
-              urls="[[item]]"
-              preload="[[configuration.videoPreload]]"
-              class="video-stream"
-              captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
-              style$="height: calc(100% / [[_rowCount(configuration.streams)]]);">
-            </video-stream>
-            <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
-              <resizer-control state="[[state]]" style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"></resizer-control>
+        <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.isInteractiveTranscriptShown, configuration.slides)]];">
+          <template is="dom-if" if="[[!_isFallbackStream]]" restamp="true">
+            <template is="dom-repeat" items="[[configuration.streams]]">
+              <video-stream
+                state="[[state]]"
+                urls="[[item]]"
+                preload="[[configuration.videoPreload]]"
+                class="video-stream"
+                captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
+                style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
+                ondragover="return false;"
+                ondrag="return false;">
+              </video-stream>
+              <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
+                <resizer-control
+                  state="[[state]]"
+                  style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"
+                  class="hidden-for-mobile">
+                </resizer-control>
+              </template>
             </template>
+          </template>
+          <template is="dom-if" if="[[_isFallbackStream]]" restamp="true">
+            <video-stream
+            state="[[state]]"
+            urls="[[configuration.fallbackStream]]"
+            preload="[[configuration.videoPreload]]"
+            class="video-stream"
+            captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
+            style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
+            is-fallback="true">
+            </video-stream>
           </template>
         </div>
         <captions-display state="[[state]]"></captions-display>
@@ -146,8 +182,8 @@
 
       <!-- Progress Bars -->
       <div id="progress-container">
-        <template is="dom-if" if="[[configuration.lectureSlides]]">
-          <lecture-slide-bar state="[[state]]" slides="[[configuration.lectureSlides]]" class="hidden-for-mobile"></lecture-slide-bar>
+        <template is="dom-if" if="[[hasItems(configuration.slides)]]">
+          <slide-preview-bar state="[[state]]" slides="[[configuration.slides]]" class="hidden-for-mobile"></slide-preview-bar>
         </template>
         <video-progress state="[[state]]"></video-progress>
       </div>
@@ -155,9 +191,11 @@
       <!-- Control Bar -->
       <control-bar
         state="[[state]]"
-        has-chapters="[[_hasChapters]]"
+        has-chapters="[[hasItems(configuration.chapters)]]"
         caption-languages="[[_captionLanguages]]"
-        available-qualities="[[_availableQualities]]">
+        available-qualities="[[_availableQualities]]"
+        playlist="[[configuration.playlist]]"
+        has-fallback-stream="[[exists(configuration.fallbackStream)]]">
       </control-bar>
 
       <!-- Chapter List -->
@@ -209,6 +247,10 @@
               type: Boolean,
               value: false,
             },
+            _isFallbackStream: {
+              type: Boolean,
+              computed: '_getIsFallbackStream(state.fallbackStreamActive)',
+            },
             _captionLanguages: {
               type: Array,
               computed: '_getCaptionLanguages(configuration.captions)',
@@ -217,25 +259,21 @@
               type: Array,
               computed: '_getAvailableQualities(configuration.streams)',
             },
-            _hasChapters: {
-              type: Boolean,
-              computed: '_getHasChapters(configuration.chapters)',
-            },
           };
         }
 
         static get observers() {
           return [
             '_configurationChanged(configuration)',
-            '_availableQualitiesChanged(_availableQualities, _stateManager)',
+            '_ensureValidQuality(_availableQualities, state.quality)',
             '_foregroundColorChanged(configuration.foregroundColor)',
             '_accentColorChanged(configuration.accentColor)',
+            '_fontColorOnAccentColorChanged(configuration.fontColorOnAccentColor)',
             '_backgroundColorChanged(configuration.backgroundColor)',
             '_secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
             '_themeChanged(configuration.theme)',
             '_playStateChanged(state.playState)',
             '_fullscreenChanged(state.fullscreen)',
-            '_captionLanguageChanged(state.captionLanguage)',
             '_userPreferencesStateChanged(state.*)',
           ];
         }
@@ -243,11 +281,11 @@
         bindServices(iocKernel) {
           super.bindServices(iocKernel);
 
-          iocKernel.bind(StateManager).toSelf(this, 'state').inSingletonScope();
-          iocKernel.bind(UserPreferencesManager).toSelf().inSingletonScope();
-          iocKernel.bind(AnalyticsManager).toSelf(this, iocKernel.get(StateManager)).inSingletonScope();
-          iocKernel.bind(SynchronizationManager).toSelf(iocKernel.get(StateManager)).inSingletonScope();
-          iocKernel.bind(FullscreenManager).toSelf(() => this.$['video-player-container']).inSingletonScope();
+          iocKernel.bind('StateManager').toFunction(() => new StateManager(this, 'state')).inSingletonScope();
+          iocKernel.bind('UserPreferencesManager').toFunction(() => new UserPreferencesManager()).inSingletonScope();
+          iocKernel.bind('SynchronizationManager').toFunction(() => new SynchronizationManager(iocKernel.get('StateManager'))).inSingletonScope();
+          iocKernel.bind('FullscreenManager').toFunction(() => new FullscreenManager(this.$['video-player-container'])).inSingletonScope();
+          iocKernel.bind('AnalyticsManager').toFunction(() => new AnalyticsManager(this, iocKernel.get(StateManager)).inSingletonScope());
         }
 
         servicesInjectedCallback() {
@@ -260,10 +298,28 @@
           this._fullscreenManager.onFullscreenChanged((fullscreen) => {
             this._stateManager.setFullscreen(fullscreen);
           });
+
+          // Set volume to 1 for mobile devices
+          // Since I had no mobile device I had no chance to test this. However it should work according to 
+          // https://coderwall.com/p/i817wa/one-line-function-to-detect-mobile-devices-with-javascript
+          if(window.orientation) {
+            this._stateManager.setVolume(1.0);
+          }
         }
 
         ready() {
+          // Make sure our player doesn't crash if somebody passes in null values
+          for (let value in this.configuration) {
+            if(!this.configuration[value]) {
+              delete this.configuration[value];
+            }
+          }
           super.ready();
+
+          // Load FontAwesome, if specified in configuration
+          if(this.configuration.loadFontAwesome) {
+            Polymer.importHref(this.importPath + '../node_modules/polymer-font-awesome/dist/font-face.html');
+          }
 
           // Add event handlers for mouse events to show/hide resizer
           this.$['streams-container'].addEventListener('mouseenter', () => this._isResizerShown = true);
@@ -278,8 +334,18 @@
           });
         }
 
+        _getIsFallbackStream(isFallbackStream) {
+          if(isFallbackStream) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+
         _getCaptionLanguages(captions) {
-          return captions.map(caption => caption.language);
+          if(captions){
+            return captions.map(caption => caption.language);
+          }
         }
 
         _getAvailableQualities(streams) {
@@ -295,10 +361,6 @@
           }
         }
 
-        _getHasChapters() {
-          return this.configuration && this.configuration.chapters && this.configuration.chapters.length !== 0;
-        }
-
         reloadConfiguration() {
           // Clone configuration to reevaluate all observers
           this.configuration = Object.assign({}, this.configuration);
@@ -311,12 +373,12 @@
           }
         }
 
-        _availableQualitiesChanged(_availableQualities) {
-          // If not all streams are available in the specified quality, use default one that is available for all streams
-          if(this._stateManager && !_availableQualities.includes(this.state.quality)) {
-            let defaultQuality = Object.values(QUALITY_MODES)
-                                       .find(quality => _availableQualities.includes(quality));
-            this._stateManager.setQuality(defaultQuality);
+        _ensureValidQuality(availableQualities, quality) {
+          // If not all streams are available in the specified quality, use one that is available for all streams
+          if(this._stateManager && !availableQualities.includes(quality)) {
+            let quality = Object.values(QUALITY_MODES)
+                                .find(x => availableQualities.includes(x));
+            this._stateManager.setQuality(quality);
           }
         }
 
@@ -355,6 +417,11 @@
             Polymer.updateStyles({'--accent-color': color});
           }
         }
+        _fontColorOnAccentColorChanged(color) {
+          if(color) {
+            Polymer.updateStyles({'--font-color-on-accent-color': color});
+          }
+        }
         _backgroundColorChanged(color) {
           if(color) {
             Polymer.updateStyles({'--background-color': color});
@@ -374,18 +441,15 @@
             if(typeof this.configuration.accentColor === 'undefined') {
               this._accentColorChanged(THEMES[name].accentColor);
             }
+            if(typeof this.configuration.fontColorOnAccentColor === 'undefined') {
+              this._fontColorOnAccentColorChanged(THEMES[name].fontColorOnAccentColor);
+            }
             if(typeof this.configuration.backgroundColor === 'undefined') {
               this._backgroundColorChanged(THEMES[name].backgroundColor);
             }
             if(typeof this.configuration.secondaryBackgroundColor === 'undefined') {
               this._secondaryBackgroundColorChanged(THEMES[name].secondaryBackgroundColor);
             }
-          }
-        }
-
-        _captionLanguageChanged(language) {
-          if(this.state.isInteractiveTranscriptShown && language === 'off') {
-            this._stateManager.toggleInteractiveTranscript();
           }
         }
 
@@ -402,6 +466,38 @@
 
         _rowCount(streams) {
           return Math.ceil(streams.length / 2);
+        }
+
+        _calculateHeight(fullscreen, isInteractiveTranscriptShown, isLectureSlides) {
+          if(fullscreen) {
+            return 'calc(100vh - ' + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + 'px)';
+          } else {
+            return 'calc(100% - ' + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + 'px)';
+          }
+        }
+
+        _bottomSpace(isInteractiveTranscriptShown, isLectureSlides) {
+          let value;
+          // Controlbar height & progres bar height
+          value = 40 + 16;
+          if(isInteractiveTranscriptShown) {
+            value += 200;
+          }
+          if(isLectureSlides) {
+            value += 11;
+          }
+          // On iPads in full screen mode, the navigation bar is permanently 
+          // displayed so we have to subtract even more for them.
+          if(window.navigator.platform === 'iPad') {
+            value += 63;
+          } else if (window.navigator.platform === 'iPhone') {
+            if(window.orientation === 90 || window.orientation === -90) {
+              value += 33;
+            } else {
+              value += 55;
+            }
+          }
+          return value;
         }
       }
 

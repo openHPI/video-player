@@ -44,12 +44,25 @@
     const HLS_MIME_TYPE = 'application/x-mpegURL';
 
     /**
+     * Contains the interval in seconds between two syncronization procedures.
+     * @type {Number}
+     */
+    const SYNC_INTERVAL = 1;
+
+    /**
      * Contains the difference threshold in seconds between position of the
      * state and position of a single video stream from which the video stream
      * is synced manually.
      * @type {Number}
      */
-    const SYNC_DIFF_THRESHOLD = 0.2;
+    const SYNC_DIFF_THRESHOLD = 0.5;
+
+    /**
+     * Contains the difference threshold in seconds between position of the
+     * state and position of a single video stream from which a seek is performed.
+     * @type {Number}
+     */
+    const SEEK_DIFF_THRESHOLD = 1;
 
     /**
      * Contains the name of the event that is used to pause playback on other
@@ -70,11 +83,12 @@
       playbackRate: 1.0,
       volume: 1.0,
       muted: false,
-      fullScreen: false,
+      fullscreen: false,
       isChapterListShown: false,
       captionLanguage: 'off',
       activeCaptions: [],
       isInteractiveTranscriptShown: false,
+      mobileSettingsMenuOpen: false,
     };
 
     /**
@@ -83,12 +97,9 @@
      */
     const DEFAULT_CONFIGURATION = {
       streams: [],
-      chapters: [],
-      captions: [],
-      lectureSlides: [],
-      relatedVideos: [],
       initialState: {},
       videoPreload: true,
+      loadFontAwesome: true,
       theme: 'dark-orange',
     };
 
@@ -100,28 +111,38 @@
       'dark-orange': {
         foregroundColor: '#FFFFFF',
         accentColor: '#DD6112',
+        fontColorOnAccentColor: '#000000',
         backgroundColor: '#424242',
         secondaryBackgroundColor: '#6D6D6D',
       },
       'dark-yellow': {
         foregroundColor: '#FFFFFF',
         accentColor: '#F5A704',
+        fontColorOnAccentColor: '#000000',
         backgroundColor: '#424242',
         secondaryBackgroundColor: '#6D6D6D',
       },
       'dark-blue': {
         foregroundColor: '#FFFFFF',
         accentColor: '#0B72B5',
+        fontColorOnAccentColor: '#FFFFFF',
         backgroundColor: '#424242',
         secondaryBackgroundColor: '#6D6D6D',
       },
       'light-green': {
         foregroundColor: '#001C3B',
         accentColor: '#ABB324',
+        fontColorOnAccentColor: '#000000',
         backgroundColor: '#FFFFFF',
-        secondaryBackgroundColor: '#565656',
+        secondaryBackgroundColor: '#AAAAAA',
       },
     };
+
+    /**
+     * Number of second to wait before the next video of a playlist is automatically loaded.
+     * @type {Number}
+     */
+    const SECONDS_TO_NEXT_VIDEO = 5;
 
     /**
      * Contains the possible user preferences properties.
@@ -165,7 +186,9 @@
       QUALITY_MODES,
       QUALITY_NAMES,
       HLS_MIME_TYPE,
+      SYNC_INTERVAL,
       SYNC_DIFF_THRESHOLD,
+      SEEK_DIFF_THRESHOLD,
       PLAYING_EVENT_NAME,
       DEFAULT_STATE,
       DEFAULT_CONFIGURATION,
@@ -173,6 +196,7 @@
       USER_PREFERNECES_STORAGE_KEY,
       THEMES,
       ANALYTICS_TOPICS,
+      SECONDS_TO_NEXT_VIDEO,
     };
   });
 </script>

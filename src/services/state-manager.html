@@ -248,6 +248,14 @@
       }
 
       /**
+       * Toggles the visibility of the captions.
+       * @returns {void}
+       */
+      toggleCaptions() {
+        this.setState('isCaptionShown', !this.state.isCaptionShown);
+      }
+
+      /**
        * Sets the new caption language or turns captions off by setting the
        * language to 'off'.
        * @param {string} language The language to be set.
@@ -264,6 +272,23 @@
        */
       setActiveCaptions(captions){
         this.setState('activeCaptions', captions);
+      }
+
+      /**
+       * Sets whether the mobile settings menu is open or not
+       * @param {Boolean} menuOpen Whether the menu is open
+       * @returns {void}
+       */
+      setMobileSettingsMenuOpen(menuOpen) {
+        this.setState('mobileSettingsMenuOpen', menuOpen);
+      }
+      
+      toggleFallbackStream() {
+        if (this.state.fallbackStreamActive) {
+          this.setState('fallbackStreamActive', false);
+        } else {
+          this.setState('fallbackStreamActive', true);
+        }
       }
     }
 

@@ -8,11 +8,14 @@
 <link rel="import" href="videotime-display.html">
 <link rel="import" href="speed-control.html">
 <link rel="import" href="chapter-list-switch.html">
-<link rel="import" href="interactive-transcript-switch.html">
+<link rel="import" href="interactive-transcript-control.html">
 <link rel="import" href="quality-control.html">
 <link rel="import" href="mute-control.html">
+<link rel="import" href="stream-switch-control.html">
 <link rel="import" href="fullscreen-control.html">
 <link rel="import" href="caption-control.html">
+<link rel="import" href="playlist-navigation-control.html">
+<link rel="import" href="mobile-settings-menu.html">
 <link rel="import" href="../../styling/global--style-module.html">
 
 <dom-module id="control-bar">
@@ -31,7 +34,6 @@
       .-flex-grow {
         flex-grow: 1;
         justify-content: flex-end;
-        background-color: #424242;
         background-color: var(--background-color-for-primary);
       }
 
@@ -40,26 +42,57 @@
           display: none;
         }
       }
+      @media (min-width: 769px) {
+        .hidden-for-desktop {
+          display: none;
+        }
+      }
     </style>
 
     <div id="container__control_bar">
+      <!-- Left button section -->
+      <template is="dom-if" if="[[playlist.previousVideo]]">
+        <playlist-navigation-control direction="backward" video-url="[[playlist.previousVideo]]"></playlist-navigation-control>
+      </template>
       <playpause-control state="[[state]]"></playpause-control>
+      <template is="dom-if" if="[[playlist.nextVideo]]">
+        <playlist-navigation-control direction="forward" video-url="[[playlist.nextVideo]]"></playlist-navigation-control>
+      </template>
+
+      <!-- Video Time -->
       <videotime-display state="[[state]]" class="-flex-grow"></videotime-display>
-      <template is="dom-if" if="[[captionLanguages]]">
+
+      <!-- Right button section -->
+      <template is="dom-if" if="[[hasItems(captionLanguages)]]">
         <caption-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></caption-control>
       </template>
-      <template is="dom-if" if="[[captionLanguages]]">
-        <interactive-transcript-switch state="[[state]]" class="hidden-for-mobile"></interactive-transcript-switch>
+      <template is="dom-if" if="[[hasItems(captionLanguages)]]">
+        <interactive-transcript-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></interactive-transcript-control>
       </template>
       <speed-control state="[[state]]" class="hidden-for-mobile"></speed-control>
-      <template is="dom-if" if="[[_hasMultipleQualities]]">
-        <quality-control state="[[state]]" qualities="[[availableQualities]]"></quality-control>
+      <template is="dom-if" if="[[hasItems(availableQualities, 2)]]">
+        <quality-control state="[[state]]" qualities="[[availableQualities]]" class="hidden-for-mobile"></quality-control>
       </template>
       <template is="dom-if" if="[[hasChapters]]">
         <chapter-list-switch state="[[state]]" class="hidden-for-mobile"></chapter-list-switch>
       </template>
+      <template is="dom-if" if="[[hasFallbackStream]]">
+        <stream-switch-control state="[[state]]" class="hidden-for-mobile"></stream-switch-control>
+      </template>
+
+      <!-- Sound controls -->
       <mute-control state="[[state]]" class="hidden-for-mobile"></mute-control>
       <sound-control state="[[state]]" class="hidden-for-mobile"></sound-control>
+
+      <!-- Settings menu for mobile devices -->
+      <mobile-settings-menu
+        state="[[state]]"
+        class="hidden-for-desktop"
+        caption-languages="[[captionLanguages]]"
+        available-qualities="[[availableQualities]]">
+      </mobile-settings-menu>
+
+      <!-- Fullscreen -->
       <full-screen-control state="[[state]]"></full-screen-control>
     </div>
   </template>
@@ -67,6 +100,7 @@
   <script>
     define('control-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
       const SKIP_SECONDS = 15;
+      const TEXT_ELEMENT_TAG_NAMES = ['INPUT', 'TEXTAREA'];
 
       class ControlBar extends IocRequesterMixin(BindingHelpersMixin(Polymer.Element)) {
         static get is() { return 'control-bar'; }
@@ -75,15 +109,13 @@
           return {
             state: Object,
             hasChapters: Boolean,
+            hasFallbackStream: Boolean,
+            playlist: Object,
             captionLanguages: Array,
             availableQualities: Boolean,
             _stateManager: {
               type: Object,
               inject: 'StateManager',
-            },
-            _hasMultipleQualities: {
-              type: Boolean,
-              computed: '_getHasMultipleQualities(availableQualities)',
             },
           };
         }
@@ -93,8 +125,8 @@
 
           // Add event listener for keyboard shortcuts
           window.addEventListener('keydown', (e) => {
-            if (e.defaultPrevented) {
-              // Do nothing if the event was already processed
+            if (e.defaultPrevented || TEXT_ELEMENT_TAG_NAMES.includes(document.activeElement.tagName)) {
+              // Do nothing, if the event was already processed or an text input is focussed
               return;
             }
 
@@ -102,10 +134,15 @@
               this._stateManager.skipSeconds(SKIP_SECONDS);
             } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
               this._stateManager.skipSeconds(-SKIP_SECONDS);
-            } else if (e.key === ' ' || e.key === 'p') {
+            } else if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'p') {
               this._stateManager.togglePlayPause();
             } else if (e.key === 'f') {
-              this._stateManager.toggleFullscreen();
+              // In IE, fullscreen cannot be enabled by keyboard events.
+              // Therefore, fullscreen is only enabled in other browsers.
+              // However, disabling fullscreen works in IE.
+              if(!('ActiveXObject' in window) || this.state.fullscreen) {
+                this._stateManager.toggleFullscreen();
+              }
             } else {
               return;
             }
@@ -114,10 +151,6 @@
             // keyboard interaction, like scrolling the page
             e.preventDefault();
           });
-        }
-
-        _getHasMultipleQualities() {
-          return this.availableQualities.length > 1;
         }
       }
 

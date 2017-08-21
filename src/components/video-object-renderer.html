@@ -1,0 +1,30 @@
+<link rel="import" href="../../bower_components/imd/imd.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="video-object-renderer">
+  <template>
+
+    <script type="application/ld+json">[[_stringifyVideoObject(videoObject)]]</script>
+  </template>
+
+  <script>
+    define('video-object-renderer', () => {
+      class VideoObjectRenderer extends Polymer.Element {
+        static get is() { return 'video-object-renderer'; }
+
+        static get properties() {
+          return {
+            videoObject: Object,
+          };
+        }
+
+        _stringifyVideoObject(videoObject) {
+          return JSON.stringify(videoObject, null, 2);
+        }
+      }
+
+      window.customElements.define(VideoObjectRenderer.is, VideoObjectRenderer);
+    });
+  </script>
+
+</dom-module>

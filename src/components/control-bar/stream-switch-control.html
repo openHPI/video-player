@@ -1,0 +1,66 @@
+<link rel="import" href="../../../bower_components/imd/imd.html">
+<link rel="import" href="../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
+
+<dom-module id="stream-switch-control">
+  <template>
+    <style type="text/css" include="control-bar--style-module font-awesome">
+      :host {
+        /* Avoid flickering with changing icons */
+        /* It should be about twice the icon size */
+        min-width: 33px;
+      }
+    </style>
+
+    <div id="container__stream-switch_control" class="user_controls">
+      <a id="button__stream-switch" class="button" on-click="_handleClick" href="javascript:void(0)">
+        <i class$="fa [[iconClass]]"></i>
+      </a>
+    </div>
+  </template>
+
+  <script>
+    define('stream-switch-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+
+      class streamSwitchControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'stream-switch-control'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            iconClass: String,
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+          };
+        }
+
+        static get observers() {
+          return [
+            '_streamChanged(state.fallbackStreamActive)',
+          ];
+        }
+
+        _streamChanged(fallbackStream) {
+          if (fallbackStream) {
+            this.iconClass = 'fa-columns';
+          } else {
+            this.iconClass = 'fa-square-o';
+          }
+        }
+
+        _handleClick() {
+          this._stateManager.toggleFallbackStream();
+        }
+      }
+
+      window.customElements.define(streamSwitchControl.is, streamSwitchControl);
+    });
+  </script>
+
+</dom-module>

@@ -10,15 +10,20 @@
 
   <template>
     <style type="text/css" include="control-bar--style-module">
+      #container__quality_switch {
+        width: 100%;
+      }
     </style>
 
     <div id="container__quality_switch">
       <select-control
+        state="[[state]]"
         values="[[qualities]]"
         selected-value="[[state.quality]]"
         formatter="[[_getQualityName]]"
         on-change="_selectionChanged"
-        icon-classes="fa fa-desktop">
+        icon-classes="fa fa-desktop"
+        is-in-mobile-menu="[[isInMobileMenu]]">
       </select-control>
     </div>
   </template>
@@ -41,6 +46,9 @@
             _analyticsManager: {
               type: Object,
               inject: 'AnalyticsManager',
+            isInMobileMenu: {
+              type: Boolean,
+              value: false,
             },
           };
         }

@@ -1,4 +1,6 @@
 # videoplayer
+Master: [![Build Status](https://travis-ci.org/openHPI/videoplayer.svg?branch=master)](https://travis-ci.org/openHPI/videoplayer)
+Dev: [![Build Status](https://travis-ci.org/openHPI/videoplayer.svg?branch=dev)](https://travis-ci.org/openHPI/videoplayer)
 
 
 ## Getting Started
@@ -15,7 +17,7 @@ The video player consists of multiple subcomponents, which can be bundled for pr
 ```
 $ npm run bundle
 ```
-This creates two bundled versions of the video-player component, which can be found in the `dist` directory. `es6` contains the regular component written in ECMAScript 6, while the bundle located in `es5` is transpiled to ECMAScript 5 to support older browser.
+This creates two bundled versions of the video-player component, which can be found in the `build` directory. `es6` contains the regular component written in ECMAScript 6, while the bundle located in `es5` is transpiled to ECMAScript 5 to support older browser.
 To maximize the performance, it is recommended to serve the ES6 bundle to modern browsers and use the ES5 version only as fallback for older ones.
 
 The component can then be used in any HTML site in the following way:
@@ -56,6 +58,7 @@ The player configuration is provided as JSON object:
     ```
 
 ### Optional Parameters
+* **fallbackStream** (Object): Contains a fallback stream that the user can switch to, i.e. a single stream source. The Object content is built up in the same way as a stream under **streams**.
 * **initialState** (Object): The initial state the player has when loaded. The following options are available:
     * **playState** (String): `<'PLAYING'|'PAUSED'>` (default: `PAUSED`)
     * **position** (Number): Seconds (default: `0`)
@@ -66,10 +69,12 @@ The player configuration is provided as JSON object:
 * **userPreferences** (Object): Override parts of the default/initial/saved state. Meant to be provided by the server based on the current user. See [User Preferences](#user-preferences)
 * **foregroundColor** (String): HEX code of the color for text and all other main content (default: `#FFFFFF`)
 * **accentColor** (String): HEX code of the highlighting color (default: `#DD6112`)
+* **fontColorOnAccentColor** (String): HEX code of the font color on the `accentColor` (default: `#000000`). Take care that the contrast ratio is high enough
 * **backgroundColor** (String): HEX code of the background for the `foregroundColor` (default: `#424242`)
-* **secondaryBackgroundColor** (String): HEX code of another background color used for example for displaying the buffer (default: `#424242`)
+* **secondaryBackgroundColor** (String): HEX code of another background color used for example for displaying the buffer (default: `#424242`). Take care that the `foregroundColor` has a high contrast to both background colors
 * **theme** (String): Predefined color theme (can be adjusted by settings the colors explicitly) `<'dark-orange', 'dark-yellow', 'dark-blue', 'light-green'>`
 * **videoPreload** (Boolean): Turns on/off preloading of the videos when the page loads (default: `true`)
+* **loadFontAwesome** (Boolean): [FontAwesome](http://fontawesome.io/) is used for the icons of the player. If your site already loads FontAwesome, this can be set to `false` to save bandwidth. (default: `true`)
 * **chapters** (Array): List of timestamps with chapter names
     ```JSON
     "chapters": [
@@ -88,9 +93,9 @@ The player configuration is provided as JSON object:
       }
     ]
     ```
-* **lectureSlides** (Array): List of lecture slides and corresponding start times in seconds to show below the progress bar
+* **slides** (Array): List of presentation slides and corresponding start times in seconds to show below the progress bar
     ```JSON
-    "lectureSlides": [
+    "slides": [
       {
         "imageUrl": "/image/of/slide.jpg",
         "startPosition": 0
@@ -107,7 +112,23 @@ The player configuration is provided as JSON object:
       }
     ]
     ```
-
+* **playlist** (Object): URLs of the previous and/or next video, if video is in a playlist. If `autoPlay` is enabled, the user is redirected to the next video page after the video has ended.
+  ```JSON
+  "playlist": {
+    "autoPlay": true,
+    "previousVideo": "/url/of/previous/video",
+    "nextVideo": "/url/of/next/video"
+  }
+  ```
+* **videoObject** (Object): Video metadata defined in the [VideoObject](http://schema.org/VideoObject) schema as JSON-LD, which is rendered by the player.
+  ```JSON
+  "videoObject": {
+    "@context": "http://schema.org/",
+    "@type": "VideoObject",
+    "name": "Name of the video",
+    "duration": "Duration of the video"
+  }
+  ```
 ## Tests
 
 Tests are realized via the web-component-tester module. General information about testing with Polymer can be found [here](https://www.polymer-project.org/2.0/docs/tools/tests). Polymer uses [Mocha](http://mochajs.org) as its test framework, [Chai](http://chaijs.com) for assertions, [Sinon](http://sinonjs.org/) for spies, stubs, and mocks, [Selenium](http://www.seleniumhq.org/) for running tests against multiple browsers, and [Accessibility Developer Tools](https://github.com/GoogleChrome/accessibility-developer-tools) for accessibility audits.
@@ -122,6 +143,25 @@ The component is set up to be tested via [web-component-tester](https://github.c
 ```
 $ npm test
 ```
+
+Note: Safari will fail this test when accessing a fixture because of a bug.
+
+### Debugging Tests
+
+If tests fail, it can be very helpful to see more information about why they fail. To be able to debug tests, you should run the following command:
+
+```
+$ npm run testdebugging
+```
+
+This will leave the browser window open, enabling you to re-run the tests and set breakpoints in your preferred browser. Unfortunately, if you open the Developer Tools, the testing environment decides to close them repeatedly, pretty much defeating the purpose of the persistent environment. Fret not, dear friend, as there is a shitty workaround you can use, described [in the bug report for this problem](https://github.com/Polymer/web-component-tester/issues/242):
+
+- polymer test -p
+- copy URL
+- close chrome
+- open a new chrome manually
+- paste url + enter
+- Voilà, devtools now stays open, but becomes more slow over time (seems like a memory leak), you'll have to reboot it after some time
 
 ## Miscellaneous
 ### User Preferences

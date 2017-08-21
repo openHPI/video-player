@@ -1,89 +1,134 @@
 <script>
-  define('binding-helpers', () => (superClass) => class extends superClass {
-    static get properties() {
-      return {
-        showIf: {
-          type: Boolean,
-          observer: '_showIfChanged',
-        },
-      };
-    }
-
-    _showIfChanged(condition) {
-      if(condition) {
-        this.classList.remove('-hidden');
-      } else {
-        this.classList.add('-hidden');
-      }
-    }
-
-    equals(...values) {
-      return values.reduce((x, y) => x === y);
-    }
-
-    and(...values) {
-      return values.reduce((x, y) => x && y);
-    }
-
-    or(...values) {
-      return values.reduce((x, y) => x || y);
-    }
-
-    ifThen(condition, thenValue) {
-      return this.ifThenElse(condition, thenValue, '');
-    }
-
-    ifNotThen(condition, thenValue) {
-      return this.ifThen(!condition, thenValue);
-    }
-
-    ifThenElse(condition, thenValue, elseValue) {
-      return condition ? thenValue : elseValue;
-    }
-
-    ifEqualsThen(a, b, thenValue) {
-      return this.ifEqualsThenElse(a, b, thenValue, '');
-    }
-
-    ifEqualsThenElse(a, b, thenValue, elseValue) {
-      return this.equals(a, b) ? thenValue : elseValue;
-    }
-
-    toStringOrEmpty(value) {
-      if(typeof value === 'undefined') {
-        return '';
+  define('binding-helpers', () => {
+    /* @polymerMixin */
+    const BindingHelpersMixin = (superClass) => class extends superClass {
+      static get properties() {
+        return {
+          showIf: {
+            type: Boolean,
+            observer: '_showIfChanged',
+          },
+        };
       }
 
-      return value.toString();
-    }
-
-    toFixedOrEmpty(value, digits) {
-      if(typeof value === 'undefined') {
-        return '';
+      _showIfChanged(condition) {
+        if(condition) {
+          this.classList.remove('-hidden');
+        } else {
+          this.classList.add('-hidden');
+        }
       }
 
-      return value.toFixed(digits);
-    }
+      equals(...values) {
+        return values.reduce((x, y) => x === y);
+      }
 
-    secondsToHms(totalSeconds, maxSeconds) {
-      let seconds = Number(totalSeconds);
-      let hours = Math.floor(seconds / 3600);
-      let minutes = Math.floor(seconds % 3600 / 60);
-      let seconds2 = Math.floor(seconds % 3600 % 60);
-      if(hours < 10) {
-        hours = '0' + hours;
+      less(a, b) {
+        return a < b;
       }
-      if(minutes < 10) {
-        minutes = '0' + minutes;
+
+      lessEquals(a, b) {
+        return a <= b;
       }
-      if(seconds2 < 10) {
-        seconds2 = '0' + seconds2;
+
+      greater(a, b) {
+        return a > b;
       }
-      if(maxSeconds > 3600) {
-        return hours + ':' + minutes + ':' + seconds2;
-      } else {
-        return minutes + ':' + seconds2;
+
+      greaterEquals(a, b) {
+        return a >= b;
       }
-    }
+
+      and(...values) {
+        return values.reduce((x, y) => x && y);
+      }
+
+      or(...values) {
+        return values.reduce((x, y) => x || y);
+      }
+
+      exists(value) {
+        if (value) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      hasItems(arr, min = 1) {
+        if(typeof arr === 'undefined') {
+          return false;
+        }
+
+        return arr.length >= min;
+      }
+
+      ifThen(condition, thenValue) {
+        return this.ifThenElse(condition, thenValue, '');
+      }
+
+      ifNotThen(condition, thenValue) {
+        return this.ifThen(!condition, thenValue);
+      }
+
+      ifThenElse(condition, thenValue, elseValue) {
+        return condition ? thenValue : elseValue;
+      }
+
+      ifEqualsThen(a, b, thenValue) {
+        return this.ifEqualsThenElse(a, b, thenValue, '');
+      }
+
+      ifNotEqualsThen(a, b, thenValue) {
+        return this.ifNotEqualsThenElse(a, b, thenValue, '');
+      }
+
+      ifEqualsThenElse(a, b, thenValue, elseValue) {
+        return this.equals(a, b) ? thenValue : elseValue;
+      }
+
+      ifNotEqualsThenElse(a, b, thenValue, elseValue) {
+        return this.equals(a, b) ? elseValue : thenValue;
+      }
+
+      toStringOrEmpty(value) {
+        if(typeof value === 'undefined') {
+          return '';
+        }
+
+        return value.toString();
+      }
+
+      toFixedOrEmpty(value, digits) {
+        if(typeof value === 'undefined') {
+          return '';
+        }
+
+        return value.toFixed(digits);
+      }
+
+      secondsToHms(totalSeconds, maxSeconds) {
+        let seconds = Number(totalSeconds);
+        let hours = Math.floor(seconds / 3600);
+        let minutes = Math.floor(seconds % 3600 / 60);
+        let seconds2 = Math.floor(seconds % 3600 % 60);
+        if(hours < 10) {
+          hours = '0' + hours;
+        }
+        if(minutes < 10) {
+          minutes = '0' + minutes;
+        }
+        if(seconds2 < 10) {
+          seconds2 = '0' + seconds2;
+        }
+        if(maxSeconds > 3600) {
+          return hours + ':' + minutes + ':' + seconds2;
+        } else {
+          return minutes + ':' + seconds2;
+        }
+      }
+    };
+
+    return BindingHelpersMixin;
   });
 </script>

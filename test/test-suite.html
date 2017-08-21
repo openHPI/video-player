@@ -1,0 +1,20 @@
+ <!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+  </head>
+  <body>
+    <script>
+      // This allows us to control the test files that are used in case we want to
+      // troubleshoot specific test cases
+      WCT.loadSuites([
+        'state-manager_test.html',
+        'video-player_test.html',
+        'playpause-control_test.html'
+      ]);
+    </script>
+  </body>
+</html> 

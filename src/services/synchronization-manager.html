@@ -2,7 +2,7 @@
 
 <script>
   define('synchronization-manager', ['constants'], (constants) => {
-    const {PLAY_STATES} = constants;
+    const {PLAY_STATES, SYNC_INTERVAL, SYNC_DIFF_THRESHOLD} = constants;
 
     class SynchronizationManager {
       /**
@@ -14,8 +14,8 @@
         this._stateManager = stateManager;
         this._videos = [];
         this._videosWaiting = new Set();
-        this._videosInitializing = new Set();
         this._videoBufferPositions = new Map();
+        this._readyCallbacks = [];
 
         // Needed in order to overcome removeEventListener
         this._videoWaiting = this._videoWaiting.bind(this);
@@ -24,23 +24,20 @@
         this._videoTimeUpdate = this._videoTimeUpdate.bind(this);
         this._videoEnded = this._videoEnded.bind(this);
         this._videoLoadedMetadata = this._videoLoadedMetadata.bind(this);
+
+        this._syncVideos();
       }
 
       /**
        * Registers a new video element to enable synchronization of this video.
        * @param  {HTMLElement} video The video element that should be registered.
-       * @param  {Boolean} isReady value determining whether the registered video is ready for playback.
        * @return {void}
        */
-      registerVideo(video, isReady = false) {
+      registerVideo(video) {
         this._videos.push(video);
-        if(!isReady) {
-          this._videosInitializing.add(video);
-        }
 
-        video.addEventListener('seeking', this._videoWaiting);
         video.addEventListener('waiting', this._videoWaiting);
-        video.addEventListener('playing', this._videoReady);
+        video.addEventListener('canplay', this._videoReady);
         video.addEventListener('seeked', this._videoReady);
         video.addEventListener('progress', this._videoProgress);
         video.addEventListener('ended', this._videoEnded);
@@ -54,11 +51,11 @@
        * @return {void}
        */
       unregisterVideo(video) {
-        this._videos.splice(this.videos.indexOf(video), 1);
+        this._videos = this._videos.filter(x => x !== video);
 
-        video.removeEventListener('seeking', this._videoWaiting);
         video.removeEventListener('waiting', this._videoWaiting);
-        video.removeEventListener('playing', this._videoReady);
+        video.removeEventListener('stalled', this._videoWaiting);
+        video.removeEventListener('canplay', this._videoReady);
         video.removeEventListener('seeked', this._videoReady);
         video.removeEventListener('progress', this._videoProgress);
         video.removeEventListener('ended', this._videoEnded);
@@ -67,21 +64,13 @@
       }
 
       /**
-       * Marks a specific video element as initializing.
-       * @param  {HTMLElement} video The video element.
+       * Registers a new callback, which is invoked when all registered videos are ready.
+       * @param  {Function} callback The callback, which should be registered.
+       * @param  {Boolean} [once=false] A Boolean indicating that the callback should be invoked at most once after being added.
        * @return {void}
        */
-      initializing(video) {
-        this._videosInitializing.add(video);
-      }
-
-      /**
-       * Marks a specific video element as ready for playback.
-       * @param  {HTMLElement} video The video element.
-       * @return {void}
-       */
-      ready(video) {
-        this._videosInitializing.delete(video);
+      onVideosReady(callback, once = false) {
+        this._readyCallbacks.push({callback, once});
       }
 
       /**
@@ -95,23 +84,14 @@
       }
 
       /**
-       * Gets a value determining whether there are registered video elements,
-       * which currently cannot play, because they are not yet initialized.
-       * @return {Boolean} The value.
-       */
-      _anyInitializing() {
-        return this._videosInitializing.size > 0;
-      }
-
-      /**
        * Is called on every time update of any of the registered video elements.
-       * Propagates position of master stream to state manager.
+       * Propagates position of master stream to slave videos and state manager.
        * @param  {EventArgs} e The event that was triggered.
        * @return {void}
        */
       _videoTimeUpdate(e) {
         let video = e.target;
-        if(this._isMaster(video) && !this._anyInitializing()) {
+        if(this._isMaster(video) && !this._anyWaiting()) {
           this._stateManager.setPosition(video.currentTime);
         }
       }
@@ -124,7 +104,7 @@
       _videoEnded(e) {
         // Explicitly propagate end position (needed for HLS.js)
         let video = e.target;
-        if(this._isMaster(video) && !this._anyInitializing()) {
+        if(this._isMaster(video) && !this._anyWaiting()) {
           this._stateManager.setPosition(this._stateManager.state.duration);
         }
       }
@@ -143,6 +123,30 @@
       }
 
       /**
+       * Synchronizes the positions of the slave videos to the master video
+       * after fixed time intervals.
+       * @return {void}
+       */
+      _syncVideos() {
+        if(!this._anyWaiting()) {
+          let master = this._videos[0];
+          if(this._stateManager.state.playState === PLAY_STATES.PAUSED) {
+            // The positions can be set instantly if playback is paused
+            this._videos.forEach(video => video.currentTime = master.currentTime);
+          } else {
+            // The state is set to waiting before setting the positions if videoa are playing
+            this._videos.filter(video => Math.abs(video.currentTime - master.currentTime) > SYNC_DIFF_THRESHOLD)
+                        .forEach(video => {
+                          this.setWaiting(video);
+                          video.currentTime = master.currentTime;
+                        });
+          }
+        }
+
+        setTimeout(() => this._syncVideos(), SYNC_INTERVAL * 1000);
+      }
+
+      /**
        * Gets a value determining whether there are videos, which currently
        * cannot play and need to buffer before continuing playback.
        * @return {Boolean} The value.
@@ -157,9 +161,24 @@
        * @return {void}
        */
       _videoWaiting(e) {
-        this._videosWaiting.add(e.target);
-        this._backupPlayState();
-        this._stateManager.setPlayState(PLAY_STATES.WAITING);
+        this.setWaiting(e.target);
+      }
+
+      /**
+       * Sets the state of a video to 'waiting'.
+       * @param  {HTMLElement} video The video element
+       * @return {void}.
+       */
+      setWaiting(video) {
+        if(!this._anyWaiting()) {
+          this._backupPlayState();
+        }
+        this._videosWaiting.add(video);
+
+        // If video has already ended, WAITING state is not set
+        if(this._stateManager.state.playState !== PLAY_STATES.FINISHED) {
+          this._stateManager.setPlayState(PLAY_STATES.WAITING);
+        }
       }
 
       /**
@@ -168,8 +187,11 @@
        * @return {void}
        */
       _videoReady(e) {
-        this._videosWaiting.delete(e.target);
-        if(!this._anyWaiting()) {
+        if(this._videosWaiting.delete(e.target) && !this._anyWaiting()) {
+          // Invoke registered callbacks
+          this._readyCallbacks.forEach(entry => entry.callback());
+          this._readyCallbacks = this._readyCallbacks.filter(entry => !entry.once);
+
           this._restorePlayState();
         }
       }
@@ -216,7 +238,9 @@
        */
       _restorePlayState() {
         if(this.backupPlayState) {
-          this._stateManager.setPlayState(this.backupPlayState);
+          if(this._stateManager.state.playState === PLAY_STATES.WAITING) {
+            this._stateManager.setPlayState(this.backupPlayState);
+          }
           this.backupPlayState = null;
         }
       }

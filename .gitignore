@@ -59,4 +59,5 @@ typings/
 
 # Build directories
 .tmp
+build
 dist

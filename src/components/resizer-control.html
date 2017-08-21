@@ -1,14 +1,13 @@
 <link rel="import" href="../../bower_components/imd/imd.html">
+<link rel="import" href="../../node_modules/polymer-font-awesome/dist/font-awesome.html">
 
 <link rel="import" href="../mixins/binding-helpers.html">
 <link rel="import" href="../mixins/ioc-requester.html">
 <link rel="import" href="../styling/global--style-module.html">
 
 <dom-module id="resizer-control">
-  <link rel="import" type="css" href="../../bower_components/components-font-awesome/css/font-awesome.min.css">
-
   <template>
-    <style type="text/css" include="global--style-module">
+    <style type="text/css" include="global--style-module font-awesome">
       /*
       * The nested flex boxes are unfortunately neccessary to avoid Safaris 100% height bug
       */
@@ -19,9 +18,9 @@
       }
       #container__resizer_control {
         display: flex;
-        overflow: hidden;
       }
       #resizer {
+        position: relative;
         border: 2px solid #5A6065;
         border: 2px solid var(--secondary-background-color);
         cursor: ew-resize;
@@ -51,7 +50,8 @@
         draggable="true"
         on-dragstart="_handleDragStart"
         on-drag="_resizeVideos"
-        on-dragend="_handleDragEnd">
+        on-dragend="_handleDragEnd"
+        on-click="_handleClick">
       </div>
     </div>
   </template>
@@ -91,17 +91,30 @@
           e.dataTransfer.setData('text', '');
           this.parentElement.addEventListener('dragover', this._handleDragOver.bind(this));
 
-          // Get _videos to resize
-          this._videos = [this._findPreviousVideo(), this._findNextVideo()];
-
-          // Avoid a dragging ghost image by creating a new element which shall be shown
-          // but is hidden per default. Unfortunately this is the only way to do so.
+          // Avoid a dragging ghost image by creating a new element which shall be
+          // shown but is hidden per default. Unfortunately this is the only way to
+          // do so.
           let dragImage = this.cloneNode(true);
           dragImage.style.visibility = 'hidden';
           document.body.appendChild(dragImage);
-          // If we want to hide the ghost image in fullscreen mode, we have to
-          // move it completely out of view by setting its position as -10000|-10000
-          e.dataTransfer.setDragImage(dragImage, -10000, -10000);
+
+          // Get _videos to resize
+          this._videos = [this._findPreviousVideo(), this._findNextVideo()];
+
+          // Microsoft Edge does not play well with our solution to hide the ghost
+          // image but somehow needs the code above or it will crash.
+          // Also, Edge does not support setDragImage which we use for our
+          // ghost image solution for fullscreen mode. We use that feature to detect
+          // support and then give Edge its special support.
+          if(!window.StyleMedia) {
+            // If we want to hide the ghost image in fullscreen mode, we have to
+            // move it completely out of view by setting its position as -10000|-10000
+            e.dataTransfer.setDragImage(dragImage, -10000, -10000);
+          } else {
+            // Workaround for Microsoft Edge to hide the ghost image. Unfortunately also
+            // hides the resizer itself
+            this.style.opacity = '0';
+          }
         }
 
         _handleDragEnd() {
@@ -109,11 +122,30 @@
           document.body.removeChild(document.body.lastChild);
           this.parentElement.removeEventListener('dragover', this._handleDragOver.bind(this));
 
+          this.style.opacity = '1';
           this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_CHANGE_SIZE}, this._getAnalyticsData());
         }
 
         _handleDragOver(e) {
-          this._mousePositionX = e.pageX;
+          this._mousePositionX = e.pageX - this.parentElement.getBoundingClientRect().left;
+        }
+
+        _handleClick(e) {
+          // Get _videos to resize
+          if(!this._videos) {
+            this._videos = [this._findPreviousVideo(), this._findNextVideo()];
+          }
+
+          let maxGap = (this.parentElement.offsetWidth * 0.49) / 2;
+          let factor = 30;
+
+          if (e.offsetX >= 15) {
+            // After element clicked
+            this._resizeToRight(maxGap, factor);
+          } else if (e.offsetX <= -15) {
+            // Before element clicked
+            this._resizeToLeft(maxGap, factor);
+          }
         }
 
         _resizeVideos(e) {
@@ -130,15 +162,9 @@
           * will shift up.
           */
           if(direction === 'left') {
-            if(this._globalFlexBasisGap[1] < maxGap) {
-              this._changeFlexBasis(this._videos[1], factor, 1, maxGap);
-              this._changeFlexBasis(this._videos[0], -factor, 0, maxGap);
-            }
+            this._resizeToLeft(maxGap, factor);
           } else if(direction === 'right') {
-            if(this._globalFlexBasisGap[0] < maxGap) {
-              this._changeFlexBasis(this._videos[1], -factor, 1, maxGap);
-              this._changeFlexBasis(this._videos[0], factor, 0, maxGap);
-            }
+            this._resizeToRight(maxGap, factor);
           }
         }
 
@@ -184,6 +210,20 @@
 
           this._globalFlexBasisGap[index] = newValue;
           video.style.flexBasis = 'calc(49% + ' + newValue + 'px)';
+        }
+
+        _resizeToLeft(maxGap, factor) {
+          if(this._globalFlexBasisGap[1] < maxGap) {
+            this._changeFlexBasis(this._videos[1], factor, 1, maxGap);
+            this._changeFlexBasis(this._videos[0], -factor, 0, maxGap);
+          }
+        }
+
+        _resizeToRight(maxGap, factor) {
+          if(this._globalFlexBasisGap[0] < maxGap) {
+            this._changeFlexBasis(this._videos[1], -factor, 1, maxGap);
+            this._changeFlexBasis(this._videos[0], factor, 0, maxGap);
+          }
         }
 
         _resetResizer () {
