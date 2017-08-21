@@ -79,6 +79,13 @@
           ];
         }
 
+        connectedCallback() {
+          super.connectedCallback();
+
+          // Get _videos to resize
+          this._videos = [this._findPreviousVideo(), this._findNextVideo()];
+        }
+
         _handleDragStart(e) {
           // Neccessary for FF to handle Drag'n'Drop
           // Since FF does not support the mouse position within a drag event, it has to be handled with the dragover event
@@ -88,12 +95,11 @@
           // Avoid a dragging ghost image by creating a new element which shall be
           // shown but is hidden per default. Unfortunately this is the only way to
           // do so.
-          let dragImage = this.cloneNode(true);
+          let dragImage = document.createElement('p');
+          let text = document.createTextNode('DragImage');
+          dragImage.appendChild(text);
           dragImage.style.visibility = 'hidden';
           document.body.appendChild(dragImage);
-
-          // Get _videos to resize
-          this._videos = [this._findPreviousVideo(), this._findNextVideo()];
 
           // Microsoft Edge does not play well with our solution to hide the ghost
           // image but somehow needs the code above or it will crash.
