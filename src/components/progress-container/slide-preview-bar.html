@@ -24,7 +24,9 @@
   </template>
 
   <script>
-    define('slide-preview-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('slide-preview-bar', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
       class SlidePreviewBar extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'slide-preview-bar'; }
 
@@ -32,11 +34,45 @@
           return {
             state: Object,
             slides: Array,
+            activeSlide: {
+              type: Object,
+              value: () => ({}),
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
             _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
           };
+        }
+
+        static get observers() {
+          return [
+            '_checkSlideActivation(state.position)',
+            '_handleSlideChange(state.activeSlide)'
+          ];
+        }
+
+        _checkSlideActivation(position) {
+          if (this._analyticsManager) {
+            console.log('active');
+            console.log(this.activeSlide);
+            console.log('calculated');
+            console.log(this._analyticsManager._getActiveSlide());
+            if (this.slide != this._analyticsManager._getActiveSlide())
+            {
+              console.log("new slide");
+            }
+          }
+        }
+
+        _handleSlideChange(slide) {
+          if (this._analyticsManager) {
+            this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SLIDE_CHANGE}, {new_current_slide: slide})
+          }
         }
       }
 
