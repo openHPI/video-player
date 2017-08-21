@@ -98,16 +98,15 @@
 
         _getActiveCue(activeCaptions, position) {
           if(activeCaptions) {
-            return activeCaptions.slice()
-                                 .reverse()
-                                 .find(cue => cue.startTime <= position);
+            return activeCaptions.find(cue => cue.startTime <= position &&
+                                              cue.endTime > position);
           }
         }
 
         _activeCueChanged() {
           let activeElement = this.$.container__interactive_transcript.getElementsByClassName('-active')[0];
           if(activeElement) {
-            activeElement.scrollIntoView({behavior: 'smooth'});
+            activeElement.parentNode.scrollTop = activeElement.offsetTop;
           }
         }
 
