@@ -128,13 +128,12 @@
             let timeBox = this.$.div__time_box;
             let progressContainer = this.$.container__progress_bar;
             
-
             this._isVisible = true;
             timeBox.style.top = progressContainer.style.top - timeBox.offsetHeight + 'px';
             this.targetValue = this.secondsToHms(this._getClickedValue(e));
 
-            // get right end of time box and right end of progress bar in pixels from complete document top left
-            let timeBoxRightEnd = timeBox.offsetLeft + timeBox.offsetWidth
+            // get right end of time box and right end of progress bar in pixels
+            let timeBoxRightEnd = e.pageX - progressContainer.getBoundingClientRect().left + timeBox.offsetWidth;
             let progressBarRightEnd = progressContainer.offsetLeft + progressContainer.offsetWidth;
 
             // remove class left if contained
