@@ -35,7 +35,7 @@
           <template is="dom-repeat" items="[[chapters]]">
             <li class="list_item">
               <a class$="link__chapter_bookmark list_item__link [[ifEqualsThen(item, activeChapter, 'active fa-caret-right')]]" on-click="_handleClick" href="javascript:void(0)">
-                [[item.text]]
+                [[item.title]]
               </a>
             </li>
           </template>
@@ -67,12 +67,12 @@
           if(chapters){
             return chapters.slice()
                           .reverse()
-                          .find(chapter => chapter.seconds <= position);
+                          .find(chapter => chapter.startPosition <= position);
           }
         }
 
         _handleClick(e) {
-          this._stateManager.setPosition(e.model.item.seconds);
+          this._stateManager.setPosition(e.model.item.startPosition);
         }
       }
 

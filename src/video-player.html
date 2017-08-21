@@ -11,6 +11,7 @@
 <link rel="import" href="styling/mixins.html">
 <link rel="import" href="styling/global--style-module.html">
 <link rel="import" href="services/state-manager.html">
+<link rel="import" href="services/configuration-validator.html">
 <link rel="import" href="services/fullscreen-manager.html">
 <link rel="import" href="services/synchronization-manager.html">
 <link rel="import" href="services/user-preferences-manager.html">
@@ -26,6 +27,8 @@
 <link rel="import" href="components/progress-container/slide-preview-bar.html">
 <link rel="import" href="components/resizer-control.html">
 <link rel="import" href="components/video-object-renderer.html">
+
+<script src="configuration-schema.js"></script>
 
 <dom-module id="video-player">
   <template>
@@ -48,7 +51,7 @@
         align-items: stretch;
       }
 
-      #video-player-container:-webkit-full-screen { 
+      #video-player-container:-webkit-full-screen {
         width: 100%;
       }
       #video-player-container:-moz-full-screen {
@@ -65,7 +68,7 @@
       #video-player-container.fake-fullscreen {
         /* Actually, what we would want here is to set the height to 100vh...but
            in mobile browsers this results in the content being bigger than what
-           the browser is able to display. For more information, see 
+           the browser is able to display. For more information, see
            https://nicolas-hoizey.com/2015/02/viewport-height-is-taller-than-the-visible-part-of-the-document-in-some-mobile-browsers.html */
         width: 100vw;
         position: fixed;
@@ -107,7 +110,7 @@
           display: none;
         }
 
-        /* On vertical mobile screens the videos should be shown below each other */ 
+        /* On vertical mobile screens the videos should be shown below each other */
         @media screen and (orientation:portrait) {
           .video-stream {
             flex-basis: 100% !important;
@@ -143,7 +146,7 @@
 
         <!-- Video Streams -->
         <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.isInteractiveTranscriptShown, configuration.slides)]];">
-          <template is="dom-if" if="[[!_isFallbackStream]]" restamp="true">
+          <template is="dom-if" if="[[!state.fallbackStreamActive]]" restamp="true">
             <template is="dom-repeat" items="[[configuration.streams]]">
               <video-stream
                 state="[[state]]"
@@ -164,7 +167,7 @@
               </template>
             </template>
           </template>
-          <template is="dom-if" if="[[_isFallbackStream]]" restamp="true">
+          <template is="dom-if" if="[[state.fallbackStreamActive]]" restamp="true">
             <video-stream
             state="[[state]]"
             urls="[[configuration.fallbackStream]]"
@@ -193,7 +196,8 @@
         has-chapters="[[hasItems(configuration.chapters)]]"
         caption-languages="[[_captionLanguages]]"
         available-qualities="[[_availableQualities]]"
-        playlist="[[configuration.playlist]]">
+        playlist="[[configuration.playlist]]"
+        has-fallback-stream="[[exists(configuration.fallbackStream)]]">
       </control-bar>
 
       <!-- Chapter List -->
@@ -206,7 +210,7 @@
   </template>
 
   <script>
-    define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'hls-js', 'constants'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, Hls, constants) => {
+    define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'hls-js', 'constants', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, Hls, constants, configurationSchema) => {
       const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES} = constants;
 
       class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
@@ -237,13 +241,13 @@
               type: Object,
               inject: 'UserPreferencesManager',
             },
+            _configurationValidator: {
+              type: Object,
+              inject: 'ConfigurationValidator',
+            },
             _isResizerShown: {
               type: Boolean,
               value: false,
-            },
-            _isFallbackStream: {
-              type: Boolean,
-              computed: '_getIsFallbackStream(state.fallbackStreamActive)',
             },
             _captionLanguages: {
               type: Array,
@@ -253,12 +257,17 @@
               type: Array,
               computed: '_getAvailableQualities(configuration.streams)',
             },
+            _isConfigurationInitialized: Boolean,
+            _isConfigurationObserverLocked: {
+              type: Boolean,
+              value: false,
+            },
           };
         }
 
         static get observers() {
           return [
-            '_configurationChanged(configuration)',
+            '_configurationChanged(configuration, _configurationValidator)',
             '_ensureValidQuality(_availableQualities, state.quality)',
             '_foregroundColorChanged(configuration.foregroundColor)',
             '_accentColorChanged(configuration.accentColor)',
@@ -277,6 +286,7 @@
 
           iocKernel.bind('StateManager').toFunction(() => new StateManager(this, 'state')).inSingletonScope();
           iocKernel.bind('UserPreferencesManager').toFunction(() => new UserPreferencesManager()).inSingletonScope();
+          iocKernel.bind('ConfigurationValidator').toFunction(() => new ConfigurationValidator(configurationSchema)).inSingletonScope();
           iocKernel.bind('SynchronizationManager').toFunction(() => new SynchronizationManager(iocKernel.get('StateManager'))).inSingletonScope();
           iocKernel.bind('FullscreenManager').toFunction(() => new FullscreenManager(this.$['video-player-container'])).inSingletonScope();
         }
@@ -293,7 +303,7 @@
           });
 
           // Set volume to 1 for mobile devices
-          // Since I had no mobile device I had no chance to test this. However it should work according to 
+          // Since I had no mobile device I had no chance to test this. However it should work according to
           // https://coderwall.com/p/i817wa/one-line-function-to-detect-mobile-devices-with-javascript
           if(window.orientation) {
             this._stateManager.setVolume(1.0);
@@ -309,11 +319,6 @@
           }
           super.ready();
 
-          // Load FontAwesome, if specified in configuration
-          if(this.configuration.loadFontAwesome) {
-            Polymer.importHref(this.importPath + '../node_modules/polymer-font-awesome/dist/font-face.html');
-          }
-
           // Add event handlers for mouse events to show/hide resizer
           this.$['streams-container'].addEventListener('mouseenter', () => this._isResizerShown = true);
           this.$['streams-container'].addEventListener('mouseleave', () => this._isResizerShown = false);
@@ -327,11 +332,10 @@
           });
         }
 
-        _getIsFallbackStream(isFallbackStream) {
-          if(isFallbackStream) {
-            return true;
-          } else {
-            return false;
+        _configurationInitialized() {
+          // Load FontAwesome, if specified in configuration
+          if(this.configuration.loadFontAwesome) {
+            Polymer.importHref(this.importPath + '../node_modules/polymer-font-awesome/dist/font-face.html');
           }
         }
 
@@ -360,9 +364,22 @@
         }
 
         _configurationChanged(configuration) {
-          // Fill missing properties in provided configuration with default values
-          if(Object.keys(DEFAULT_CONFIGURATION).filter(x => !Object.keys(configuration).includes(x)).length > 0) {
-            this.configuration = Object.assign({}, DEFAULT_CONFIGURATION, configuration);
+          if(this._configurationValidator && !this._isConfigurationObserverLocked) {
+            // Validate configuration
+            this._configurationValidator.validate(this.configuration);
+
+            // Fill missing properties in provided configuration with default values
+            if(Object.keys(DEFAULT_CONFIGURATION).filter(x => !Object.keys(configuration).includes(x)).length > 0) {
+              this._isConfigurationObserverLocked = true;
+              this.configuration = Object.assign({}, DEFAULT_CONFIGURATION, configuration);
+              this._isConfigurationObserverLocked = false;
+            }
+
+            // Invoke callback, if configuration was initally loaded
+            if(!this._isConfigurationInitialized) {
+              this._configurationInitialized();
+              this._isConfigurationInitialized = true;
+            }
           }
         }
 
@@ -479,7 +496,7 @@
           if(isLectureSlides) {
             value += 11;
           }
-          // On iPads in full screen mode, the navigation bar is permanently 
+          // On iPads in full screen mode, the navigation bar is permanently
           // displayed so we have to subtract even more for them.
           if(window.navigator.platform === 'iPad') {
             value += 63;

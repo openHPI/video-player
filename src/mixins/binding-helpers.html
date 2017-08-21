@@ -47,6 +47,14 @@
         return values.reduce((x, y) => x || y);
       }
 
+      exists(value) {
+        if (value) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
       hasItems(arr, min = 1) {
         if(typeof arr === 'undefined') {
           return false;
@@ -100,7 +108,7 @@
       }
 
       secondsToHms(totalSeconds, maxSeconds) {
-        let seconds = Number(totalSeconds);
+        let seconds = Number(maxSeconds || totalSeconds);
         let hours = Math.floor(seconds / 3600);
         let minutes = Math.floor(seconds % 3600 / 60);
         let seconds2 = Math.floor(seconds % 3600 % 60);
