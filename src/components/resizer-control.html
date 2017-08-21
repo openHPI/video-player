@@ -50,7 +50,8 @@
         draggable="true"
         on-dragstart="_handleDragStart"
         on-drag="_resizeVideos"
-        on-dragend="_handleDragEnd">
+        on-dragend="_handleDragEnd"
+        on-click="_handleClick">
       </div>
     </div>
   </template>
@@ -84,15 +85,16 @@
           e.dataTransfer.setData('text', '');
           this.parentElement.addEventListener('dragover', this._handleDragOver.bind(this));
 
-          // Get _videos to resize
-          this._videos = [this._findPreviousVideo(), this._findNextVideo()];
-
           // Avoid a dragging ghost image by creating a new element which shall be
           // shown but is hidden per default. Unfortunately this is the only way to
           // do so.
           let dragImage = this.cloneNode(true);
           dragImage.style.visibility = 'hidden';
           document.body.appendChild(dragImage);
+
+          // Get _videos to resize
+          this._videos = [this._findPreviousVideo(), this._findNextVideo()];
+
           // Microsoft Edge does not play well with our solution to hide the ghost
           // image but somehow needs the code above or it will crash.
           // Also, Edge does not support setDragImage which we use for our
@@ -117,7 +119,25 @@
         }
 
         _handleDragOver(e) {
-          this._mousePositionX = e.pageX;
+          this._mousePositionX = e.pageX - this.parentElement.getBoundingClientRect().left;
+        }
+
+        _handleClick(e) {
+          // Get _videos to resize
+          if(!this._videos) {
+            this._videos = [this._findPreviousVideo(), this._findNextVideo()];
+          }
+
+          let maxGap = (this.parentElement.offsetWidth * 0.49) / 2;
+          let factor = 30;
+
+          if (e.offsetX >= 15) {
+            // After element clicked
+            this._resizeToRight(maxGap, factor);
+          } else if (e.offsetX <= -15) {
+            // Before element clicked
+            this._resizeToLeft(maxGap, factor);
+          }
         }
 
         _resizeVideos(e) {
@@ -134,15 +154,9 @@
           * will shift up.
           */
           if(direction === 'left') {
-            if(this._globalFlexBasisGap[1] < maxGap) {
-              this._changeFlexBasis(this._videos[1], factor, 1, maxGap);
-              this._changeFlexBasis(this._videos[0], -factor, 0, maxGap);
-            }
+            this._resizeToLeft(maxGap, factor);
           } else if(direction === 'right') {
-            if(this._globalFlexBasisGap[0] < maxGap) {
-              this._changeFlexBasis(this._videos[1], -factor, 1, maxGap);
-              this._changeFlexBasis(this._videos[0], factor, 0, maxGap);
-            }
+            this._resizeToRight(maxGap, factor);
           }
         }
 
@@ -188,6 +202,20 @@
 
           this._globalFlexBasisGap[index] = newValue;
           video.style.flexBasis = 'calc(49% + ' + newValue + 'px)';
+        }
+
+        _resizeToLeft(maxGap, factor) {
+          if(this._globalFlexBasisGap[1] < maxGap) {
+            this._changeFlexBasis(this._videos[1], factor, 1, maxGap);
+            this._changeFlexBasis(this._videos[0], -factor, 0, maxGap);
+          }
+        }
+
+        _resizeToRight(maxGap, factor) {
+          if(this._globalFlexBasisGap[0] < maxGap) {
+            this._changeFlexBasis(this._videos[1], -factor, 1, maxGap);
+            this._changeFlexBasis(this._videos[0], factor, 0, maxGap);
+          }
         }
 
         _resetResizer () {

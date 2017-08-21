@@ -11,6 +11,7 @@
 <link rel="import" href="interactive-transcript-control.html">
 <link rel="import" href="quality-control.html">
 <link rel="import" href="mute-control.html">
+<link rel="import" href="stream-switch-control.html">
 <link rel="import" href="fullscreen-control.html">
 <link rel="import" href="caption-control.html">
 <link rel="import" href="playlist-navigation-control.html">
@@ -75,6 +76,9 @@
       <template is="dom-if" if="[[hasChapters]]">
         <chapter-list-switch state="[[state]]" class="hidden-for-mobile"></chapter-list-switch>
       </template>
+      <template is="dom-if" if="[[hasFallbackStream]]">
+        <stream-switch-control state="[[state]]" class="hidden-for-mobile"></stream-switch-control>
+      </template>
 
       <!-- Sound controls -->
       <mute-control state="[[state]]" class="hidden-for-mobile"></mute-control>
@@ -105,6 +109,7 @@
           return {
             state: Object,
             hasChapters: Boolean,
+            hasFallbackStream: Boolean,
             playlist: Object,
             captionLanguages: Array,
             availableQualities: Boolean,

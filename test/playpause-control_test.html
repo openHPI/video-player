@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>video-player test</title>
+    
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../bower_components/web-component-tester/browser.js"></script>
+    
+    <link rel="import" href="../bower_components/imd/imd.html">
+    <link rel="import" href="../src/services/state-manager.html"> 
+    <link rel="import" href="../src/constants.html">
+    <link rel="import" href="../src/components/control-bar/playpause-control.html">
+  </head>
+  <body>
+
+    <test-fixture id="PlayPauseControlTestFixture">
+      <template>
+        <playpause-control state="[[state]]"></playpause-control>
+      </template>
+    </test-fixture>
+
+    <script>
+      define('playpause-control-test', ['constants'], (constants) => {
+        const {PLAY_STATES} = constants;
+
+        let playpauseControl;
+        let mockStateManager = {
+          togglePlayPause: function() {
+            if (state.playState === PLAY_STATES.PLAYING) {
+              state.playState = PLAY_STATES.PAUSED;
+            } else {
+              state.playState = PLAY_STATES.PLAYING;
+            }
+          }
+        };
+
+        state = {
+          playState: 'PAUSED'
+        };
+
+        // This function gets run before every test function
+        setup(function() {
+          // We want to run tests with an empty local storage to avoid
+          // unintended side effects and to start with a clean slate in each
+          // test file.
+          if (localStorage) {
+            localStorage.clear();
+          } else if (window.localStorage) {
+            window.localStorage.clear();
+          };
+          playpauseControl = fixture('PlayPauseControlTestFixture');
+          playpauseControl._stateManager = mockStateManager;
+        });
+
+        test('Test whether CSS class gets adjusted accordingly', function() {
+          playpauseControl._playStateChanged(state.playState);
+          assert.isTrue(playpauseControl.shadowRoot.querySelectorAll('#button__play_pause i.fa')[0].classList.contains('fa-play'));
+          playpauseControl._handleClick();
+          // The observers apparently do not work in test mode so we
+          // manually have to call the corresponding method
+          playpauseControl._playStateChanged(state.playState);
+          // The icon shows pause when a video is playing
+          assert.isTrue(playpauseControl.shadowRoot.querySelectorAll('#button__play_pause i.fa')[0].classList.contains('fa-pause'));
+        });
+      });
+    </script>
+
+  </body>
+</html>

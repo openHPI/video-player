@@ -54,10 +54,10 @@
       #video-player-container:-webkit-full-screen {
         width: 100%;
       }
-      #video-player-container:-moz-full-screen{
+      #video-player-container:-moz-full-screen {
         width: 100%;
       }
-      #video-player-container:-ms-fullscreen{
+      #video-player-container:-ms-fullscreen {
         width: 100%;
       }
 
@@ -68,7 +68,7 @@
       #video-player-container.fake-fullscreen {
         /* Actually, what we would want here is to set the height to 100vh...but
            in mobile browsers this results in the content being bigger than what
-           the browser is able to display. For more information, see 
+           the browser is able to display. For more information, see
            https://nicolas-hoizey.com/2015/02/viewport-height-is-taller-than-the-visible-part-of-the-document-in-some-mobile-browsers.html */
         width: 100vw;
         position: fixed;
@@ -94,7 +94,6 @@
       }
 
       #progress-container {
-        border-top: 1px solid black;
         border-bottom: 1px solid black;
       }
 
@@ -111,7 +110,7 @@
           display: none;
         }
 
-        /* On vertical mobile screens the videos should be shown below each other */ 
+        /* On vertical mobile screens the videos should be shown below each other */
         @media screen and (orientation:portrait) {
           .video-stream {
             flex-basis: 100% !important;
@@ -147,24 +146,37 @@
 
         <!-- Video Streams -->
         <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.isInteractiveTranscriptShown, configuration.slides)]];">
-          <template is="dom-repeat" items="[[configuration.streams]]">
-            <video-stream
-              state="[[state]]"
-              urls="[[item]]"
-              preload="[[configuration.videoPreload]]"
-              class="video-stream"
-              captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
-              style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
-              ondragover="return false;"
-              ondrag="return false;">
-            </video-stream>
-            <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
-              <resizer-control
+          <template is="dom-if" if="[[!_isFallbackStream]]" restamp="true">
+            <template is="dom-repeat" items="[[configuration.streams]]">
+              <video-stream
                 state="[[state]]"
-                style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"
-                class="hidden-for-mobile">
-              </resizer-control>
+                urls="[[item]]"
+                preload="[[configuration.videoPreload]]"
+                class="video-stream"
+                captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
+                style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
+                ondragover="return false;"
+                ondrag="return false;">
+              </video-stream>
+              <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
+                <resizer-control
+                  state="[[state]]"
+                  style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"
+                  class="hidden-for-mobile">
+                </resizer-control>
+              </template>
             </template>
+          </template>
+          <template is="dom-if" if="[[_isFallbackStream]]" restamp="true">
+            <video-stream
+            state="[[state]]"
+            urls="[[configuration.fallbackStream]]"
+            preload="[[configuration.videoPreload]]"
+            class="video-stream"
+            captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
+            style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
+            is-fallback="true">
+            </video-stream>
           </template>
         </div>
         <captions-display state="[[state]]"></captions-display>
@@ -184,7 +196,8 @@
         has-chapters="[[hasItems(configuration.chapters)]]"
         caption-languages="[[_captionLanguages]]"
         available-qualities="[[_availableQualities]]"
-        playlist="[[configuration.playlist]]">
+        playlist="[[configuration.playlist]]"
+        has-fallback-stream="[[exists(configuration.fallbackStream)]]">
       </control-bar>
 
       <!-- Chapter List -->
@@ -235,6 +248,10 @@
             _isResizerShown: {
               type: Boolean,
               value: false,
+            },
+            _isFallbackStream: {
+              type: Boolean,
+              computed: '_getIsFallbackStream(state.fallbackStreamActive)',
             },
             _captionLanguages: {
               type: Array,
@@ -288,9 +305,22 @@
           this._fullscreenManager.onFullscreenChanged((fullscreen) => {
             this._stateManager.setFullscreen(fullscreen);
           });
+
+          // Set volume to 1 for mobile devices
+          // Since I had no mobile device I had no chance to test this. However it should work according to
+          // https://coderwall.com/p/i817wa/one-line-function-to-detect-mobile-devices-with-javascript
+          if(window.orientation) {
+            this._stateManager.setVolume(1.0);
+          }
         }
 
         ready() {
+          // Make sure our player doesn't crash if somebody passes in null values
+          for (let value in this.configuration) {
+            if(!this.configuration[value]) {
+              delete this.configuration[value];
+            }
+          }
           super.ready();
 
           // Add event handlers for mouse events to show/hide resizer
@@ -310,6 +340,14 @@
           // Load FontAwesome, if specified in configuration
           if(this.configuration.loadFontAwesome) {
             Polymer.importHref(this.importPath + '../node_modules/polymer-font-awesome/dist/font-face.html');
+          }
+        }
+
+        _getIsFallbackStream(isFallbackStream) {
+          if(isFallbackStream) {
+            return true;
+          } else {
+            return false;
           }
         }
 
@@ -470,8 +508,8 @@
           if(isLectureSlides) {
             value += 11;
           }
-          // iPads in full screen mode permanently display the navigation
-          // bar so we have to subtract even more for them.
+          // On iPads in full screen mode, the navigation bar is permanently
+          // displayed so we have to subtract even more for them.
           if(window.navigator.platform === 'iPad') {
             value += 63;
           } else if (window.navigator.platform === 'iPhone') {

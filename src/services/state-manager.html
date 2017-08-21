@@ -273,6 +273,23 @@
       setActiveCaptions(captions){
         this.setState('activeCaptions', captions);
       }
+
+      /**
+       * Sets whether the mobile settings menu is open or not
+       * @param {Boolean} menuOpen Whether the menu is open
+       * @returns {void}
+       */
+      setMobileSettingsMenuOpen(menuOpen) {
+        this.setState('mobileSettingsMenuOpen', menuOpen);
+      }
+      
+      toggleFallbackStream() {
+        if (this.state.fallbackStreamActive) {
+          this.setState('fallbackStreamActive', false);
+        } else {
+          this.setState('fallbackStreamActive', true);
+        }
+      }
     }
 
     return StateManager;

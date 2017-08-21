@@ -1,3 +1,22 @@
+const streamSchema = {
+  hls: {
+    type: 'string',
+    description: 'URL of the HLS video stream.',
+  },
+  hd: {
+    type: 'string',
+    description: 'URL of the HD video stream.',
+  },
+  sd: {
+    type: 'string',
+    description: 'URL of the SD video stream.',
+  },
+  poster: {
+    type: 'string',
+    description: 'URL of the poster image.',
+  },
+};
+
 const stateSchema = {
   playState: {
     type: 'string',
@@ -40,24 +59,7 @@ const configurationSchema = {
     required: true,
     type: 'array',
     description: 'List of URLs to the videos streams of different qualities and (optional) poster images. If there is only one quality, use `hd`.',
-    schema: {
-      hls: {
-        type: 'string',
-        description: 'URL of the HLS video stream.',
-      },
-      hd: {
-        type: 'string',
-        description: 'URL of the HD video stream.',
-      },
-      sd: {
-        type: 'string',
-        description: 'URL of the SD video stream.',
-      },
-      poster: {
-        type: 'string',
-        description: 'URL of the poster image.',
-      },
-    },
+    schema: streamSchema,
     example: [
       {
         sd: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
@@ -65,6 +67,11 @@ const configurationSchema = {
         poster: 'https://peach.blender.org/wp-content/uploads/bbb-splash.png',
       },
     ],
+  },
+  fallbackStream: {
+    type: 'object',
+    description: 'Contains a fallback stream that the user can switch to, i.e. a single stream source.',
+    schema: streamSchema,
   },
   initialState: {
     type: 'object',

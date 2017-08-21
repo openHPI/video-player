@@ -6,34 +6,28 @@
 <link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 
-<dom-module id="playpause-control">
+<dom-module id="stream-switch-control">
   <template>
     <style type="text/css" include="control-bar--style-module font-awesome">
       :host {
         /* Avoid flickering with changing icons */
         /* It should be about twice the icon size */
-        min-width: 48px;
+        min-width: 33px;
       }
     </style>
 
-    <div id="container__play_pause_control" class="user_controls">
-      <a id="button__play_pause" class="button" on-click="_handleClick" href="javascript:void(0)">
+    <div id="container__stream-switch_control" class="user_controls">
+      <a id="button__stream-switch" class="button" on-click="_handleClick" href="javascript:void(0)">
         <i class$="fa [[iconClass]]"></i>
       </a>
     </div>
   </template>
 
   <script>
-    define('playpause-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
-      const {PLAY_STATES} = constants;
-      const PLAY_STATE_ICONS = {
-        [PLAY_STATES.PLAYING]: 'fa-pause',
-        [PLAY_STATES.PAUSED]: 'fa-play',
-        [PLAY_STATES.FINISHED]: 'fa-refresh',
-      };
+    define('stream-switch-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
 
-      class PlayPauseControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
-        static get is() { return 'playpause-control'; }
+      class streamSwitchControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'stream-switch-control'; }
 
         static get properties() {
           return {
@@ -48,23 +42,24 @@
 
         static get observers() {
           return [
-            '_playStateChanged(state.playState)',
+            '_streamChanged(state.fallbackStreamActive)',
           ];
         }
 
-        _playStateChanged(playState) {
-          let newIcon = PLAY_STATE_ICONS[playState];
-          if(newIcon) {
-            this.iconClass = newIcon;
+        _streamChanged(fallbackStream) {
+          if (fallbackStream) {
+            this.iconClass = 'fa-columns';
+          } else {
+            this.iconClass = 'fa-square-o';
           }
         }
 
         _handleClick() {
-          this._stateManager.togglePlayPause();
+          this._stateManager.toggleFallbackStream();
         }
       }
 
-      window.customElements.define(PlayPauseControl.is, PlayPauseControl);
+      window.customElements.define(streamSwitchControl.is, streamSwitchControl);
     });
   </script>
 

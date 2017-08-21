@@ -6,10 +6,9 @@ under the URL https://github.com/openHPI/videoplayer/blob/master/LICENSE
 
 Preamble
 
-The Hasso-Plattner-Institut für Softwaresystemtechnik GmbH, Prof.-Dr.-Helmert-
+The Hasso-Plattner-Institut für Digital Engineering gGmbH, Prof.-Dr.-Helmert-
 Strasse 2-3, 14482 Potsdam, hereinafter referred to as Hasso-Plattner
-Institute, provides a research in-memory database storage engine system to
-store different kinds of relational and other data. 
+Institute, provides a video player polymer web component. 
 
 
 1. Licence Grant
@@ -56,7 +55,7 @@ The user shall be obliged,
 
     a)  on reproduction of this software pursuant to Point 2.a), to incorporate the
         following copyright mark, at least in the corresponding source code: 
-        „Exclusive copyrighted exploitation rights / Copyright © 2012 
+        „Exclusive copyrighted exploitation rights / Copyright © 2017 
         Hasso-Plattner-Institut für Softwaresystemtechnik GmbH“
         as well as to include a copy of these terms of use; in the case of 
         publication, the terms of use must also be included in the offer of 
