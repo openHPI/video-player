@@ -40,14 +40,11 @@
       #div__time_box {
         display: none;
         position: absolute;
-        background-color: rgba(0, 0, 0, 0.85);
+        background-color: rgba(0, 0, 0, 0.75);
         color: #FFFFFF;
-      }
-      #container__progress_bar.-left #div__time_box {
-        left: 0;
-      }
-      #container__progress_bar.-right #div__time_box {
-        right: 0;
+        padding: 2px;
+        min-width: 40px;
+        text-align: center;
       }
 
       #container__progress_bar:hover #div__time_box {
@@ -127,35 +124,36 @@
         }
 
         _showTargetPosition(e) {
-          if(this.showTargetPositionOnHover){
-            this._isVisible=true;
-            this.$.div__time_box.style.top = this.$.container__progress_bar.style.top - this.$.div__time_box.offsetHeight + 'px';
-            this.$.div__time_box.style.left = e.offsetX + 'px';
+          if(this.showTargetPositionOnHover) {
+            let timeBox = this.$.div__time_box;
+            let progressContainer = this.$.container__progress_bar;
+            
+
+            this._isVisible = true;
+            timeBox.style.top = progressContainer.style.top - timeBox.offsetHeight + 'px';
             this.targetValue = this.secondsToHms(this._getClickedValue(e));
 
             // get right end of time box and right end of progress bar in pixels from complete document top left
-            let timeBoxRightEnd = this.$.div__time_box.offsetLeft + this.$.div__time_box.offsetWidth
-            let progressBarRightEnd = this.$.container__progress_bar.offsetLeft + this.$.container__progress_bar.offsetWidth
+            let timeBoxRightEnd = timeBox.offsetLeft + timeBox.offsetWidth
+            let progressBarRightEnd = progressContainer.offsetLeft + progressContainer.offsetWidth;
 
             // remove class left if contained
             // add class right if not already contained
-            if(timeBoxRightEnd > progressBarRightEnd){
-              if( this.$.div__time_box.classList.contains('-left') ) this.$.div__time_box.classList.remove('-left');
-              if( !this.$.div__time_box.classList.contains('-right') ) this.$.div__time_box.classList.add('-right');
+            if(timeBoxRightEnd >= progressBarRightEnd) {
+              timeBox.style.left = 'auto';
+              timeBox.style.right = '0px';
             }
             // remove class right if contained
             // add class left if not already contained
-            else{
-              if( this.$.div__time_box.classList.contains('-right') ) this.$.div__time_box.classList.remove('-right');
-              if( !this.$.div__time_box.classList.contains('-left') ) this.$.div__time_box.classList.add('-left');
+            else {
+              timeBox.style.left = e.offsetX + 'px';
+              timeBox.style.right = 'auto';
             }
           }
         }
 
-
-
-        _toggleTargetPosition(e){
-          this._isVisible=false;
+        _toggleTargetPosition(e) {
+          this._isVisible = false;
         }
 
         _getClickedValue(e){
