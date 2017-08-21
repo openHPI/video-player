@@ -50,6 +50,10 @@ The player configuration is provided as JSON object:
 <!-- THEY ARE USED FOR GENERATING PARAMETERS DOCS FROM SCHEMA. -->
 <!-- BEGIN-SECTION CONFIGURATION -->
 * **streams** (array): List of URLs to the videos streams of different qualities and (optional) poster images. If there is only one quality, use `hd`. (*Required*)
+   * **hls** (string): URL of the HLS video stream.
+   * **hd** (string): URL of the HD video stream.
+   * **sd** (string): URL of the SD video stream.
+   * **poster** (string): URL of the poster image.
 
    *Example*
 ```JSON
@@ -62,8 +66,26 @@ The player configuration is provided as JSON object:
    ]
 ```
 * **fallbackStream** (object): Contains a fallback stream that the user can switch to, i.e. a single stream source.
+   * **hls** (string): URL of the HLS video stream.
+   * **hd** (string): URL of the HD video stream.
+   * **sd** (string): URL of the SD video stream.
+   * **poster** (string): URL of the poster image.
 * **initialState** (object): The initial state the player has when loaded.
+   * **playState** (string):`<["PLAYING","PAUSED"]>` (default: `"PAUSED"`)
+   * **position** (number): Video position in seconds. (default: `0`)
+   * **playbackRate** (number):`<[0.7,1,1.3,1.5,1.8,2]>` (default: `1`)
+   * **quality** (string):`<["hls","hd","sd"]>` (default: `"best quality available"`)
+   * **volume** (number):`<0...1>` (default: `1`)
+   * **muted** (boolean): (default: `false`)
+   * **captionLanguage** (string): (default: `"off"`)
 * **userPreferences** (object): Override parts of the default/initial/saved state. Meant to be provided by the server based on the current user.
+   * **playState** (string):`<["PLAYING","PAUSED"]>` (default: `"PAUSED"`)
+   * **position** (number): Video position in seconds. (default: `0`)
+   * **playbackRate** (number):`<[0.7,1,1.3,1.5,1.8,2]>` (default: `1`)
+   * **quality** (string):`<["hls","hd","sd"]>` (default: `"best quality available"`)
+   * **volume** (number):`<0...1>` (default: `1`)
+   * **muted** (boolean): (default: `false`)
+   * **captionLanguage** (string): (default: `"off"`)
 * **foregroundColor** (string): HEX code of the color for text and all other main content.
 * **accentColor** (string): HEX code of the highlighting color.
 * **fontColorOnAccentColor** (string): HEX code of the font color on the `accentColor`. Take care that the contrast ratio is high enough.
@@ -73,6 +95,8 @@ The player configuration is provided as JSON object:
 * **videoPreload** (boolean): [FontAwesome](http://fontawesome.io) is used for the icons of the player. If your site already loads FontAwesome, this can be set to false to save bandwidth. (default: `true`)
 * **loadFontAwesome** (boolean): Turns on/off preloading of the videos when the page loads. (default: `true`)
 * **chapters** (array): List of timestamps with chapter names.
+   * **title** (string): Title of the chapter. (*Required*)
+   * **startPosition** (number): Start position of the chapter in seconds. (*Required*)
 
    *Example*
 ```JSON
@@ -84,6 +108,8 @@ The player configuration is provided as JSON object:
    ]
 ```
 * **captions** (array): List of caption files for different languages.
+   * **language** (string): Language of the captions. (*Required*)
+   * **url** (string): URL of the captions WebVTT file. (*Required*)
 
    *Example*
 ```JSON
@@ -95,6 +121,8 @@ The player configuration is provided as JSON object:
    ]
 ```
 * **slides** (array): List of presentation slides and corresponding start times in seconds to show below the progress.
+   * **thumbnail** (string): URL of the slide thumbnail. (*Required*)
+   * **startPosition** (number): Start position of the slide in seconds. (*Required*)
 
    *Example*
 ```JSON
@@ -106,6 +134,10 @@ The player configuration is provided as JSON object:
    ]
 ```
 * **relatedVideos** (array): List of related videos that are shown after the video has ended.
+   * **title** (string): Title of the video. (*Required*)
+   * **url** (string): URL of the video page. (*Required*)
+   * **thumbnail** (string): URL of the video thumbnail. (*Required*)
+   * **duration** (number): Duration of the video in seconds.
 
    *Example*
 ```JSON
@@ -119,6 +151,9 @@ The player configuration is provided as JSON object:
    ]
 ```
 * **playlist** (object): URLs of the previous and/or next video, if video is in a playlist.
+   * **autoPlay** (boolean): If enabled, the user is redirected to the next video page after the video has ended. (default: `false`)
+   * **previousVideo** (string): The URL of the previous video in the playlist.
+   * **nextVideo** (string): The URL of the next video in the playlist.
 
    *Example*
 ```JSON

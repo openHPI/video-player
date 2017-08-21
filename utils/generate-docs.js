@@ -36,8 +36,8 @@ function generateDocsForOption(option, attr, level) {
   } else if(attr.required) {
     optionDocs += ' (*Required*)';
   }
-  if(attr.attr) {
-    optionDocs += `\n${generateDocs(attr.attr, level + 1)}`;
+  if(attr.schema) {
+    optionDocs += `\n${generateDocs(attr.schema, level + 1)}`;
   }
   if(attr.example) {
     optionDocs += '\n\n' + formatExample(attr.example, level + 1);
