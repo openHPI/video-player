@@ -37,7 +37,9 @@
     </style>
 
     <div id="container__captions" class$="[[ifNotThen(state.isCaptionShown, '-hidden')]]">
-      <div class="caption-cue-text">[[_activeCue.text]]</div>
+      <template is="dom-if" if="[[_activeCue]]">
+        <div class="caption-cue-text">[[_activeCue.text]]</div>
+      </template>
     </div>
   </template>
 
@@ -63,9 +65,8 @@
 
         _getActiveCue(activeCaptions, position) {
           if(activeCaptions) {
-            return activeCaptions.slice()
-                                 .reverse()
-                                 .find(cue => cue.startTime <= position);
+            return activeCaptions.find(cue => cue.startTime <= position &&
+                                              cue.endTime > position);
           }
         }
       }
