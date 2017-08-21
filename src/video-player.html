@@ -294,7 +294,7 @@
           iocKernel.bind('ConfigurationValidator').toFunction(() => new ConfigurationValidator(configurationSchema)).inSingletonScope();
           iocKernel.bind('SynchronizationManager').toFunction(() => new SynchronizationManager(iocKernel.get('StateManager'))).inSingletonScope();
           iocKernel.bind('FullscreenManager').toFunction(() => new FullscreenManager(this.$['video-player-container'])).inSingletonScope();
-          iocKernel.bind('AnalyticsManager').toFunction(() => new AnalyticsManager(this, iocKernel.get('StateManager')).inSingletonScope());
+          iocKernel.bind('AnalyticsManager').toFunction(() => new AnalyticsManager(this, iocKernel.get('StateManager'))).inSingletonScope();
         }
 
         servicesInjectedCallback() {
