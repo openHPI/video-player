@@ -45,91 +45,102 @@ The player configuration is provided as JSON object:
 <video-player configuration='{}'></video-player>
 ```
 
-### Required Parameters
-* **streams** (Array): List of URLs to the videos streams of different qualities and (optional) poster images. If there is only one quality, use `hd`.
-    ```JSON
-    "streams": [
-      {
-        "sd": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        "hd": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        "poster": "https://peach.blender.org/wp-content/uploads/bbb-splash.png"
-      }
-    ]
-    ```
+### Parameters
+<!-- DO NOT REMOVE BEGIN-SECTION/END-SECTION COMMENTS. -->
+<!-- THEY ARE USED FOR GENERATING PARAMETERS DOCS FROM SCHEMA. -->
+<!-- BEGIN-SECTION CONFIGURATION -->
+* **streams** (array): List of URLs to the videos streams of different qualities and (optional) poster images. If there is only one quality, use `hd`. (*Required*)
 
-### Optional Parameters
-* **fallbackStream** (Object): Contains a fallback stream that the user can switch to, i.e. a single stream source. The Object content is built up in the same way as a stream under **streams**.
-* **initialState** (Object): The initial state the player has when loaded. The following options are available:
-    * **playState** (String): `<'PLAYING'|'PAUSED'>` (default: `PAUSED`)
-    * **position** (Number): Seconds (default: `0`)
-    * **playbackRate** (Number): `<[0.7, 1.0, 1.3, 1.5, 1.8, 2.0]>` (default: `1.0`)
-    * **volume** (Number): `<0..1>` (default: `1.0`)
-    * **muted** (Boolean): (default: `false`)
-    * **captionLanguage** (String): (default: `off`)
-* **userPreferences** (Object): Override parts of the default/initial/saved state. Meant to be provided by the server based on the current user. See [User Preferences](#user-preferences)
-* **foregroundColor** (String): HEX code of the color for text and all other main content (default: `#FFFFFF`)
-* **accentColor** (String): HEX code of the highlighting color (default: `#DD6112`)
-* **fontColorOnAccentColor** (String): HEX code of the font color on the `accentColor` (default: `#000000`). Take care that the contrast ratio is high enough
-* **backgroundColor** (String): HEX code of the background for the `foregroundColor` (default: `#424242`)
-* **secondaryBackgroundColor** (String): HEX code of another background color used for example for displaying the buffer (default: `#424242`). Take care that the `foregroundColor` has a high contrast to both background colors
-* **theme** (String): Predefined color theme (can be adjusted by settings the colors explicitly) `<'dark-orange', 'dark-yellow', 'dark-blue', 'light-green'>`
-* **videoPreload** (Boolean): Turns on/off preloading of the videos when the page loads (default: `true`)
-* **loadFontAwesome** (Boolean): [FontAwesome](http://fontawesome.io/) is used for the icons of the player. If your site already loads FontAwesome, this can be set to `false` to save bandwidth. (default: `true`)
-* **chapters** (Array): List of timestamps with chapter names
-    ```JSON
-    "chapters": [
-      {
-        "title": "Chapter 1",
-        "startPosition": 0
-      }
-    ]
-    ```
-* **captions** (Array): List of caption files for different languages
-    ```JSON
-    "captions": [
-      {
-        "language": "en",
-        "url": "/captions/en.vtt"
-      }
-    ]
-    ```
-* **slides** (Array): List of presentation slides and corresponding start times in seconds to show below the progress bar
-    ```JSON
-    "slides": [
-      {
-        "thumbnail": "/image/of/slide.jpg",
-        "startPosition": 0
-      }
-    ]
-    ```
-* **relatedVideos** (Array): List of related videos that are shown after the video has ended
-    ```JSON
-    "relatedVideos": [
-      {
-        "title": "Title of related video",
-        "thumbnail": "/image/of/thumbnail.jpg",
-        "url": "/url/of/video-page",
-        "duration": 2259
-      }
-    ]
-    ```
-* **playlist** (Object): URLs of the previous and/or next video, if video is in a playlist. If `autoPlay` is enabled, the user is redirected to the next video page after the video has ended.
-  ```JSON
-  "playlist": {
-    "autoPlay": true,
-    "previousVideo": "/url/of/previous/video",
-    "nextVideo": "/url/of/next/video"
-  }
-  ```
-* **videoObject** (Object): Video metadata defined in the [VideoObject](http://schema.org/VideoObject) schema as JSON-LD, which is rendered by the player.
-  ```JSON
-  "videoObject": {
-    "@context": "http://schema.org/",
-    "@type": "VideoObject",
-    "name": "Name of the video",
-    "duration": "Duration of the video"
-  }
-  ```
+   *Example*
+```JSON
+   [
+     {
+       "sd": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+       "hd": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+       "poster": "https://peach.blender.org/wp-content/uploads/bbb-splash.png"
+     }
+   ]
+```
+* **fallbackStream** (object): Contains a fallback stream that the user can switch to, i.e. a single stream source.
+* **initialState** (object): The initial state the player has when loaded.
+* **userPreferences** (object): Override parts of the default/initial/saved state. Meant to be provided by the server based on the current user.
+* **foregroundColor** (string): HEX code of the color for text and all other main content.
+* **accentColor** (string): HEX code of the highlighting color.
+* **fontColorOnAccentColor** (string): HEX code of the font color on the `accentColor`. Take care that the contrast ratio is high enough.
+* **backgroundColor** (string): HEX code of the background for the `foregroundColor`.
+* **secondaryBackgroundColor** (string): HEX code of another background color used for example for displaying the buffer. Take care that the `foregroundColor` has a high contrast to both background colors.
+* **theme** (string):`<["dark-orange","dark-yellow","dark-blue","light-green"]>` Predefined color theme (can be adjusted by settings the colors explicitly). (default: `"dark-orange"`)
+* **videoPreload** (boolean): [FontAwesome](http://fontawesome.io) is used for the icons of the player. If your site already loads FontAwesome, this can be set to false to save bandwidth. (default: `true`)
+* **loadFontAwesome** (boolean): Turns on/off preloading of the videos when the page loads. (default: `true`)
+* **chapters** (array): List of timestamps with chapter names.
+
+   *Example*
+```JSON
+   [
+     {
+       "title": "Chapter 1",
+       "startPosition": 0
+     }
+   ]
+```
+* **captions** (array): List of caption files for different languages.
+
+   *Example*
+```JSON
+   [
+     {
+       "language": "en",
+       "url": "/captions/en.vtt"
+     }
+   ]
+```
+* **slides** (array): List of presentation slides and corresponding start times in seconds to show below the progress.
+
+   *Example*
+```JSON
+   [
+     {
+       "thumbnail": "/image/of/slide.jpg",
+       "startPosition": 0
+     }
+   ]
+```
+* **relatedVideos** (array): List of related videos that are shown after the video has ended.
+
+   *Example*
+```JSON
+   [
+     {
+       "title": "Title of related video.",
+       "url": "/url/of/video-page",
+       "thumbnail": "/image/of/thumbnail.jpg",
+       "duration": 2259
+     }
+   ]
+```
+* **playlist** (object): URLs of the previous and/or next video, if video is in a playlist.
+
+   *Example*
+```JSON
+   {
+     "autoPlay": true,
+     "previousVideo": "/url/of/previous/video",
+     "nextVideo": "/url/of/next/video"
+   }
+```
+* **videoObject** (object): Video metadata defined in the [VideoObject](http://schema.org/VideoObject) schema as JSON-LD, which is rendered by the player.
+
+   *Example*
+```JSON
+   {
+     "@context": "http://schema.org/",
+     "@type": "VideoObject",
+     "name": "Name of the video",
+     "duration": "Duration of the video"
+   }
+```
+<!-- END-SECTION CONFIGURATION -->
+
 ## Tests
 
 Tests are realized via the web-component-tester module. General information about testing with Polymer can be found [here](https://www.polymer-project.org/2.0/docs/tools/tests). Polymer uses [Mocha](http://mochajs.org) as its test framework, [Chai](http://chaijs.com) for assertions, [Sinon](http://sinonjs.org/) for spies, stubs, and mocks, [Selenium](http://www.seleniumhq.org/) for running tests against multiple browsers, and [Accessibility Developer Tools](https://github.com/GoogleChrome/accessibility-developer-tools) for accessibility audits.

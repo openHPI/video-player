@@ -70,13 +70,17 @@ fs.readFile(README_FILE, 'utf8', (err, data) => {
   // Update configuration section
   let start = data.indexOf(BEGIN_SECTION_PATTERN) + BEGIN_SECTION_PATTERN.length;
   let end = data.indexOf(END_SECTION_PATTERN);
-  let docs = generateDocs(configurationSchema);
-  let newData = `${data.substring(0, start)}\n${docs}\n${data.substring(end)}`;
+  if(start >= BEGIN_SECTION_PATTERN.length && end > start) {
+    let docs = generateDocs(configurationSchema);
+    let newData = `${data.substring(0, start)}\n${docs}\n${data.substring(end)}`;
 
-  // Write updated docs to README file
-  fs.writeFile(README_FILE, newData, 'utf8', (err) => {
-    if (err) {
-      return console.log(err);
-    }
-  });
+    // Write updated docs to README file
+    fs.writeFile(README_FILE, newData, 'utf8', (err) => {
+      if (err) {
+        return console.log(err);
+      }
+    });
+  } else {
+    throw new Error('Configuration section delimiter not found in readme file.');
+  }
 });
