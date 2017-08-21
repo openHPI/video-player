@@ -37,7 +37,7 @@
         z-index: 1;
       }
 
-      #div__time_box {
+      #div__hover_box {
         display: none;
         position: absolute;
         background-color: rgba(0, 0, 0, 0.75);
@@ -45,9 +45,10 @@
         padding: 2px;
         min-width: 40px;
         text-align: center;
+        z-index: 10;
       }
 
-      #container__progress_bar:hover #div__time_box {
+      #container__progress_bar:hover #div__hover_box {
         display: block;
       }
     </style>
@@ -55,13 +56,11 @@
     <div id="container__progress_bar" on-click="_handleClick" on-mousemove="_showTargetPosition" on-mouseout="_toggleTargetPosition" class$="[[ifThenElse(border, '', '-no-border')]]">
       <div id="div__primary_progress" class="progress-overlay" style$="width: [[_calcWidth(value, min, max)]]%;"></div>
       <div id="div__secondary_progress" class="progress-overlay" style$="width: [[_calcWidth(secondaryValue, min, max)]]%;"></div>
-      <div 
-        id="div__time_box" 
-        style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
+      <div id="div__hover_box" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
         [[targetValue]]
       </div>
     </div>
-    
+
   </template>
 
   <script>
@@ -125,9 +124,9 @@
 
         _showTargetPosition(e) {
           if(this.showTargetPositionOnHover) {
-            let timeBox = this.$.div__time_box;
+            let timeBox = this.$.div__hover_box;
             let progressContainer = this.$.container__progress_bar;
-            
+
             this._isVisible = true;
             timeBox.style.top = progressContainer.style.top - timeBox.offsetHeight + 'px';
             this.targetValue = this.secondsToHms(this._getClickedValue(e));
