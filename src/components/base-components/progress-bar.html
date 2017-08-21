@@ -96,12 +96,12 @@
             },
             targetValue: {
               type: String,
-              value: 0
+              value: 0,
             },
             showTargetPositionOnHover: {
               type: Boolean,
-              value: false
-            }
+              value: false,
+            },
           };
         }
 
@@ -131,26 +131,25 @@
             timeBox.style.top = progressContainer.style.top - timeBox.offsetHeight + 'px';
             this.targetValue = this.secondsToHms(this._getClickedValue(e));
 
-            // get right end of time box and right end of progress bar in pixels
+            // Get right end of time box and right end of progress bar in pixels
             let timeBoxRightEnd = e.pageX - progressContainer.getBoundingClientRect().left + timeBox.offsetWidth;
             let progressBarRightEnd = progressContainer.offsetLeft + progressContainer.offsetWidth;
 
-            // remove class left if contained
-            // add class right if not already contained
             if(timeBoxRightEnd >= progressBarRightEnd) {
+              // Remove class left if contained
+              // add class right if not already contained
               timeBox.style.left = 'auto';
               timeBox.style.right = '0px';
-            }
-            // remove class right if contained
-            // add class left if not already contained
-            else {
+            } else {
+              // Remove class right if contained
+              // add class left if not already contained
               timeBox.style.left = e.offsetX + 'px';
               timeBox.style.right = 'auto';
             }
           }
         }
 
-        _toggleTargetPosition(e) {
+        _toggleTargetPosition() {
           this._isVisible = false;
         }
 
