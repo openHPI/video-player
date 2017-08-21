@@ -37,18 +37,22 @@
         z-index: 1;
       }
 
-      #div__time_box  {
-          position:absolute;
-          text-decoration: none;
-          display: inline;
-          background-color: rgba(0, 0, 0, 0.85);
-          color: #FFFFFF;
-      }
-
-      #div__time_box:hover  {
+      #div__time_box {
+        display: none;
         position: absolute;
+        background-color: rgba(0, 0, 0, 0.85);
+        color: #FFFFFF;
+      }
+      #container__progress_bar.-left #div__time_box {
+        left: 0;
+      }
+      #container__progress_bar.-right #div__time_box {
+        right: 0;
       }
 
+      #container__progress_bar:hover #div__time_box {
+        display: block;
+      }
     </style>
 
     <div id="container__progress_bar" on-click="_handleClick" on-mousemove="_showTargetPosition" on-mouseout="_toggleTargetPosition" class$="[[ifThenElse(border, '', '-no-border')]]">
@@ -97,6 +101,10 @@
             targetValue: {
               type: String,
               value: 0
+            },
+            showTargetPositionOnHover: {
+              type: Boolean,
+              value: false
             }
           };
         }
@@ -119,13 +127,32 @@
         }
 
         _showTargetPosition(e) {
-          this._isVisible=true;
-          this.$.div__time_box.style.top = this.$.container__progress_bar.style.top - this.$.div__time_box.offsetHeight + 'px';
-          this.$.div__time_box.style.left = e.offsetX + 'px';
-          this.targetValue = this.secondsToHms(this._getClickedValue(e));
-          //let rightEnd = this.$.div__time_box.offsetLeft + this.$.div__time_box.offsetWidth
-          //let progressBarRightEnd = this.$.container__progress_bar.offsetLeft + this.$.container__progress_bar.offsetWidth
+          if(this.showTargetPositionOnHover){
+            this._isVisible=true;
+            this.$.div__time_box.style.top = this.$.container__progress_bar.style.top - this.$.div__time_box.offsetHeight + 'px';
+            this.$.div__time_box.style.left = e.offsetX + 'px';
+            this.targetValue = this.secondsToHms(this._getClickedValue(e));
+
+            // get right end of time box and right end of progress bar in pixels from complete document top left
+            let timeBoxRightEnd = this.$.div__time_box.offsetLeft + this.$.div__time_box.offsetWidth
+            let progressBarRightEnd = this.$.container__progress_bar.offsetLeft + this.$.container__progress_bar.offsetWidth
+
+            // remove class left if contained
+            // add class right if not already contained
+            if(timeBoxRightEnd > progressBarRightEnd){
+              if( this.$.div__time_box.classList.contains('-left') ) this.$.div__time_box.classList.remove('-left');
+              if( !this.$.div__time_box.classList.contains('-right') ) this.$.div__time_box.classList.add('-right');
+            }
+            // remove class right if contained
+            // add class left if not already contained
+            else{
+              if( this.$.div__time_box.classList.contains('-right') ) this.$.div__time_box.classList.remove('-right');
+              if( !this.$.div__time_box.classList.contains('-left') ) this.$.div__time_box.classList.add('-left');
+            }
+          }
         }
+
+
 
         _toggleTargetPosition(e){
           this._isVisible=false;
