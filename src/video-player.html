@@ -320,12 +320,6 @@
         }
 
         ready() {
-          // Make sure our player doesn't crash if somebody passes in null values
-          for (let value in this.configuration) {
-            if(!this.configuration[value]) {
-              delete this.configuration[value];
-            }
-          }
           super.ready();
 
           // Add event handlers for mouse events to show/hide resizer
@@ -374,6 +368,14 @@
 
         _configurationChanged(configuration) {
           if(this._configurationValidator && !this._isConfigurationObserverLocked) {
+            // Remove null values form configuration
+            for (let value in configuration) {
+              // eslint-disable-next-line eqeqeq
+              if(configuration[value] == null) {
+                delete configuration[value];
+              }
+            }
+
             // Validate configuration
             this._configurationValidator.validate(this.configuration);
 
