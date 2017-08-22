@@ -64,6 +64,7 @@
         static get properties() {
           return {
             state: Object,
+            videoAlignment: String,
             _videos: Array,
             _mousePositionX: Number,
             _globalFlexBasisGap: {
@@ -84,6 +85,11 @@
 
           // Get _videos to resize
           this._videos = [this._findPreviousVideo(), this._findNextVideo()];
+
+          if(this.videoAlignment === 'height' && this._videos[0].urls.ratio && this._videos[1].urls.ratio) {
+            this._alignVideoHeight();
+          }
+
         }
 
         _handleDragStart(e) {
@@ -222,6 +228,29 @@
             this._changeFlexBasis(this._videos[1], -factor, 1, maxGap);
             this._changeFlexBasis(this._videos[0], factor, 0, maxGap);
           }
+        }
+
+        _alignVideoHeight() {
+          // Only neccessary when the videos have a different ratio
+          if(this._videos[0].urls.ratio !== this._videos[1].urls.ratio) {
+            let quotient1 = this._getRatioQuotient(this._videos[0].urls.ratio);
+            let quotient2 = this._getRatioQuotient(this._videos[1].urls.ratio);
+
+            let containerWidth = 98;
+
+            let video1_width = (containerWidth * quotient2) / (quotient1 + quotient2);
+            let video2_width = (containerWidth * quotient1) / (quotient1 + quotient2);
+
+            this._videos[0].style.flexBasis = video1_width + '%';
+            this._videos[1].style.flexBasis = video2_width + '%';
+          }
+        }
+
+        _getRatioQuotient(ratio) {
+          let number1 = ratio.split(':')[0];
+          let number2 = ratio.split(':')[1];
+
+          return number2 / number1;
         }
 
         _resetResizer () {
