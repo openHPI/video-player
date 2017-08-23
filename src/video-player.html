@@ -528,9 +528,9 @@
           }
         }
 
-        _userPreferencesStateChanged(states) {
+        _userPreferencesStateChanged() {
           if (this._userPreferencesManager) {
-            this._userPreferencesManager.setPreferences(states);
+            this._userPreferencesManager.setPreferences(this.state);
           }
         }
 
