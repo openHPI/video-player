@@ -43,9 +43,9 @@
           <track src="[[item.url]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
         </template>
       </video>
-      <template is="dom-if" if="[[and(urls.poster, _isPosterVisible)]]">
+      <template is="dom-if" if="[[and(props.poster, _isPosterVisible)]]">
         <div id="container__poster_overlay">
-          <img id="image__poster" src="[[urls.poster]]" alt="Poster" on-click="_handleClick" />
+          <img id="image__poster" src="[[props.poster]]" alt="Poster" on-click="_handleClick" />
         </div>
       </template>
     </div>
@@ -61,7 +61,7 @@
         static get properties() {
           return {
             state: Object,
-            urls: Object,
+            props: Object,
             captions: Array,
             preload: {
               type: Boolean,
@@ -101,7 +101,7 @@
             '_volumeChanged(state.volume)',
             '_mutedChanged(state.muted)',
             '_captionLanguageChanged(state.captionLanguage)',
-            '_qualityChanged(urls, state.quality)',
+            '_qualityChanged(props, state.quality)',
           ];
         }
 
@@ -150,13 +150,13 @@
           this.$.video.muted = muted;
         }
 
-        _qualityChanged(urls, quality) {
+        _qualityChanged(props, quality) {
           if(this._synchronizationManager) {
             this._synchronizationManager.setWaiting(this.$.video);
           }
 
           // Change source depending on quality
-          let url = urls[quality];
+          let url = props[quality];
           if(this._nativeHlsSupport || quality !== QUALITY_MODES.HLS) {
             // Destroy old hls client
             if(this._hlsClient) {

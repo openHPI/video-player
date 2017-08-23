@@ -86,7 +86,7 @@
           // Get _videos to resize
           this._videos = [this._findPreviousVideo(), this._findNextVideo()];
 
-          if(this.videoAlignment === 'height' && this._videos[0].urls.ratio && this._videos[1].urls.ratio) {
+          if(this.videoAlignment === 'height' && this._videos[0].props.ratio && this._videos[1].props.ratio) {
             this._alignVideoHeight();
           }
 
@@ -232,17 +232,23 @@
 
         _alignVideoHeight() {
           // Only neccessary when the videos have a different ratio
-          if(this._videos[0].urls.ratio !== this._videos[1].urls.ratio) {
-            let quotient1 = this._getRatioQuotient(this._videos[0].urls.ratio);
-            let quotient2 = this._getRatioQuotient(this._videos[1].urls.ratio);
+          if(this._videos[0].props.ratio !== this._videos[1].props.ratio) {
+            let quotient1 = this._getRatioQuotient(this._videos[0].props.ratio);
+            let quotient2 = this._getRatioQuotient(this._videos[1].props.ratio);
 
-            let containerWidth = 98;
+            if(quotient1 && quotient2) {
+              // The width of the videos (100% - 2% (for the resizer))
+              let containerWidth = 98;
 
-            let video1_width = (containerWidth * quotient2) / (quotient1 + quotient2);
-            let video2_width = (containerWidth * quotient1) / (quotient1 + quotient2);
+              // Calculation based on two formulas
+              // I video1_width + video2_width = containerWidth
+              // II video1_width * quotient1 = video2_width * quotient2
+              let video1_width = (containerWidth * quotient2) / (quotient1 + quotient2);
+              let video2_width = (containerWidth * quotient1) / (quotient1 + quotient2);
 
-            this._videos[0].style.flexBasis = video1_width + '%';
-            this._videos[1].style.flexBasis = video2_width + '%';
+              this._videos[0].style.flexBasis = video1_width + '%';
+              this._videos[1].style.flexBasis = video2_width + '%';
+            }
           }
         }
 
@@ -250,7 +256,12 @@
           let number1 = ratio.split(':')[0];
           let number2 = ratio.split(':')[1];
 
-          return number2 / number1;
+          // If the format is wrong, number2 will be empty
+          if(number2) {
+            return number2 / number1;
+          } 
+
+          return false;
         }
 
         _resetResizer () {

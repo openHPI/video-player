@@ -152,7 +152,7 @@
             <template is="dom-repeat" items="[[configuration.streams]]">
               <video-stream
                 state="[[state]]"
-                urls="[[item]]"
+                props="[[item]]"
                 preload="[[configuration.videoPreload]]"
                 class="video-stream"
                 captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
@@ -173,7 +173,7 @@
           <template is="dom-if" if="[[state.fallbackStreamActive]]" restamp="true">
             <video-stream
             state="[[state]]"
-            urls="[[configuration.fallbackStream]]"
+            props="[[configuration.fallbackStream]]"
             preload="[[configuration.videoPreload]]"
             class="video-stream"
             captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
