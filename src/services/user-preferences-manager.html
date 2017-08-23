@@ -19,7 +19,7 @@
        * @return {Object} JSON Object with user preferences.
        */
       getPreferences() {
-        return JSON.parse(window.localStorage.getItem(USER_PREFERNECES_STORAGE_KEY));
+        return JSON.parse(window.localStorage.getItem(USER_PREFERNECES_STORAGE_KEY)) || {};
       }
 
       /**
