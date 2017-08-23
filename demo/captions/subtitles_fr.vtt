@@ -1,25 +1,342 @@
 WEBVTT
 
-00:00:00.000 --> 00:01:10.000
-Wikipédia est un projet d’encyclopédie collective en ligne, universelle, multilingue et fonctionnant sur le principe du wiki.
+00:00:05.000 --> 00:00:11.500
+Ladies and Gentleman
+I would like to welcome you to the OpenHPI-Course 
+on 'Business Process Modeling and Analysis'.
 
-00:01:10.000 --> 00:02:10.000
-En octobre 2003, il remporte son premier mandat électoral en remportant une élection partielle au conseil du comté de Fingal.
+00:00:11.500 --> 00:00:16.000
+In this week I will be introducing 'Business Process Management'.
 
-00:02:10.000 --> 00:20:10.000
-Je ne parlé pas francais.
+00:00:16.000 --> 00:00:20.000
+This week has seven lecture videos.
 
-00:20:10.000 --> 00:30:10.000
-Je ne l'ai jamais parlé français,
+00:00:20.000 --> 00:00:26.000
+In the first lecture video I will be defining business processes.
 
-00:30:10.000 --> 00:40:10.000
-Je ne parlais pas francais.
+00:00:26.000 --> 00:00:32.000
+The second one is about modeling because our cause is about 'Business Process Modeling and Analysis'.
 
-00:40:10.000 --> 00:50:10.000
-Je ne vais pas parler français.
+00:00:32.000 --> 00:00:38.000
+I would like to expand a little bit on modeling in general and also discuss a little bit of modeling theory.
 
-00:50:10.000 --> 00:55:10.000
-Beaucoup de peuples germaniques occupent le nord du territoire actuel depuis l'Antiquité classique. 
+00:00:38.000 --> 00:00:47.000
+After that we will be looking at 'Business Process Models' and apply what we learned from modeling theory to process models.
 
-00:55:10.000 --> 00:59:00.000
-Les sociétés germaniques, jusqu'à la période des Grandes Invasions, ont une structure sociale assez souple.
+00:00:47.000 --> 00:00:54.000
+In lecture video 1.4 we will be looking at 'Interacting Business Processes'. 
+
+00:00:54.000 --> 00:00:58.000
+Processes that interact with other business processes.
+
+00:00:58.000 --> 00:01:02.000
+This topic will be discussed in detail in week six.
+
+00:01:03.000 --> 00:01:08.000
+In the lecture video 1.5 we look at models and instances.
+
+00:01:08.500 --> 00:01:12.000
+Each business process model has a number of process instances.
+
+00:01:12.000 --> 00:01:14.000
+We will be covering these topics.
+
+00:01:14.500 --> 00:01:18.500
+In 1.6 we look at different levels of 'Process Models'.
+
+00:01:18.500 --> 00:01:23.500
+And finally, we introduce the 'Business Process Lifecycle' in video 1.7.
+
+00:01:29.000 --> 00:01:36.000
+So I would like to come back to my introductory video that most of you will have seen.
+
+00:01:36:000 --> 00:01:39:00
+Maybe some time ago already.
+
+00:01:39.000 --> 00:01:43.000
+Well, I mentioned that we are all involved in business processes.
+
+00:01:43.000 --> 00:01:45.500
+As clients we trigger business processes.
+
+00:01:45.500 --> 00:01:48.000
+And as professionals we participate in business processes.
+
+00:01:49.000 --> 00:01:52.000
+We had a number of examples on this slide.
+
+00:01:52.000 --> 00:01:55.000
+And I would like to focus on the submisson of an insurance claim.
+
+00:01:56.000 --> 00:02:01.000
+So when for instance our bike has been stolen, we fill out an insurance claim.
+
+00:02:01.000 --> 00:02:10.000
+001 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:02:10.000 --> 00:02:20.000
+002 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:02:20.000 --> 00:02:30.000
+003 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:02:30.000 --> 00:02:40.000
+004 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
+
+00:02:40.000 --> 00:02:50.000
+005 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:02:50.000 --> 00:03:00.000
+006 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:03:00.000 --> 00:03:10.000
+007 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:03:10.000 --> 00:03:20.000
+008 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+00:03:20.000 --> 00:03:30.000
+009 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:03:30.000 --> 00:03:40.000
+010 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:03:40.000 --> 00:03:50.000
+011 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:03:50.000 --> 00:04:00.000
+012 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
+
+00:04:00.000 --> 00:04:10.000
+013 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:04:10.000 --> 00:04:20.000
+014 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:04:20.000 --> 00:04:30.000
+015 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:04:30.000 --> 00:04:40.000
+016 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+00:04:40.000 --> 00:04:50.000
+017 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:04:50.000 --> 00:05:00.000
+018 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:05:00.000 --> 00:05:10.000
+019 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:05:10.000 --> 00:05:20.000
+020 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
+
+00:05:20.000 --> 00:05:30.000
+021 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:05:30.000 --> 00:05:40.000
+022 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:05:40.000 --> 00:05:50.000
+023 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:05:50.000 --> 00:06:00.000
+024 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+00:06:00.000 --> 00:06:10.000
+025 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:06:10.000 --> 00:06:20.000
+026 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:06:20.000 --> 00:06:30.000
+027 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:06:30.000 --> 00:06:40.000
+028 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
+
+00:06:40.000 --> 00:06:50.000
+029 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:06:50.000 --> 00:07:00.000
+030 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:07:00.000 --> 00:07:10.000
+031 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:07:10.000 --> 00:07:20.000
+032 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+00:07:20.000 --> 00:07:30.000
+033 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:07:30.000 --> 00:07:40.000
+034 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:07:40.000 --> 00:07:50.000
+035 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:07:50.000 --> 00:08:00.000
+036 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
+
+00:08:00.000 --> 00:08:10.000
+037 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:08:10.000 --> 00:08:20.000
+038 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:08:20.000 --> 00:08:30.000
+039 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:08:30.000 --> 00:08:40.000
+040 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+00:08:40.000 --> 00:08:50.000
+041 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:08:50.000 --> 00:09:00.000
+042 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:09:00.000 --> 00:09:10.000
+043 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:09:10.000 --> 00:09:20.000
+044 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
+
+00:09:20.000 --> 00:09:30.000
+045 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:09:30.000 --> 00:09:40.000
+046 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:09:40.000 --> 00:09:50.000
+047 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:09:50.000 --> 00:10:00.000
+048 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+00:10:00.000 --> 00:10:10.000
+049 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:10:10.000 --> 00:10:20.000
+050 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:10:20.000 --> 00:10:30.000
+051 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:10:30.000 --> 00:10:40.000
+052 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
+
+00:10:40.000 --> 00:10:50.000
+053 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:10:50.000 --> 00:11:00.000
+054 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:11:00.000 --> 00:11:10.000
+055 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:11:10.000 --> 00:11:20.000
+056 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+00:11:20.000 --> 00:11:30.000
+057 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:11:30.000 --> 00:11:40.000
+058 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:11:40.000 --> 00:11:50.000
+059 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:11:50.000 --> 00:12:00.000
+060 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
+
+00:12:00.000 --> 00:12:10.000
+061 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:12:10.000 --> 00:12:20.000
+062 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:12:20.000 --> 00:12:30.000
+063 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:12:30.000 --> 00:12:40.000
+064 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+00:12:40.000 --> 00:12:50.000
+065 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:12:50.000 --> 00:13:00.000
+066 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:13:00.000 --> 00:13:10.000
+067 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:13:10.000 --> 00:13:20.000
+068 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
+
+00:13:20.000 --> 00:13:30.000
+069 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:13:30.000 --> 00:13:40.000
+070 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:13:40.000 --> 00:13:50.000
+071 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:13:50.000 --> 00:14:00.000
+072 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+00:14:00.000 --> 00:14:10.000
+073 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:14:10.000 --> 00:14:20.000
+074 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:14:20.000 --> 00:14:30.000
+075 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:14:30.000 --> 00:14:40.000
+076 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
+
+00:14:40.000 --> 00:14:50.000
+077 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:14:50.000 --> 00:15:00.000
+078 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:15:00.000 --> 00:15:10.000
+079 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:15:10.000 --> 00:15:20.000
+080 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+00:15:20.000 --> 00:15:30.000
+081 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:15:30.000 --> 00:15:40.000
+082 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:15:40.000 --> 00:15:50.000
+083 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:15:50.000 --> 00:16:00.000
+084 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. 
+
+00:16:00.000 --> 00:16:10.000
+085 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:16:10.000 --> 00:16:20.000
+086 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+
+00:16:20.000 --> 00:16:30.000
+087 - At vero eos et accusam et justo duo dolores et ea rebum. 
+
+00:16:30.000 --> 00:16:40.000
+088 - Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+00:16:40.000 --> 00:16:50.000
+089 - Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
+
+00:16:50.000 --> 00:16:58.000
+090 - sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 

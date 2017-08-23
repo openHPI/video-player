@@ -26,7 +26,7 @@
     <template is="dom-if" if="[[isInMobileMenu]]">
         <select-control
         state="[[state]]"
-        values='[[_getValues()]]'
+        items='[[_getItems()]]'
         selected-value="[[_getSelectedValue()]]"
         on-change="_selectionChanged"
         icon-classes="fa fa-columns"
@@ -64,8 +64,17 @@
           ];
         }
 
-        _getValues() {
-          return [1, this.numberOfStreams];
+        _getItems() {
+          return [
+            {
+              text: '1',
+              value: 1,
+            },
+            {
+              value: this.numberOfStreams,
+              text: '' + this.numberOfStreams,
+            }
+          ];
         }
 
         _getSelectedValue() {
