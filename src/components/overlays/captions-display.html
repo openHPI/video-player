@@ -82,17 +82,8 @@
           }
         }
 
-        _getCueIdentifier(cue) {
-          if (cue.id !== "")
-            return cue.id;
-          else
-            return this.state.activeCaptions.findIndex(cueCandidate => {
-              return Object.is(cue, cueCandidate);
-            })
-        }
-
         _cueChanged(activeCue) {
-          let identifier = this._getCueIdentifier(activeCue);
+          let identifier = this._analyticsManager._getCueIdentifier(activeCue);
           this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SUBTITLE_CHANGE}, {
             current_subtitle_identifier: identifier,
             current_subtitle_language: this.state.captionLanguage
