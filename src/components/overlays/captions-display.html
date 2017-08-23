@@ -37,12 +37,13 @@
     </style>
 
     <div id="container__captions" class$="[[ifNotThen(state.isCaptionShown, '-hidden')]]">
-      <div class="caption-cue-text">[[_activeCue.text]]</div>
+      <div class="caption-cue-text">[[activeCue.text]]</div>
     </div>
   </template>
 
   <script>
-    define('captions-display', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('captions-display', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
 
       class CaptionsDisplay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'captions-display'; }
@@ -50,23 +51,52 @@
         static get properties() {
           return {
             state: Object,
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
             _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            _activeCue: {
+            activeCue: {
               type: Object,
-              computed: '_getActiveCue(state.activeCaptions, state.position)',
             },
           };
         }
+        static get observers() {
+          return [
+            '_getActiveCue(state.position)',
+            '_cueChanged(activeCue)',
+          ];
+        }
 
-        _getActiveCue(activeCaptions, position) {
-          if(activeCaptions) {
-            return activeCaptions.slice()
+        _getActiveCue(position) {
+          if(this.state.activeCaptions) {
+            let newCue = this.state.activeCaptions.slice()
                                  .reverse()
                                  .find(cue => cue.startTime <= position);
+            if (!Object.is(this.activeCue, newCue)) {
+              this.activeCue = newCue;
+            }
           }
+        }
+
+        _getCueIdentifier(cue) {
+          if (cue.id !== "")
+            return cue.id;
+          else
+            return this.state.activeCaptions.findIndex(cueCandidate => {
+              return Object.is(cue, cueCandidate);
+            })
+        }
+
+        _cueChanged(activeCue) {
+          let identifier = this._getCueIdentifier(activeCue);
+          this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SUBTITLE_CHANGE}, {
+            current_subtitle_identifier: identifier,
+            current_subtitle_language: this.state.captionLanguage
+          });
         }
       }
 
