@@ -166,6 +166,7 @@
             // The src attribute can not be updated using data bindings
             // since the binding may be overwritten by hls.js
             this.$.video.setAttribute('src', url);
+            this.$.video.play();
           } else {
             // Create and configure new hls client for existing video element
             this._hlsClient = new Hls();
