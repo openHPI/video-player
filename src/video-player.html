@@ -215,7 +215,7 @@
 
   <script>
     define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-js', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, Localizer, Hls, constants, locales, configurationSchema) => {
-      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES} = constants;
+      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, HLS_MIME_TYPE} = constants;
 
       class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
         static get is() { return 'video-player'; }
@@ -366,7 +366,7 @@
         _getAvailableQualities(streams, fallbackStreamActive, fallbackStream) {
           if (streams) {
             let supportedQualities = Object.values(QUALITY_MODES);
-            let isHlsSupported = Hls.isSupported() || document.createElement('video').canPlayType('application/x-mpegURL') !== '';
+            let isHlsSupported = Hls.isSupported() || document.createElement('video').canPlayType(HLS_MIME_TYPE) !== '';
             if(!isHlsSupported) {
               supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
             }
