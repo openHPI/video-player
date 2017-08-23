@@ -64,6 +64,7 @@
         static get properties() {
           return {
             state: Object,
+            videoAlignment: String,
             _videos: Array,
             _mousePositionX: Number,
             _globalFlexBasisGap: {
@@ -84,6 +85,11 @@
 
           // Get _videos to resize
           this._videos = [this._findPreviousVideo(), this._findNextVideo()];
+
+          if(this.videoAlignment === 'height' && this._videos[0].props.ratio && this._videos[1].props.ratio) {
+            this._alignVideoHeight();
+          }
+
         }
 
         _handleDragStart(e) {
@@ -222,6 +228,40 @@
             this._changeFlexBasis(this._videos[1], -factor, 1, maxGap);
             this._changeFlexBasis(this._videos[0], factor, 0, maxGap);
           }
+        }
+
+        _alignVideoHeight() {
+          // Only neccessary when the videos have a different ratio
+          if(this._videos[0].props.ratio !== this._videos[1].props.ratio) {
+            let quotient1 = this._getRatioQuotient(this._videos[0].props.ratio);
+            let quotient2 = this._getRatioQuotient(this._videos[1].props.ratio);
+
+            if(quotient1 && quotient2) {
+              // The width of the videos (100% - 2% (for the resizer))
+              let containerWidth = 98;
+
+              // Calculation based on two formulas
+              // I video1_width + video2_width = containerWidth
+              // II video1_width * quotient1 = video2_width * quotient2
+              let video1_width = (containerWidth * quotient2) / (quotient1 + quotient2);
+              let video2_width = (containerWidth * quotient1) / (quotient1 + quotient2);
+
+              this._videos[0].style.flexBasis = video1_width + '%';
+              this._videos[1].style.flexBasis = video2_width + '%';
+            }
+          }
+        }
+
+        _getRatioQuotient(ratio) {
+          let number1 = ratio.split(':')[0];
+          let number2 = ratio.split(':')[1];
+
+          // If the format is wrong, number2 will be empty
+          if(number2) {
+            return number2 / number1;
+          } 
+
+          return false;
         }
 
         _resetResizer () {

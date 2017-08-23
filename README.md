@@ -54,6 +54,7 @@ The player configuration is provided as JSON object:
    * **hd** (string): URL of the HD video stream.
    * **sd** (string): URL of the SD video stream.
    * **poster** (string): URL of the poster image.
+   * **ratio** (string): The ratio of the video. This is mandatory when the videoAlignment is set to `height`. It should be in the format `x:y`.
 
    *Example*
 ```JSON
@@ -70,6 +71,7 @@ The player configuration is provided as JSON object:
    * **hd** (string): URL of the HD video stream.
    * **sd** (string): URL of the SD video stream.
    * **poster** (string): URL of the poster image.
+   * **ratio** (string): The ratio of the video. This is mandatory when the videoAlignment is set to `height`. It should be in the format `x:y`.
 * **language** (string): Language used for localizing messages. (default: `"en"`)
 * **initialState** (object): The initial state the player has when loaded.
    * **playState** (string):`<["PLAYING","PAUSED"]>` (default: `"PAUSED"`)
@@ -175,6 +177,7 @@ The player configuration is provided as JSON object:
      "duration": "Duration of the video"
    }
 ```
+* **videoAlignment** (string):`<["width","height"]>` If there is more than one video this property decides whether they should have the same height or the same width.
 <!-- END-SECTION CONFIGURATION -->
 
 ## Tests

@@ -64,6 +64,12 @@
         for (let [key, value] of Object.entries(configuration)) {
           let propertyPath = this._getPropertyPath(nodePath, key);
 
+          // Ignore null values
+          // eslint-disable-next-line eqeqeq
+          if(value == null) {
+            continue;
+          }
+
           // Check if key is included in schema
           if(!Object.keys(schema).includes(key)) {
             this._warn(`Option "${propertyPath}" is unknown and therefore ignored.`);

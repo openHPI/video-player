@@ -152,7 +152,7 @@
             <template is="dom-repeat" items="[[configuration.streams]]">
               <video-stream
                 state="[[state]]"
-                urls="[[item]]"
+                props="[[item]]"
                 preload="[[configuration.videoPreload]]"
                 class="video-stream"
                 captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
@@ -164,7 +164,8 @@
                 <resizer-control
                   state="[[state]]"
                   style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"
-                  class="hidden-for-mobile">
+                  class="hidden-for-mobile"
+                  video-alignment="[[configuration.videoAlignment]]">
                 </resizer-control>
               </template>
             </template>
@@ -172,7 +173,7 @@
           <template is="dom-if" if="[[state.fallbackStreamActive]]" restamp="true">
             <video-stream
             state="[[state]]"
-            urls="[[configuration.fallbackStream]]"
+            props="[[configuration.fallbackStream]]"
             preload="[[configuration.videoPreload]]"
             class="video-stream"
             captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
@@ -196,10 +197,11 @@
       <control-bar
         state="[[state]]"
         has-chapters="[[hasItems(configuration.chapters)]]"
+        has-fallback-stream="[[_hasFallbackStream]]"
         caption-languages="[[_captionLanguages]]"
         available-qualities="[[_availableQualities]]"
         playlist="[[configuration.playlist]]"
-        has-fallback-stream="[[exists(configuration.fallbackStream)]]">
+        number-of-streams="[[configuration.streams.length]]">
       </control-bar>
 
       <!-- Chapter List -->
@@ -263,6 +265,10 @@
               type: Array,
               computed: '_getAvailableQualities(configuration.streams)',
             },
+            _hasFallbackStream: {
+              type: Boolean,
+              computed: '_getHasFallbackStream(configuration.streams, configuration.fallbackStream)',
+            },
             _isConfigurationInitialized: Boolean,
             _isConfigurationObserverLocked: {
               type: Boolean,
@@ -319,12 +325,6 @@
         }
 
         ready() {
-          // Make sure our player doesn't crash if somebody passes in null values
-          for (let value in this.configuration) {
-            if(!this.configuration[value]) {
-              delete this.configuration[value];
-            }
-          }
           super.ready();
 
           // Add event handlers for mouse events to show/hide resizer
@@ -366,6 +366,10 @@
           }
         }
 
+        _getHasFallbackStream(streams, fallbackStream) {
+          return this.hasItems(streams, 2) && fallbackStream;
+        }
+
         reloadConfiguration() {
           // Clone configuration to reevaluate all observers
           this.configuration = Object.assign({}, this.configuration);
@@ -373,6 +377,14 @@
 
         _configurationChanged(configuration) {
           if(this._configurationValidator && !this._isConfigurationObserverLocked) {
+            // Remove null values form configuration
+            for (let value in configuration) {
+              // eslint-disable-next-line eqeqeq
+              if(configuration[value] == null) {
+                delete configuration[value];
+              }
+            }
+
             // Validate configuration
             this._configurationValidator.validate(this.configuration);
 

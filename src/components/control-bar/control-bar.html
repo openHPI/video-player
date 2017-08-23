@@ -89,7 +89,9 @@
         state="[[state]]"
         class="hidden-for-desktop"
         caption-languages="[[captionLanguages]]"
-        available-qualities="[[availableQualities]]">
+        available-qualities="[[availableQualities]]"
+        has-fallback-stream="[[hasFallbackStream]]"
+        number-of-streams="[[numberOfStreams]]">
       </mobile-settings-menu>
 
       <!-- Fullscreen -->
@@ -113,6 +115,7 @@
             playlist: Object,
             captionLanguages: Array,
             availableQualities: Boolean,
+            numberOfStreams: Number,
             _stateManager: {
               type: Object,
               inject: 'StateManager',

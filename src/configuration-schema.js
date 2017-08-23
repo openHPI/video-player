@@ -15,6 +15,10 @@ const streamSchema = {
     type: 'string',
     description: 'URL of the poster image.',
   },
+  ratio: {
+    type: 'string',
+    description: 'The ratio of the video. This is mandatory when the videoAlignment is set to `height`. It should be in the format `x:y`.',
+  }
 };
 
 const stateSchema = {
@@ -262,6 +266,12 @@ const configurationSchema = {
       name: 'Name of the video',
       duration: 'Duration of the video',
     },
+  },
+  videoAlignment: {
+    type: 'string',
+    options: ['width', 'height'],
+    defaul: 'width',
+    description: 'If there is more than one video this property decides whether they should have the same height or the same width.',
   },
 };
 
