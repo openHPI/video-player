@@ -263,11 +263,15 @@
             },
             _availableQualities: {
               type: Array,
-              computed: '_getAvailableQualities(configuration.streams)',
+              computed: '_getAvailableQualities(configuration.streams, state.fallbackStreamActive, configuration.fallbackStream)',
             },
             _hasFallbackStream: {
               type: Boolean,
-              computed: '_getHasFallbackStream(configuration.streams, configuration.fallbackStream)',
+              computed: '_getHasFallbackStream(configuration.streams, configuration.fallbackStream, _isIOS)',
+            },
+            _isIOS: {
+              type: Boolean,
+              computed: '_getIsIOS()',
             },
             _isConfigurationInitialized: Boolean,
             _isConfigurationObserverLocked: {
@@ -311,6 +315,12 @@
           // Build state from provided intial state configuration and default values
           this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState, this._userPreferencesManager.getPreferences(), this.configuration.userPreferences);
 
+          // In iOS playing multiple videos concurrently is currently not supported.
+          // Therefore, the fallback is used allways in iOS
+          if(this._isIOS && this.hasItems(this.configuration.streams, 2)) {
+            this._stateManager.setFallbackStreamActive(true);
+          }
+
           // Initialize FullscreenManager
           this._fullscreenManager.onFullscreenChanged((fullscreen) => {
             this._stateManager.setFullscreen(fullscreen);
@@ -353,21 +363,49 @@
           }
         }
 
-        _getAvailableQualities(streams) {
+        _getAvailableQualities(streams, fallbackStreamActive, fallbackStream) {
           if (streams) {
             let supportedQualities = Object.values(QUALITY_MODES);
             if(!Hls.isSupported()) {
               supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
             }
 
-            return supportedQualities
-                     .filter(quality => streams.every(stream => Object.keys(stream)
-                                                                      .includes(quality)));
+            if(fallbackStreamActive) {
+              return supportedQualities.filter(quality => Object.keys(fallbackStream)
+                                                                .includes(quality));
+            } else {
+              return supportedQualities
+                       .filter(quality => streams.every(stream => Object.keys(stream)
+                                                                        .includes(quality)));
+            }
           }
         }
 
-        _getHasFallbackStream(streams, fallbackStream) {
-          return this.hasItems(streams, 2) && fallbackStream;
+        _getHasFallbackStream(streams, fallbackStream, isIOS) {
+          // In iOS playing multiple videos concurrently is currently not supported.
+          // Therefore, the fallback is used allways in iOS
+          return !isIOS && this.hasItems(streams, 2) && fallbackStream;
+        }
+
+        _getIsIOS() {
+          const iDevices = [
+            'iPad Simulator',
+            'iPhone Simulator',
+            'iPod Simulator',
+            'iPad',
+            'iPhone',
+            'iPod',
+          ];
+
+          if (navigator.platform) {
+            while (iDevices.length) {
+              if (navigator.platform === iDevices.pop()) {
+                return true;
+              }
+            }
+          }
+
+          return false;
         }
 
         reloadConfiguration() {
