@@ -58,7 +58,7 @@
 
         _checkSlideActivation(position) {
           if (this._analyticsManager) {
-            let currentActiveSlide = this._getActiveSlide(position);
+            let currentActiveSlide = this._analyticsManager._getActiveSlide();
             if (this.activeSlide != currentActiveSlide) {
               this.activeSlide = currentActiveSlide;
             }
@@ -69,12 +69,6 @@
           if (this._analyticsManager) {
             this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SLIDE_CHANGE}, {new_current_slide: slide})
           }
-        }
-
-        _getActiveSlide(position) {
-          return this.slides.slice()
-                              .reverse()
-                              .find(slide => slide.startPosition <= position);
         }
       }
 
