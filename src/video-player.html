@@ -197,10 +197,10 @@
       <control-bar
         state="[[state]]"
         has-chapters="[[hasItems(configuration.chapters)]]"
+        has-fallback-stream="[[_hasFallbackStream]]"
         caption-languages="[[_captionLanguages]]"
         available-qualities="[[_availableQualities]]"
         playlist="[[configuration.playlist]]"
-        has-fallback-stream="[[exists(configuration.fallbackStream)]]"
         number-of-streams="[[configuration.streams.length]]">
       </control-bar>
 
@@ -264,6 +264,10 @@
             _availableQualities: {
               type: Array,
               computed: '_getAvailableQualities(configuration.streams)',
+            },
+            _hasFallbackStream: {
+              type: Boolean,
+              computed: '_getHasFallbackStream(configuration.streams, configuration.fallbackStream)',
             },
             _isConfigurationInitialized: Boolean,
             _isConfigurationObserverLocked: {
@@ -360,6 +364,10 @@
                      .filter(quality => streams.every(stream => Object.keys(stream)
                                                                       .includes(quality)));
           }
+        }
+
+        _getHasFallbackStream(streams, fallbackStream) {
+          return this.hasItems(streams, 2) && fallbackStream;
         }
 
         reloadConfiguration() {
