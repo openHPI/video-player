@@ -23,7 +23,9 @@
   </template>
 
   <script>
-    define('caption-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('caption-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
       class CaptionControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'caption-control'; }
 
@@ -34,6 +36,10 @@
             _stateManager: {
               type: Object,
               inject: 'StateManager',
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
             },
             _values: {
               type: Array,
@@ -61,6 +67,11 @@
           if (e.target.selectedValue === 'off' && this.state.isCaptionShown) {
             this._stateManager.toggleCaptions();
           }
+
+          this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SUBTITLE}, {
+            current_subtitle_status: this.state.isCaptionShown,
+            current_subtitle_language: this.state.captionLanguage
+            });
         }
       }
 
