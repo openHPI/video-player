@@ -56,6 +56,11 @@
             beforeStates.old_current_time = this.stateManager.state.position;
             beforeStates.old_current_slide = this._getActiveSlide();
             break;
+          case ANALYTICS_TOPICS.VIDEO_TRANSCRIPT_SEEK:
+            beforeStates.old_current_time = this.stateManager.state.position;
+            beforeStates.old_current_subtitle_identifier = this._getCueIdentifier(this._getActiveCue());
+            beforeStates.current_transcript_language = this.stateManager.state.captionLanguage;
+            break;
         }
 
         this.stateManager[changeFunction](...changeParameters);
@@ -75,10 +80,13 @@
             afterStates.new_current_quality = this.stateManager.state.quality;
             break;
           case ANALYTICS_TOPICS.VIDEO_SLIDE_SEEK:
-            beforeStates.new_current_time = this.stateManager.state.position;
-            beforeStates.new_current_slide = this._getActiveSlide();
+            afterStates.new_current_time = this.stateManager.state.position;
+            afterStates.new_current_slide = this._getActiveSlide();
             break;
-
+          case ANALYTICS_TOPICS.VIDEO_TRANSCRIPT_SEEK:
+            afterStates.new_current_time = this.stateManager.state.position;
+            afterStates.new_current_subtitle_identifier = this._getCueIdentifier(this._getActiveCue());
+            break;
         }
 
         this._fireEvent(options.verb, baseEventData, beforeStates, afterStates);
@@ -181,6 +189,32 @@
         let baseEventData = this._getBaseEventData();
         let verb = (window.screen.orientation.type.includes('landscape') ? ANALYTICS_TOPICS.VIDEO_LANDSCAPE : ANALYTICS_TOPICS.VIDEO_PORTRAIT);
         this._fireEvent(verb, baseEventData);
+      }
+
+      /**
+       * Returns the identifier for a cue.
+       * @param {Object} cue The cue to identify
+       * @returns {Object} Identifier text if available, Index of cue otherwise
+       */
+      _getCueIdentifier(cue) {
+        if (cue.id !== "")
+          return cue.id;
+        else
+          return this.stateManager.state.activeCaptions.findIndex(cueCandidate => {
+            return Object.is(cue, cueCandidate);
+          })
+      }
+
+      /**
+       * Returns the active Cue.
+       * @returns {Object} Teh active cue.
+       */
+      _getActiveCue() {
+        if(this.stateManager.state.activeCaptions) {
+          return this.stateManager.state.activeCaptions.slice()
+                                .reverse()
+                                .find(cue => cue.startTime <= this.stateManager.state.position);
+        }
       }
     }
 

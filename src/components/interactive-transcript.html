@@ -58,8 +58,8 @@
     <div id="container__interactive_transcript" class="container__list">
       <ul class="list">
           <template is="dom-repeat" items="[[state.activeCaptions]]">
-            <li class$="list_item [[ifEqualsThen(item, _activeCue, '-active')]]">
-              <a class$="list_item__prefix list_item__link [[ifEqualsThen(item, _activeCue, 'active fa-caret-right')]]" on-click="_handleClick">
+            <li class$="list_item [[ifEqualsThen(item, activeCue, '-active')]]">
+              <a class$="list_item__prefix list_item__link [[ifEqualsThen(item, activeCue, 'active fa-caret-right')]]" on-click="_handleClick">
                 [[secondsToHms(item.startTime, state.duration)]] - [[secondsToHms(item.endTime, state.duration)]]:
               </a>
               <a class="list_item__link" on-click="_handleClick" href="javascript:void(0)">
@@ -72,35 +72,43 @@
   </template>
 
   <script>
-    define('interactive-transcript', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('interactive-transcript', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
       class InteractiveTranscript extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'interactive-transcript'; }
 
         static get properties() {
           return {
             state: Object,
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
             _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            _activeCue: {
+            activeCue: {
               type: Object,
-              computed: '_getActiveCue(state.activeCaptions, state.position)',
             },
           };
         }
 
         static get observers() {
           return [
-            '_activeCueChanged(_activeCue, state.isInteractiveTranscriptShown)', // Observe isInteractiveTranscriptShown to scroll to current element when element is shown
+            '_activeCueChanged(activeCue, state.isInteractiveTranscriptShown)', // Observe isInteractiveTranscriptShown to scroll to current element when element is shown
           ];
         }
 
-        _getActiveCue(activeCaptions, position) {
-          if(activeCaptions) {
-            return activeCaptions.slice()
+        _getActiveCue(position) {
+          if(this.state.activeCaptions) {
+            return this.state.activeCaptions.slice()
                                  .reverse()
                                  .find(cue => cue.startTime <= position);
+            if (!Object.is(this.activeCue, newCue)) {
+              this.activeCue = newCue;
+            }
           }
         }
 
@@ -112,7 +120,7 @@
         }
 
         _handleClick(e) {
-          this._stateManager.setPosition(e.model.item.startTime);
+          this._analyticsManager.changeState('setPosition', [e.model.item.startTime], {verb: ANALYTICS_TOPICS.VIDEO_TRANSCRIPT_SEEK});
         }
       }
 
