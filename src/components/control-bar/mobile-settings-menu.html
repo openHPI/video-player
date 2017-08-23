@@ -64,6 +64,9 @@
             <quality-control is-in-mobile-menu="true" state="[[state]]" qualities="[[availableQualities]]">
             </quality-control>
           </template>
+          <template is="dom-if" if="[[hasFallbackStream]]">
+            <stream-switch-control is-in-mobile-menu="true" state="[[state]]" number-of-streams="[[numberOfStreams]]" class="hidden-for-mobile"></stream-switch-control>
+          </template>
         </div>
       </div>
     </div>
@@ -81,6 +84,8 @@
             state: Object,
             captionLanguages: Array,
             availableQualities: Boolean,
+            hasFallbackStream: Boolean,
+            numberOfStreams: Number,
             _isMobileSettingsMenuOpen: {
               type: Boolean,
               value: false,
