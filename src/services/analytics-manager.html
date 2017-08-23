@@ -121,11 +121,11 @@
        * @returns {Object} The active chapter object, undefined if there are no chapters
        */
       _getActiveChapter() {
-        if (this.videoPlayer._hasChapters) {
+        if (this.videoPlayer.configuration.chapters) {
           let chapters = this.videoPlayer.configuration.chapters;
           return chapters.slice()
                           .reverse()
-                          .find(chapter => chapter.seconds <= this.stateManager.state.position);
+                          .find(chapter => chapter.startPosition <= this.stateManager.state.position);
         }
         else
           return undefined;
@@ -136,8 +136,8 @@
        * @returns {Object} The active slide object, undefined if there are none
        */
       _getActiveSlide() {
-        if (this.videoPlayer.configuration.lectureSlides) {
-          let slides = this.videoPlayer.configuration.lectureSlides;
+        if (this.videoPlayer.configuration.slides) {
+          let slides = this.videoPlayer.configuration.slides;
           return slides.slice()
                           .reverse()
                           .find(slide => slide.startPosition <= this.stateManager.state.position);
