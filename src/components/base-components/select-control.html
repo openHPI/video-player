@@ -113,16 +113,16 @@
     <div id="container__select_control" class$="user_controls [[ifNotThen(isInMobileMenu, 'dropdown')]] [[ifThen(isInMobileMenu, 'in-menu-entry')]]">
       <div id="inner_container__select_control" on-mouseover="_handleMouseOver" on-mouseout="_handleMouseOut">
         <a id="button__select"
-           class$="button [[ifNotEqualsThen(selectedValue, 'off', 'with-badge')]] [[ifNotThen(active, 'inactive')]]"
-           badge-value$="{{formatter(selectedValue)}}"
+           class$="button [[ifThen(selectedItem.value, 'with-badge')]] [[ifNotThen(active, 'inactive')]]"
+           badge-value$="[[selectedItem.text]]"
            href="javascript:void(0)"
            on-click="_handleClick">
           <i class$="[[iconClasses]]"></i>
         </a>
         <div id="dropdown__select" class$="dropdown-content [[ifNotThen(_isDropDownOpen, '-hidden')]]">
-          <template is="dom-repeat" items="[[values]]">
-            <a on-click="_handleDropDownElementClick" class$="[[ifEqualsThen(item, selectedValue, 'selected')]]" href="javascript:void(0)">
-              [[formatter(item)]]
+          <template is="dom-repeat" items="[[items]]">
+            <a on-click="_handleDropDownElementClick" class$="[[ifEqualsThen(item.value, selectedValue, 'selected')]]" href="javascript:void(0)">
+              [[item.text]]
             </a>
           </template>
         </div>
@@ -138,18 +138,22 @@
         static get properties() {
           return {
             state: Object,
-            values: {
+            items: {
               type: Array,
-              value: [],
+              value: () => [],
             },
-            selectedValue: String,
-            formatter: {
-              type: Function,
-              value: () => (x) => x,
+            selectedValue: Object,
+            selectedItem: {
+              type: Object,
+              computed: '_getSelectedItem(items, selectedValue)',
             },
             iconClasses: {
               type: String,
               value: '',
+            },
+            isInMobileMenu: {
+              type: Boolean,
+              value: false,
             },
             _isDropDownOpen: {
               type: Boolean,
@@ -158,10 +162,6 @@
             active: {
               type: Boolean,
               value: true,
-            },
-            isInMobileMenu: {
-              type: Boolean,
-              value: false,
             },
           };
         }
@@ -203,19 +203,22 @@
         }
 
         _handleDropDownElementClick(e) {
-          this._setSelectedValue(e.model.item);
+          this.selectedValue = e.model.item.value;
+          this.dispatchEvent(new CustomEvent('change'));
+
           if(!this.state.mobileSettingsMenuOpen) {
             this._hideDropDown();
           }
         }
 
-        _setSelectedValue(value) {
-          this.selectedValue = value;
-          this.dispatchEvent(new CustomEvent('change'));
+        _getSelectedItem(items, selectedValue) {
+          if(items) {
+            return items.find(item => item.value === selectedValue);
+          }
         }
 
         _mobileSettingsMenuChanged(menuOpen) {
-          if(menuOpen) { 
+          if(menuOpen) {
             if (this.isInMobileMenu) {
               this._showDropDown();
             } else {

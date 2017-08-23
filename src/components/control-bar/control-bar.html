@@ -128,8 +128,9 @@
 
           // Add event listener for keyboard shortcuts
           window.addEventListener('keydown', (e) => {
-            if (e.defaultPrevented || TEXT_ELEMENT_TAG_NAMES.includes(document.activeElement.tagName)) {
-              // Do nothing, if the event was already processed or an text input is focussed
+            if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey || TEXT_ELEMENT_TAG_NAMES.includes(document.activeElement.tagName)) {
+              // Do nothing, if the event was already processed, a system shortcut
+              // including a modifier key was pressed or an text input is focussed
               return;
             }
 

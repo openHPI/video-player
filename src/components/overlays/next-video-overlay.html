@@ -3,6 +3,7 @@
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../mixins/localization.html">
 <link rel="import" href="../../styling/overlay--style-module.html">
 
 <dom-module id="next-video-overlay">
@@ -76,20 +77,20 @@
     </style>
 
     <div id="container__next-video_overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
-      <p id="text__next_video">Nächstes Video</p>
+      <p id="text__next_video">[[localize('next-video-overlay--next-video-label')]]</p>
       <div class="container__spinner">
         <i id="icon_spinner" class="fa fa-spinner" aria-hidden="true"></i>
         <span id="timer">[[_secondsToNextVideo]]</span>
       </div>
-      <a id="button__disable_next_video" class="button" on-click="_handleClick" href="javascript:void(0)">Abbrechen</a>
+      <a id="button__disable_next_video" class="button" on-click="_handleClick" href="javascript:void(0)">[[localize('general--cancel')]]</a>
     </div>
   </template>
 
   <script>
-    define('next-video-overlay', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+    define('next-video-overlay', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
       const {PLAY_STATES, SECONDS_TO_NEXT_VIDEO} = constants;
 
-      class NextVideoOverlay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+      class NextVideoOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
         static get is() { return 'next-video-overlay'; }
 
         static get properties() {

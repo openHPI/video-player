@@ -1,0 +1,58 @@
+<script>
+  define('localizer', () => {
+    class Localizer {
+      /**
+       * Initializes a new Localizer instance.
+       * @param {object} locales  The localized messages.
+       * @param {string} defaultLanguage  The default language.
+       * @param {boolean} useKeyIfMissing Determines, if the key should be used if translation is missing.
+       * @return {Localizer}  The new Localizer instance.
+       */
+      constructor(locales, defaultLanguage = 'en', useKeyIfMissing = true) {
+        this._locales = locales;
+        this._language = defaultLanguage;
+        this._useKeyIfMissing = useKeyIfMissing;
+        this._languageChangedCallbacks = [];
+      }
+
+      /**
+       * Sets the language used for localization.
+       * @param {string} language The language.
+       * @return {void}
+       */
+      setLanguage(language) {
+        this._language = language;
+        this._languageChangedCallbacks.forEach(callback => callback(language));
+      }
+
+      /**
+       * Registers an event listener for changes of the language.
+       * @param  {Function} callback The callback.
+       * @return {void}
+       */
+      onLanguageChanged(callback) {
+        this._languageChangedCallbacks.push(callback);
+      }
+
+      /**
+       * Translates a message to the configured language.
+       * @param  {stirng} key The key of the message.
+       * @return {string} The localized message.
+       */
+      localize(key) {
+        if(!key || !this._locales || !this._language || !this._locales[this._language]) {
+          return;
+        }
+
+        let translatedValue = this._locales[this._language][key];
+        if (!translatedValue) {
+          return this._useKeyIfMissing ? key : '';
+        }
+
+        return translatedValue;
+      }
+    }
+
+    return Localizer;
+  });
+</script>
