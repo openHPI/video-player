@@ -10,8 +10,8 @@
        * @return {void}
        */
       setPreferences(preferences) {
-        let filteredPreferences = this._filterPreferences(preferences.base);
-        window.localStorage.setItem(USER_PREFERNECES_STORAGE_KEY, JSON.stringify(filteredPreferences));
+        let mergedPreferences = Object.assign(this.getPreferences(), this._filterPreferences(preferences));
+        window.localStorage.setItem(USER_PREFERNECES_STORAGE_KEY, JSON.stringify(mergedPreferences));
       }
 
       /**
@@ -28,7 +28,12 @@
        * @return {Object} The filtered preferences object.
        */
       _filterPreferences(preferences) {
-        return Object.assign({}, ...USER_PREFERENCES_KEYS.map(key => ({[key]: preferences[key]})));
+        preferences = Object.assign({}, preferences);
+        Object.keys(preferences)
+              .filter(key => !USER_PREFERENCES_KEYS.includes(key))
+              .forEach(key => delete preferences[key]);
+
+        return preferences;
       }
     }
 
