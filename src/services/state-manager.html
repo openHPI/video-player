@@ -282,13 +282,26 @@
       setMobileSettingsMenuOpen(menuOpen) {
         this.setState('mobileSettingsMenuOpen', menuOpen);
       }
-      
+
+      /**
+       * Toggles the flag that determines whether the fallback stream is active.
+       * @return {void}
+       */
       toggleFallbackStream() {
         if (this.state.fallbackStreamActive) {
-          this.setState('fallbackStreamActive', false);
+          this.setFallbackStreamActive(false);
         } else {
-          this.setState('fallbackStreamActive', true);
+          this.setFallbackStreamActive(true);
         }
+      }
+
+      /**
+       * Sets the flag that determines whether the fallback stream is active.
+       * @param {Boolean} fallbackStreamActive New value.
+       * @return {void}
+       */
+      setFallbackStreamActive(fallbackStreamActive) {
+        this.setState('fallbackStreamActive', fallbackStreamActive);
       }
     }
 

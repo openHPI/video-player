@@ -215,7 +215,7 @@
 
   <script>
     define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-js', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, Localizer, Hls, constants, locales, configurationSchema) => {
-      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES} = constants;
+      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, HLS_MIME_TYPE} = constants;
 
       class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
         static get is() { return 'video-player'; }
@@ -263,11 +263,15 @@
             },
             _availableQualities: {
               type: Array,
-              computed: '_getAvailableQualities(configuration.streams)',
+              computed: '_getAvailableQualities(configuration.streams, state.fallbackStreamActive, configuration.fallbackStream)',
             },
             _hasFallbackStream: {
               type: Boolean,
-              computed: '_getHasFallbackStream(configuration.streams, configuration.fallbackStream)',
+              computed: '_getHasFallbackStream(configuration.streams, configuration.fallbackStream, _isIOS)',
+            },
+            _isIOS: {
+              type: Boolean,
+              computed: '_getIsIOS()',
             },
             _isConfigurationInitialized: Boolean,
             _isConfigurationObserverLocked: {
@@ -345,6 +349,12 @@
           if(this.configuration.loadFontAwesome) {
             Polymer.importHref(this.importPath + '../node_modules/polymer-font-awesome/dist/font-face.html');
           }
+
+          // In iOS playing multiple videos concurrently is currently not supported.
+          // Therefore, the fallback is used allways in iOS
+          if(this._isIOS && this.hasItems(this.configuration.streams, 2)) {
+            this._stateManager.setFallbackStreamActive(true);
+          }
         }
 
         _getCaptionLanguages(captions) {
@@ -353,21 +363,50 @@
           }
         }
 
-        _getAvailableQualities(streams) {
+        _getAvailableQualities(streams, fallbackStreamActive, fallbackStream) {
           if (streams) {
             let supportedQualities = Object.values(QUALITY_MODES);
-            if(!Hls.isSupported()) {
+            let isHlsSupported = Hls.isSupported() || document.createElement('video').canPlayType(HLS_MIME_TYPE) !== '';
+            if(!isHlsSupported) {
               supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
             }
 
-            return supportedQualities
-                     .filter(quality => streams.every(stream => Object.keys(stream)
-                                                                      .includes(quality)));
+            if(fallbackStreamActive) {
+              return supportedQualities.filter(quality => Object.keys(fallbackStream)
+                                                                .includes(quality));
+            } else {
+              return supportedQualities
+                       .filter(quality => streams.every(stream => Object.keys(stream)
+                                                                        .includes(quality)));
+            }
           }
         }
 
-        _getHasFallbackStream(streams, fallbackStream) {
-          return this.hasItems(streams, 2) && fallbackStream;
+        _getHasFallbackStream(streams, fallbackStream, isIOS) {
+          // In iOS playing multiple videos concurrently is currently not supported.
+          // Therefore, the fallback is used allways in iOS
+          return !isIOS && this.hasItems(streams, 2) && fallbackStream;
+        }
+
+        _getIsIOS() {
+          const iDevices = [
+            'iPad Simulator',
+            'iPhone Simulator',
+            'iPod Simulator',
+            'iPad',
+            'iPhone',
+            'iPod',
+          ];
+
+          if (navigator.platform) {
+            while (iDevices.length) {
+              if (navigator.platform === iDevices.pop()) {
+                return true;
+              }
+            }
+          }
+
+          return false;
         }
 
         reloadConfiguration() {
