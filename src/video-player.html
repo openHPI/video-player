@@ -315,12 +315,6 @@
           // Build state from provided intial state configuration and default values
           this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState, this._userPreferencesManager.getPreferences(), this.configuration.userPreferences);
 
-          // In iOS playing multiple videos concurrently is currently not supported.
-          // Therefore, the fallback is used allways in iOS
-          if(this._isIOS && this.hasItems(this.configuration.streams, 2)) {
-            this._stateManager.setFallbackStreamActive(true);
-          }
-
           // Initialize FullscreenManager
           this._fullscreenManager.onFullscreenChanged((fullscreen) => {
             this._stateManager.setFullscreen(fullscreen);
@@ -355,6 +349,12 @@
           if(this.configuration.loadFontAwesome) {
             Polymer.importHref(this.importPath + '../node_modules/polymer-font-awesome/dist/font-face.html');
           }
+
+          // In iOS playing multiple videos concurrently is currently not supported.
+          // Therefore, the fallback is used allways in iOS
+          if(this._isIOS && this.hasItems(this.configuration.streams, 2)) {
+            this._stateManager.setFallbackStreamActive(true);
+          }
         }
 
         _getCaptionLanguages(captions) {
@@ -366,7 +366,8 @@
         _getAvailableQualities(streams, fallbackStreamActive, fallbackStream) {
           if (streams) {
             let supportedQualities = Object.values(QUALITY_MODES);
-            if(!Hls.isSupported()) {
+            let isHlsSupported = Hls.isSupported() || document.createElement('video').canPlayType('application/x-mpegURL') !== '';
+            if(!isHlsSupported) {
               supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
             }
 
