@@ -16,11 +16,24 @@
       }
     </style>
 
-    <div id="container__stream-switch_control" class="user_controls">
-      <a id="button__stream-switch" class="button" on-click="_handleClick" href="javascript:void(0)">
-        <i class$="fa [[iconClass]]"></i>
-      </a>
-    </div>
+    <template is="dom-if" if="[[!isInMobileMenu]]">
+      <div id="container__stream-switch_control" class="user_controls">
+        <a id="button__stream-switch" class="button" on-click="_handleClick" href="javascript:void(0)">
+          <i class$="fa [[iconClass]]"></i>
+        </a>
+      </div>
+    </template>
+    <template is="dom-if" if="[[isInMobileMenu]]">
+        <select-control
+        state="[[state]]"
+        values='[[_getValues()]]'
+        selected-value="[[_getSelectedValue()]]"
+        on-change="_selectionChanged"
+        icon-classes="fa fa-columns"
+        is-in-mobile-menu="true">
+      </select-control>
+    </template>
+
   </template>
 
   <script>
@@ -33,9 +46,14 @@
           return {
             state: Object,
             iconClass: String,
+            numberOfStreams: Number,
             _stateManager: {
               type: Object,
               inject: 'StateManager',
+            },
+            isInMobileMenu: {
+              type: Boolean,
+              value: false,
             },
           };
         }
@@ -46,11 +64,25 @@
           ];
         }
 
+        _getValues() {
+          return [1, this.numberOfStreams];
+        }
+
+        _getSelectedValue() {
+          return this.state.fallbackStreamActive? 1 : this.numberOfStreams;
+        }
+
         _streamChanged(fallbackStream) {
           if (fallbackStream) {
             this.iconClass = 'fa-columns';
           } else {
             this.iconClass = 'fa-clone';
+          }
+        }
+        
+        _selectionChanged(e) {
+          if (this._getSelectedValue() !== e.target.selectedValue) {
+            this._stateManager.toggleFallbackStream();
           }
         }
 
