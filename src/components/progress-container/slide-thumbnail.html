@@ -50,7 +50,8 @@
   </template>
 
   <script>
-    define('slide-thumbnail', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('slide-thumbnail', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
 
       class SlideThumbnail extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'slide-thumbnail'; }
@@ -59,6 +60,10 @@
           return {
             state: Object,
             slide: Object,
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
             _stateManager: {
               type: Object,
               inject: 'StateManager',
@@ -82,7 +87,7 @@
         }
 
         _handleClick(){
-          this._stateManager.setPosition(this.slide.startPosition);
+          this._analyticsManager.changeState('setPosition', [this.slide.startPosition], {verb: ANALYTICS_TOPICS.VIDEO_SLIDE_SEEK});
         }
       }
 
