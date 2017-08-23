@@ -222,3 +222,6 @@ Properties changed by the user are always automatically saved in the browser's L
 * `volume`
 
 When using `userPreferences` in the configuration, it will override the preferences saved in LocalStorage.
+
+### iOS Support
+Currently dual video playing is not fully supported on iOS, based on hardware rendering capabilities. Till there is an API to determince if some video will play, iOS will only be able to handle single stream. This will be handled by the player automaticly.
