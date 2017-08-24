@@ -128,8 +128,8 @@ const configurationSchema = {
     type: 'boolean',
     default: true,
     description: '[FontAwesome](http://fontawesome.io) is used for the icons of the player. If your site already loads FontAwesome, this can be set to false to save bandwidth.',
-  },  
-  videoPreloads: {
+  },
+  videoPreload: {
     type: 'boolean',
     default: true,
     description: 'Turns on/off preloading of the videos when the page loads.',
