@@ -56,7 +56,7 @@ The player configuration is provided as JSON object:
 * **secondaryBackgroundColor** (string): HEX code of another background color used for example for displaying the buffer. Take care that the `foregroundColor` has a high contrast to both background colors.
 * **theme** (string):`<["dark-orange","dark-yellow","dark-blue","light-green"]>` Predefined color theme (can be adjusted by settings the colors explicitly). (default: `"dark-orange"`)
 * **loadFontAwesome** (boolean): [FontAwesome](http://fontawesome.io) is used for the icons of the player. If your site already loads FontAwesome, this can be set to false to save bandwidth. (default: `true`)
-* **videoPreloads** (boolean): Turns on/off preloading of the videos when the page loads. (default: `true`)
+* **videoPreload** (boolean): Turns on/off preloading of the videos when the page loads. (default: `true`)
 * **chapters** (array): List of timestamps with chapter names.
    * **title** (string): Title of the chapter. (*Required*)
    * **startPosition** (number): Start position of the chapter in seconds. (*Required*)

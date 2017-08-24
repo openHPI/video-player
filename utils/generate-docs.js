@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const configurationSchema = require('../src/configuration-schema').schema;
 
-const README_FILE = path.join(__dirname, '..', 'README.md');
+const README_FILE = path.join(__dirname, '../docs/configuration.md');
 const BEGIN_SECTION_PATTERN = '<!-- BEGIN-SECTION CONFIGURATION -->';
 const END_SECTION_PATTERN = '<!-- END-SECTION CONFIGURATION -->';
 
