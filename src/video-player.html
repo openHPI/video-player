@@ -100,14 +100,6 @@
       }
 
       @media (max-width: 768px) {
-        :host {
-          /*
-          * The min-widths are necessary to avoid that the video containter and
-          * the controlbar have different widths on small screens.
-          */
-          min-width: 360px;
-        }
-
         .hidden-for-mobile {
           display: none;
         }
@@ -118,14 +110,6 @@
             flex-basis: 100% !important;
             height: 100% !important;
           }
-        }
-      }
-      @media (min-width: 769px) {
-        :host {
-          /*
-          * Look above
-          */
-          min-width: 660px;
         }
       }
     </style>
