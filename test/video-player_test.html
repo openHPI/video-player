@@ -99,8 +99,7 @@
           })
         });
 
-        test('testing a complex video player setup with three streams', function() {
-          videoPlayer = fixture('complex-video-player-fixture');
+        test('testing the setup of a complex video player with three streams', function() {
           assert.isNotNull(videoPlayer.configuration, 'there is a configuration');
           // Testing whether all stateManager values are at their set value
           assert.equal(videoPlayer.state.position, 0, 'position value is at default');
@@ -109,6 +108,89 @@
           assert.equal(videoPlayer.state.volume, 0.75, 'volume value is at set value');
           assert.equal(videoPlayer.state.muted, false, 'muted value is at default');
           assert.equal(videoPlayer.state.fullscreen, false, 'full screen value is at default');
+        });
+
+        test('testing to press play on a video', function() {
+          // Click the play button
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause")[0].click();
+          assert.equal(videoPlayer.state.playState, PLAY_STATES.PLAYING, 'pressing play works');
+          assert.isTrue(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause i.fa")[0].classList.contains("fa-pause"), 'pressing play turns the play button into the pause button');
+        });
+
+        test('testing chapter-list-switch', function(done) {
+          assert.isTrue(videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].shadowRoot.querySelectorAll("#container__chapter_list li").length === 2, "Test whether we have two chapters available");
+          assert.isTrue(videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].classList.contains("-hidden"), 'chapter list is hidden by default');
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("chapter-list-switch")[0].shadowRoot.querySelectorAll("#button__chapter_list")[0].click();
+          assert.isFalse(videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].classList.contains("-hidden"), 'chapter list is not hidden anymore after activating it');
+          videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].shadowRoot.querySelectorAll("#container__chapter_list li a")[1].click();
+          assert.equal(videoPlayer.state.position, 15, 'position value is at value of second chapter');
+          done();
+        });
+
+        test('testing fullscreen-control', function(done){
+          done();
+        });
+
+        test('testing captions', function(done) {
+          assert.isTrue(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("caption-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]").length === 4, "Test whether we have three caption languages available, plus one 'off' switch");
+          // Click the caption button
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("caption-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name=de]")[0].click();
+          // We need the flush and the setTimeout so the DOM has the chance to react to the caption control click.
+          // It is possible that 20ms is not enough. In this case, the value needs to be increased
+          flush(function(){
+            setTimeout(function(){
+              assert.isTrue(videoPlayer.shadowRoot.querySelectorAll("captions-display")[0].shadowRoot.querySelectorAll(".caption-cue-text")[0].innerText === 'This is a test caption', 'turning captions on shows captions');
+              done();
+            }, 20);
+          });
+        });
+
+        test('testing interactive transcripts', function(done){
+          done();
+        });
+
+        test('testing mobile settings menu', function(done){
+          done();
+        });
+
+        test('testing mute control', function(done){
+          done();
+        });
+
+        test('testing playlist navigation', function(done){
+          done();
+        });
+
+        test('testing quality control', function(done){
+          done();
+        });
+
+        test('testing sound control', function(done){
+          done();
+        });
+
+        test('testing speed control', function(done){
+          done();
+        });
+
+        test('testing stream switch control', function(done){
+          done();
+        });
+
+        test('testing videotime display', function(done){
+          done();
+        });
+
+        test('testing finished overlay', function(done){
+          done();
+        });
+
+        test('testing next video overlay', function(done){
+          done();
+        });
+
+        test('testing waiting overlay', function(done){
+          done();
         });
 
       });
