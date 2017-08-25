@@ -20,21 +20,27 @@
         configuration='{
         "streams" : [
           {
-            "hd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
+            "hd": "/components/videoplayer/test/test-files/BigBuckBunny30s_hd.mp4",
             "sd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
             "poster": "/components/videoplayer/test/test-files/poster_1.jpg"
           },
           {
-            "hd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
+            "hd": "/components/videoplayer/test/test-files/BigBuckBunny30s_hd.mp4",
             "sd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
             "poster": "/components/videoplayer/test/test-files/poster_2.jpg"
           },
           {
-            "hd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
+            "hd": "/components/videoplayer/test/test-files/BigBuckBunny30s_hd.mp4",
             "sd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
             "poster": "/components/videoplayer/test/test-files/poster_1.jpg"
           }
         ],
+        "fallbackStream" :
+        {
+          "hd" : "/components/videoplayer/test/test-files/BigBuckBunny30s_fallback.mp4",
+          "sd" : "/components/videoplayer/test/test-files/BigBuckBunny30s_fallback.mp4",
+          "poster" : "/components/videoplayer/test/test-files/poster_1.jpg"
+        },
         "captions" : [
           {
             "language" : "de",
@@ -49,6 +55,11 @@
             "url" : "/components/videoplayer/test/test-files/captions/subtitles_fr.vtt"
           }
         ],
+        "playlist" : {
+          "autoPlay": false,
+          "previousVideo" : "https://testing.openhpi.de/courses/videoplayer/items/5xa1AWl3L7AqpLw9VMGBWQ",
+          "nextVideo" : "https://testing.openhpi.de/courses/videoplayer/items/6ZKdGPHCVZPem2u0RlTxtv"
+        },
         "slides" : [
           {
             "thumbnail" : "/components/videoplayer/test/test-files/bbb-splash.png",
@@ -125,11 +136,16 @@
         });
 
         test('testing playlist navigation', function(done){
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playlist-navigation-control[direction=backward]")[0].shadowRoot.querySelectorAll("#button__navigate_to_video")[0].href, 'https://testing.openhpi.de/courses/videoplayer/items/5xa1AWl3L7AqpLw9VMGBWQ', 'previous video button leads to previous video');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playlist-navigation-control[direction=forward]")[0].shadowRoot.querySelectorAll("#button__navigate_to_video")[0].href, 'https://testing.openhpi.de/courses/videoplayer/items/6ZKdGPHCVZPem2u0RlTxtv', 'next video button leads to next video');
           done();
         });
 
         test('testing videotime display', function(done){
-          done();
+          setTimeout(function(){
+            assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("videotime-display")[0].shadowRoot.querySelectorAll("#container__videotime_display")[0].innerText, '00:00 / 00:31', 'video time display is at zero in the beginning and contains the correct length of the video');
+            done();
+          }, 100);
         });
 
         test('testing captions', function(done) {
@@ -147,14 +163,43 @@
         });
 
         test('testing interactive transcripts', function(done){
-          done();
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("interactive-transcript-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]").length, 4, "Test whether we have three interactive transcript languages available, plus one 'off' switch");
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("interactive-transcript-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]").length,
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("caption-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]").length, "Test whether we have as much interactive transcript languages available as caption languages");
+          // Click the caption button for the language German
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("interactive-transcript-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name=de]")[0].click();
+          // We need the flush and the setTimeout so the DOM has the chance to react to the caption control click.
+          // It is possible that 40ms is not enough. In this case, the value needs to be increased.
+          flush(function(){
+            setTimeout(function(){
+              assert.equal(videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll("li.-active .list_item__link")[0].innerText, ' 00:00 - 00:10:', 'the first transcript item shows the correct time frame');
+              assert.equal(videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll("li.-active .list_item__link[href]")[0].innerText, 'This is a test caption', 'the first interactive transcript item displays with the correct text');
+              // Click the second transcript item to jump to its corresponding position
+              videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll("li:nth-of-type(2) .list_item__prefix")[0].click();
+              assert.equal(videoPlayer.state.position, 10, 'clicking on an interactive transcript item jumps to its corresponding position');
+              done();
+            }, 40);
+          });
         });
 
         test('testing speed control', function(done){
+          // This one is weird. I would want to do a CSS selector at the end with
+          // value "#dropdown__select [name=1.5x]", just like above, but apparently
+          // this is "not a valid selector". Instead we just hope those values
+          // never change and expect 1.5 to be the 4th item.
+          // We test for the value '1.5x' beforehand.
+          assert.include(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("speed-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]")[3].innerText, "1.5x", "workaround for small testing hack: '1.5x' should be the fourth item in the list");
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("speed-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]")[3].click();
+          assert.equal(videoPlayer.state.playbackRate, 1.5);
           done();
         });
 
         test('testing quality control', function(done){
+          assert.equal(videoPlayer.state.quality, 'sd', 'Quality is at SD before changing');
+          assert.include(videoPlayer.shadowRoot.querySelectorAll("video-stream")[0].shadowRoot.querySelectorAll("#video")[0].src, '/components/videoplayer/test/test-files/BigBuckBunny30s.mp4', 'before changing the stream we see SD video');
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("quality-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name=HD]")[0].click();
+          assert.equal(videoPlayer.state.quality, 'hd', 'Quality is at HD after changing');
+          assert.include(videoPlayer.shadowRoot.querySelectorAll("video-stream")[0].shadowRoot.querySelectorAll("#video")[0].src, '/components/videoplayer/test/test-files/BigBuckBunny30s_hd.mp4', 'changing the stream really does change to HD video');
           done();
         });
 
@@ -169,15 +214,34 @@
         });
 
         test('testing stream switch control', function(done){
-          done();
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("#streams-container video-stream").length, 3, 'before doing the stream switch, there are three video streams in the stream container');
+          assert.isFalse(videoPlayer.state.fallbackStreamActive, 'before doing the stream switch, fallbackStreamActive is false');
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("stream-switch-control")[0].shadowRoot.querySelectorAll("#button__stream-switch")[0].click();
+          flush(function(){
+            assert.equal(videoPlayer.shadowRoot.querySelectorAll("#streams-container video-stream").length, 1, 'after doing the stream switch, there are is only one video stream in the stream container');
+            assert.include(videoPlayer.shadowRoot.querySelectorAll("#streams-container video-stream")[0].shadowRoot.querySelectorAll("#video")[0].src, '/components/videoplayer/test/test-files/BigBuckBunny30s_fallback.mp4', 'after doing the stream switch, the only shown video is the fallback stream');
+            assert.isTrue(videoPlayer.state.fallbackStreamActive, 'after doing the stream switch, fallbackStreamActive is true');
+            done();
+          });
         });
 
         test('testing mute control', function(done){
+          assert.isFalse(videoPlayer.state.muted, 'in its default state, the video player is not muted');
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("mute-control")[0].shadowRoot.querySelectorAll("#button__mute")[0].click();
+          assert.isTrue(videoPlayer.state.muted, 'after clicking the mute button, the video player is muted');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].style.width, '0%', 'after clicking the mute button, the volume is at 0%');
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("mute-control")[0].shadowRoot.querySelectorAll("#button__mute")[0].click();
+          assert.isFalse(videoPlayer.state.muted, 'when clicking the mute button again, the video player is unmuted');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].style.width, '75%', 'when clicking the mute button again, the volume goes back to 75%');
           done();
         });
 
         test('testing sound control', function(done){
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].style.width, '75%', 'according to our given configuration, the volume is at 75%');
           done();
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].onchange({"target": {"value": 0.5}});
+          assert.equal(videoPlayer.state.volume, 0.5, 'setting volume works!');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].style.width, '50%', 'after our click event, the volume is at 50%');
         });
 
         test('testing fullscreen-control', function(done){
@@ -197,6 +261,26 @@
         });
 
         test('testing waiting overlay', function(done){
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("waiting-overlay")[0].shadowRoot.querySelectorAll("#container__waiting_overlay")[0].style.visibility, 'hidden', "Test whether the waiting overlay is hidden by default");
+          // videoPlayer.state.playState = PLAY_STATES.WAITING;
+          // setTimeout(function(){
+          //   flush(function(){
+          //     assert.isTrue(videoPlayer.shadowRoot.querySelectorAll("waiting-overlay")[0].shadowRoot.querySelectorAll("#container__waiting_overlay")[0].style.visibility === 'visible', "Test whether the waiting overlay is shown when the play state is waiting");
+          //     done();
+          //   });
+          // }, 2000);
+          done();
+        });
+        
+        test('video progress bar works', function(done){
+          done();
+        });
+        
+        test('keyboard shortcuts work', function(done){
+          done();
+        });
+
+        test('poster image is shown before playback starts', function(done){
           done();
         });
 
