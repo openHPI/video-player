@@ -6,7 +6,7 @@
 
     <title>video-player test</title>
 
-
+    <link rel="import" href="../bower_components/polymer/polymer.html">
     <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../bower_components/web-component-tester/browser.js"></script>
 
@@ -20,38 +20,38 @@
         configuration='{
         "streams" : [
           {
-            "hd": "/components/videoplayer/test/BigBuckBunny30s.mp4",
-            "sd": "/components/videoplayer/test/BigBuckBunny30s.mp4",
-            "poster": "/components/videoplayer/demo/poster_1.jpg"
+            "hd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
+            "sd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
+            "poster": "/components/videoplayer/test/test-files/poster_1.jpg"
           },
           {
-            "hd": "/components/videoplayer/test/BigBuckBunny30s.mp4",
-            "sd": "/components/videoplayer/test/BigBuckBunny30s.mp4",
-            "poster": "/components/videoplayer/demo/poster_2.jpg"
+            "hd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
+            "sd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
+            "poster": "/components/videoplayer/test/test-files/poster_2.jpg"
           },
           {
-            "hd": "/components/videoplayer/test/BigBuckBunny30s.mp4",
-            "sd": "/components/videoplayer/test/BigBuckBunny30s.mp4",
-            "poster": "/components/videoplayer/demo/poster_1.jpg"
+            "hd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
+            "sd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
+            "poster": "/components/videoplayer/test/test-files/poster_1.jpg"
           }
         ],
         "captions" : [
           {
             "language" : "de",
-            "url" : "/components/videoplayer/demo/captions/subtitles_de.vtt"
+            "url" : "/components/videoplayer/test/test-files/captions/subtitles_de.vtt"
           },
           {
             "language" : "en",
-            "url" : "/components/videoplayer/demo/captions/subtitles_en.vtt"
+            "url" : "/components/videoplayer/test/test-files/captions/subtitles_en.vtt"
           },
           {
             "language" : "fr",
-            "url" : "/components/videoplayer/demo/captions/subtitles_fr.vtt"
+            "url" : "/components/videoplayer/test/test-files/captions/subtitles_fr.vtt"
           }
         ],
         "slides" : [
           {
-            "thumbnail" : "/components/videoplayer/test/bbb-splash.png",
+            "thumbnail" : "/components/videoplayer/test/test-files/bbb-splash.png",
             "startPosition" : 0
           }
         ],
@@ -75,28 +75,14 @@
       }'></video-player>
       </template>
     </test-fixture>
-
-    <test-fixture id="simple-video-player-fixture">
-      <template>
-        <video-player
-        configuration='{
-        "streams" : [
-          {
-            "hd": "/components/videoplayer/test/BigBuckBunny30s.mp4",
-            "sd": "/components/videoplayer/test/BigBuckBunny30s.mp4",
-            "poster": "/components/videoplayer/demo/poster_1.jpg"
-          }
-        ]
-      }'></video-player>
-      </template>
-    </test-fixture>
-
     <script>
 
-      suite('video-player', function() {
+      define('video-player', ['constants'], (constants) => {
+        const {PLAY_STATES, PLAYBACK_RATES, QUALITY_MODES} = constants;
+
         let videoPlayer;
 
-        setup(function() {
+        setup(function(done) {
           // We want to run tests with an empty local storage to avoid
           // unintended side effects and to start with a clean slate in each
           // test file.
@@ -105,18 +91,12 @@
           } else if (window.localStorage) {
             window.localStorage.clear();
           }
-        });
-
-        test('testing a simple video player setup with one stream', function() {
-          videoPlayer = fixture('simple-video-player-fixture');
-          assert.isNotNull(videoPlayer.configuration, 'there is a configuration');
-          // Testing whether all stateManager values are at their set value
-          assert.equal(videoPlayer.state.position, 0, 'position value is at default');
-          assert.equal(videoPlayer.state.duration, 0, 'duration value is at default');
-          assert.equal(videoPlayer.state.playbackRate, 1.0, 'playback rate value is at default');
-          assert.equal(videoPlayer.state.volume, 1, 'volume value is at default');
-          assert.equal(videoPlayer.state.muted, false, 'muted value is at default');
-          assert.equal(videoPlayer.state.fullscreen, false, 'full screen value is at default');
+          videoPlayer = fixture('complex-video-player-fixture');
+          // Start things off with a flush so that all DOM elements are
+          // ready at the beginning of each test.
+          flush(function(){
+            done();
+          })
         });
 
         test('testing a complex video player setup with three streams', function() {
