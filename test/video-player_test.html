@@ -117,7 +117,7 @@
           });
         });
 
-        test('testing the setup of a complex video player with three streams', function() {
+        test('testing the setup of a complex video player with three streams', function(done) {
           assert.isNotNull(videoPlayer.configuration, 'there is a configuration');
           // Testing whether all stateManager values are at their set value
           assert.equal(videoPlayer.state.position, 0, 'position value is at default');
@@ -126,13 +126,15 @@
           assert.equal(videoPlayer.state.volume, 0.75, 'volume value is at set value');
           assert.equal(videoPlayer.state.muted, false, 'muted value is at default');
           assert.equal(videoPlayer.state.fullscreen, false, 'full screen value is at default');
+          done();
         });
 
-        test('testing to press play on a video', function() {
+        test('testing to press play on a video', function(done) {
           // Click the play button
           videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause")[0].click();
           assert.equal(videoPlayer.state.playState, PLAY_STATES.PLAYING, 'pressing play works');
           assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause i.fa")[0].classList), "fa-pause", 'pressing play turns the play button into the pause button');
+          done();
         });
 
         test('testing playlist navigation', function(done){
@@ -242,9 +244,29 @@
           videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].onchange({"target": {"value": 0.5}});
           assert.equal(videoPlayer.state.volume, 0.5, 'setting volume works!');
           assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].style.width, '50%', 'after our click event, the volume is at 50%');
+          done();
         });
 
         test('testing fullscreen-control', function(done){
+          // Fullscreen cannot be triggered programmatically
+          // (we get the error "Failed to execute 'requestFullscreen'").
+          // Instead, we will fake being an iOS device / incompatible with the 
+          // existing full screen APIs so we can at least test the fake full screen.
+          videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].requestFullscreen = undefined;
+          videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].mozRequestFullScreen = undefined;
+          videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].webkitRequestFullScreen = undefined;
+          videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].msRequestFullscreen = undefined;
+          // Do the same for exit fullscreen
+          document.exitFullscreen = undefined;
+          document.mozCancelFullScreen = undefined;
+          document.webkitCancelFullScreen = undefined;
+          document.msExitFullscreen = undefined;
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("full-screen-control")[0].shadowRoot.querySelectorAll("#button__fullscreen")[0].click();
+          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].classList), 'fake-fullscreen', 'clicking the full screen button sets the fake-fullscreen class');
+          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("full-screen-control")[0].shadowRoot.querySelectorAll("#button__fullscreen > i")[0].classList), 'fa-compress', 'after clicking the full screen button, its icon changes to the compress icon');
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("full-screen-control")[0].shadowRoot.querySelectorAll("#button__fullscreen")[0].click();
+          assert.notInclude(Array.from(videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].classList), 'fake-fullscreen', 'clicking the full screen button again unsets the fake-fullscreen class');
+          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("full-screen-control")[0].shadowRoot.querySelectorAll("#button__fullscreen > i")[0].classList), 'fa-expand', 'after clicking the full screen button again, its icon changes back to the expand icon');
           done();
         });
 
