@@ -121,7 +121,7 @@
         </a>
         <div id="dropdown__select" class$="dropdown-content [[ifNotThen(_isDropDownOpen, '-hidden')]]">
           <template is="dom-repeat" items="[[items]]">
-            <a on-click="_handleDropDownElementClick" class$="[[ifEqualsThen(item.value, selectedValue, 'selected')]]" href="javascript:void(0)">
+            <a on-click="_handleDropDownElementClick" name="[[item.text]]" class$="[[ifEqualsThen(item.value, selectedValue, 'selected')]]" href="javascript:void(0)">
               [[item.text]]
             </a>
           </template>
