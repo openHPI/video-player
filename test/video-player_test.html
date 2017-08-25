@@ -76,7 +76,14 @@
       </template>
     </test-fixture>
     <script>
-
+      // We use the ES6 method `Array.from` to convert classlists to arrays
+      // so we can use chaijs' include functionality.
+      // Behold: This file is full of `setTimeout`s with awful magic numbers
+      // for the corresponding waiting periods. We were unable to figure out
+      // a better way of waiting for the interface to adjust since the recommended
+      // `flush` method from the Polymer framework only works some of the time.
+      // These numbers can rear their ugly heads at us during testing with
+      // slower hardware than the one the tests were written on.
       define('video-player', ['constants'], (constants) => {
         const {PLAY_STATES, PLAYBACK_RATES, QUALITY_MODES} = constants;
 
@@ -96,7 +103,7 @@
           // ready at the beginning of each test.
           flush(function(){
             done();
-          })
+          });
         });
 
         test('testing the setup of a complex video player with three streams', function() {
@@ -114,7 +121,7 @@
           // Click the play button
           videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause")[0].click();
           assert.equal(videoPlayer.state.playState, PLAY_STATES.PLAYING, 'pressing play works');
-          assert.isTrue(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause i.fa")[0].classList.contains("fa-pause"), 'pressing play turns the play button into the pause button');
+          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause i.fa")[0].classList), "fa-pause", 'pressing play turns the play button into the pause button');
         });
 
         test('testing playlist navigation', function(done){
@@ -126,14 +133,14 @@
         });
 
         test('testing captions', function(done) {
-          assert.isTrue(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("caption-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]").length === 4, "Test whether we have three caption languages available, plus one 'off' switch");
-          // Click the caption button
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("caption-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]").length, 4, "Test whether we have three caption languages available, plus one 'off' switch");
+          // Click the caption button for the language German
           videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("caption-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name=de]")[0].click();
           // We need the flush and the setTimeout so the DOM has the chance to react to the caption control click.
           // It is possible that 20ms is not enough. In this case, the value needs to be increased
           flush(function(){
             setTimeout(function(){
-              assert.isTrue(videoPlayer.shadowRoot.querySelectorAll("captions-display")[0].shadowRoot.querySelectorAll(".caption-cue-text")[0].innerText === 'This is a test caption', 'turning captions on shows captions');
+              assert.equal(videoPlayer.shadowRoot.querySelectorAll("captions-display")[0].shadowRoot.querySelectorAll(".caption-cue-text")[0].innerText, 'This is a test caption', 'turning captions on shows captions');
               done();
             }, 20);
           });
@@ -152,10 +159,10 @@
         });
 
         test('testing chapter-list-switch', function(done) {
-          assert.isTrue(videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].shadowRoot.querySelectorAll("#container__chapter_list li").length === 2, "Test whether we have two chapters available");
-          assert.isTrue(videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].classList.contains("-hidden"), 'chapter list is hidden by default');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].shadowRoot.querySelectorAll("#container__chapter_list li").length, 2, "Test whether we have two chapters available");
+          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].classList), "-hidden", "chapter list is hidden by default");
           videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("chapter-list-switch")[0].shadowRoot.querySelectorAll("#button__chapter_list")[0].click();
-          assert.isFalse(videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].classList.contains("-hidden"), 'chapter list is not hidden anymore after activating it');
+          assert.notInclude(Array.from(videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].classList), "-hidden", 'chapter list is not hidden anymore after activating it');
           videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].shadowRoot.querySelectorAll("#container__chapter_list li a")[1].click();
           assert.equal(videoPlayer.state.position, 15, 'position value is at value of second chapter');
           done();
