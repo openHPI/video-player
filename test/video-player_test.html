@@ -147,7 +147,7 @@
           setTimeout(function(){
             assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("videotime-display")[0].shadowRoot.querySelectorAll("#container__videotime_display")[0].innerText, '00:00 / 00:31', 'video time display is at zero in the beginning and contains the correct length of the video');
             done();
-          }, 100);
+          }, 200);
         });
 
         test('testing captions', function(done) {
@@ -155,12 +155,12 @@
           // Click the caption button for the language German
           videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("caption-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name=de]")[0].click();
           // We need the flush and the setTimeout so the DOM has the chance to react to the caption control click.
-          // It is possible that 20ms is not enough. In this case, the value needs to be increased
+          // It is possible that 50ms is not enough. In this case, the value needs to be increased
           flush(function(){
             setTimeout(function(){
               assert.equal(videoPlayer.shadowRoot.querySelectorAll("captions-display")[0].shadowRoot.querySelectorAll(".caption-cue-text")[0].innerText, 'This is a test caption', 'turning captions on shows captions');
               done();
-            }, 20);
+            }, 50);
           });
         });
 
@@ -171,7 +171,7 @@
           // Click the caption button for the language German
           videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("interactive-transcript-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name=de]")[0].click();
           // We need the flush and the setTimeout so the DOM has the chance to react to the caption control click.
-          // It is possible that 40ms is not enough. In this case, the value needs to be increased.
+          // It is possible that 80ms is not enough. In this case, the value needs to be increased.
           flush(function(){
             setTimeout(function(){
               assert.equal(videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll("li.-active .list_item__link")[0].innerText, ' 00:00 - 00:10:', 'the first transcript item shows the correct time frame');
@@ -180,7 +180,7 @@
               videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll("li:nth-of-type(2) .list_item__prefix")[0].click();
               assert.equal(videoPlayer.state.position, 10, 'clicking on an interactive transcript item jumps to its corresponding position');
               done();
-            }, 40);
+            }, 80);
           });
         });
 
