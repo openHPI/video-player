@@ -7,6 +7,7 @@
     <title>video-player test</title>
 
     <link rel="import" href="../bower_components/polymer/polymer.html">
+    <link rel="import" href="../bower_components/iron-test-helpers/iron-test-helpers.html">
     <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../bower_components/web-component-tester/browser.js"></script>
 
@@ -286,22 +287,61 @@
           // videoPlayer.state.playState = PLAY_STATES.WAITING;
           // setTimeout(function(){
           //   flush(function(){
-          //     assert.isTrue(videoPlayer.shadowRoot.querySelectorAll("waiting-overlay")[0].shadowRoot.querySelectorAll("#container__waiting_overlay")[0].style.visibility === 'visible', "Test whether the waiting overlay is shown when the play state is waiting");
+          //     assert.equal(videoPlayer.shadowRoot.querySelectorAll("waiting-overlay")[0].shadowRoot.querySelectorAll("#container__waiting_overlay")[0].style.visibility, 'visible', "Test whether the waiting overlay is shown when the play state is waiting");
           //     done();
           //   });
-          // }, 2000);
+          // }, 200);
           done();
         });
         
-        test('video progress bar works', function(done){
+        test('testing video progress bar', function(done){
+          // This does not work, even though we use the progress bar in the
+          // same way as in the sound-control test.
+          // videoPlayer.shadowRoot.querySelectorAll("video-progress")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#container__progress_bar")[0].click({"target": {"value": 0.5}});
+          // flush(function(){
+          //   setTimeout(function(){
+          //     assert.equal(videoPlayer.state.position, 15, 'position value is at newly set value');
+          //     done();
+          //   }, 100);
+          // });
           done();
         });
         
-        test('keyboard shortcuts work', function(done){
-          done();
+        test('testing keyboard shortcuts', function(done){
+          // Despite multiple efforts, I could not figure out how to fire
+          // keyboard events in a manner that web-component-tester accepts.
+          // let doc = videoPlayer.ownerDocument;
+          // let nodeWindow = doc.defaultView || doc.parentWindow;
+          // nodeWindow.dispatchEvent(new KeyboardEvent('keydown',{'key':' '}));
+          // // MockInteractions.pressSpace(nodeWindow);
+          // flush(function(){
+          //   setTimeout(function(){
+          // assert.equal(videoPlayer.state.playState, 'PLAYING', 'pressing space bar works for play!');
+          // MockInteractions.pressSpace(nodeWindow);          
+          // nodeWindow.dispatchEvent(new KeyboardEvent('keydown',{'key':' '}));
+          // assert.equal(videoPlayer.state.playState, 'PAUSED', 'pressing space bar works for pause!');
+          // // Apparently the state manager gets confused by the videos
+          // // being reloaded so very often so the duration is not
+          // // correctly set. We manually correct this here.
+          // // videoPlayer._stateManager.setDuration(31.594667);
+          //   MockInteractions.keyDownOn(nodeWindow, '', '', 'ArrowRight');
+          //     // nodeWindow.dispatchEvent(new KeyboardEvent('keydown',{'key':'ArrowRight'}));
+          //     assert.equal(videoPlayer.state.position, 15, 'pressing right works!');
+          //     // nodeWindow.dispatchEvent(new KeyboardEvent('keydown',{'key':'ArrowLeft'}));
+          //     MockInteractions.keyDownOn(nodeWindow, '', '', 'ArrowLeft');
+          //     assert.equal(videoPlayer.state.position, 0, 'pressing left works!');
+              done();
+            // }, 200);
+          // })
         });
 
-        test('poster image is shown before playback starts', function(done){
+        test('testing poster image', function(done){
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("video-stream")[0].shadowRoot.querySelectorAll("#container__poster_overlay")[0].style.display, '', "Test whether the poster is shown by default");
+          // Click the play button
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause")[0].click();
+          flush( function() {
+            assert.equal(videoPlayer.shadowRoot.querySelectorAll("video-stream")[0].shadowRoot.querySelectorAll("#container__poster_overlay")[0].style.display, 'none', "Test whether the poster is hidden when the video starts playing");
+          });
           done();
         });
 
