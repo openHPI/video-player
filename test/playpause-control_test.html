@@ -11,7 +11,6 @@
     
     <link rel="import" href="../bower_components/imd/imd.html">
     <link rel="import" href="../src/services/state-manager.html"> 
-    <link rel="import" href="../src/constants.html">
     <link rel="import" href="../src/components/control-bar/playpause-control.html">
   </head>
   <body>
@@ -23,16 +22,15 @@
     </test-fixture>
 
     <script>
-      define('playpause-control-test', ['constants'], (constants) => {
-        const {PLAY_STATES} = constants;
+      suite('playpause-control-test', function (){
 
         let playpauseControl;
         let mockStateManager = {
           togglePlayPause: function() {
-            if (state.playState === PLAY_STATES.PLAYING) {
-              state.playState = PLAY_STATES.PAUSED;
+            if (state.playState === 'PLAYING') {
+              state.playState = 'PAUSED';
             } else {
-              state.playState = PLAY_STATES.PLAYING;
+              state.playState = 'PLAYING';
             }
           }
         };

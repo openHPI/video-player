@@ -95,8 +95,7 @@
       // `flush` method from the Polymer framework only works some of the time.
       // These numbers can rear their ugly heads at us during testing with
       // slower hardware than the one the tests were written on.
-      define('video-player', ['constants'], (constants) => {
-        const {PLAY_STATES, PLAYBACK_RATES, QUALITY_MODES} = constants;
+      suite('video-player', function(){
 
         let videoPlayer;
 
@@ -132,7 +131,7 @@
         test('testing to press play on a video', function(done) {
           // Click the play button
           videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause")[0].click();
-          assert.equal(videoPlayer.state.playState, PLAY_STATES.PLAYING, 'pressing play works');
+          assert.equal(videoPlayer.state.playState, 'PLAYING', 'pressing play works');
           assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause i.fa")[0].classList), "fa-pause", 'pressing play turns the play button into the pause button');
           done();
         });
