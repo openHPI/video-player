@@ -147,7 +147,7 @@
           setTimeout(function(){
             assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("videotime-display")[0].shadowRoot.querySelectorAll("#container__videotime_display")[0].innerText, '00:00 / 00:31', 'video time display is at zero in the beginning and contains the correct length of the video');
             done();
-          }, 200);
+          }, 400);
         });
 
         test('testing captions', function(done) {
