@@ -61,6 +61,10 @@
             beforeStates.old_current_subtitle_identifier = this._getCueIdentifier(this._getActiveCue());
             beforeStates.current_transcript_language = this.stateManager.state.captionLanguage;
             break;
+          case ANALYTICS_TOPICS.VIDEO_CHAPTER_SEEK:
+            beforeStates.old_current_time = this.stateManager.state.position;
+            beforeStates.old_current_chapter = this._getActiveChapter();
+            break;
         }
 
         this.stateManager[changeFunction](...changeParameters);
@@ -89,6 +93,10 @@
             break;
           case ANALYTICS_TOPICS.VIDEO_CHAPTER:
             afterStates.current_chapter_status = this.stateManager.state.isChapterListShown;
+            break;
+          case ANALYTICS_TOPICS.VIDEO_CHAPTER_SEEK:
+            afterStates.new_current_time = this.stateManager.state.position;
+            afterStates.new_current_chapter = this._getActiveChapter();
             break;
         }
 
