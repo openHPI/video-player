@@ -212,7 +212,7 @@
 
   <script>
     define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'analytics-manager', 'hls-js', 'constants', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, AnalyticsManager, Hls, constants, configurationSchema) => {
-      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES} = constants;
+      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, ANALYTICS_TOPICS} = constants;
 
       class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
         static get is() { return 'video-player'; }
@@ -283,6 +283,7 @@
             '_playStateChanged(state.playState)',
             '_fullscreenChanged(state.fullscreen)',
             '_userPreferencesStateChanged(state.*)',
+            '_positionChanged(state.position)',
           ];
         }
 
@@ -408,6 +409,12 @@
             });
 
             window.dispatchEvent(event);
+          }
+        }
+
+        _positionChanged(position) {
+          if (this._analyticsManager) {
+            this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_TIME_CHANGE}, {});
           }
         }
 
