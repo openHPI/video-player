@@ -87,6 +87,9 @@
             afterStates.new_current_time = this.stateManager.state.position;
             afterStates.new_current_subtitle_identifier = this._getCueIdentifier(this._getActiveCue());
             break;
+          case ANALYTICS_TOPICS.VIDEO_CHAPTER:
+            afterStates.current_chapter_status = this.stateManager.state.isChapterListShown;
+            break;
         }
 
         this._fireEvent(options.verb, baseEventData, beforeStates, afterStates);
