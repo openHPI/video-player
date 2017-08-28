@@ -44,6 +44,9 @@ See [configuration.md](docs/configuration.md)
 ## Features
 See [features.md](docs/features.md)
 
+## Extending the Framework
+See [extending.md](docs/extending.md)
+
 ## Tests 
 See [tests.md](docs/tests.md)
 
