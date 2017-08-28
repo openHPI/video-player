@@ -34,6 +34,11 @@
             }
           }
         };
+        let mockAnalyticsManager = {
+          changeState: function(changeFunction, changeParameters, options) {
+            mockStateManager.togglePlayPause();
+          }
+        };
 
         state = {
           playState: 'PAUSED'
@@ -51,6 +56,7 @@
           };
           playpauseControl = fixture('PlayPauseControlTestFixture');
           playpauseControl._stateManager = mockStateManager;
+          playpauseControl._analyticsManager = mockAnalyticsManager;
         });
 
         test('Test whether CSS class gets adjusted accordingly', function() {

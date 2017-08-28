@@ -67,7 +67,8 @@
         }
 
         _handleClick() {
-          this._analyticsManager.changeState('togglePlayPause', [], {verb: ANALYTICS_TOPICS.PLAY_PAUSE});
+          if (this._analyticsManager)
+            this._analyticsManager.changeState('togglePlayPause', [], {verb: ANALYTICS_TOPICS.PLAY_PAUSE});
         }
       }
 

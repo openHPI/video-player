@@ -195,10 +195,10 @@
           // This one is weird. We would want to do a CSS selector at the end with
           // value "#dropdown__select [name=1.5x]", just like above, but apparently
           // this is "not a valid selector". Instead we just hope those values
-          // never change and expect 1.5 to be the 4th item.
+          // never change and expect 1.5 to be the 3rd item.
           // We test for the value '1.5x' beforehand.
-          assert.include(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("speed-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]")[3].innerText, "1.5x", "workaround for small testing hack: '1.5x' should be the fourth item in the list");
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("speed-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]")[3].click();
+          assert.include(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("speed-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]")[2].innerText, "1.5x", "workaround for small testing hack: '1.5x' should be the third item in the list");
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("speed-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]")[2].click();
           assert.equal(videoPlayer.state.playbackRate, 1.5);
           done();
         });
