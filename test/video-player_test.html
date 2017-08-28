@@ -161,13 +161,15 @@
           assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("caption-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]").length, 4, "Test whether we have three caption languages available, plus one 'off' switch");
           // Click the caption button for the language German
           videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("caption-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name=de]")[0].click();
+          // Press play
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause")[0].click();
           // We need the flush and the setTimeout so the DOM has the chance to react to the caption control click.
-          // It is possible that 50ms is not enough. In this case, the value needs to be increased
+          // It is possible that 300ms is not enough. In this case, the value needs to be increased
           flush(function(){
             setTimeout(function(){
               assert.equal(videoPlayer.shadowRoot.querySelectorAll("captions-display")[0].shadowRoot.querySelectorAll(".caption-cue-text")[0].innerText, 'This is a test caption', 'turning captions on shows captions');
               done();
-            }, 50);
+            }, 300);
           });
         });
 
@@ -181,8 +183,8 @@
           // It is possible that 80ms is not enough. In this case, the value needs to be increased.
           flush(function(){
             setTimeout(function(){
-              assert.equal(videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll("li.-active .list_item__link")[0].innerText, ' 00:00 - 00:10:', 'the first transcript item shows the correct time frame');
-              assert.equal(videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll("li.-active .list_item__link[href]")[0].innerText, 'This is a test caption', 'the first interactive transcript item displays with the correct text');
+              assert.equal(videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll(".list_item__link")[0].innerText, '00:00 - 00:10:', 'the first transcript item shows the correct time frame');
+              assert.equal(videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll(".list_item__link")[1].innerText, 'This is a test caption', 'the first interactive transcript item displays with the correct text');
               // Click the second transcript item to jump to its corresponding position
               videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll("li:nth-of-type(2) .list_item__prefix")[0].click();
               assert.equal(videoPlayer.state.position, 10, 'clicking on an interactive transcript item jumps to its corresponding position');
