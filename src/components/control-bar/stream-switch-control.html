@@ -24,7 +24,8 @@
   </template>
 
   <script>
-    define('stream-switch-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('stream-switch-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
 
       class streamSwitchControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'stream-switch-control'; }
@@ -36,6 +37,10 @@
             _stateManager: {
               type: Object,
               inject: 'StateManager',
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
             },
           };
         }
@@ -55,7 +60,7 @@
         }
 
         _handleClick() {
-          this._stateManager.toggleFallbackStream();
+          this._analyticsManager.changeState('toggleFallbackStream', [], {verb: ANALYTICS_TOPICS.VIDEO_DUAL_STREAM_CHANGE});
         }
       }
 

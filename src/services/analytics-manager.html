@@ -98,6 +98,8 @@
             afterStates.new_current_time = this.stateManager.state.position;
             afterStates.new_current_chapter = this._getActiveChapter();
             break;
+          case ANALYTICS_TOPICS.VIDEO_DUAL_STREAM_CHANGE:
+            afterStates.new_current_dual_stream_status = this._getDualStreamStatus();
         }
 
         this._fireEvent(options.verb, baseEventData, beforeStates, afterStates);
@@ -218,7 +220,7 @@
 
       /**
        * Returns the active Cue.
-       * @returns {Object} Teh active cue.
+       * @returns {Object} The active cue.
        */
       _getActiveCue() {
         if(this.stateManager.state.activeCaptions) {
@@ -226,6 +228,14 @@
                                 .reverse()
                                 .find(cue => cue.startTime <= this.stateManager.state.position);
         }
+      }
+
+      /**
+       * Returns the current dual stream status.
+       * @returns {String} Current dual stream status (dual_stream|^back_stream).
+       */
+      _getDualStreamStatus() {
+        return (this.stateManager.state.fallbackStreamActive) ? 'fallback_stream' : 'dual_stream';
       }
     }
 
