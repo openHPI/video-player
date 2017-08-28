@@ -208,7 +208,7 @@
        * @returns {Object} Identifier text if available, Index of cue otherwise
        */
       _getCueIdentifier(cue) {
-        if (cue.id && cue.id !== '')
+        if (cue && cue.id !== '')
           return cue.id;
         else
           return this.stateManager.state.activeCaptions.findIndex(cueCandidate => Object.is(cue, cueCandidate));
