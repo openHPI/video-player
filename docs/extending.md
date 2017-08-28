@@ -10,11 +10,11 @@ Therefore, also check to the [Polymer docs](https://www.polymer-project.org/2.0/
 ### Structure & Data Flow
 The general structure of a component is always the same. There is a [template](component-template.html) for new components, which can be used as foundation.
 
-The most components need to know the state of the video player. It needs to be passed into the component as attribute and can then be accessed like `this.state.playState` inside the component.
-However, changes to the state needs to be performed using the [StateManager](../src/services/state-manager.html). It is [injected](#dependency-injection) into the component can can be used like `this._stateManager.play()`.
+Most components need to know the state of the video player. It needs to be passed into the component as an attribute and can then be accessed via `this.state.playState`.
+However, changes to the state need to be performed using the [StateManager](../src/services/state-manager.html). It is [injected](#dependency-injection) into the component and can be used like `this._stateManager.play()`.
 
-If your component needs to react to changes of the state, you need to register an property observer.
-This is done by creating the static read-only `observers` property (or adapt it) as follows:
+If your component needs to react to changes of the state, you need to register a property observer.
+This is done by creating the static read-only `observers` property (or adapting it) as follows:
 ```js
 static get observers() {
   return [
@@ -26,8 +26,8 @@ You can also add observers for multiple properties and private properties of the
 For more detailed information about observers refer to the [Polymer docs](https://www.polymer-project.org/2.0/docs/devguide/observers).
 
 When you finished your component, you need to integrate it into the existing components. 
-Therefore, you need to edit the component, in which your new component should be integrated. 
-You need add an HTML import for your new component and use the tag of it in the template as follows:
+To do so, you need to edit the component, in which your new component should be integrated. 
+You need to add an HTML import for your new component and use the tag of it in the template as follows:
 ```html
 ...
 <link rel="import" href="new-component.html">
@@ -58,7 +58,7 @@ Last but not least you need to pass the configuration option to your component. 
 ```
 
 ### Dependency Injection
-For interaction of multiple components services are used. The video player uses an IoC kernel for dependency injection of services. 
+For the interaction between multiple components we use services. The video player uses an IoC kernel for dependency injection of services. 
 You can retrieve the instance of a specific service, i.e. the `StateManager`, by defining a private property the following way:
 ```js
 static get properties() {
