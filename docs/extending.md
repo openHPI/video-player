@@ -42,7 +42,7 @@ You need add an HTML import for your new component and use the tag of it in the 
 If you defined additional public properties, you might add them to the tag.
 
 ### Configuration Parameters
-A video-player instance is configured by passing a configuration as JSON object as attribute (see [configuration.md](docs/configuration.md)).
+A video-player instance is configured by passing a configuration as JSON object as attribute (see [configuration.md](configuration.md)).
 You can add options to the configuration for your new component. To do so, you need to add the new option and its metadata to the [configuration-schema.js](../src/configuration-schema.js) file. 
 Since the file is also used for generation of the configuration docs, execute the command `npm run generate-docs` to update the docs.
 
