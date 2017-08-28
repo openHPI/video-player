@@ -8,10 +8,10 @@ The framework uses [Polymer 2](https://www.polymer-project.org) for creating reu
 Therefore, also check to the [Polymer docs](https://www.polymer-project.org/2.0/docs/devguide/feature-overview) before writing a new component. 
 
 ### Structure & Data Flow
-The general structure of a component is always the same. There is a [template](docs/component-template.html) for new components, which can be used as foundation.
+The general structure of a component is always the same. There is a [template](component-template.html) for new components, which can be used as foundation.
 
 The most components need to know the state of the video player. It needs to be passed into the component as attribute and can then be accessed like `this.state.playState` inside the component.
-However, changes to the state needs to be performed using the [StateManager](src/services/state-manager.html). It is [injected](#dependency-injection) into the component can can be used like `this._stateManager.play()`.
+However, changes to the state needs to be performed using the [StateManager](../src/services/state-manager.html). It is [injected](#dependency-injection) into the component can can be used like `this._stateManager.play()`.
 
 If your component needs to react to changes of the state, you need to register an property observer.
 This is done by creating the static read-only `observers` property (or adapt it) as follows:
@@ -43,12 +43,12 @@ If you defined additional public properties, you might add them to the tag.
 
 ### Configuration Parameters
 A video-player instance is configured by passing a configuration as JSON object as attribute (see [configuration.md](docs/configuration.md)).
-You can add options to the configuration for your new component. To do so, you need to add the new option and its metadata to the [configuration-schema.js](src/configuration-schema.js) file. 
+You can add options to the configuration for your new component. To do so, you need to add the new option and its metadata to the [configuration-schema.js](../src/configuration-schema.js) file. 
 Since the file is also used for generation of the configuration docs, execute the command `npm run generate-docs` to update the docs.
 
-If you want to provide a default value for the option, it needs to be added to the `DEFAULT_CONFIGURATION` in [constants.html](src/constants.html).
+If you want to provide a default value for the option, it needs to be added to the `DEFAULT_CONFIGURATION` in [constants.html](../src/constants.html).
 
-Last but not least you need to pass the configuration option to your component. The entire configuration object is available in the [video-player.html](src/video-player.html) component. 
+Last but not least you need to pass the configuration option to your component. The entire configuration object is available in the [video-player.html](../src/video-player.html) component. 
 
 `src/video-player.html`
 ```
@@ -108,14 +108,14 @@ After that, you can use the `localize` function in your component to localize st
 <p>[[localize('message-key')]]</p>
 ```
 
-The locale files are located in [src/locales](src/locales) and can be extended by new messages. 
+The locale files are located in [src/locales](../src/locales) and can be extended by new messages. 
 
 ## Creating a new Service
 In some cases it might be neccessary to create a new service for the interaction of multiple components. 
 Services are ES6 classes defined as [IMD](https://github.com/PolymerLabs/IMD) modules. 
-There is also a [template](docs/service-template.html) for new services.
+There is also a [template](service-template.html) for new services.
 
-Since the framework uses dependency injection for services, you need to register your service in the [video-player.html](src/video-player.html) component in the following way:
+Since the framework uses dependency injection for services, you need to register your service in the [video-player.html](../src/video-player.html) component in the following way:
 ```html
 <!-- Import service module -->
 <link rel="import" href="services/new-service.html">
