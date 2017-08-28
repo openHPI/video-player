@@ -56,10 +56,13 @@
         }
 
         _getItems() {
-          return PLAYBACK_RATES.map(playbackRate => ({
-            text: this.toFixedOrEmpty(playbackRate, 1) + 'x',
-            value: playbackRate,
-          }));
+          return PLAYBACK_RATES
+            .sort()
+            .reverse()
+            .map(playbackRate => ({
+              text: this.toFixedOrEmpty(playbackRate, 1) + 'x',
+              value: playbackRate,
+            }));
         }
 
         _selectionChanged(e) {
