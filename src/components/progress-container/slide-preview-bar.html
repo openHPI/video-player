@@ -52,14 +52,14 @@
         static get observers() {
           return [
             '_checkSlideActivation(state.position)',
-            '_handleSlideChange(activeSlide)'
+            '_handleSlideChange(activeSlide)',
           ];
         }
 
-        _checkSlideActivation(position) {
+        _checkSlideActivation() {
           if (this._analyticsManager) {
             let currentActiveSlide = this._analyticsManager._getActiveSlide();
-            if (this.activeSlide != currentActiveSlide) {
+            if (this.activeSlide !== currentActiveSlide) {
               this.activeSlide = currentActiveSlide;
             }
           }
@@ -67,7 +67,7 @@
 
         _handleSlideChange(slide) {
           if (this._analyticsManager) {
-            this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SLIDE_CHANGE}, {new_current_slide: slide})
+            this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SLIDE_CHANGE}, {new_current_slide: slide});
           }
         }
       }
