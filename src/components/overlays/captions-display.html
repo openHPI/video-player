@@ -86,8 +86,8 @@
         _cueChanged(activeCue) {
           let identifier = this._analyticsManager._getCueIdentifier(activeCue);
           this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SUBTITLE_CHANGE}, {
-            current_subtitle_identifier: identifier,
-            current_subtitle_language: this.state.captionLanguage,
+            currentSubtitleIdentifier: identifier,
+            currentSubtitleLanguage: this.state.captionLanguage,
           });
         }
       }

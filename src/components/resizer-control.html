@@ -292,9 +292,9 @@
           let sizeRatio = this._videos[0].offsetWidth / this._videos[1].offsetWidth;
           let resizerControls = Array.from(this.parentElement.querySelectorAll('resizer-control'));
           return {
-            new_current_ratio: sizeRatio,
-            resizer_index: resizerControls.indexOf(this),
-            resizer_count: resizerControls.length,
+            newCurrentRatio: sizeRatio,
+            resizerIndex: resizerControls.indexOf(this),
+            resizerCount: resizerControls.length,
           };
         }
       }

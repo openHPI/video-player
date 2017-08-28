@@ -455,7 +455,7 @@
           }
         }
 
-        _positionChanged(position) {
+        _positionChanged() {
           if (this._analyticsManager) {
             this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_TIME_CHANGE}, {});
           }

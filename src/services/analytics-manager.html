@@ -43,29 +43,29 @@
         let beforeStates = {};
         switch (options.verb) {
           case ANALYTICS_TOPICS.VIDEO_SEEK:
-            beforeStates.old_current_time = this.stateManager.state.position;
+            beforeStates.oldCurrentTime = this.stateManager.state.position;
             break;
           case ANALYTICS_TOPICS.PLAY_PAUSE:
             beforeStates.verb = (this.stateManager.state.playState === PLAY_STATES.PLAYING) ? ANALYTICS_TOPICS.VIDEO_PAUSE : ANALYTICS_TOPICS.VIDEO_PLAY;
             break;
           case ANALYTICS_TOPICS.VIDEO_CHANGE_SPEED:
-            beforeStates.old_current_speed = this.stateManager.state.playbackRate;
+            beforeStates.oldCurrentSpeed = this.stateManager.state.playbackRate;
             break;
           case ANALYTICS_TOPICS.VIDEO_CHANGE_QUALITY:
-            beforeStates.old_current_quality = this.stateManager.state.quality;
+            beforeStates.oldCurrentQuality = this.stateManager.state.quality;
             break;
           case ANALYTICS_TOPICS.VIDEO_SLIDE_SEEK:
-            beforeStates.old_current_time = this.stateManager.state.position;
-            beforeStates.old_current_slide = this._getActiveSlide();
+            beforeStates.oldCurrentTime = this.stateManager.state.position;
+            beforeStates.oldCurrentSlide = this._getActiveSlide();
             break;
           case ANALYTICS_TOPICS.VIDEO_TRANSCRIPT_SEEK:
-            beforeStates.old_current_time = this.stateManager.state.position;
-            beforeStates.old_current_subtitle_identifier = this._getCueIdentifier(this._getActiveCue());
-            beforeStates.current_transcript_language = this.stateManager.state.captionLanguage;
+            beforeStates.oldCurrentTime = this.stateManager.state.position;
+            beforeStates.oldCurrentSubtitleIdentifier = this._getCueIdentifier(this._getActiveCue());
+            beforeStates.currentTranscriptLanguage = this.stateManager.state.captionLanguage;
             break;
           case ANALYTICS_TOPICS.VIDEO_CHAPTER_SEEK:
-            beforeStates.old_current_time = this.stateManager.state.position;
-            beforeStates.old_current_chapter = this._getActiveChapter();
+            beforeStates.oldCurrentTime = this.stateManager.state.position;
+            beforeStates.oldCurrentChapter = this._getActiveChapter();
             break;
         }
 
@@ -74,34 +74,34 @@
         let afterStates = {};
         switch (options.verb) {
           case ANALYTICS_TOPICS.VIDEO_SEEK:
-            afterStates.new_current_time = this.stateManager.state.position;
+            afterStates.newCurrentTime = this.stateManager.state.position;
             break;
           case ANALYTICS_TOPICS.VIDEO_FULLSCREEN:
-            afterStates.new_current_fullscreen = this._getFullscreenMode();
+            afterStates.newCurrentFullscreen = this._getFullscreenMode();
             break;
           case ANALYTICS_TOPICS.VIDEO_CHANGE_SPEED:
-            afterStates.new_current_speed = this.stateManager.state.playbackRate;
+            afterStates.newCurrentSpeed = this.stateManager.state.playbackRate;
             break;
           case ANALYTICS_TOPICS.VIDEO_CHANGE_QUALITY:
-            afterStates.new_current_quality = this.stateManager.state.quality;
+            afterStates.newCurrentQuality = this.stateManager.state.quality;
             break;
           case ANALYTICS_TOPICS.VIDEO_SLIDE_SEEK:
-            afterStates.new_current_time = this.stateManager.state.position;
-            afterStates.new_current_slide = this._getActiveSlide();
+            afterStates.newCurrentTime = this.stateManager.state.position;
+            afterStates.newCurrentSlide = this._getActiveSlide();
             break;
           case ANALYTICS_TOPICS.VIDEO_TRANSCRIPT_SEEK:
-            afterStates.new_current_time = this.stateManager.state.position;
-            afterStates.new_current_subtitle_identifier = this._getCueIdentifier(this._getActiveCue());
+            afterStates.newCurrentTime = this.stateManager.state.position;
+            afterStates.newCurrentSubtitleIdentifier = this._getCueIdentifier(this._getActiveCue());
             break;
           case ANALYTICS_TOPICS.VIDEO_CHAPTER:
-            afterStates.current_chapter_status = this.stateManager.state.isChapterListShown;
+            afterStates.currentChapterStatus = this.stateManager.state.isChapterListShown;
             break;
           case ANALYTICS_TOPICS.VIDEO_CHAPTER_SEEK:
-            afterStates.new_current_time = this.stateManager.state.position;
-            afterStates.new_current_chapter = this._getActiveChapter();
+            afterStates.newCurrentTime = this.stateManager.state.position;
+            afterStates.newCurrentChapter = this._getActiveChapter();
             break;
           case ANALYTICS_TOPICS.VIDEO_DUAL_STREAM_CHANGE:
-            afterStates.new_current_dual_stream_status = this._getDualStreamStatus();
+            afterStates.newCurrentDualStreamStatus = this._getDualStreamStatus();
         }
 
         this._fireEvent(options.verb, baseEventData, beforeStates, afterStates);
@@ -134,14 +134,14 @@
        */
       _getBaseEventData() {
         return {
-          current_time: this.stateManager.state.position,
-          current_speed: this.stateManager.state.playbackRate,
-          current_quality: this.stateManager.state.quality,
-          current_source: 'online',
-          current_orientation: window.screen.orientation.type,
-          current_slide: this._getActiveSlide(),
-          current_chapter: this._getActiveChapter(),
-          current_fullscreen: this._getFullscreenMode(),
+          currentTime: this.stateManager.state.position,
+          currentSpeed: this.stateManager.state.playbackRate,
+          currentQuality: this.stateManager.state.quality,
+          currentSource: 'online',
+          currentOrientation: window.screen.orientation.type,
+          currentSlide: this._getActiveSlide(),
+          currentChapter: this._getActiveChapter(),
+          currentFullscreen: this._getFullscreenMode(),
         };
       }
 

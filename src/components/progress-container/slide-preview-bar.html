@@ -67,7 +67,7 @@
 
         _handleSlideChange(slide) {
           if (this._analyticsManager) {
-            this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SLIDE_CHANGE}, {new_current_slide: slide});
+            this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SLIDE_CHANGE}, {newCurrentSlide: slide});
           }
         }
       }
