@@ -8,6 +8,7 @@
 <link rel="import" href="interactive-transcript-control.html">
 <link rel="import" href="speed-control.html">
 <link rel="import" href="quality-control.html">
+<link rel="import" href="stream-switch-control.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 
 <dom-module id="mobile-settings-menu">
@@ -48,7 +49,7 @@
         <a id="button__select" class="button" on-click="_toggleMobileSettingsMenu">
           <i class="fa fa-cog"></i>
         </a>
-        <div id="mobile-settings-menu__select" 
+        <div id="mobile-settings-menu__select"
              class$="mobile-settings-menu-content [[ifNotThen(_isMobileSettingsMenuOpen, '-hidden')]]"
              style$="bottom: [[_calcBottomValue(state.isInteractiveTranscriptShown)]];">
           <template is="dom-if" if="[[captionLanguages]]">
@@ -63,6 +64,9 @@
           <template is="dom-if" if="[[_hasMultipleQualities]]">
             <quality-control is-in-mobile-menu="true" state="[[state]]" qualities="[[availableQualities]]">
             </quality-control>
+          </template>
+          <template is="dom-if" if="[[hasFallbackStream]]">
+            <stream-switch-control is-in-mobile-menu="true" state="[[state]]" number-of-streams="[[numberOfStreams]]" class="hidden-for-mobile"></stream-switch-control>
           </template>
         </div>
       </div>
@@ -81,6 +85,8 @@
             state: Object,
             captionLanguages: Array,
             availableQualities: Boolean,
+            hasFallbackStream: Boolean,
+            numberOfStreams: Number,
             _isMobileSettingsMenuOpen: {
               type: Boolean,
               value: false,

@@ -43,9 +43,9 @@
           <track src="[[item.url]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
         </template>
       </video>
-      <template is="dom-if" if="[[and(urls.poster, _isPosterVisible)]]">
+      <template is="dom-if" if="[[and(props.poster, _isPosterVisible)]]">
         <div id="container__poster_overlay">
-          <img id="image__poster" src="[[urls.poster]]" alt="Poster" on-click="_handleClick" />
+          <img id="image__poster" src="[[props.poster]]" alt="Poster" on-click="_handleClick" />
         </div>
       </template>
     </div>
@@ -61,7 +61,7 @@
         static get properties() {
           return {
             state: Object,
-            urls: Object,
+            props: Object,
             captions: Array,
             preload: {
               type: Boolean,
@@ -101,7 +101,7 @@
             '_volumeChanged(state.volume)',
             '_mutedChanged(state.muted)',
             '_captionLanguageChanged(state.captionLanguage)',
-            '_qualityChanged(urls, state.quality)',
+            '_qualityChanged(props, state.quality)',
           ];
         }
 
@@ -124,6 +124,10 @@
         }
 
         _playStateChanged(playState) {
+          if(this._isInitializingVideo) {
+            return;
+          }
+
           if (playState === PLAY_STATES.PLAYING) {
             this.$.video.play();
           } else if (playState === PLAY_STATES.PAUSED || playState === PLAY_STATES.WAITING) {
@@ -133,30 +137,44 @@
         }
 
         _positionChanged(position) {
+          if(this._isInitializingVideo) {
+            return;
+          }
+
           if(Math.abs(this.$.video.currentTime - position) > SEEK_DIFF_THRESHOLD) {
             this.$.video.currentTime = position;
+            return true;
           }
+
+          return false;
         }
 
         _playbackRateChanged(playbackRate) {
-          this.$.video.playbackRate = playbackRate;
+          if(!this._isInitializingVideo) {
+            this.$.video.playbackRate = playbackRate;
+          }
         }
 
         _volumeChanged(volume) {
-          this.$.video.volume = volume;
+          if(!this._isInitializingVideo) {
+            this.$.video.volume = volume;
+          }
         }
 
         _mutedChanged(muted) {
-          this.$.video.muted = muted;
+          if(!this._isInitializingVideo) {
+            this.$.video.muted = muted;
+          }
         }
 
-        _qualityChanged(urls, quality) {
+        _qualityChanged(props, quality) {
+          this._isInitializingVideo = true;
           if(this._synchronizationManager) {
             this._synchronizationManager.setWaiting(this.$.video);
           }
 
           // Change source depending on quality
-          let url = urls[quality];
+          let url = props[quality];
           if(this._nativeHlsSupport || quality !== QUALITY_MODES.HLS) {
             // Destroy old hls client
             if(this._hlsClient) {
@@ -166,6 +184,7 @@
             // The src attribute can not be updated using data bindings
             // since the binding may be overwritten by hls.js
             this.$.video.setAttribute('src', url);
+            this.$.video.load();
           } else {
             // Create and configure new hls client for existing video element
             this._hlsClient = new Hls();
@@ -175,7 +194,12 @@
 
           // Reapply current state to video element after the new source has been loaded
           if(this._synchronizationManager) {
-            this._synchronizationManager.onVideosReady(() => this._applyState(), true);
+            this._synchronizationManager.onVideosReady(() => {
+              this._isInitializingVideo = false;
+              this._applyState();
+            }, true);
+          } else {
+            this._isInitializingVideo = false;
           }
         }
 
@@ -219,11 +243,15 @@
         }
 
         _applyState() {
-          this._positionChanged(this.state.position);
+          // Make sure that playState is first applies after seek process
+          this.$.video.addEventListener('seeked', () => this._playStateChanged(this.state.playState), true);
+          let seeked = this._positionChanged(this.state.position);
           this._playbackRateChanged(this.state.playbackRate);
           this._volumeChanged(this.state.volume);
           this._mutedChanged(this.state.muted);
-          this._playStateChanged(this.state.playState);
+          if(!seeked) {
+            this._playStateChanged(this.state.playState);
+          }
         }
       }
 

@@ -56,7 +56,8 @@
       }
 
       hasItems(arr, min = 1) {
-        if(typeof arr === 'undefined') {
+        // eslint-disable-next-line eqeqeq
+        if(arr == null) {
           return false;
         }
 
@@ -127,6 +128,26 @@
           return hours + ':' + minutes + ':' + seconds2;
         } else {
           return minutes + ':' + seconds2;
+        }
+      }
+
+
+      hmsToSeconds(timeString){
+        let array = timeString.split(':');
+        if (array.length === 1) {
+          // Just seconds
+          return parseInt(array[0]);
+        } else if (array.length === 2) {
+          // Minutes + seconds
+          let m = parseInt(array[0]) * 60;
+          let s = parseInt(array[1]);
+          return m + s;
+        } else if (array.length === 3) {
+        // Hours + minutes + seconds
+          let h = parseInt(array[0]) * 3600;
+          let m = parseInt(array[1]) * 60;
+          let s = parseInt(array[2]);
+          return h + m + s;
         }
       }
     };

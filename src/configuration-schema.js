@@ -15,6 +15,10 @@ const streamSchema = {
     type: 'string',
     description: 'URL of the poster image.',
   },
+  ratio: {
+    type: 'string',
+    description: 'The ratio of the video. This is mandatory when the videoAlignment is set to `height`. It should be in the format `x:y`.',
+  }
 };
 
 const stateSchema = {
@@ -73,6 +77,11 @@ const configurationSchema = {
     description: 'Contains a fallback stream that the user can switch to, i.e. a single stream source.',
     schema: streamSchema,
   },
+  language: {
+    type: 'string',
+    default: 'en',
+    description: 'Language used for localizing messages.',
+  },
   initialState: {
     type: 'object',
     description: 'The initial state the player has when loaded.',
@@ -115,12 +124,12 @@ const configurationSchema = {
     default: 'dark-orange',
     description: 'Predefined color theme (can be adjusted by settings the colors explicitly).',
   },
-  videoPreload: {
+  loadFontAwesome: {
     type: 'boolean',
     default: true,
     description: '[FontAwesome](http://fontawesome.io) is used for the icons of the player. If your site already loads FontAwesome, this can be set to false to save bandwidth.',
   },
-  loadFontAwesome: {
+  videoPreload: {
     type: 'boolean',
     default: true,
     description: 'Turns on/off preloading of the videos when the page loads.',
@@ -257,6 +266,12 @@ const configurationSchema = {
       name: 'Name of the video',
       duration: 'Duration of the video',
     },
+  },
+  videoAlignment: {
+    type: 'string',
+    options: ['width', 'height'],
+    defaul: 'width',
+    description: 'If there is more than one video this property decides whether they should have the same height or the same width.',
   },
 };
 

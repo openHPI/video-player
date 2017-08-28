@@ -8,6 +8,7 @@
 <link rel="import" href="mixins/ioc-requester.html">
 <link rel="import" href="mixins/binding-helpers.html">
 <link rel="import" href="3rd-imports/hls-js.html">
+<link rel="import" href="locales/locales.html">
 <link rel="import" href="styling/mixins.html">
 <link rel="import" href="styling/global--style-module.html">
 <link rel="import" href="services/state-manager.html">
@@ -16,6 +17,7 @@
 <link rel="import" href="services/synchronization-manager.html">
 <link rel="import" href="services/user-preferences-manager.html">
 <link rel="import" href="services/analytics-manager.html">
+<link rel="import" href="services/localizer.html">
 <link rel="import" href="components/video-stream.html">
 <link rel="import" href="components/chapter-list.html">
 <link rel="import" href="components/interactive-transcript.html">
@@ -99,14 +101,6 @@
       }
 
       @media (max-width: 768px) {
-        :host {
-          /*
-          * The min-widths are necessary to avoid that the video containter and
-          * the controlbar have different widths on small screens.
-          */
-          min-width: 360px;
-        }
-
         .hidden-for-mobile {
           display: none;
         }
@@ -117,14 +111,6 @@
             flex-basis: 100% !important;
             height: 100% !important;
           }
-        }
-      }
-      @media (min-width: 769px) {
-        :host {
-          /*
-          * Look above
-          */
-          min-width: 660px;
         }
       }
     </style>
@@ -151,7 +137,7 @@
             <template is="dom-repeat" items="[[configuration.streams]]">
               <video-stream
                 state="[[state]]"
-                urls="[[item]]"
+                props="[[item]]"
                 preload="[[configuration.videoPreload]]"
                 class="video-stream"
                 captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
@@ -163,7 +149,8 @@
                 <resizer-control
                   state="[[state]]"
                   style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]"
-                  class="hidden-for-mobile">
+                  class="hidden-for-mobile"
+                  video-alignment="[[configuration.videoAlignment]]">
                 </resizer-control>
               </template>
             </template>
@@ -171,7 +158,7 @@
           <template is="dom-if" if="[[state.fallbackStreamActive]]" restamp="true">
             <video-stream
             state="[[state]]"
-            urls="[[configuration.fallbackStream]]"
+            props="[[configuration.fallbackStream]]"
             preload="[[configuration.videoPreload]]"
             class="video-stream"
             captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
@@ -195,10 +182,11 @@
       <control-bar
         state="[[state]]"
         has-chapters="[[hasItems(configuration.chapters)]]"
+        has-fallback-stream="[[_hasFallbackStream]]"
         caption-languages="[[_captionLanguages]]"
         available-qualities="[[_availableQualities]]"
         playlist="[[configuration.playlist]]"
-        has-fallback-stream="[[exists(configuration.fallbackStream)]]">
+        number-of-streams="[[configuration.streams.length]]">
       </control-bar>
 
       <!-- Chapter List -->
@@ -211,8 +199,8 @@
   </template>
 
   <script>
-    define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'analytics-manager', 'hls-js', 'constants', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, AnalyticsManager, Hls, constants, configurationSchema) => {
-      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, ANALYTICS_TOPICS} = constants;
+    define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-js', 'analytics-manager', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, Localizer, Hls, AnalyticsManager, constants, locales, configurationSchema) => {
+      const {DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, HLS_MIME_TYPE, ANALYTICS_TOPICS} = constants;
 
       class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
         static get is() { return 'video-player'; }
@@ -250,6 +238,10 @@
               type: Object,
               inject: 'ConfigurationValidator',
             },
+            _localizer: {
+              type: Object,
+              inject: 'Localizer',
+            },
             _isResizerShown: {
               type: Boolean,
               value: false,
@@ -260,7 +252,15 @@
             },
             _availableQualities: {
               type: Array,
-              computed: '_getAvailableQualities(configuration.streams)',
+              computed: '_getAvailableQualities(configuration.streams, state.fallbackStreamActive, configuration.fallbackStream)',
+            },
+            _hasFallbackStream: {
+              type: Boolean,
+              computed: '_getHasFallbackStream(configuration.streams, configuration.fallbackStream, _isIOS)',
+            },
+            _isIOS: {
+              type: Boolean,
+              computed: '_getIsIOS()',
             },
             _isConfigurationInitialized: Boolean,
             _isConfigurationObserverLocked: {
@@ -280,6 +280,7 @@
             '_backgroundColorChanged(configuration.backgroundColor)',
             '_secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
             '_themeChanged(configuration.theme)',
+            '_languageChanged(configuration.language, _localizer)',
             '_playStateChanged(state.playState)',
             '_fullscreenChanged(state.fullscreen)',
             '_userPreferencesStateChanged(state.*)',
@@ -296,6 +297,7 @@
           iocKernel.bind('SynchronizationManager').toFunction(() => new SynchronizationManager(iocKernel.get('StateManager'))).inSingletonScope();
           iocKernel.bind('FullscreenManager').toFunction(() => new FullscreenManager(this.$['video-player-container'])).inSingletonScope();
           iocKernel.bind('AnalyticsManager').toFunction(() => new AnalyticsManager(this, iocKernel.get('StateManager'))).inSingletonScope();
+          iocKernel.bind('Localizer').toFunction(() => new Localizer(locales)).inSingletonScope();
         }
 
         servicesInjectedCallback() {
@@ -318,12 +320,6 @@
         }
 
         ready() {
-          // Make sure our player doesn't crash if somebody passes in null values
-          for (let value in this.configuration) {
-            if(!this.configuration[value]) {
-              delete this.configuration[value];
-            }
-          }
           super.ready();
 
           // Add event handlers for mouse events to show/hide resizer
@@ -344,6 +340,12 @@
           if(this.configuration.loadFontAwesome) {
             Polymer.importHref(this.importPath + '../node_modules/polymer-font-awesome/dist/font-face.html');
           }
+
+          // In iOS playing multiple videos concurrently is currently not supported.
+          // Therefore, the fallback is used allways in iOS
+          if(this._isIOS && this.hasItems(this.configuration.streams, 2)) {
+            this._stateManager.setFallbackStreamActive(true);
+          }
         }
 
         _getCaptionLanguages(captions) {
@@ -352,17 +354,50 @@
           }
         }
 
-        _getAvailableQualities(streams) {
+        _getAvailableQualities(streams, fallbackStreamActive, fallbackStream) {
           if (streams) {
             let supportedQualities = Object.values(QUALITY_MODES);
-            if(!Hls.isSupported()) {
+            let isHlsSupported = Hls.isSupported() || document.createElement('video').canPlayType(HLS_MIME_TYPE) !== '';
+            if(!isHlsSupported) {
               supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
             }
 
-            return supportedQualities
-                     .filter(quality => streams.every(stream => Object.keys(stream)
-                                                                      .includes(quality)));
+            if(fallbackStreamActive) {
+              return supportedQualities.filter(quality => Object.keys(fallbackStream)
+                                                                .includes(quality));
+            } else {
+              return supportedQualities
+                       .filter(quality => streams.every(stream => Object.keys(stream)
+                                                                        .includes(quality)));
+            }
           }
+        }
+
+        _getHasFallbackStream(streams, fallbackStream, isIOS) {
+          // In iOS playing multiple videos concurrently is currently not supported.
+          // Therefore, the fallback is used allways in iOS
+          return !isIOS && this.hasItems(streams, 2) && fallbackStream;
+        }
+
+        _getIsIOS() {
+          const iDevices = [
+            'iPad Simulator',
+            'iPhone Simulator',
+            'iPod Simulator',
+            'iPad',
+            'iPhone',
+            'iPod',
+          ];
+
+          if (navigator.platform) {
+            while (iDevices.length) {
+              if (navigator.platform === iDevices.pop()) {
+                return true;
+              }
+            }
+          }
+
+          return false;
         }
 
         reloadConfiguration() {
@@ -372,6 +407,14 @@
 
         _configurationChanged(configuration) {
           if(this._configurationValidator && !this._isConfigurationObserverLocked) {
+            // Remove null values form configuration
+            for (let value in configuration) {
+              // eslint-disable-next-line eqeqeq
+              if(configuration[value] == null) {
+                delete configuration[value];
+              }
+            }
+
             // Validate configuration
             this._configurationValidator.validate(this.configuration);
 
@@ -476,9 +519,15 @@
           }
         }
 
-        _userPreferencesStateChanged(states) {
+        _languageChanged(language) {
+          if(this._localizer) {
+            this._localizer.setLanguage(language);
+          }
+        }
+
+        _userPreferencesStateChanged() {
           if (this._userPreferencesManager) {
-            this._userPreferencesManager.setPreferences(states);
+            this._userPreferencesManager.setPreferences(this.state);
           }
         }
 

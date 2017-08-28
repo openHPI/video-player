@@ -68,8 +68,9 @@
          https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/12414257/
          And a link to a similar bug report:
          https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
-         And here's a link to the CSS selector that targets only Microsoft Edge because
-         looks for a feature that is only supported in Edge.*/
+         And here's a link about the CSS selector that targets only Microsoft Edge because
+         it looks for a feature that is only supported in Edge:
+         https://jeffclayton.wordpress.com/2015/04/07/css-hacks-for-windows-10-and-spartan-browser-preview/ */
       @supports (-ms-ime-align: auto) {
         .dropdown #button__select.with-badge{
           background-color: transparent;
@@ -112,16 +113,16 @@
     <div id="container__select_control" class$="user_controls [[ifNotThen(isInMobileMenu, 'dropdown')]] [[ifThen(isInMobileMenu, 'in-menu-entry')]]">
       <div id="inner_container__select_control" on-mouseover="_handleMouseOver" on-mouseout="_handleMouseOut">
         <a id="button__select"
-           class$="button [[ifNotEqualsThen(selectedValue, 'off', 'with-badge')]] [[ifNotThen(active, 'inactive')]]"
-           badge-value$="{{formatter(selectedValue)}}"
+           class$="button [[ifThen(selectedItem.value, 'with-badge')]] [[ifNotThen(active, 'inactive')]]"
+           badge-value$="[[selectedItem.text]]"
            href="javascript:void(0)"
            on-click="_handleClick">
           <i class$="[[iconClasses]]"></i>
         </a>
         <div id="dropdown__select" class$="dropdown-content [[ifNotThen(_isDropDownOpen, '-hidden')]]">
-          <template is="dom-repeat" items="[[values]]">
-            <a on-click="_handleDropDownElementClick" class$="[[ifEqualsThen(item, selectedValue, 'selected')]]" href="javascript:void(0)">
-              [[formatter(item)]]
+          <template is="dom-repeat" items="[[items]]">
+            <a on-click="_handleDropDownElementClick" name="[[item.text]]" class$="[[ifEqualsThen(item.value, selectedValue, 'selected')]]" href="javascript:void(0)">
+              [[item.text]]
             </a>
           </template>
         </div>
@@ -137,18 +138,22 @@
         static get properties() {
           return {
             state: Object,
-            values: {
+            items: {
               type: Array,
-              value: [],
+              value: () => [],
             },
-            selectedValue: String,
-            formatter: {
-              type: Function,
-              value: () => (x) => x,
+            selectedValue: Object,
+            selectedItem: {
+              type: Object,
+              computed: '_getSelectedItem(items, selectedValue)',
             },
             iconClasses: {
               type: String,
               value: '',
+            },
+            isInMobileMenu: {
+              type: Boolean,
+              value: false,
             },
             _isDropDownOpen: {
               type: Boolean,
@@ -157,10 +162,6 @@
             active: {
               type: Boolean,
               value: true,
-            },
-            isInMobileMenu: {
-              type: Boolean,
-              value: false,
             },
           };
         }
@@ -202,19 +203,22 @@
         }
 
         _handleDropDownElementClick(e) {
-          this._setSelectedValue(e.model.item);
+          this.selectedValue = e.model.item.value;
+          this.dispatchEvent(new CustomEvent('change'));
+
           if(!this.state.mobileSettingsMenuOpen) {
             this._hideDropDown();
           }
         }
 
-        _setSelectedValue(value) {
-          this.selectedValue = value;
-          this.dispatchEvent(new CustomEvent('change'));
+        _getSelectedItem(items, selectedValue) {
+          if(items) {
+            return items.find(item => item.value === selectedValue);
+          }
         }
 
         _mobileSettingsMenuChanged(menuOpen) {
-          if(menuOpen) { 
+          if(menuOpen) {
             if (this.isInMobileMenu) {
               this._showDropDown();
             } else {

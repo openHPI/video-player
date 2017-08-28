@@ -97,15 +97,17 @@
 
         static get observers() {
           return [
+            '_getActiveCue(state.position)',
             '_activeCueChanged(activeCue, state.isInteractiveTranscriptShown)', // Observe isInteractiveTranscriptShown to scroll to current element when element is shown
           ];
         }
 
         _getActiveCue(position) {
           if(this.state.activeCaptions) {
-            return this.state.activeCaptions.slice()
+            let newCue = this.state.activeCaptions.slice()
                                  .reverse()
-                                 .find(cue => cue.startTime <= position);
+                                 .find(cue => cue.startTime <= position &&
+                                              cue.endTime > position);
             if (!Object.is(this.activeCue, newCue)) {
               this.activeCue = newCue;
             }
@@ -115,7 +117,7 @@
         _activeCueChanged() {
           let activeElement = this.$.container__interactive_transcript.getElementsByClassName('-active')[0];
           if(activeElement) {
-            activeElement.scrollIntoView({behavior: 'smooth'});
+            activeElement.parentNode.scrollTop = activeElement.offsetTop;
           }
         }
 

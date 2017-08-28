@@ -18,9 +18,8 @@
     <div id="container__quality_switch">
       <select-control
         state="[[state]]"
-        values="[[qualities]]"
+        items="[[_items]]"
         selected-value="[[state.quality]]"
-        formatter="[[_getQualityName]]"
         on-change="_selectionChanged"
         icon-classes="fa fa-desktop"
         is-in-mobile-menu="[[isInMobileMenu]]">
@@ -29,16 +28,20 @@
   </template>
 
   <script>
-    define('quality-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
-      const {QUALITY_NAMES, ANALYTICS_TOPICS} = constants;
+    define('quality-control', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
 
-      class QualityControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+      class QualityControl extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
         static get is() { return 'quality-control'; }
 
         static get properties() {
           return {
             state: Object,
             qualities: Array,
+            isInMobileMenu: {
+              type: Boolean,
+              value: false,
+            },
             _stateManager: {
               type: Object,
               inject: 'StateManager',
@@ -47,15 +50,20 @@
               type: Object,
               inject: 'AnalyticsManager',
             },
-            isInMobileMenu: {
-              type: Boolean,
-              value: false,
+            _items: {
+              type: Array,
+              computed: '_getItems(qualities, localize)',
             },
           }
         }
 
-        _getQualityName(quality) {
-          return QUALITY_NAMES[quality];
+        _getItems(qualities) {
+          if(this.localize) {
+            return qualities.map(quality => ({
+              text: this.localize(`quality-control--quality-${quality}`),
+              value: quality,
+            }));
+          }
         }
 
         _selectionChanged(e) {

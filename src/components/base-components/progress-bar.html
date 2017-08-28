@@ -36,12 +36,31 @@
         @apply --set-secondary-background-color;
         z-index: 1;
       }
+
+      #div__hover_box {
+        display: none;
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.75);
+        color: #FFFFFF;
+        padding: 2px;
+        min-width: 40px;
+        text-align: center;
+        z-index: 10;
+      }
+
+      #container__progress_bar:hover #div__hover_box {
+        display: block;
+      }
     </style>
 
-    <div id="container__progress_bar" on-click="_handleClick" class$="[[ifThenElse(border, '', '-no-border')]]">
+    <div id="container__progress_bar" on-click="_handleClick" on-mousemove="_showTargetPosition" on-mouseout="_toggleTargetPosition" class$="[[ifThenElse(border, '', '-no-border')]]">
       <div id="div__primary_progress" class="progress-overlay" style$="width: [[_calcWidth(value, min, max)]]%;"></div>
       <div id="div__secondary_progress" class="progress-overlay" style$="width: [[_calcWidth(secondaryValue, min, max)]]%;"></div>
+      <div id="div__hover_box" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
+        [[targetValue]]
+      </div>
     </div>
+
   </template>
 
   <script>
@@ -71,6 +90,18 @@
               type: Boolean,
               value: false,
             },
+            _isVisible: {
+              type: Boolean,
+              value: false,
+            },
+            targetValue: {
+              type: String,
+              value: 0,
+            },
+            showTargetPositionOnHover: {
+              type: Boolean,
+              value: false,
+            },
           };
         }
 
@@ -83,6 +114,46 @@
         }
 
         _handleClick(e) {
+          // Check if still within borders
+          let clickedValue = this._getClickedValue(e);
+          if( clickedValue <= this.max) {
+            this.value = clickedValue;
+            this.dispatchEvent(new CustomEvent('change'));
+          }
+        }
+
+        _showTargetPosition(e) {
+          if(this.showTargetPositionOnHover) {
+            let timeBox = this.$.div__hover_box;
+            let progressContainer = this.$.container__progress_bar;
+
+            this._isVisible = true;
+            timeBox.style.top = progressContainer.style.top - timeBox.offsetHeight + 'px';
+            this.targetValue = this.secondsToHms(this._getClickedValue(e));
+
+            // Get right end of time box and right end of progress bar in pixels
+            let timeBoxRightEnd = e.pageX - progressContainer.getBoundingClientRect().left + timeBox.offsetWidth;
+            let progressBarRightEnd = progressContainer.offsetLeft + progressContainer.offsetWidth;
+
+            if(timeBoxRightEnd >= progressBarRightEnd) {
+              // Remove class left if contained
+              // add class right if not already contained
+              timeBox.style.left = 'auto';
+              timeBox.style.right = '0px';
+            } else {
+              // Remove class right if contained
+              // add class left if not already contained
+              timeBox.style.left = e.offsetX + 'px';
+              timeBox.style.right = 'auto';
+            }
+          }
+        }
+
+        _toggleTargetPosition() {
+          this._isVisible = false;
+        }
+
+        _getClickedValue(e){
           // Get x value by substracting offsetleft of control
           let borderLeftWidth = parseInt(getComputedStyle(this.$.container__progress_bar, null).getPropertyValue('border-left-width'), 10);
           let x = e.pageX - this.getBoundingClientRect().left - borderLeftWidth;
@@ -94,11 +165,8 @@
 
           // Calculate value that will be between 0 and the max value
           let clickedValue = Math.max(0, Math.min(this.max, x * this.max / this.getBoundingClientRect().width));
-          // Check if still within borders
-          if(clickedValue <= this.max) {
-            this.value = clickedValue;
-            this.dispatchEvent(new CustomEvent('change'));
-          }
+
+          return clickedValue;
         }
       }
 

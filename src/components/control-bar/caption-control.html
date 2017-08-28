@@ -3,6 +3,7 @@
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../mixins/localization.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 <link rel="import" href="../base-components/select-control.html">
 
@@ -13,8 +14,8 @@
 
     <select-control
       state="[[state]]"
-      values="[[_values]]"
-      selected-value="[[ifThenElse(state.isCaptionShown, state.captionLanguage, 'off')]]"
+      items="[[_items]]"
+      selected-value="[[ifThenElse(state.isCaptionShown, state.captionLanguage, _offValue)]]"
       on-change="_selectionChanged"
       icon-classes="fa fa-cc"
       is-in-mobile-menu="[[isInMobileMenu]]"
@@ -23,16 +24,20 @@
   </template>
 
   <script>
-    define('caption-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+    define('caption-control', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
       const {ANALYTICS_TOPICS} = constants;
 
-      class CaptionControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+      class CaptionControl extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
         static get is() { return 'caption-control'; }
 
         static get properties() {
           return {
             state: Object,
             languages: Array,
+            isInMobileMenu: {
+              type: Boolean,
+              value: false,
+            },
             _stateManager: {
               type: Object,
               inject: 'StateManager',
@@ -41,30 +46,41 @@
               type: Object,
               inject: 'AnalyticsManager',
             },
-            _values: {
+            _items: {
               type: Array,
-              computed: '_getValues(languages.*)',
+              computed: '_getItems(languages.*, localize)',
             },
-            isInMobileMenu: {
-              type: Boolean,
-              value: false,
+            _offValue: {
+              readOnly: true,
+              value: null,
             },
           };
         }
 
-        _getValues() {
-          return ['off'].concat(this.languages);
+        _getItems() {
+          if(this.localize) {
+            let languageItems = this.languages.map(language => ({
+              text: language,
+              value: language,
+            }));
+            let offItem = {
+              text: this.localize('general--off'),
+              value: this._offValue,
+            };
+
+            return [offItem].concat(languageItems);
+          }
         }
 
         _selectionChanged(e) {
-          if (e.target.selectedValue !== 'off') {
+          if (e.target.selectedValue !== this._offValue) {
             this._stateManager.setCaptionLanguage(e.target.selectedValue);
             if(!this.state.isCaptionShown) {
               this._stateManager.toggleCaptions();
             }
           }
 
-          if (e.target.selectedValue === 'off' && this.state.isCaptionShown) {
+          if (e.target.selectedValue === this._offValue && this.state.isCaptionShown) {
             this._stateManager.toggleCaptions();
           }
 

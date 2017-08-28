@@ -12,7 +12,7 @@
 <link rel="import" href="quality-control.html">
 <link rel="import" href="mute-control.html">
 <link rel="import" href="stream-switch-control.html">
-<link rel="import" href="fullscreen-control.html">
+<link rel="import" href="full-screen-control.html">
 <link rel="import" href="caption-control.html">
 <link rel="import" href="playlist-navigation-control.html">
 <link rel="import" href="mobile-settings-menu.html">
@@ -89,7 +89,9 @@
         state="[[state]]"
         class="hidden-for-desktop"
         caption-languages="[[captionLanguages]]"
-        available-qualities="[[availableQualities]]">
+        available-qualities="[[availableQualities]]"
+        has-fallback-stream="[[hasFallbackStream]]"
+        number-of-streams="[[numberOfStreams]]">
       </mobile-settings-menu>
 
       <!-- Fullscreen -->
@@ -113,6 +115,7 @@
             playlist: Object,
             captionLanguages: Array,
             availableQualities: Boolean,
+            numberOfStreams: Number,
             _stateManager: {
               type: Object,
               inject: 'StateManager',
@@ -125,8 +128,9 @@
 
           // Add event listener for keyboard shortcuts
           window.addEventListener('keydown', (e) => {
-            if (e.defaultPrevented || TEXT_ELEMENT_TAG_NAMES.includes(document.activeElement.tagName)) {
-              // Do nothing, if the event was already processed or an text input is focussed
+            if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey || TEXT_ELEMENT_TAG_NAMES.includes(document.activeElement.tagName)) {
+              // Do nothing, if the event was already processed, a system shortcut
+              // including a modifier key was pressed or an text input is focussed
               return;
             }
 

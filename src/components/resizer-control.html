@@ -66,6 +66,7 @@
         static get properties() {
           return {
             state: Object,
+            videoAlignment: String,
             _videos: Array,
             _mousePositionX: Number,
             _globalFlexBasisGap: {
@@ -85,6 +86,18 @@
           ];
         }
 
+        connectedCallback() {
+          super.connectedCallback();
+
+          // Get _videos to resize
+          this._videos = [this._findPreviousVideo(), this._findNextVideo()];
+
+          if(this.videoAlignment === 'height' && this._videos[0].props.ratio && this._videos[1].props.ratio) {
+            this._alignVideoHeight();
+          }
+
+        }
+
         _handleDragStart(e) {
           // Neccessary for FF to handle Drag'n'Drop
           // Since FF does not support the mouse position within a drag event, it has to be handled with the dragover event
@@ -94,12 +107,11 @@
           // Avoid a dragging ghost image by creating a new element which shall be
           // shown but is hidden per default. Unfortunately this is the only way to
           // do so.
-          let dragImage = this.cloneNode(true);
+          let dragImage = document.createElement('p');
+          let text = document.createTextNode('DragImage');
+          dragImage.appendChild(text);
           dragImage.style.visibility = 'hidden';
           document.body.appendChild(dragImage);
-
-          // Get _videos to resize
-          this._videos = [this._findPreviousVideo(), this._findNextVideo()];
 
           // Microsoft Edge does not play well with our solution to hide the ghost
           // image but somehow needs the code above or it will crash.
@@ -224,6 +236,40 @@
             this._changeFlexBasis(this._videos[1], -factor, 1, maxGap);
             this._changeFlexBasis(this._videos[0], factor, 0, maxGap);
           }
+        }
+
+        _alignVideoHeight() {
+          // Only neccessary when the videos have a different ratio
+          if(this._videos[0].props.ratio !== this._videos[1].props.ratio) {
+            let quotient1 = this._getRatioQuotient(this._videos[0].props.ratio);
+            let quotient2 = this._getRatioQuotient(this._videos[1].props.ratio);
+
+            if(quotient1 && quotient2) {
+              // The width of the videos (100% - 2% (for the resizer))
+              let containerWidth = 98;
+
+              // Calculation based on two formulas
+              // I video1Width + video2Width = containerWidth
+              // II video1Width * quotient1 = video2Width * quotient2
+              let video1Width = (containerWidth * quotient2) / (quotient1 + quotient2);
+              let video2Width = (containerWidth * quotient1) / (quotient1 + quotient2);
+
+              this._videos[0].style.flexBasis = video1Width + '%';
+              this._videos[1].style.flexBasis = video2Width + '%';
+            }
+          }
+        }
+
+        _getRatioQuotient(ratio) {
+          let number1 = ratio.split(':')[0];
+          let number2 = ratio.split(':')[1];
+
+          // If the format is wrong, number2 will be empty
+          if(number2) {
+            return number2 / number1;
+          }
+
+          return false;
         }
 
         _resetResizer () {
