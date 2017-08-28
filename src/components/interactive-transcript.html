@@ -98,9 +98,16 @@
 
         static get observers() {
           return [
+            '_interactiveTranscriptChanged(state.activeCaptions)',
             '_getActiveCue(state.position)',
             '_activeCueChanged(activeCue, state.isInteractiveTranscriptShown)', // Observe isInteractiveTranscriptShown to scroll to current element when element is shown
           ];
+        }
+
+        _interactiveTranscriptChanged() {
+          if(this.state.isInteractiveTranscriptShown){
+            this._getActiveCue(this.state.position);
+          }
         }
 
         _getActiveCue(position) {
