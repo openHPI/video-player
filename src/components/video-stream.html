@@ -99,7 +99,7 @@
             '_positionChanged(state.position)',
             '_playbackRateChanged(state.playbackRate)',
             '_volumeChanged(state.volume)',
-            '_mutedChanged(state.muted)',
+            '_mutedChanged(state.muted, props.muted)',
             '_captionLanguageChanged(state.captionLanguage)',
             '_qualityChanged(props, state.quality)',
           ];
@@ -162,7 +162,9 @@
         }
 
         _mutedChanged(muted) {
-          if(!this._isInitializingVideo) {
+          if(this.props.muted) {
+            this.$.video.muted = true;
+          } else if(!this._isInitializingVideo) {
             this.$.video.muted = muted;
           }
         }

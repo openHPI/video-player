@@ -18,7 +18,12 @@ const streamSchema = {
   ratio: {
     type: 'string',
     description: 'The ratio of the video. This is mandatory when the videoAlignment is set to `height`. It should be in the format `x:y`.',
-  }
+  },
+  muted: {
+    type: 'boolean',
+    description: 'Mutes the audio stream of the video.',
+    default: false,
+  },
 };
 
 const stateSchema = {
