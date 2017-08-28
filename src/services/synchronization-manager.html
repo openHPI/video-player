@@ -19,6 +19,7 @@
 
         // Needed in order to overcome removeEventListener
         this._videoWaiting = this._videoWaiting.bind(this);
+        this._videoSeeking = this._videoSeeking.bind(this);
         this._videoReady = this._videoReady.bind(this);
         this._videoProgress = this._videoProgress.bind(this);
         this._videoTimeUpdate = this._videoTimeUpdate.bind(this);
@@ -37,7 +38,9 @@
         this._videos.push(video);
 
         video.addEventListener('waiting', this._videoWaiting);
+        video.addEventListener('seeking', this._videoSeeking);
         video.addEventListener('canplay', this._videoReady);
+        video.addEventListener('canplaythrough', this._videoReady);
         video.addEventListener('seeked', this._videoReady);
         video.addEventListener('progress', this._videoProgress);
         video.addEventListener('ended', this._videoEnded);
@@ -55,8 +58,9 @@
         this._videosWaiting.delete(video);
 
         video.removeEventListener('waiting', this._videoWaiting);
-        video.removeEventListener('stalled', this._videoWaiting);
+        video.removeEventListener('seeking', this._videoSeeking);
         video.removeEventListener('canplay', this._videoReady);
+        video.removeEventListener('canplaythrough', this._videoReady);
         video.removeEventListener('seeked', this._videoReady);
         video.removeEventListener('progress', this._videoProgress);
         video.removeEventListener('ended', this._videoEnded);
@@ -166,6 +170,24 @@
       }
 
       /**
+       * Is called everytime a registered video is seeking.
+       * @param  {EventArgs} e The event that was triggered.
+       * @return {void}
+       */
+      _videoSeeking(e) {
+        // Check if requested timestamp is buffered
+        let video = e.target;
+        let seekTime = e.target.currentTime;
+        for(let i = 0; i < video.buffered.length; i++) {
+          if(seekTime >= video.buffered.start(i) && seekTime < video.buffered.end(i))
+            return;
+        }
+
+        // If timestamp is not buffered, set video to waiting
+        this.setWaiting(video);
+      }
+
+      /**
        * Sets the state of a video to 'waiting'.
        * @param  {HTMLElement} video The video element
        * @return {void}.
@@ -189,11 +211,11 @@
        */
       _videoReady(e) {
         if(this._videosWaiting.delete(e.target) && !this._anyWaiting()) {
+          this._restorePlayState();
+
           // Invoke registered callbacks
           this._readyCallbacks.forEach(entry => entry.callback());
           this._readyCallbacks = this._readyCallbacks.filter(entry => !entry.once);
-
-          this._restorePlayState();
         }
       }
 

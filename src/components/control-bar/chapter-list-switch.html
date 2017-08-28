@@ -26,7 +26,9 @@
     </template>
 
   <script>
-    define('chapter-list-switch', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('chapter-list-switch', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
       class ChapterListControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'chapter-list-switch'; }
 
@@ -37,11 +39,15 @@
               type: Object,
               inject: 'StateManager',
             },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
           };
         }
 
         _handleClick() {
-          this._stateManager.toggleIsChapterListShown();
+          this._analyticsManager.changeState('toggleIsChapterListShown', [], {verb: ANALYTICS_TOPICS.VIDEO_CHAPTER});
         }
       }
 

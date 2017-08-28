@@ -25,7 +25,9 @@
   </template>
 
   <script>
-    define('interactive-transcript-control', ['binding-helpers', 'ioc-requester', 'localization'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin) => {
+    define('interactive-transcript-control', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
       class InteractiveTranscriptControl extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
         static get is() { return 'interactive-transcript-control'; }
 
@@ -40,6 +42,10 @@
             _stateManager: {
               type: Object,
               inject: 'StateManager',
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
             },
             _items: {
               type: Array,
@@ -78,6 +84,11 @@
           if (e.target.selectedValue === this._offValue && this.state.isInteractiveTranscriptShown) {
             this._stateManager.toggleInteractiveTranscript();
           }
+
+          this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_TRANSCRIPT}, {
+            currentTranscriptStatus: this.state.isInteractiveTranscriptShown,
+            currentTranscriptLanguage: this.state.captionLanguage,
+          });
         }
       }
 

@@ -28,7 +28,9 @@
   </template>
 
   <script>
-    define('quality-control', ['binding-helpers', 'ioc-requester', 'localization'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin) => {
+    define('quality-control', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
       class QualityControl extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
         static get is() { return 'quality-control'; }
 
@@ -43,6 +45,10 @@
             _stateManager: {
               type: Object,
               inject: 'StateManager',
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
             },
             _items: {
               type: Array,
@@ -61,7 +67,7 @@
         }
 
         _selectionChanged(e) {
-          this._stateManager.setQuality(e.target.selectedValue);
+          this._analyticsManager.changeState('setQuality', [e.target.selectedValue], {verb: ANALYTICS_TOPICS.VIDEO_CHANGE_QUALITY});
         }
       }
 

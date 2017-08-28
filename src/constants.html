@@ -153,6 +153,35 @@
      */
     const USER_PREFERNECES_STORAGE_KEY = 'videoplayerUserPreferences';
 
+    /**
+     * Contains the possible topics for analytics events.
+     * @type {Object.<string, Object>}
+     */
+    const ANALYTICS_TOPICS = {
+      VIDEO_SEEK: 'video_seek',
+      PLAY_PAUSE: 'play_pause',
+      VIDEO_PAUSE: 'video_pause',
+      VIDEO_PLAY: 'video_play',
+      VIDEO_FULLSCREEN: 'video_fullscreen',
+      VIDEO_CHANGE_SPEED: 'video_change_speed',
+      VIDEO_END: 'video_end',
+      VIDEO_CLOSE: 'video_close',
+      VIDEO_CHANGE_QUALITY: 'video_change_quality',
+      VIDEO_CHANGE_SIZE: 'video_change_size',
+      VIDEO_LANDSCAPE: 'video_landscape',
+      VIDEO_PORTRAIT: 'video_portrait',
+      VIDEO_SLIDE_CHANGE: 'video_slide_change',
+      VIDEO_SLIDE_SEEK: 'video_slide_seek',
+      VIDEO_SUBTITLE: 'video_subtitle',
+      VIDEO_SUBTITLE_CHANGE: 'video_subtitle_change',
+      VIDEO_TRANSCRIPT: 'video_transcript',
+      VIDEO_TRANSCRIPT_SEEK: 'video_transcript_seek',
+      VIDEO_CHAPTER: 'video_chapter',
+      VIDEO_CHAPTER_SEEK: 'video_chapter_seek',
+      VIDEO_TIME_CHANGE: 'video_time_change',
+      VIDEO_DUAL_STREAM_CHANGE: 'video_dual_stream_change',
+    };
+    
     return {
       PLAY_STATES,
       PLAYBACK_RATES,
@@ -167,6 +196,7 @@
       USER_PREFERENCES_KEYS,
       USER_PREFERNECES_STORAGE_KEY,
       THEMES,
+      ANALYTICS_TOPICS,
       SECONDS_TO_NEXT_VIDEO,
     };
   });

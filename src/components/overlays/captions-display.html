@@ -37,14 +37,15 @@
     </style>
 
     <div id="container__captions" class$="[[ifNotThen(state.isCaptionShown, '-hidden')]]">
-      <template is="dom-if" if="[[_activeCue]]">
-        <div class="caption-cue-text">[[_activeCue.text]]</div>
+      <template is="dom-if" if="[[activeCue]]">
+        <div class="caption-cue-text">[[activeCue.text]]</div>
       </template>
     </div>
   </template>
 
   <script>
-    define('captions-display', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('captions-display', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
 
       class CaptionsDisplay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'captions-display'; }
@@ -52,22 +53,42 @@
         static get properties() {
           return {
             state: Object,
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
             _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
-            _activeCue: {
+            activeCue: {
               type: Object,
-              computed: '_getActiveCue(state.activeCaptions, state.position)',
             },
           };
         }
+        static get observers() {
+          return [
+            '_getActiveCue(state.position)',
+            '_cueChanged(activeCue)',
+          ];
+        }
 
-        _getActiveCue(activeCaptions, position) {
-          if(activeCaptions) {
-            return activeCaptions.find(cue => cue.startTime <= position &&
-                                              cue.endTime > position);
+        _getActiveCue(position) {
+          if(this.state.activeCaptions) {
+            let newCue = this.state.activeCaptions.find(cue => cue.startTime <= position &&
+                                                               cue.endTime > position);
+            if (!Object.is(this.activeCue, newCue)) {
+              this.activeCue = newCue;
+            }
           }
+        }
+
+        _cueChanged(activeCue) {
+          let identifier = this._analyticsManager._getCueIdentifier(activeCue);
+          this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SUBTITLE_CHANGE}, {
+            currentSubtitleIdentifier: identifier,
+            currentSubtitleLanguage: this.state.captionLanguage,
+          });
         }
       }
 

@@ -28,7 +28,7 @@
 
   <script>
     define('speed-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
-      const {PLAYBACK_RATES} = constants;
+      const {PLAYBACK_RATES, ANALYTICS_TOPICS} = constants;
 
       class SpeedControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'speed-control'; }
@@ -43,6 +43,10 @@
             _stateManager: {
               type: Object,
               inject: 'StateManager',
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
             },
             _items: {
               type: Array,
@@ -59,7 +63,7 @@
         }
 
         _selectionChanged(e) {
-          this._stateManager.setPlaybackRate(e.target.selectedValue);
+          this._analyticsManager.changeState('setPlaybackRate', [e.target.selectedValue], {verb: ANALYTICS_TOPICS.VIDEO_CHANGE_SPEED});
         }
       }
 

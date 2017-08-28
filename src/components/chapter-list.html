@@ -44,7 +44,9 @@
   </template>
 
   <script>
-    define('chapter-list', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('chapter-list', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
       class ChapterList extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'chapter-list'; }
 
@@ -55,6 +57,10 @@
             _stateManager: {
               type: Object,
               inject: 'StateManager',
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
             },
             activeChapter: {
               type: Object,
@@ -72,7 +78,8 @@
         }
 
         _handleClick(e) {
-          this._stateManager.setPosition(e.model.item.startPosition);
+          this._analyticsManager.changeState('setPosition', [e.model.item.startPosition], {verb: ANALYTICS_TOPICS.VIDEO_CHAPTER_SEEK});
+
         }
       }
 

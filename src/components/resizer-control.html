@@ -57,7 +57,9 @@
   </template>
 
   <script>
-    define('resizer-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('resizer-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
       class ResizerControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'resizer-control'; }
 
@@ -70,6 +72,10 @@
             _globalFlexBasisGap: {
               type: Array,
               value: () => [0, 0],
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
             },
           };
         }
@@ -127,7 +133,9 @@
           // Remove the created ghost element & eventhandler when the dragging ended.
           document.body.removeChild(document.body.lastChild);
           this.parentElement.removeEventListener('dragover', this._handleDragOver.bind(this));
+
           this.style.opacity = '1';
+          this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_CHANGE_SIZE}, this._getAnalyticsData());
         }
 
         _handleDragOver(e) {
@@ -241,13 +249,13 @@
               let containerWidth = 98;
 
               // Calculation based on two formulas
-              // I video1_width + video2_width = containerWidth
-              // II video1_width * quotient1 = video2_width * quotient2
-              let video1_width = (containerWidth * quotient2) / (quotient1 + quotient2);
-              let video2_width = (containerWidth * quotient1) / (quotient1 + quotient2);
+              // I video1Width + video2Width = containerWidth
+              // II video1Width * quotient1 = video2Width * quotient2
+              let video1Width = (containerWidth * quotient2) / (quotient1 + quotient2);
+              let video2Width = (containerWidth * quotient1) / (quotient1 + quotient2);
 
-              this._videos[0].style.flexBasis = video1_width + '%';
-              this._videos[1].style.flexBasis = video2_width + '%';
+              this._videos[0].style.flexBasis = video1Width + '%';
+              this._videos[1].style.flexBasis = video2Width + '%';
             }
           }
         }
@@ -259,7 +267,7 @@
           // If the format is wrong, number2 will be empty
           if(number2) {
             return number2 / number1;
-          } 
+          }
 
           return false;
         }
@@ -278,6 +286,16 @@
           if (!isFullscreen) {
             this._resetResizer();
           }
+        }
+
+        _getAnalyticsData() {
+          let sizeRatio = this._videos[0].offsetWidth / this._videos[1].offsetWidth;
+          let resizerControls = Array.from(this.parentElement.querySelectorAll('resizer-control'));
+          return {
+            newCurrentRatio: sizeRatio,
+            resizerIndex: resizerControls.indexOf(this),
+            resizerCount: resizerControls.length,
+          };
         }
       }
 

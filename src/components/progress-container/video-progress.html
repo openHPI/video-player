@@ -23,7 +23,9 @@
   </template>
 
   <script>
-    define('video-progress', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    define('video-progress', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
       class VideoProgress extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'video-progress'; }
 
@@ -34,11 +36,15 @@
               type: Object,
               inject: 'StateManager',
             },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
           };
         }
 
         _handleChange(e) {
-          this._stateManager.setPosition(e.target.value);
+          this._analyticsManager.changeState('setPosition', [e.target.value], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
         }
       }
 
