@@ -1,0 +1,50 @@
+<!-- Paths might need to be adapted depending on the file location of the component -->
+<link rel="import" href="../../bower_components/imd/imd.html">
+
+<link rel="import" href="../mixins/binding-helpers.html">
+<link rel="import" href="../mixins/ioc-requester.html">
+
+<dom-module id="new-component">
+  <template>
+    <style type="text/css">
+      /* Styling of component goes here */
+    </style>
+
+    <!-- HTML structure of component goes here -->
+  </template>
+
+  <script>
+    define('new-component', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+      class NewComponent extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'new-component'; }
+
+        static get properties() {
+          return {
+            // Public attributes of the component
+            state: Object,
+            
+            // Private properties of the component
+            _foo: {
+              value: 'bar',
+            },
+            
+            // Services can be injected in the following way
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+          };
+        }
+        
+        ready() {
+          super.ready();
+          
+          // One-time initialization of component
+        }
+      }
+
+      window.customElements.define(NewComponent.is, NewComponent);
+    });
+  </script>
+
+</dom-module>
