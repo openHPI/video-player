@@ -17,7 +17,12 @@
         this.stateManager = stateManager;
 
         window.onunload = this._handleWindowUnload.bind(this);
-        window.screen.orientation.onchange = this._handleOrientationChange.bind(this);
+        if (this._isIOSSafari()){
+          window.orientationchange = this._handleOrientationChange.bind(this);
+        }
+        else if (!this._isMacOSSafari()) {
+          window.screen.orientation.onchange = this._handleOrientationChange.bind(this);
+        }
       }
 
       /**
@@ -138,7 +143,7 @@
           currentSpeed: this.stateManager.state.playbackRate,
           currentQuality: this.stateManager.state.quality,
           currentSource: 'online',
-          currentOrientation: window.screen.orientation.type,
+          currentOrientation: (this._isMacOSSafari()) ? undefined : window.screen.orientation.type,
           currentSlide: this._getActiveSlide(),
           currentChapter: this._getActiveChapter(),
           currentFullscreen: this._getFullscreenMode(),
@@ -208,7 +213,7 @@
        * @returns {Object} Identifier text if available, Index of cue otherwise
        */
       _getCueIdentifier(cue) {
-        if (cue.id !== '')
+        if (cue && cue.id !== '')
           return cue.id;
         else
           return this.stateManager.state.activeCaptions.findIndex(cueCandidate => Object.is(cue, cueCandidate));
@@ -232,6 +237,26 @@
        */
       _getDualStreamStatus() {
         return (this.stateManager.state.fallbackStreamActive) ? 'fallback_stream' : 'dual_stream';
+      }
+
+      /**
+       * Detects iOS Safari
+       * @returns {boolean} TRUE if is Safari on iOS
+      **/
+      _isIOSSafari() {
+        let userAgent = window.navigator.userAgent;
+        let iOS = !!userAgent.match(/iPad/i) || !!userAgent.match(/iPhone/i)|| !!userAgent.match(/iPod/i);
+        return iOS && !!userAgent.match(/Safari/i);
+      }
+
+      /**
+       * Detects MacOS Safari
+       * @returns {boolean} TRUE if is Safari on MacOS
+      **/
+      _isMacOSSafari() {
+        let userAgent = window.navigator.userAgent;
+        let macOS = !!userAgent.match(/Macintosh/i) || !!userAgent.match(/Mac OS/i);
+        return macOS && !!userAgent.match(/Safari/i);
       }
     }
 

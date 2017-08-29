@@ -68,9 +68,14 @@
         }
         static get observers() {
           return [
+            '_captionsChanged(state.activeCaptions)',
             '_getActiveCue(state.position)',
             '_cueChanged(activeCue)',
           ];
+        }
+
+        _captionsChanged() {
+          this._getActiveCue(this.state.position);
         }
 
         _getActiveCue(position) {
