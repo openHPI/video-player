@@ -94,7 +94,7 @@
 
         this.setState('position', seconds);
 
-        if(this.state.position === this.state.duration && this.duration > 0) {
+        if(this.state.position === this.state.duration && this.state.duration > 0) {
           this.setPlayState(PLAY_STATES.FINISHED);
         } else if(this.state.playState === PLAY_STATES.FINISHED) {
           this.setPlayState(PLAY_STATES.PAUSED);
