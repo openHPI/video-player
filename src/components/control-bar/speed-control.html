@@ -1,4 +1,4 @@
-<link rel="import" href="../../../bower_components/imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
@@ -27,7 +27,7 @@
     </template>
 
   <script>
-    define('speed-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+    IMD.define('speed-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {PLAYBACK_RATES, ANALYTICS_TOPICS} = constants;
 
       class SpeedControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {

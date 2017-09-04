@@ -41,8 +41,7 @@
   ],
   "globals": {
     "Polymer": false,
-    "define": false,
-    "require": false,
+    "IMD": false,
     "exports": false
   }
 }

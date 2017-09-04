@@ -1,7 +1,8 @@
+<link rel="import" href="../3rd-imports/scoped-imd.html">
 <link rel="import" href="../constants.html">
 
 <script>
-  define('state-manager', ['constants'], (constants) => {
+  IMD.define('state-manager', ['constants'], (constants) => {
     const {PLAY_STATES, PLAYBACK_RATES, QUALITY_MODES} = constants;
 
     class StateManager {

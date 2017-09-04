@@ -1,4 +1,4 @@
-<link rel="import" href="../../../bower_components/imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 <link rel="import" href="../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
@@ -87,7 +87,7 @@
   </template>
 
   <script>
-    define('next-video-overlay', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
+    IMD.define('next-video-overlay', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
       const {PLAY_STATES, SECONDS_TO_NEXT_VIDEO} = constants;
 
       class NextVideoOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {

@@ -1,7 +1,8 @@
+<link rel="import" href="../3rd-imports/scoped-imd.html">
 <link rel="import" href="../constants.html">
 
 <script>
-  define('synchronization-manager', ['constants'], (constants) => {
+  IMD.define('synchronization-manager', ['constants'], (constants) => {
     const {PLAY_STATES, SYNC_INTERVAL, SYNC_DIFF_THRESHOLD} = constants;
 
     class SynchronizationManager {

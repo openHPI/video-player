@@ -1,6 +1,8 @@
+<link rel="import" href="../3rd-imports/scoped-imd.html">
 <link rel="import" href="../constants.html">
+
 <script>
-  define('user-preferences-manager', ['constants'], (constants) => {
+  IMD.define('user-preferences-manager', ['constants'], (constants) => {
     const {USER_PREFERENCES_KEYS, USER_PREFERNECES_STORAGE_KEY} = constants;
 
     class UserPreferencesManager {

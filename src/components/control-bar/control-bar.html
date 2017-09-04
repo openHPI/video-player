@@ -1,4 +1,4 @@
-<link rel="import" href="../../../bower_components/imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
@@ -100,7 +100,7 @@
   </template>
 
   <script>
-    define('control-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    IMD.define('control-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
       const SKIP_SECONDS = 15;
       const TEXT_ELEMENT_TAG_NAMES = ['INPUT', 'TEXTAREA'];
 

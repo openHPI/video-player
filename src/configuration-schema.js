@@ -284,5 +284,5 @@ const configurationSchema = {
 if (typeof window === 'undefined') {
   exports.schema = configurationSchema;
 } else {
-  define('configuration-schema', () => configurationSchema);
+  IMD.define('configuration-schema', () => configurationSchema);
 }

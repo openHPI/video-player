@@ -1,4 +1,4 @@
-<link rel="import" href="../../../bower_components/imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
@@ -48,7 +48,7 @@
   </template>
 
   <script>
-    define('waiting-overlay', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+    IMD.define('waiting-overlay', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {PLAY_STATES} = constants;
 
       class WaitingOverlay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {

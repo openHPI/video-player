@@ -1,4 +1,4 @@
-<link rel="import" href="../../../bower_components/imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
@@ -50,7 +50,7 @@
   </template>
 
   <script>
-    define('slide-thumbnail', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+    IMD.define('slide-thumbnail', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {ANALYTICS_TOPICS} = constants;
 
       class SlideThumbnail extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {

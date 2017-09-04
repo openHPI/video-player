@@ -1,4 +1,4 @@
-<link rel="import" href="../../bower_components/imd/imd.html">
+<link rel="import" href="../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../constants.html">
 <link rel="import" href="../3rd-imports/hls-js.html">
@@ -52,7 +52,7 @@
   </template>
 
   <script>
-    define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, Hls, constants) => {
+    IMD.define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, Hls, constants) => {
       const {PLAY_STATES, QUALITY_MODES, HLS_MIME_TYPE, SEEK_DIFF_THRESHOLD} = constants;
 
       class VideoStream extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {

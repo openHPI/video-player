@@ -1,8 +1,9 @@
+<link rel="import" href="../3rd-imports/scoped-imd.html">
 <link rel="import" href="../constants.html">
 <link rel="import" href="state-manager.html">
 
 <script>
-  define('analytics-manager', ['constants'], (constants) => {
+  IMD.define('analytics-manager', ['constants'], (constants) => {
     const {ANALYTICS_TOPICS, PLAY_STATES} = constants;
 
     class AnalyticsManager {
@@ -17,10 +18,9 @@
         this.stateManager = stateManager;
 
         window.onunload = this._handleWindowUnload.bind(this);
-        if (this._isIOSSafari()){
+        if (this._isIOSSafari()) {
           window.orientationchange = this._handleOrientationChange.bind(this);
-        }
-        else if (!this._isMacOSSafari()) {
+        } else if (!this._isMacOSSafari()) {
           window.screen.orientation.onchange = this._handleOrientationChange.bind(this);
         }
       }

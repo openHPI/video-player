@@ -1,5 +1,7 @@
+<link rel="import" href="../3rd-imports/scoped-imd.html">
+
 <script>
-  define('fullscreen-manager', () => {
+  IMD.define('fullscreen-manager', () => {
     class FullscreenManager {
       /**
        * Initializes a new FullscreenManager instance.
@@ -47,7 +49,7 @@
           // stretches the fullscreenElement to occupy 100% of width and height
           this.fullscreenElement.classList.add('fake-fullscreen');
           this._oldBodyPosition = document.body.style.position;
-          document.body.style.position = 'fixed'; 
+          document.body.style.position = 'fixed';
         }
       }
 
