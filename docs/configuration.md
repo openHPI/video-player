@@ -115,17 +115,32 @@ The player configuration is provided as JSON object:
      }
    ]
 ```
-* **playlist** (object): URLs of the previous and/or next video, if video is in a playlist.
+* **playlist** (object): The playlist, the video is part of.
+   * **currentPosition** (number): The current position in the playlist. (*Required*)
+   * **entries** (array): Videos of the playlist. (*Required*)
+       * **url** (string): The url of the page containing the video. (*Required*)
+       * **title** (string): The title of the video.
    * **autoPlay** (boolean): If enabled, the user is redirected to the next video page after the video has ended. (default: `false`)
-   * **previousVideo** (string): The URL of the previous video in the playlist.
-   * **nextVideo** (string): The URL of the next video in the playlist.
 
    *Example*
 ```JSON
    {
      "autoPlay": true,
-     "previousVideo": "/url/of/previous/video",
-     "nextVideo": "/url/of/next/video"
+     "currentPosition": 1,
+     "entries": [
+       {
+         "title": "Previous Video",
+         "url": "/url/of/previous/video"
+       },
+       {
+         "title": "Current Video",
+         "url": "/url/of/current/video"
+       },
+       {
+         "title": "Next Video",
+         "url": "/url/of/next/video"
+       }
+     ]
    }
 ```
 * **videoObject** (object): Video metadata defined in the [VideoObject](http://schema.org/VideoObject) schema as JSON-LD, which is rendered by the player.

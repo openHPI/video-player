@@ -19,7 +19,7 @@
 <link rel="import" href="services/analytics-manager.html">
 <link rel="import" href="services/localizer.html">
 <link rel="import" href="components/video-stream.html">
-<link rel="import" href="components/chapter-list.html">
+<link rel="import" href="components/playlist-chapter-list.html">
 <link rel="import" href="components/interactive-transcript.html">
 <link rel="import" href="components/overlays/waiting-overlay.html">
 <link rel="import" href="components/overlays/next-video-overlay.html">
@@ -124,8 +124,8 @@
       <div id="video-container">
         <!-- Videos Overlays -->
         <waiting-overlay state="[[state]]"></waiting-overlay>
-        <template is="dom-if" if="[[and(configuration.playlist.autoPlay, configuration.playlist.nextVideo)]]">
-          <next-video-overlay state="[[state]]" next-video="[[configuration.playlist.nextVideo]]"></next-video-overlay>
+        <template is="dom-if" if="[[and(_nextVideo, configuration.playlist.autoPlay)]]">
+          <next-video-overlay state="[[state]]" next-video="[[_nextVideo]]"></next-video-overlay>
         </template>
         <template is="dom-if" if="[[hasItems(configuration.relatedVideos)]]">
           <finished-overlay state="[[state]]" related-videos="[[configuration.relatedVideos]]"></finished-overlay>
@@ -185,12 +185,18 @@
         has-fallback-stream="[[_hasFallbackStream]]"
         caption-languages="[[_captionLanguages]]"
         available-qualities="[[_availableQualities]]"
-        playlist="[[configuration.playlist]]"
+        previous-video="[[_previousVideo]]"
+        next-video="[[_nextVideo]]"
         number-of-streams="[[configuration.streams.length]]">
       </control-bar>
 
       <!-- Chapter List -->
-      <chapter-list state="[[state]]" chapters="[[configuration.chapters]]" show-if="[[state.isChapterListShown]]"></chapter-list>
+      <playlist-chapter-list
+        state="[[state]]"
+        chapters="[[configuration.chapters]]"
+        playlist="[[configuration.playlist]]"
+        show-if="[[state.isChapterListShown]]">
+      </playlist-chapter-list>
 
       <!-- Interactive Transcript -->
       <interactive-transcript state="[[state]]" show-if="[[state.isInteractiveTranscriptShown]]"></interactive-transcript>
@@ -253,6 +259,14 @@
             _availableQualities: {
               type: Array,
               computed: '_getAvailableQualities(configuration.streams, state.fallbackStreamActive, configuration.fallbackStream)',
+            },
+            _previousVideo: {
+              type: Object,
+              computed: '_getPreviousVideo(configuration.playlist.currentPosition, configuration.playlist.entries)',
+            },
+            _nextVideo: {
+              type: Object,
+              computed: '_getNextVideo(configuration.playlist.currentPosition, configuration.playlist.entries)',
             },
             _hasFallbackStream: {
               type: Boolean,
@@ -370,6 +384,18 @@
                        .filter(quality => streams.every(stream => Object.keys(stream)
                                                                         .includes(quality)));
             }
+          }
+        }
+
+        _getPreviousVideo(currentPosition, entries) {
+          if(entries && currentPosition > 0 && entries.length > 1) {
+            return entries[currentPosition - 1];
+          }
+        }
+
+        _getNextVideo(currentPosition, entries) {
+          if(entries && currentPosition >= 0 && currentPosition < entries.length - 1) {
+            return entries[currentPosition + 1];
           }
         }
 

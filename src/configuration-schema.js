@@ -240,26 +240,52 @@ const configurationSchema = {
   },
   playlist: {
     type: 'object',
-    description: 'URLs of the previous and/or next video, if video is in a playlist.',
+    description: 'The playlist, the video is part of.',
     schema: {
       autoPlay: {
         type: 'boolean',
         description: 'If enabled, the user is redirected to the next video page after the video has ended.',
         default: false,
       },
-      previousVideo: {
-        type: 'string',
-        description: 'The URL of the previous video in the playlist.',
+      currentPosition: {
+        required: true,
+        type: 'number',
+        description: 'The current position in the playlist.',
       },
-      nextVideo: {
-        type: 'string',
-        description: 'The URL of the next video in the playlist.',
+      entries: {
+        required: true,
+        type: 'array',
+        description: 'Videos of the playlist.',
+        schema: {
+          title: {
+            type: 'string',
+            description: 'The title of the video.',
+          },
+          url: {
+            required: true,
+            type: 'string',
+            description: 'The url of the page containing the video.',
+          },
+        },
       },
     },
     example: {
       autoPlay: true,
-      previousVideo: '/url/of/previous/video',
-      nextVideo: '/url/of/next/video',
+      currentPosition: 1,
+      entries: [
+        {
+          title: 'Previous Video',
+          url: '/url/of/previous/video',
+        },
+        {
+          title: 'Current Video',
+          url: '/url/of/current/video',
+        },
+        {
+          title: 'Next Video',
+          url: '/url/of/next/video',
+        },
+      ],
     },
   },
   videoObject: {

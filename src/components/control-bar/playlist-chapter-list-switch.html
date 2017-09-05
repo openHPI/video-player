@@ -5,7 +5,7 @@
 <link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 
-<dom-module id="chapter-list-switch">
+<dom-module id="playlist-chapter-list-switch">
   <template>
     <style type="text/css" include="control-bar--style-module font-awesome">
       :host {
@@ -15,7 +15,7 @@
       }
     </style>
 
-    <div id="container__chapter_list_switch" class="user_controls">
+    <div id="container__playlist_chapter_list_switch" class="user_controls">
       <a id="button__chapter_list"
          class$="button [[ifNotThen(state.isChapterListShown, 'inactive')]]"
          on-click="_handleClick"
@@ -26,11 +26,11 @@
     </template>
 
   <script>
-    IMD.define('chapter-list-switch', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+    IMD.define('playlist-chapter-list-switch', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {ANALYTICS_TOPICS} = constants;
 
-      class ChapterListControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
-        static get is() { return 'chapter-list-switch'; }
+      class PlaylistChapterListSwitch extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'playlist-chapter-list-switch'; }
 
         static get properties() {
           return {
@@ -51,7 +51,7 @@
         }
       }
 
-      window.customElements.define(ChapterListControl.is, ChapterListControl);
+      window.customElements.define(PlaylistChapterListSwitch.is, PlaylistChapterListSwitch);
     });
   </script>
 

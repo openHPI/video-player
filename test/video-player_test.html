@@ -56,10 +56,23 @@
             "url" : "/components/videoplayer/test/test-files/captions/subtitles_fr.vtt"
           }
         ],
-        "playlist" : {
-          "autoPlay": false,
-          "previousVideo" : "https://testing.openhpi.de/courses/videoplayer/items/5xa1AWl3L7AqpLw9VMGBWQ",
-          "nextVideo" : "https://testing.openhpi.de/courses/videoplayer/items/6ZKdGPHCVZPem2u0RlTxtv"
+        "playlist": {
+          "autoPlay": true,
+          "currentPosition": 1,
+          "entries": [
+            {
+              "title": "Get to Know the Internet of Things",
+              "url": "https://testing.openhpi.de/courses/videoplayer/items/5xa1AWl3L7AqpLw9VMGBWQ"
+            },
+            {
+              "title": "Introduction to Buisness Process Management",
+              "url": "https://testing.openhpi.de/courses/videoplayer/items/2KNJwtTFXFacCdzGpYR3vX"
+            },
+            {
+              "title": "On Modeling",
+              "url": "https://testing.openhpi.de/courses/videoplayer/items/6ZKdGPHCVZPem2u0RlTxtv"
+            }
+          ]
         },
         "slides" : [
           {
@@ -214,12 +227,13 @@
           done();
         });
 
-        test('testing chapter-list-switch', function(done) {
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].shadowRoot.querySelectorAll("#container__chapter_list li").length, 2, "Test whether we have two chapters available");
-          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].classList), "-hidden", "chapter list is hidden by default");
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("chapter-list-switch")[0].shadowRoot.querySelectorAll("#button__chapter_list")[0].click();
-          assert.notInclude(Array.from(videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].classList), "-hidden", 'chapter list is not hidden anymore after activating it');
-          videoPlayer.shadowRoot.querySelectorAll("chapter-list")[0].shadowRoot.querySelectorAll("#container__chapter_list li a")[1].click();
+        test('testing playlist-chapter-list-switch', function(done) {
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("playlist-chapter-list")[0].shadowRoot.querySelectorAll("#container__playlist_chapter_list .list_item:not(.sublist_item)").length, 3, "Test whether we have three playlist entries available");
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll("playlist-chapter-list")[0].shadowRoot.querySelectorAll("#container__playlist_chapter_list .list_item.sublist_item").length, 2, "Test whether we have two chapters available");
+          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("playlist-chapter-list")[0].classList), "-hidden", "chapter list is hidden by default");
+          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playlist-chapter-list-switch")[0].shadowRoot.querySelectorAll("#button__chapter_list")[0].click();
+          assert.notInclude(Array.from(videoPlayer.shadowRoot.querySelectorAll("playlist-chapter-list")[0].classList), "-hidden", 'chapter list is not hidden anymore after activating it');
+          videoPlayer.shadowRoot.querySelectorAll("playlist-chapter-list")[0].shadowRoot.querySelectorAll("#container__playlist_chapter_list .list_item.sublist_item a")[1].click();
           assert.equal(videoPlayer.state.position, 15, 'position value is at value of second chapter');
           done();
         });
@@ -259,7 +273,7 @@
         test('testing fullscreen-control', function(done){
           // Fullscreen cannot be triggered programmatically
           // (we get the error "Failed to execute 'requestFullscreen'").
-          // Instead, we will fake being an iOS device / incompatible with the 
+          // Instead, we will fake being an iOS device / incompatible with the
           // existing full screen APIs so we can at least test the fake full screen.
           videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].requestFullscreen = undefined;
           videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].mozRequestFullScreen = undefined;
@@ -302,7 +316,7 @@
           // }, 200);
           done();
         });
-        
+
         test('testing video progress bar', function(done){
           // This does not work, even though we use the progress bar in the
           // same way as in the sound-control test.
@@ -315,7 +329,7 @@
           // });
           done();
         });
-        
+
         test('testing keyboard shortcuts', function(done){
           // Despite multiple efforts, we could not figure out how to fire
           // keyboard events in a manner that web-component-tester accepts.
@@ -326,7 +340,7 @@
           // flush(function(){
           //   setTimeout(function(){
           // assert.equal(videoPlayer.state.playState, 'PLAYING', 'pressing space bar works for play!');
-          // MockInteractions.pressSpace(nodeWindow);          
+          // MockInteractions.pressSpace(nodeWindow);
           // nodeWindow.dispatchEvent(new KeyboardEvent('keydown',{'key':' '}));
           // assert.equal(videoPlayer.state.playState, 'PAUSED', 'pressing space bar works for pause!');
           // // Apparently the state manager gets confused by the videos
