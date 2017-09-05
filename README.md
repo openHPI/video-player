@@ -60,6 +60,9 @@ A new GitHub release can be created by merging in the master branch and executin
 
 The sources are bundled and the release is created afterwards by Travis, if the tests are passing.
 
+## Analytics
+See [analytics.md](docs/analytics.md)
+
 ## Miscellaneous
 ### User Preferences
 Properties changed by the user are always automatically saved in the browser's LocalStorage. Possible for:
