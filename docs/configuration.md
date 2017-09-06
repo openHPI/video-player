@@ -59,6 +59,17 @@ The player configuration is provided as JSON object:
 * **theme** (string):`<["dark-orange","dark-yellow","dark-blue","light-green"]>` Predefined color theme (can be adjusted by settings the colors explicitly). (default: `"dark-orange"`)
 * **loadFontAwesome** (boolean): [FontAwesome](http://fontawesome.io) is used for the icons of the player. If your site already loads FontAwesome, this can be set to false to save bandwidth. (default: `true`)
 * **videoPreload** (boolean): Turns on/off preloading of the videos when the page loads. (default: `true`)
+* **trimVideo** (object): Restricts the playback on a specific segment of the video.
+   * **start** (number): The start position of the segment. (default: `0`)
+   * **end** (number): The end position of the segment (default: `"duration of video"`)
+
+   *Example*
+```JSON
+   {
+     "start": 60,
+     "end": 300
+   }
+```
 * **chapters** (array): List of timestamps with chapter names.
    * **title** (string): Title of the chapter. (*Required*)
    * **startPosition** (number): Start position of the chapter in seconds. (*Required*)

@@ -295,7 +295,10 @@
             '_secondaryBackgroundColorChanged(configuration.secondaryBackgroundColor)',
             '_themeChanged(configuration.theme)',
             '_languageChanged(configuration.language, _localizer)',
+            '_trimStartChanged(configuration.trimVideo.start)',
+            '_trimEndChanged(configuration.trimVideo.end)',
             '_playStateChanged(state.playState)',
+            '_durationChanged(state.duration)',
             '_fullscreenChanged(state.fullscreen)',
             '_userPreferencesStateChanged(state.*)',
             '_positionChanged(state.position)',
@@ -487,6 +490,12 @@
           }
         }
 
+        _durationChanged(duration) {
+          if(duration > 0) {
+            this.dispatchEvent(new CustomEvent('ready'));
+          }
+        }
+
         _fullscreenChanged(fullscreen) {
           if(this._fullscreenManager) {
             if (fullscreen) {
@@ -548,6 +557,18 @@
         _languageChanged(language) {
           if(this._localizer) {
             this._localizer.setLanguage(language);
+          }
+        }
+
+        _trimStartChanged(trimStart) {
+          if(this._stateManager) {
+            this._stateManager.trimStart(trimStart);
+          }
+        }
+
+        _trimEndChanged(trimEnd) {
+          if(this._stateManager) {
+            this._stateManager.trimEnd(trimEnd);
           }
         }
 

@@ -14,7 +14,7 @@
     </style>
 
     <div id="container__videotime_display" class="user_controls">
-      [[secondsToHms(state.position, state.duration)]] / [[secondsToHms(state.duration, state.duration)]]
+      [[secondsToHms(_position, _duration)]] / [[secondsToHms(_duration)]]
     </div>
   </template>
 
@@ -30,7 +30,23 @@
               type: Object,
               inject: 'StateManager',
             },
+            _position: {
+              type: Number,
+              computed: '_getPosition(state.position, state.trimStart)',
+            },
+            _duration: {
+              type: Number,
+              computed: '_getDuration(state.trimStart, state.trimEnd)',
+            },
           };
+        }
+
+        _getPosition(position, trimStart) {
+          return position - trimStart;
+        }
+
+        _getDuration(trimStart, trimEnd) {
+          return trimEnd - trimStart;
         }
       }
 

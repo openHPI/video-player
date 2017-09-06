@@ -13,9 +13,9 @@
     <div class="progress_indicator">
       <progress-bar
         id="progress__video_progress"
-        max="[[toStringOrEmpty(state.duration)]]"
-        value$="[[toStringOrEmpty(state.position)]]"
-        secondary-value$="[[toStringOrEmpty(state.bufferPosition)]]"
+        max="[[toStringOrEmpty(_duration)]]"
+        value$="[[toStringOrEmpty(_position)]]"
+        secondary-value$="[[toStringOrEmpty(_bufferPosition)]]"
         on-change="_handleChange"
         show-target-position-on-hover>
       </progress-bar>
@@ -40,11 +40,32 @@
               type: Object,
               inject: 'AnalyticsManager',
             },
+            _position: {
+              type: Number,
+              computed: '_getPosition(state.position, state.trimStart, state.trimEnd)',
+            },
+            _bufferPosition: {
+              type: Number,
+              computed: '_getPosition(state.bufferPosition, state.trimStart, state.trimEnd)',
+            },
+            _duration: {
+              type: Number,
+              computed: '_getDuration(state.duration, state.trimStart, state.trimEnd)',
+            },
           };
         }
 
+        _getPosition(position, trimStart, trimEnd) {
+          return Math.min(position - trimStart, trimEnd);
+        }
+
+        _getDuration(duration, trimStart, trimEnd) {
+          return trimEnd - trimStart;
+        }
+
         _handleChange(e) {
-          this._analyticsManager.changeState('setPosition', [e.target.value], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
+          let position = this.state.trimStart + e.target.value;
+          this._analyticsManager.changeState('setPosition', [position], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
         }
       }
 

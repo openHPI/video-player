@@ -139,6 +139,26 @@ const configurationSchema = {
     default: true,
     description: 'Turns on/off preloading of the videos when the page loads.',
   },
+  trimVideo: {
+    type: 'object',
+    description: 'Restricts the playback on a specific segment of the video.',
+    schema: {
+      start: {
+        type: 'number',
+        default: 0,
+        description: 'The start position of the segment.',
+      },
+      end: {
+        type: 'number',
+        default: 'duration of video',
+        description: 'The end position of the segment',
+      },
+    },
+    example: {
+      start: 60,
+      end: 300,
+    },
+  },
   chapters: {
     type: 'array',
     description: 'List of timestamps with chapter names.',

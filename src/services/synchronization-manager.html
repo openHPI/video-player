@@ -98,7 +98,12 @@
       _videoTimeUpdate(e) {
         let video = e.target;
         if(this._isMaster(video) && !this._anyWaiting()) {
-          this._stateManager.setPosition(video.currentTime);
+          // Do not exceed trimEnd, if set
+          if(this._stateManager.state.trimEnd && video.currentTime > this._stateManager.state.trimEnd) {
+            this._stateManager.setPosition(this._stateManager.state.trimEnd);
+          } else {
+            this._stateManager.setPosition(video.currentTime);
+          }
         }
       }
 

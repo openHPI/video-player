@@ -58,10 +58,11 @@
 
     <div id="container__interactive_transcript" class="container__list">
       <ul class="list">
-          <template is="dom-repeat" items="[[state.activeCaptions]]">
-            <li class$="list_item [[ifEqualsThen(item, activeCue, '-active')]]" on-click="_handleClick">
-              <span class$="list_item__prefix list_item__link [[ifEqualsThen(item, activeCue, 'active fa-caret-right')]]">
-                [[secondsToHms(item.startTime, state.duration)]] - [[secondsToHms(item.endTime, state.duration)]]:
+          <template is="dom-repeat" items="[[_visibleCaptions]]">
+            <li class$="list_item [[ifEqualsThen(item, _activeCue, '-active')]]" on-click="_handleClick">
+              <span class$="list_item__prefix list_item__link [[ifEqualsThen(item, _activeCue, 'active fa-caret-right')]]">
+                [[_formatSeconds(item.startTime, state.duration, state.trimStart, state.trimEnd)]] -
+                [[_formatSeconds(item.endTime, state.duration, state.trimStart, state.trimEnd)]]:
               </span>
               <span class="list_item__link">
                 [[item.text]]
@@ -90,35 +91,36 @@
               type: Object,
               inject: 'StateManager',
             },
-            activeCue: {
+            _visibleCaptions: {
+              type: Array,
+              computed: '_getVisibleCaptions(state.activeCaptions, state.trimStart, state.trimEnd)',
+            },
+            _activeCue: {
               type: Object,
+              computed: '_getActiveCue(_visibleCaptions, state.position)',
             },
           };
         }
 
         static get observers() {
           return [
-            '_interactiveTranscriptChanged(state.activeCaptions)',
-            '_getActiveCue(state.position)',
-            '_activeCueChanged(activeCue, state.isInteractiveTranscriptShown)', // Observe isInteractiveTranscriptShown to scroll to current element when element is shown
+            '_activeCueChanged(_activeCue, state.isInteractiveTranscriptShown)', // Observe isInteractiveTranscriptShown to scroll to current element when element is shown
           ];
         }
 
-        _interactiveTranscriptChanged() {
-          if(this.state.isInteractiveTranscriptShown){
-            this._getActiveCue(this.state.position);
+        _getActiveCue(captions, position) {
+          if(captions) {
+            return captions.slice()
+                           .reverse()
+                           .find(cue => cue.startTime <= position &&
+                                        cue.endTime > position);
           }
         }
 
-        _getActiveCue(position) {
-          if(this.state.activeCaptions) {
-            let newCue = this.state.activeCaptions.slice()
-                                 .reverse()
-                                 .find(cue => cue.startTime <= position &&
-                                              cue.endTime > position);
-            if (!Object.is(this.activeCue, newCue)) {
-              this.activeCue = newCue;
-            }
+        _getVisibleCaptions(captions, trimStart, trimEnd) {
+          if(captions) {
+            return captions.filter(cue => cue.endTime > trimStart &&
+                                          cue.startTime < trimEnd);
           }
         }
 
@@ -127,6 +129,11 @@
           if(activeElement) {
             activeElement.parentNode.scrollTop = activeElement.offsetTop;
           }
+        }
+
+        _formatSeconds(seconds, duration, trimStart, trimEnd) {
+          seconds = Math.min(Math.max(0, seconds - trimStart), trimEnd);
+          return this.secondsToHms(seconds, duration);
         }
 
         _handleClick(e) {

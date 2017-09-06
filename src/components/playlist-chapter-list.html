@@ -49,7 +49,7 @@
               </a>
               <template is="dom-if" if="[[equals(index, playlist.currentPosition)]]">
                 <ul class="list sublist">
-                  <template is="dom-repeat" items="[[chapters]]">
+                  <template is="dom-repeat" items="[[_visibleChapters]]">
                     <li class$="list_item sublist_item [[ifEqualsThen(item, _activeChapter, 'active')]]">
                       <template is="dom-if" if="[[equals(item, _activeChapter)]]">
                         <i class="fa fa-caret-right"></i>
@@ -66,7 +66,7 @@
         </template>
 
         <template is="dom-if" if="[[!_hasPlaylist]]">
-          <template is="dom-repeat" items="[[chapters]]">
+          <template is="dom-repeat" items="[[_visibleChapters]]">
             <li class$="list_item [[ifEqualsThen(item, _activeChapter, 'active')]]">
               <template is="dom-if" if="[[equals(item, _activeChapter)]]">
                 <i class="fa fa-caret-right"></i>
@@ -106,9 +106,13 @@
               value: false,
               computed: '_getHasPlaylist(playlist)',
             },
+            _visibleChapters: {
+              type: Array,
+              computed: '_getVisibleChapters(chapters, state.trimStart, state.trimEnd)',
+            },
             _activeChapter: {
               type: Object,
-              computed: '_getActiveChapter(chapters, state.position)',
+              computed: '_getActiveChapter(_visibleChapters, state.position)',
             },
           };
         }
@@ -123,6 +127,18 @@
           return playlist && this.hasItems(playlist.entries);
         }
 
+        _getVisibleChapters(chapters, trimStart, trimEnd) {
+          let visibleChapters = [];
+          for(let i = 0; i < chapters.length; i++) {
+            let chapter = chapters[i];
+            if((chapter.startPosition >= trimStart || chapters[i + 1] && chapters[i + 1].startPosition > trimStart) && chapter.startPosition <= trimEnd) {
+              visibleChapters.push(chapter);
+            }
+          }
+
+          return visibleChapters;
+        }
+
         _getActiveChapter(chapters, position) {
           if(chapters){
             return chapters.slice()
@@ -132,7 +148,12 @@
         }
 
         _handleChapterClick(e) {
-          this._analyticsManager.changeState('setPosition', [e.model.item.startPosition], {verb: ANALYTICS_TOPICS.VIDEO_CHAPTER_SEEK});
+          let position = e.model.item.startPosition;
+          if(this.state.trimStart) {
+            position = Math.max(this.state.trimStart, position);
+          }
+
+          this._analyticsManager.changeState('setPosition', [position], {verb: ANALYTICS_TOPICS.VIDEO_CHAPTER_SEEK});
         }
 
         _scrollToActivePlaylistItem() {
