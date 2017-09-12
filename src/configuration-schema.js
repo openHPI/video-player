@@ -267,6 +267,11 @@ const configurationSchema = {
         description: 'If enabled, the user is redirected to the next video page after the video has ended.',
         default: false,
       },
+      hideInList: {
+        type: 'boolean',
+        description: 'If enabled, the playlist entries are not shown in the playlist/chapter list.',
+        default: false,
+      },
       currentPosition: {
         required: true,
         type: 'number',

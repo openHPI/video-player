@@ -38,7 +38,7 @@
 
     <div id="container__playlist_chapter_list" class="container__list">
       <ul class="list">
-        <template is="dom-if" if="[[_hasPlaylist]]">
+        <template is="dom-if" if="[[_showPlaylist]]">
           <template is="dom-repeat" items="[[playlist.entries]]">
             <li class$="list_item [[ifEqualsThen(index, playlist.currentPosition, 'active')]]">
               <template is="dom-if" if="[[equals(index, playlist.currentPosition)]]">
@@ -65,7 +65,7 @@
           </template>
         </template>
 
-        <template is="dom-if" if="[[!_hasPlaylist]]">
+        <template is="dom-if" if="[[!_showPlaylist]]">
           <template is="dom-repeat" items="[[_visibleChapters]]">
             <li class$="list_item [[ifEqualsThen(item, _activeChapter, 'active')]]">
               <template is="dom-if" if="[[equals(item, _activeChapter)]]">
@@ -101,10 +101,10 @@
               type: Object,
               inject: 'AnalyticsManager',
             },
-            _hasPlaylist: {
+            _showPlaylist: {
               type: Boolean,
               value: false,
-              computed: '_getHasPlaylist(playlist)',
+              computed: '_getShowPlaylist(playlist)',
             },
             _visibleChapters: {
               type: Array,
@@ -123,8 +123,8 @@
           ];
         }
 
-        _getHasPlaylist(playlist) {
-          return playlist && this.hasItems(playlist.entries);
+        _getShowPlaylist(playlist) {
+          return playlist && this.hasItems(playlist.entries) && !playlist.hideInList;
         }
 
         _getVisibleChapters(chapters, trimStart, trimEnd) {

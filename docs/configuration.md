@@ -132,6 +132,7 @@ The player configuration is provided as JSON object:
        * **url** (string): The url of the page containing the video. (*Required*)
        * **title** (string): The title of the video.
    * **autoPlay** (boolean): If enabled, the user is redirected to the next video page after the video has ended. (default: `false`)
+   * **hideInList** (boolean): If enabled, the playlist entries are not shown in the playlist/chapter list. (default: `false`)
 
    *Example*
 ```JSON
