@@ -72,6 +72,10 @@
             beforeStates.oldCurrentTime = this.stateManager.state.position;
             beforeStates.oldCurrentChapter = this._getActiveChapter();
             break;
+          case ANALYTICS_TOPICS.VIDEO_VOLUME_CHANGE:
+            beforeStates.oldCurrentVolume = this.stateManager.state.volume;
+            beforeStates.oldCurrentMuted = this.stateManager.state.muted;
+            break;
         }
 
         this.stateManager[changeFunction](...changeParameters);
@@ -107,6 +111,10 @@
             break;
           case ANALYTICS_TOPICS.VIDEO_DUAL_STREAM_CHANGE:
             afterStates.newCurrentDualStreamStatus = this._getDualStreamStatus();
+          case ANALYTICS_TOPICS.VIDEO_VOLUME_CHANGE:
+            afterStates.newCurrentVolume = this.stateManager.state.volume;
+            afterStates.newCurrentMuted = this.stateManager.state.muted;
+            break;
         }
 
         this._fireEvent(options.verb, baseEventData, beforeStates, afterStates);
