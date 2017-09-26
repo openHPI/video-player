@@ -27,14 +27,14 @@
     "openHPI"
   ],
   "main": "video-player.html",
-  "homepage": "https://github.com/openHPI/videoplayer#readme",
+  "homepage": "https://github.com/openHPI/video-player#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openHPI/videoplayer.git"
+    "url": "git+https://github.com/openHPI/video-player.git"
   },
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
-    "url": "https://github.com/openHPI/videoplayer/issues"
+    "url": "https://github.com/openHPI/video-player/issues"
   },
   "directories": {
     "test": "test"
