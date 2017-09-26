@@ -169,7 +169,7 @@
             setTimeout(function(){
               assert.equal(videoPlayer.shadowRoot.querySelectorAll("captions-display")[0].shadowRoot.querySelectorAll(".caption-cue-text")[0].innerText, 'This is a test caption', 'turning captions on shows captions');
               done();
-            }, 200);
+            }, 1000);
           });
         });
 
@@ -189,7 +189,7 @@
               videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll("li:nth-of-type(2) .list_item__prefix")[0].click();
               assert.equal(videoPlayer.state.position, 10, 'clicking on an interactive transcript item jumps to its corresponding position');
               done();
-            }, 200);
+            }, 1000);
           });
         });
 
