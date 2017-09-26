@@ -1,8 +1,9 @@
-<link rel="import" href="../bower_components/imd/imd.html">
-<link rel="import" href="../bower_components/shadycss/apply-shim.html">
-<link rel="import" href="../bower_components/polymer/lib/utils/import-href.html">
-<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
-<link rel="import" href="../bower_components/polymer/lib/elements/custom-style.html">
+<link rel="import" href="../../imd/imd.html">
+<link rel="import" href="../../shadycss/apply-shim.html">
+<link rel="import" href="../../polymer/lib/utils/import-href.html">
+<link rel="import" href="../../polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../polymer/lib/elements/custom-style.html">
 
 <link rel="import" href="mixins/ioc-provider.html">
 <link rel="import" href="mixins/ioc-requester.html">
@@ -338,7 +339,7 @@
         _configurationInitialized() {
           // Load FontAwesome, if specified in configuration
           if(this.configuration.loadFontAwesome) {
-            Polymer.importHref(this.importPath + '../node_modules/polymer-font-awesome/dist/font-face.html');
+            Polymer.importHref(this.importPath + '../../../node_modules/polymer-font-awesome/dist/font-face.html');
           }
 
           // In iOS playing multiple videos concurrently is currently not supported.
