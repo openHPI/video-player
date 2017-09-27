@@ -6,10 +6,10 @@
 
     <title>video-player test</title>
 
-    <link rel="import" href="../bower_components/polymer/polymer.html">
-    <link rel="import" href="../bower_components/iron-test-helpers/iron-test-helpers.html">
-    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="../bower_components/web-component-tester/browser.js"></script>
+    <link rel="import" href="../../polymer/polymer-element.html">
+    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
 
     <link rel="import" href="../src/video-player.html">
   </head>
@@ -21,39 +21,39 @@
         configuration='{
         "streams" : [
           {
-            "hd": "/components/videoplayer/test/test-files/BigBuckBunny30s_hd.mp4",
-            "sd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
-            "poster": "/components/videoplayer/test/test-files/poster_1.jpg"
+            "hd": "test-files/BigBuckBunny30s_hd.mp4",
+            "sd": "test-files/BigBuckBunny30s.mp4",
+            "poster": "test-files/poster_1.jpg"
           },
           {
-            "hd": "/components/videoplayer/test/test-files/BigBuckBunny30s_hd.mp4",
-            "sd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
-            "poster": "/components/videoplayer/test/test-files/poster_2.jpg"
+            "hd": "test-files/BigBuckBunny30s_hd.mp4",
+            "sd": "test-files/BigBuckBunny30s.mp4",
+            "poster": "test-files/poster_2.jpg"
           },
           {
-            "hd": "/components/videoplayer/test/test-files/BigBuckBunny30s_hd.mp4",
-            "sd": "/components/videoplayer/test/test-files/BigBuckBunny30s.mp4",
-            "poster": "/components/videoplayer/test/test-files/poster_1.jpg"
+            "hd": "test-files/BigBuckBunny30s_hd.mp4",
+            "sd": "test-files/BigBuckBunny30s.mp4",
+            "poster": "test-files/poster_1.jpg"
           }
         ],
         "fallbackStream" :
         {
-          "hd" : "/components/videoplayer/test/test-files/BigBuckBunny30s_fallback.mp4",
-          "sd" : "/components/videoplayer/test/test-files/BigBuckBunny30s_fallback.mp4",
-          "poster" : "/components/videoplayer/test/test-files/poster_1.jpg"
+          "hd" : "test-files/BigBuckBunny30s_fallback.mp4",
+          "sd" : "test-files/BigBuckBunny30s_fallback.mp4",
+          "poster" : "test-files/poster_1.jpg"
         },
         "captions" : [
           {
             "language" : "de",
-            "url" : "/components/videoplayer/test/test-files/captions/subtitles_de.vtt"
+            "url" : "test-files/captions/subtitles_de.vtt"
           },
           {
             "language" : "en",
-            "url" : "/components/videoplayer/test/test-files/captions/subtitles_en.vtt"
+            "url" : "test-files/captions/subtitles_en.vtt"
           },
           {
             "language" : "fr",
-            "url" : "/components/videoplayer/test/test-files/captions/subtitles_fr.vtt"
+            "url" : "test-files/captions/subtitles_fr.vtt"
           }
         ],
         "playlist" : {
@@ -63,7 +63,7 @@
         },
         "slides" : [
           {
-            "thumbnail" : "/components/videoplayer/test/test-files/bbb-splash.png",
+            "thumbnail" : "test-files/bbb-splash.png",
             "startPosition" : 0
           }
         ],
@@ -169,7 +169,7 @@
             setTimeout(function(){
               assert.equal(videoPlayer.shadowRoot.querySelectorAll("captions-display")[0].shadowRoot.querySelectorAll(".caption-cue-text")[0].innerText, 'This is a test caption', 'turning captions on shows captions');
               done();
-            }, 100);
+            }, 1000);
           });
         });
 
@@ -189,7 +189,7 @@
               videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll("li:nth-of-type(2) .list_item__prefix")[0].click();
               assert.equal(videoPlayer.state.position, 10, 'clicking on an interactive transcript item jumps to its corresponding position');
               done();
-            }, 80);
+            }, 1000);
           });
         });
 
@@ -207,10 +207,10 @@
 
         test('testing quality control', function(done){
           assert.equal(videoPlayer.state.quality, 'sd', 'Quality is at SD before changing');
-          assert.include(videoPlayer.shadowRoot.querySelectorAll("video-stream")[0].shadowRoot.querySelectorAll("#video")[0].src, '/components/videoplayer/test/test-files/BigBuckBunny30s.mp4', 'before changing the stream we see SD video');
+          assert.include(videoPlayer.shadowRoot.querySelectorAll("video-stream")[0].shadowRoot.querySelectorAll("#video")[0].src, 'test-files/BigBuckBunny30s.mp4', 'before changing the stream we see SD video');
           videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("quality-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name=HD]")[0].click();
           assert.equal(videoPlayer.state.quality, 'hd', 'Quality is at HD after changing');
-          assert.include(videoPlayer.shadowRoot.querySelectorAll("video-stream")[0].shadowRoot.querySelectorAll("#video")[0].src, '/components/videoplayer/test/test-files/BigBuckBunny30s_hd.mp4', 'changing the stream really does change to HD video');
+          assert.include(videoPlayer.shadowRoot.querySelectorAll("video-stream")[0].shadowRoot.querySelectorAll("#video")[0].src, 'test-files/BigBuckBunny30s_hd.mp4', 'changing the stream really does change to HD video');
           done();
         });
 
@@ -230,7 +230,7 @@
           videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("stream-switch-control")[0].shadowRoot.querySelectorAll("#button__stream-switch")[0].click();
           flush(function(){
             assert.equal(videoPlayer.shadowRoot.querySelectorAll("#streams-container video-stream").length, 1, 'after doing the stream switch, there are is only one video stream in the stream container');
-            assert.include(videoPlayer.shadowRoot.querySelectorAll("#streams-container video-stream")[0].shadowRoot.querySelectorAll("#video")[0].src, '/components/videoplayer/test/test-files/BigBuckBunny30s_fallback.mp4', 'after doing the stream switch, the only shown video is the fallback stream');
+            assert.include(videoPlayer.shadowRoot.querySelectorAll("#streams-container video-stream")[0].shadowRoot.querySelectorAll("#video")[0].src, 'test-files/BigBuckBunny30s_fallback.mp4', 'after doing the stream switch, the only shown video is the fallback stream');
             assert.isTrue(videoPlayer.state.fallbackStreamActive, 'after doing the stream switch, fallbackStreamActive is true');
             done();
           });

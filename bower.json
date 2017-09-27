@@ -10,7 +10,7 @@
     "Sören Oldag"
   ],
   "license": "LICENSE",
-  "homepage": "https://github.com/openHPI/videoplayer#readme",
+  "homepage": "https://github.com/openHPI/video-player#readme",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "imd": "PolymerLabs/IMD#^1.0.0",
