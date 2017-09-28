@@ -17,12 +17,8 @@
         this.videoPlayer = videoPlayer;
         this.stateManager = stateManager;
 
-        /*window.onunload = this._handleWindowUnload.bind(this);
-        if (this._isIOSSafari()){
-          window.orientationchange = this._handleOrientationChange.bind(this);
-        } else if (!this._isMacOSSafari()) {
-          window.screen.orientation.onchange = this._handleOrientationChange.bind(this);
-        }*/
+        window.onunload = this._handleWindowUnload.bind(this);
+        this._bindOrientationChange();
       }
 
       /**
@@ -143,7 +139,7 @@
           currentSpeed: this.stateManager.state.playbackRate,
           currentQuality: this.stateManager.state.quality,
           currentSource: 'online',
-          /*currentOrientation: (this._isMacOSSafari()) ? undefined : window.screen.orientation.type,*/
+          currentOrientation: (undefined || window.screen.msOrientation || (window.screen.orientation && window.screen.orientation.type)),
           currentSlide: this._getActiveSlide(),
           currentChapter: this._getActiveChapter(),
           currentFullscreen: this._getFullscreenMode(),
@@ -203,7 +199,7 @@
        */
       _handleOrientationChange() {
         let baseEventData = this._getBaseEventData();
-        let verb = (window.screen.orientation.type.includes('landscape') ? ANALYTICS_TOPICS.VIDEO_LANDSCAPE : ANALYTICS_TOPICS.VIDEO_PORTRAIT);
+        let verb = ((window.screen.msOrientation || window.screen.orientation.type).includes('landscape') ? ANALYTICS_TOPICS.VIDEO_LANDSCAPE : ANALYTICS_TOPICS.VIDEO_PORTRAIT);
         this._fireEvent(verb, baseEventData);
       }
 
@@ -240,23 +236,18 @@
       }
 
       /**
-       * Detects iOS Safari
-       * @returns {boolean} TRUE if is Safari on iOS
-      **/
-      _isIOSSafari() {
-        let userAgent = window.navigator.userAgent;
-        let iOS = !!userAgent.match(/iPad/i) || !!userAgent.match(/iPhone/i)|| !!userAgent.match(/iPod/i);
-        return iOS && !!userAgent.match(/Safari/i);
-      }
-
-      /**
-       * Detects MacOS Safari
-       * @returns {boolean} TRUE if is Safari on MacOS
-      **/
-      _isMacOSSafari() {
-        let userAgent = window.navigator.userAgent;
-        let macOS = !!userAgent.match(/Macintosh/i) || !!userAgent.match(/Mac OS/i);
-        return macOS && !!userAgent.match(/Safari/i);
+       * Binds the orientation change event depending on the used browser.
+       * @returns {void}
+       */
+      _bindOrientationChange() {
+        // MacOS Safari doesn't support this feature
+        if (window.screen.orientation && window.screen.orientation.onchange) { // standard
+          window.screen.orientation.onchange = this._handleOrientationChange.bind(this);
+        } else if (window.orientationchange) { // iOS Safari
+          window.orientationchange = this._handleOrientationChange.bind(this);
+        } else if (window.screen.onmsorientationchange) { // IE and Edge
+          window.onmsorientationchange = this._handleOrientationChange.bind(this);
+        }
       }
     }
 
