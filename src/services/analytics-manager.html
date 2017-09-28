@@ -175,10 +175,13 @@
       _getActiveSlide() {
         if (this.videoPlayer.configuration.slides) {
           let slides = this.videoPlayer.configuration.slides;
-          return slides.slice()
-                          .reverse()
-                          .find(slide => slide.startPosition <= this.stateManager.state.position);
-        } else
+          let slide = slides.slice()
+                            .reverse()
+                            .find(slide => slide.startPosition <= this.stateManager.state.position);
+          if (slide)
+            slide.slide_number = slides.slice().indexOf(slide);
+          return slide;
+         } else
           return undefined;
       }
 
