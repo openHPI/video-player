@@ -28,7 +28,9 @@
   </template>
 
   <script>
-    IMD.define('sound-control', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    IMD.define('sound-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
       class SoundControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'sound-control'; }
 
@@ -38,6 +40,10 @@
             _stateManager: {
               type: Object,
               inject: 'StateManager',
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
             },
             _effectiveVolume: {
               type: Number,
@@ -55,7 +61,7 @@
         }
 
         _handleChange(e) {
-          this._stateManager.setVolume(e.target.value);
+          this._analyticsManager.changeState('setVolume', [e.target.value], {verb: ANALYTICS_TOPICS.VIDEO_VOLUME_CHANGE});
         }
       }
 
