@@ -1,14 +1,14 @@
-# videoplayer
-Master: [![Build Status](https://travis-ci.org/openHPI/videoplayer.svg?branch=master)](https://travis-ci.org/openHPI/videoplayer)
-Dev: [![Build Status](https://travis-ci.org/openHPI/videoplayer.svg?branch=dev)](https://travis-ci.org/openHPI/videoplayer)
+# video-player
+Master: [![Build Status](https://travis-ci.org/openHPI/video-player.svg?branch=master)](https://travis-ci.org/openHPI/video-player)
+Dev: [![Build Status](https://travis-ci.org/openHPI/video-player.svg?branch=dev)](https://travis-ci.org/openHPI/video-player)
 
 
 ## Getting Started
 
 Make sure you have [NPM](https://www.npmjs.com/get-npm), [Bower](https://www.npmjs.com/package/bower) and the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed.
 
-1. Clone the repository with `git clone https://github.com/openHPI/videoplayer`.
-2. Change the directory with `cd videoplayer`.
+1. Clone the repository with `git clone https://github.com/openHPI/video-player`.
+2. Change the directory with `cd video-player`.
 3. Install dependencies by running `npm install`.
 4. Execute `npm run serve` and head to `http://localhost:8080/components/video-player` in your browser for a demo.
 
@@ -38,7 +38,7 @@ The component can then be used in any HTML site in the following way:
 </html>
 ```
 
-The bundle is automatically created for each version tag and attatched to the corresponding [GitHub release](https://github.com/openHPI/videoplayer/releases).
+The bundle is automatically created for each version tag and attached to the corresponding [GitHub release](https://github.com/openHPI/video-player/releases).
 
 ## Configuration
 See [configuration.md](docs/configuration.md)

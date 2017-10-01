@@ -61,3 +61,7 @@ typings/
 .tmp
 build
 dist
+
+# Ignore IntelliJ files
+.idea/
+*.iml
