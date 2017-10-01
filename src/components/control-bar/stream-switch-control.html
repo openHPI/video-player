@@ -1,4 +1,4 @@
-<link rel="import" href="../../../../imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 <link rel="import" href="../../../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
 <link rel="import" href="../../../../polymer/polymer-element.html">
 
@@ -38,7 +38,7 @@
   </template>
 
   <script>
-    define('stream-switch-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+    IMD.define('stream-switch-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {ANALYTICS_TOPICS} = constants;
 
       class streamSwitchControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {

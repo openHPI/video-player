@@ -1,7 +1,8 @@
+<link rel="import" href="../3rd-imports/scoped-imd.html">
 <link rel="import" href="../constants.html">
 
 <script>
-  define('synchronization-manager', ['constants'], (constants) => {
+  IMD.define('synchronization-manager', ['constants'], (constants) => {
     const {PLAY_STATES, SYNC_INTERVAL, SYNC_DIFF_THRESHOLD} = constants;
 
     class SynchronizationManager {
@@ -97,7 +98,14 @@
       _videoTimeUpdate(e) {
         let video = e.target;
         if(this._isMaster(video) && !this._anyWaiting()) {
-          this._stateManager.setPosition(video.currentTime);
+          // Stay within trimmed range, if set
+          if(this._stateManager.state.trimStart && video.currentTime < this._stateManager.state.trimStart) {
+            this._stateManager.setPosition(this._stateManager.state.trimStart);
+          } else if(this._stateManager.state.trimEnd && video.currentTime > this._stateManager.state.trimEnd) {
+            this._stateManager.setPosition(this._stateManager.state.trimEnd);
+          } else {
+            this._stateManager.setPosition(video.currentTime);
+          }
         }
       }
 

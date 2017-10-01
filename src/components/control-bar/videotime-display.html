@@ -1,4 +1,4 @@
-<link rel="import" href="../../../../imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
@@ -14,12 +14,12 @@
     </style>
 
     <div id="container__videotime_display" class="user_controls">
-      [[secondsToHms(state.position, state.duration)]] / [[secondsToHms(state.duration, state.duration)]]
+      [[secondsToHms(_position, _duration)]] / [[secondsToHms(_duration)]]
     </div>
   </template>
 
   <script>
-    define('videotime-display', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    IMD.define('videotime-display', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
       class VideoTimeDisplay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'videotime-display'; }
 
@@ -30,7 +30,23 @@
               type: Object,
               inject: 'StateManager',
             },
+            _position: {
+              type: Number,
+              computed: '_getPosition(state.position, state.trimStart)',
+            },
+            _duration: {
+              type: Number,
+              computed: '_getDuration(state.trimStart, state.trimEnd)',
+            },
           };
+        }
+
+        _getPosition(position, trimStart) {
+          return position - trimStart;
+        }
+
+        _getDuration(trimStart, trimEnd) {
+          return trimEnd - trimStart;
         }
       }
 

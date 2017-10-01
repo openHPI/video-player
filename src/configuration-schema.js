@@ -139,6 +139,26 @@ const configurationSchema = {
     default: true,
     description: 'Turns on/off preloading of the videos when the page loads.',
   },
+  trimVideo: {
+    type: 'object',
+    description: 'Restricts the playback on a specific segment of the video.',
+    schema: {
+      start: {
+        type: 'number',
+        default: 0,
+        description: 'The start position of the segment.',
+      },
+      end: {
+        type: 'number',
+        default: 'duration of video',
+        description: 'The end position of the segment',
+      },
+    },
+    example: {
+      start: 60,
+      end: 300,
+    },
+  },
   chapters: {
     type: 'array',
     description: 'List of timestamps with chapter names.',
@@ -240,26 +260,57 @@ const configurationSchema = {
   },
   playlist: {
     type: 'object',
-    description: 'URLs of the previous and/or next video, if video is in a playlist.',
+    description: 'The playlist, the video is part of.',
     schema: {
       autoPlay: {
         type: 'boolean',
         description: 'If enabled, the user is redirected to the next video page after the video has ended.',
         default: false,
       },
-      previousVideo: {
-        type: 'string',
-        description: 'The URL of the previous video in the playlist.',
+      hideInList: {
+        type: 'boolean',
+        description: 'If enabled, the playlist entries are not shown in the playlist/chapter list.',
+        default: false,
       },
-      nextVideo: {
-        type: 'string',
-        description: 'The URL of the next video in the playlist.',
+      currentPosition: {
+        required: true,
+        type: 'number',
+        description: 'The current position in the playlist.',
+      },
+      entries: {
+        required: true,
+        type: 'array',
+        description: 'Videos of the playlist.',
+        schema: {
+          title: {
+            type: 'string',
+            description: 'The title of the video.',
+          },
+          url: {
+            required: true,
+            type: 'string',
+            description: 'The url of the page containing the video.',
+          },
+        },
       },
     },
     example: {
       autoPlay: true,
-      previousVideo: '/url/of/previous/video',
-      nextVideo: '/url/of/next/video',
+      currentPosition: 1,
+      entries: [
+        {
+          title: 'Previous Video',
+          url: '/url/of/previous/video',
+        },
+        {
+          title: 'Current Video',
+          url: '/url/of/current/video',
+        },
+        {
+          title: 'Next Video',
+          url: '/url/of/next/video',
+        },
+      ],
     },
   },
   videoObject: {
@@ -284,5 +335,5 @@ const configurationSchema = {
 if (typeof window === 'undefined') {
   exports.schema = configurationSchema;
 } else {
-  define('configuration-schema', () => configurationSchema);
+  IMD.define('configuration-schema', () => configurationSchema);
 }

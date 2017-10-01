@@ -1,4 +1,4 @@
-<link rel="import" href="../../../../imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 <link rel="import" href="../../../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
@@ -26,7 +26,7 @@
     </template>
 
   <script>
-    define('full-screen-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+    IMD.define('full-screen-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {ANALYTICS_TOPICS} = constants;
 
       class FullscreenControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {

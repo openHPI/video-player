@@ -1,4 +1,4 @@
-<link rel="import" href="../../../imd/imd.html">
+<link rel="import" href="../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../constants.html">
 <link rel="import" href="../3rd-imports/hls-js.html">
@@ -52,7 +52,7 @@
   </template>
 
   <script>
-    define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, Hls, constants) => {
+    IMD.define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, Hls, constants) => {
       const {PLAY_STATES, QUALITY_MODES, HLS_MIME_TYPE, SEEK_DIFF_THRESHOLD} = constants;
 
       class VideoStream extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
@@ -88,7 +88,7 @@
             },
             _isPosterVisible: {
               type: Boolean,
-              computed: '_getIsPosterVisible(state.playState, state.position, state.duration)',
+              computed: '_getIsPosterVisible(state.playState, state.position, state.trimStart, state.trimEnd)',
             },
           };
         }
@@ -119,8 +119,8 @@
           return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
         }
 
-        _getIsPosterVisible(playState, position, duration) {
-          return playState === PLAY_STATES.PAUSED && (position === 0 || position === duration);
+        _getIsPosterVisible(playState, position, trimStart, trimEnd) {
+          return playState === PLAY_STATES.PAUSED && (position === trimStart || position === trimEnd);
         }
 
         _playStateChanged(playState) {
@@ -130,9 +130,8 @@
 
           if (playState === PLAY_STATES.PLAYING) {
             this.$.video.play();
-          } else if (playState === PLAY_STATES.PAUSED || playState === PLAY_STATES.WAITING) {
-            if(!this.$.video.paused && this.$.video.readyState > 2)
-              this.$.video.pause();
+          } else if(!this.$.video.paused && this.$.video.readyState > 2) {
+            this.$.video.pause();
           }
         }
 
@@ -201,7 +200,10 @@
               this._applyState();
             }, true);
           } else {
-            this._isInitializingVideo = false;
+            this.$.video.addEventListener('canplay', () => {
+              this._isInitializingVideo = false;
+              this._applyState();
+            }, true);
           }
         }
 

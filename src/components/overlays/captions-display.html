@@ -1,4 +1,4 @@
-<link rel="import" href="../../../../imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
@@ -44,7 +44,7 @@
   </template>
 
   <script>
-    define('captions-display', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+    IMD.define('captions-display', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {ANALYTICS_TOPICS} = constants;
 
       class CaptionsDisplay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {

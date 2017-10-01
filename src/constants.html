@@ -1,5 +1,5 @@
 <script>
-  define('constants', () => {
+  IMD.define('constants', () => {
     /**
      * Contains the different play states.
      * @type {Object.<string, string>}
@@ -70,6 +70,8 @@
       position: 0,
       bufferPosition: 0,
       duration: 0,
+      trimStart: 0,
+      trimEnd: 0,
       playbackRate: 1.0,
       volume: 1.0,
       muted: false,
@@ -180,6 +182,7 @@
       VIDEO_CHAPTER_SEEK: 'video_chapter_seek',
       VIDEO_TIME_CHANGE: 'video_time_change',
       VIDEO_DUAL_STREAM_CHANGE: 'video_dual_stream_change',
+      VIDEO_VOLUME_CHANGE: 'video_volume_change',
     };
     
     return {

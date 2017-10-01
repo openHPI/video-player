@@ -59,7 +59,7 @@
     "test-chrome": "node_modules/web-component-tester/bin/wct  test/test-suite.html -l chrome",
     "testdebugging": "node_modules/web-component-tester/bin/wct -p test/test-suite.html",
     "generate-docs": "node ./utils/generate-docs.js",
-    "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html && polymer lint",
+    "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html && polymer lint -i ./src/*",
     "postinstall": "bower install",
     "serve": "polymer serve",
     "bundle": "polymer build && gulp polyfills",

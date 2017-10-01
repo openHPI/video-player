@@ -1,4 +1,4 @@
-<link rel="import" href="../../../../imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
@@ -14,17 +14,15 @@
     </style>
 
     <div id="container__slide_preview_bar" class="progress_indicator">
-        <template is="dom-repeat" items="[[slides]]">
-          <template is="dom-if" if="[[less(item.startPosition, state.duration)]]">
-            <slide-thumbnail state="[[state]]" slide="[[item]]"></slide-thumbnail>
-          </template>
+        <template is="dom-repeat" items="[[_visibleSlides]]">
+          <slide-thumbnail state="[[state]]" slide="[[item]]"></slide-thumbnail>
         </template>
     </div>
 
   </template>
 
   <script>
-    define('slide-preview-bar', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+    IMD.define('slide-preview-bar', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {ANALYTICS_TOPICS} = constants;
 
       class SlidePreviewBar extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
@@ -46,6 +44,10 @@
               type: Object,
               inject: 'StateManager',
             },
+            _visibleSlides: {
+              type: Array,
+              computed: '_getVisibleSlides(slides, state.trimStart, state.trimEnd)',
+            },
           };
         }
 
@@ -54,6 +56,18 @@
             '_checkSlideActivation(state.position)',
             '_handleSlideChange(activeSlide)',
           ];
+        }
+
+        _getVisibleSlides(slides, trimStart, trimEnd) {
+          let visibleSlides = [];
+          for(let i = 0; i < slides.length; i++) {
+            let slide = slides[i];
+            if((slide.startPosition >= trimStart || slides[i + 1] && slides[i + 1].startPosition > trimStart) && slide.startPosition <= trimEnd) {
+              visibleSlides.push(slide);
+            }
+          }
+
+          return visibleSlides;
         }
 
         _checkSlideActivation() {
