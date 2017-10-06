@@ -128,10 +128,25 @@
             return;
           }
 
+          let promise;
           if (playState === PLAY_STATES.PLAYING) {
-            this.$.video.play();
+            promise = this.$.video.play();
           } else if(!this.$.video.paused && this.$.video.readyState > 2) {
-            this.$.video.pause();
+            promise = this.$.video.pause();
+          }
+
+          // If error occured while applying play state on video, update the
+          // play state with regard to the video status.
+          // This can happen for example in Safari when autoplay is active,
+          // because Safari does not allow to play a video without the user
+          // clicking a button
+          if(promise) {
+            promise.catch(() => {
+              if(this.$.video.paused)
+                this._stateManager.pause();
+              else
+                this._stateManager.play();
+            });
           }
         }
 
