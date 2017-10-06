@@ -28,11 +28,11 @@
       #container__playlist_chapter_list .list_item > .list_item__link {
         @apply --set-foreground-color;
       }
-      #container__playlist_chapter_list .list_item:not(.sublist_item):nth-child(odd) {
+      #container__playlist_chapter_list .list_item:nth-child(odd) {
         @apply --set-secondary-background-color;
       }
-      #container__playlist_chapter_list .list_item:.sublist_item:nth-child(odd) {
-        @apply --set-secondary-foreground-color;
+      #container__playlist_chapter_list .list_item.sublist_item {
+        background-color: inherit;
       }
     </style>
 
