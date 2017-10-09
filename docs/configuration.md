@@ -14,7 +14,6 @@ The player configuration is provided as JSON object:
    * **hd** (string): URL of the HD video stream.
    * **sd** (string): URL of the SD video stream.
    * **poster** (string): URL of the poster image.
-   * **ratio** (string): The ratio of the video. This is mandatory when the videoAlignment is set to `height`. It should be in the format `x:y`.
    * **muted** (boolean): Mutes the audio stream of the video. (default: `false`)
 
    *Example*
@@ -32,7 +31,6 @@ The player configuration is provided as JSON object:
    * **hd** (string): URL of the HD video stream.
    * **sd** (string): URL of the SD video stream.
    * **poster** (string): URL of the poster image.
-   * **ratio** (string): The ratio of the video. This is mandatory when the videoAlignment is set to `height`. It should be in the format `x:y`.
    * **muted** (boolean): Mutes the audio stream of the video. (default: `false`)
 * **language** (string): Language used for localizing messages. (default: `"en"`)
 * **initialState** (object): The initial state the player has when loaded.

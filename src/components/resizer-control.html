@@ -68,6 +68,7 @@
             state: Object,
             videoAlignment: String,
             _videos: Array,
+            _videoResolutions: Object,
             _mousePositionX: Number,
             _globalFlexBasisGap: {
               type: Array,
@@ -92,10 +93,16 @@
           // Get _videos to resize
           this._videos = [this._findPreviousVideo(), this._findNextVideo()];
 
-          if(this.videoAlignment === 'height' && this._videos[0].props.ratio && this._videos[1].props.ratio) {
-            this._alignVideoHeight();
+          // Align videos according to their resolution
+          this._videoResolutions = {};
+          for(let i = 0; i < this._videos.length; i++) {
+            this._videos[i].addEventListener('loaded-video', e => {
+              this._videoResolutions[i] = e.detail.resolution;
+              if(Object.keys(this._videoResolutions).length === Object.keys(this._videos).length) {
+                this._alignVideoHeights();
+              }
+            });
           }
-
         }
 
         _handleDragStart(e) {
@@ -238,38 +245,20 @@
           }
         }
 
-        _alignVideoHeight() {
-          // Only neccessary when the videos have a different ratio
-          if(this._videos[0].props.ratio !== this._videos[1].props.ratio) {
-            let quotient1 = this._getRatioQuotient(this._videos[0].props.ratio);
-            let quotient2 = this._getRatioQuotient(this._videos[1].props.ratio);
+        _alignVideoHeights() {
+          // The width of the videos (100% - 2% (for the resizer))
+          let containerWidth = 98;
 
-            if(quotient1 && quotient2) {
-              // The width of the videos (100% - 2% (for the resizer))
-              let containerWidth = 98;
+          // Calculation based on two formulas
+          // I video1Width + video2Width = containerWidth
+          // II video1Width * ratio1 = video2Width * ratio2
+          let ratio1 = this._videoResolutions[0].height / this._videoResolutions[0].width;
+          let ratio2 = this._videoResolutions[1].height / this._videoResolutions[1].width;
+          let video1Width = (containerWidth * ratio2) / (ratio1 + ratio2);
+          let video2Width = (containerWidth * ratio1) / (ratio1 + ratio2);
 
-              // Calculation based on two formulas
-              // I video1Width + video2Width = containerWidth
-              // II video1Width * quotient1 = video2Width * quotient2
-              let video1Width = (containerWidth * quotient2) / (quotient1 + quotient2);
-              let video2Width = (containerWidth * quotient1) / (quotient1 + quotient2);
-
-              this._videos[0].style.flexBasis = video1Width + '%';
-              this._videos[1].style.flexBasis = video2Width + '%';
-            }
-          }
-        }
-
-        _getRatioQuotient(ratio) {
-          let number1 = ratio.split(':')[0];
-          let number2 = ratio.split(':')[1];
-
-          // If the format is wrong, number2 will be empty
-          if(number2) {
-            return number2 / number1;
-          }
-
-          return false;
+          this._videos[0].style.flexBasis = video1Width + '%';
+          this._videos[1].style.flexBasis = video2Width + '%';
         }
 
         _resetResizer () {
