@@ -73,14 +73,16 @@
 
         _stylePercentage(position, duration, trimStart, trimEnd) {
           // Apply video trimming
-          position = position - trimStart;
-          duration = trimEnd - trimStart;
+          if(typeof trimStart !== 'undefined')
+            position = position - trimStart;
+          if(typeof trimEnd !== 'undefined')
+            duration = trimEnd - trimStart;
 
           return Math.max(0, Math.min(position / duration * 100, 100));
         }
 
-        _getSlidePosition(position, duration) {
-          let percentage = this._stylePercentage(position, duration);
+        _getSlidePosition(position, duration, trimStart, trimEnd) {
+          let percentage = this._stylePercentage(position, duration, trimStart, trimEnd);
           // This is an approximation
           // to avoid that the slide image overflows the video container
           if(percentage > 85) {
