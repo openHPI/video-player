@@ -15,6 +15,7 @@
       constructor(videoPlayer, statePath) {
         this.videoPlayer = videoPlayer;
         this.statePath = statePath;
+        this.stickyTrimEnd = true;
       }
 
       /**
@@ -139,8 +140,9 @@
         }
 
         this.setState('duration', seconds);
-        if(!this.state.trimEnd) {
+        if(!this.state.trimEnd || this.stickyTrimEnd) {
           this.trimEnd(seconds);
+          this.stickyTrimEnd = true;
         }
       }
 
@@ -170,12 +172,26 @@
           throw new RangeError('Value must be between 0 and duration of the video.');
         }
 
-        if(seconds || this.state.duration) {
-          this.setState('trimEnd', seconds || this.state.duration);
+        if(seconds) {
+          this.setState('trimEnd', seconds);
+          this.stickyTrimEnd = false;
+        } else if(this.state.duration) {
+          this.setState('trimEnd', this.state.duration);
+          this.stickyTrimEnd = true;
         }
         if(seconds && this.state.position > seconds) {
           this.setPosition(seconds);
         }
+      }
+
+
+      /**
+       * Sets the live indicator, which determines if streams are live or not.
+       * @param  {boolean} live The live indicator.
+       * @return {void}
+       */
+      setLive(live) {
+        this.setState('live', live);
       }
 
 

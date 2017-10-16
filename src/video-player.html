@@ -97,8 +97,8 @@
         flex: 1 1 49%;
       }
 
-      #progress-container {
-        border-bottom: 1px solid black;
+      #control-bar {
+        border-top: 1px solid black;
       }
 
       @media (max-width: 768px) {
@@ -137,10 +137,10 @@
           <template is="dom-if" if="[[!state.fallbackStreamActive]]" restamp="true">
             <template is="dom-repeat" items="[[configuration.streams]]">
               <video-stream
+                class="video-stream"
                 state="[[state]]"
                 props="[[item]]"
                 preload="[[configuration.videoPreload]]"
-                class="video-stream"
                 captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
                 style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
                 ondragover="return false;"
@@ -172,15 +172,18 @@
       </div>
 
       <!-- Progress Bars -->
-      <div id="progress-container">
-        <template is="dom-if" if="[[hasItems(configuration.slides)]]">
-          <slide-preview-bar state="[[state]]" slides="[[configuration.slides]]" class="hidden-for-mobile"></slide-preview-bar>
-        </template>
-        <video-progress state="[[state]]"></video-progress>
-      </div>
+      <template is="dom-if" if="[[!state.live]]">
+        <div id="progress-container">
+          <template is="dom-if" if="[[hasItems(configuration.slides)]]">
+            <slide-preview-bar state="[[state]]" slides="[[configuration.slides]]" class="hidden-for-mobile"></slide-preview-bar>
+          </template>
+          <video-progress state="[[state]]"></video-progress>
+        </div>
+      </template>
 
       <!-- Control Bar -->
       <control-bar
+        id="control-bar"
         state="[[state]]"
         has-chapters="[[hasItems(configuration.chapters)]]"
         has-fallback-stream="[[_hasFallbackStream]]"
@@ -308,6 +311,7 @@
             '_languageChanged(configuration.language, _localizer)',
             '_trimStartChanged(configuration.trimVideo.start)',
             '_trimEndChanged(configuration.trimVideo.end)',
+            '_liveChanged(configuration.live)',
             '_playStateChanged(state.playState)',
             '_fullscreenChanged(state.fullscreen)',
             '_userPreferencesStateChanged(state.*)',
@@ -586,6 +590,12 @@
         _trimEndChanged(trimEnd) {
           if(this._stateManager) {
             this._stateManager.trimEnd(trimEnd);
+          }
+        }
+
+        _liveChanged(live) {
+          if(this._stateManager) {
+            this._stateManager.setLive(live);
           }
         }
 

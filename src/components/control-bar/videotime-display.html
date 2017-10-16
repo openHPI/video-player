@@ -1,4 +1,5 @@
 <link rel="import" href="../../3rd-imports/scoped-imd.html">
+<link rel="import" href="../../../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
@@ -7,14 +8,31 @@
 <dom-module id="videotime-display">
 
   <template>
-    <style type="text/css" include="control-bar--style-module">
+    <style type="text/css" include="control-bar--style-module font-awesome">
       #container__videotime_display {
         white-space: nowrap;
+      }
+
+      #span__live_indicator {
+        font-weight: bold;
+        margin-right: 10px;
+        @apply --set-accent-color-foreground;
+      }
+      #span__live_indicator::before {
+        content: '\f111';
+        font-family: FontAwesome;
+        margin-right: 4px;
       }
     </style>
 
     <div id="container__videotime_display" class="user_controls">
-      [[secondsToHms(_position, _duration)]] / [[secondsToHms(_duration)]]
+      <template is="dom-if" if="[[state.live]]">
+        <span id="span__live_indicator">LIVE</span>
+      </template>
+      [[secondsToHms(_position, _duration)]]
+      <template is="dom-if" if="[[!state.live]]">
+        / [[secondsToHms(_duration)]]
+      </template>
     </div>
   </template>
 

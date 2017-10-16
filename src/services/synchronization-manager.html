@@ -25,7 +25,7 @@
         this._videoProgress = this._videoProgress.bind(this);
         this._videoTimeUpdate = this._videoTimeUpdate.bind(this);
         this._videoEnded = this._videoEnded.bind(this);
-        this._videoLoadedMetadata = this._videoLoadedMetadata.bind(this);
+        this._videoDurationChanged = this._videoDurationChanged.bind(this);
 
         this._syncVideos();
       }
@@ -46,7 +46,7 @@
         video.addEventListener('progress', this._videoProgress);
         video.addEventListener('ended', this._videoEnded);
         video.addEventListener('timeupdate', this._videoTimeUpdate);
-        video.addEventListener('loadedmetadata', this._videoLoadedMetadata);
+        video.addEventListener('durationchange', this._videoDurationChanged);
       }
 
       /**
@@ -66,7 +66,7 @@
         video.removeEventListener('progress', this._videoProgress);
         video.removeEventListener('ended', this._videoEnded);
         video.removeEventListener('timeupdate', this._videoTimeUpdate);
-        video.removeEventListener('loadedmetadata', this._videoLoadedMetadata);
+        video.removeEventListener('durationchange', this._videoDurationChanged);
       }
 
       /**
@@ -128,7 +128,7 @@
        * @param  {EventArgs} e The event that was triggered.
        * @return {void}
        */
-      _videoLoadedMetadata(e) {
+      _videoDurationChanged(e) {
         let video = e.target;
         if(this._isMaster(video)) {
           this._stateManager.setDuration(video.duration);
