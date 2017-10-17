@@ -225,6 +225,10 @@
               type: Object,
               value: () => ({}),
             },
+            isReady: {
+              type: Boolean,
+              value: () => false,
+            },
             _stateManager: {
               type: Object,
               inject: 'StateManager',
@@ -288,6 +292,7 @@
         static get observers() {
           return [
             '_configurationChanged(configuration, _configurationValidator)',
+            '_isReadyChanged(isReady)',
             '_ensureValidQuality(_availableQualities, state.quality)',
             '_foregroundColorChanged(configuration.foregroundColor)',
             '_accentColorChanged(configuration.accentColor)',
@@ -463,6 +468,12 @@
           }
         }
 
+        _isReadyChanged(isReady) {
+          if(isReady) {
+            this.dispatchEvent(new CustomEvent('ready'));
+          }
+        }
+
         _ensureValidQuality(availableQualities, quality) {
           // If not all streams are available in the specified quality, use one that is available for all streams
           if(this._stateManager && !availableQualities.includes(quality)) {
@@ -493,7 +504,7 @@
 
         _durationChanged(duration) {
           if(duration > 0) {
-            this.dispatchEvent(new CustomEvent('ready'));
+            this.isReady = true;
           }
         }
 
