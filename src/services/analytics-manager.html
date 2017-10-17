@@ -107,6 +107,7 @@
             break;
           case ANALYTICS_TOPICS.VIDEO_DUAL_STREAM_CHANGE:
             afterStates.newCurrentDualStreamStatus = this._getDualStreamStatus();
+            break;
           case ANALYTICS_TOPICS.VIDEO_VOLUME_CHANGE:
             afterStates.newCurrentVolume = this.stateManager.state.volume;
             afterStates.newCurrentMuted = this.stateManager.state.muted;
@@ -179,9 +180,9 @@
                             .reverse()
                             .find(slide => slide.startPosition <= this.stateManager.state.position);
           if (slide)
-            slide.slide_number = slides.slice().indexOf(slide);
+            slide.slide_number = slides.slice().indexOf(slide); // eslint-disable-line camelcase
           return slide;
-         } else
+        } else
           return undefined;
       }
 
@@ -252,9 +253,9 @@
        */
       _bindOrientationChange() {
         // MacOS Safari doesn't support this feature
-        if (window.screen.orientation && window.screen.orientation.onchange) { // standard
+        if (window.screen.orientation && window.screen.orientation.onchange) { // Standard
           window.screen.orientation.onchange = this._handleOrientationChange.bind(this);
-        } else if (window.orientationchange) { // iOS Safari
+        } else if (window.orientationchange) { // IOS Safari
           window.orientationchange = this._handleOrientationChange.bind(this);
         } else if (window.screen.onmsorientationchange) { // IE and Edge
           window.onmsorientationchange = this._handleOrientationChange.bind(this);

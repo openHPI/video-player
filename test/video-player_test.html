@@ -112,7 +112,7 @@
       suite('video-player', () => {
         let videoPlayer;
 
-        setup((done) =>  {
+        setup((done) => {
           // We want to run tests with an empty local storage to avoid
           // unintended side effects and to start with a clean slate in each
           // test file.
@@ -126,7 +126,7 @@
           // Wait for player to be loaded completely so that all DOM elements
           // are ready at the beginning of each test.
           if(videoPlayer.isReady) {
-            flush(done)
+            flush(done);
           } else {
             videoPlayer.addEventListener('ready', () => flush(done), true);
           }
@@ -145,50 +145,50 @@
 
         test('testing to press play on a video', () => {
           // Click the play button
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause")[0].click();
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('playpause-control')[0].shadowRoot.querySelectorAll('#button__play_pause')[0].click();
           assert.equal(videoPlayer.state.playState, 'PLAYING', 'pressing play works');
-          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause i.fa")[0].classList), "fa-pause", 'pressing play turns the play button into the pause button');
+          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('playpause-control')[0].shadowRoot.querySelectorAll('#button__play_pause i.fa')[0].classList), 'fa-pause', 'pressing play turns the play button into the pause button');
         });
 
         test('testing playlist navigation', () => {
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playlist-navigation-control[direction=backward]")[0].shadowRoot.querySelectorAll("#button__navigate_to_video")[0].href, 'https://testing.openhpi.de/courses/video-player/items/5xa1AWl3L7AqpLw9VMGBWQ', 'previous video button leads to previous video');
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playlist-navigation-control[direction=forward]")[0].shadowRoot.querySelectorAll("#button__navigate_to_video")[0].href, 'https://testing.openhpi.de/courses/video-player/items/6ZKdGPHCVZPem2u0RlTxtv', 'next video button leads to next video');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('playlist-navigation-control[direction=backward]')[0].shadowRoot.querySelectorAll('#button__navigate_to_video')[0].href, 'https://testing.openhpi.de/courses/video-player/items/5xa1AWl3L7AqpLw9VMGBWQ', 'previous video button leads to previous video');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('playlist-navigation-control[direction=forward]')[0].shadowRoot.querySelectorAll('#button__navigate_to_video')[0].href, 'https://testing.openhpi.de/courses/video-player/items/6ZKdGPHCVZPem2u0RlTxtv', 'next video button leads to next video');
         });
 
         test('testing videotime display', () => {
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("videotime-display")[0].shadowRoot.querySelectorAll("#container__videotime_display")[0].innerText, '00:00 / 00:31', 'video time display is at zero in the beginning and contains the correct length of the video');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('videotime-display')[0].shadowRoot.querySelectorAll('#container__videotime_display')[0].innerText, '00:00 / 00:31', 'video time display is at zero in the beginning and contains the correct length of the video');
         });
 
-        test('testing captions', (done) =>  {
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("caption-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]").length, 4, "Test whether we have three caption languages available, plus one 'off' switch");
+        test('testing captions', (done) => {
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('caption-control')[0].shadowRoot.querySelectorAll('select-control')[0].shadowRoot.querySelectorAll('#dropdown__select [name]').length, 4, 'Test whether we have three caption languages available, plus one \'off\' switch');
           // Click the caption button for the language German
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("caption-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name=de]")[0].click();
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('caption-control')[0].shadowRoot.querySelectorAll('select-control')[0].shadowRoot.querySelectorAll('#dropdown__select [name=de]')[0].click();
           // Press play
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause")[0].click();
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('playpause-control')[0].shadowRoot.querySelectorAll('#button__play_pause')[0].click();
           // We need the flush and the setTimeout so the DOM has the chance to react to the caption control click.
           // It is possible that 50ms is not enough. In this case, the value needs to be increased
           flush(() => {
             setTimeout(() => {
-              assert.equal(videoPlayer.shadowRoot.querySelectorAll("captions-display")[0].shadowRoot.querySelectorAll(".caption-cue-text")[0].innerText, 'This is a test caption', 'turning captions on shows captions');
+              assert.equal(videoPlayer.shadowRoot.querySelectorAll('captions-display')[0].shadowRoot.querySelectorAll('.caption-cue-text')[0].innerText, 'This is a test caption', 'turning captions on shows captions');
               done();
             }, 1000);
           });
         });
 
-        test('testing interactive transcripts', (done) =>  {
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("interactive-transcript-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]").length, 4, "Test whether we have three interactive transcript languages available, plus one 'off' switch");
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("interactive-transcript-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]").length,
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("caption-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]").length, "Test whether we have as much interactive transcript languages available as caption languages");
+        test('testing interactive transcripts', (done) => {
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('interactive-transcript-control')[0].shadowRoot.querySelectorAll('select-control')[0].shadowRoot.querySelectorAll('#dropdown__select [name]').length, 4, 'Test whether we have three interactive transcript languages available, plus one \'off\' switch');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('interactive-transcript-control')[0].shadowRoot.querySelectorAll('select-control')[0].shadowRoot.querySelectorAll('#dropdown__select [name]').length,
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('caption-control')[0].shadowRoot.querySelectorAll('select-control')[0].shadowRoot.querySelectorAll('#dropdown__select [name]').length, 'Test whether we have as much interactive transcript languages available as caption languages');
           // Click the caption button for the language German
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("interactive-transcript-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name=de]")[0].click();
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('interactive-transcript-control')[0].shadowRoot.querySelectorAll('select-control')[0].shadowRoot.querySelectorAll('#dropdown__select [name=de]')[0].click();
           // We need the flush and the setTimeout so the DOM has the chance to react to the caption control click.
           // It is possible that 80ms is not enough. In this case, the value needs to be increased.
           flush(() => {
             setTimeout(() => {
-              assert.equal(videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll("li.-active .list_item__link")[0].innerText, ' 00:00 - 00:10:', 'the first transcript item shows the correct time frame');
-              assert.equal(videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll("li.-active .list_item__link")[1].innerText, 'This is a test caption', 'the first interactive transcript item displays with the correct text');
+              assert.equal(videoPlayer.shadowRoot.querySelectorAll('interactive-transcript')[0].shadowRoot.querySelectorAll('li.-active .list_item__link')[0].innerText, ' 00:00 - 00:10:', 'the first transcript item shows the correct time frame');
+              assert.equal(videoPlayer.shadowRoot.querySelectorAll('interactive-transcript')[0].shadowRoot.querySelectorAll('li.-active .list_item__link')[1].innerText, 'This is a test caption', 'the first interactive transcript item displays with the correct text');
               // Click the second transcript item to jump to its corresponding position
-              videoPlayer.shadowRoot.querySelectorAll("interactive-transcript")[0].shadowRoot.querySelectorAll("li:nth-of-type(2) .list_item__prefix")[0].click();
+              videoPlayer.shadowRoot.querySelectorAll('interactive-transcript')[0].shadowRoot.querySelectorAll('li:nth-of-type(2) .list_item__prefix')[0].click();
               assert.equal(videoPlayer.state.position, 10, 'clicking on an interactive transcript item jumps to its corresponding position');
               done();
             }, 1000);
@@ -201,36 +201,36 @@
           // this is "not a valid selector". Instead we just hope those values
           // never change and expect 1.5 to be the 3rd item.
           // We test for the value '1.5x' beforehand.
-          assert.include(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("speed-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]")[2].innerText, "1.5x", "workaround for small testing hack: '1.5x' should be the third item in the list");
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("speed-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name]")[2].click();
+          assert.include(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('speed-control')[0].shadowRoot.querySelectorAll('select-control')[0].shadowRoot.querySelectorAll('#dropdown__select [name]')[2].innerText, '1.5x', 'workaround for small testing hack: \'1.5x\' should be the third item in the list');
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('speed-control')[0].shadowRoot.querySelectorAll('select-control')[0].shadowRoot.querySelectorAll('#dropdown__select [name]')[2].click();
           assert.equal(videoPlayer.state.playbackRate, 1.5);
         });
 
         test('testing quality control', () => {
           assert.equal(videoPlayer.state.quality, 'sd', 'Quality is at SD before changing');
-          assert.include(videoPlayer.shadowRoot.querySelectorAll("video-stream")[0].shadowRoot.querySelectorAll("#video")[0].src, 'test-files/BigBuckBunny30s.mp4', 'before changing the stream we see SD video');
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("quality-control")[0].shadowRoot.querySelectorAll("select-control")[0].shadowRoot.querySelectorAll("#dropdown__select [name=HD]")[0].click();
+          assert.include(videoPlayer.shadowRoot.querySelectorAll('video-stream')[0].shadowRoot.querySelectorAll('#video')[0].src, 'test-files/BigBuckBunny30s.mp4', 'before changing the stream we see SD video');
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('quality-control')[0].shadowRoot.querySelectorAll('select-control')[0].shadowRoot.querySelectorAll('#dropdown__select [name=HD]')[0].click();
           assert.equal(videoPlayer.state.quality, 'hd', 'Quality is at HD after changing');
-          assert.include(videoPlayer.shadowRoot.querySelectorAll("video-stream")[0].shadowRoot.querySelectorAll("#video")[0].src, 'test-files/BigBuckBunny30s_hd.mp4', 'changing the stream really does change to HD video');
+          assert.include(videoPlayer.shadowRoot.querySelectorAll('video-stream')[0].shadowRoot.querySelectorAll('#video')[0].src, 'test-files/BigBuckBunny30s_hd.mp4', 'changing the stream really does change to HD video');
         });
 
         test('testing playlist-chapter-list-switch', () => {
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("playlist-chapter-list")[0].shadowRoot.querySelectorAll("#container__playlist_chapter_list .list_item:not(.sublist_item)").length, 3, "Test whether we have three playlist entries available");
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("playlist-chapter-list")[0].shadowRoot.querySelectorAll("#container__playlist_chapter_list .list_item.sublist_item").length, 2, "Test whether we have two chapters available");
-          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("playlist-chapter-list")[0].classList), "-hidden", "chapter list is hidden by default");
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playlist-chapter-list-switch")[0].shadowRoot.querySelectorAll("#button__chapter_list")[0].click();
-          assert.notInclude(Array.from(videoPlayer.shadowRoot.querySelectorAll("playlist-chapter-list")[0].classList), "-hidden", 'chapter list is not hidden anymore after activating it');
-          videoPlayer.shadowRoot.querySelectorAll("playlist-chapter-list")[0].shadowRoot.querySelectorAll("#container__playlist_chapter_list .list_item.sublist_item a")[1].click();
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('playlist-chapter-list')[0].shadowRoot.querySelectorAll('#container__playlist_chapter_list .list_item:not(.sublist_item)').length, 3, 'Test whether we have three playlist entries available');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('playlist-chapter-list')[0].shadowRoot.querySelectorAll('#container__playlist_chapter_list .list_item.sublist_item').length, 2, 'Test whether we have two chapters available');
+          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll('playlist-chapter-list')[0].classList), '-hidden', 'chapter list is hidden by default');
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('playlist-chapter-list-switch')[0].shadowRoot.querySelectorAll('#button__chapter_list')[0].click();
+          assert.notInclude(Array.from(videoPlayer.shadowRoot.querySelectorAll('playlist-chapter-list')[0].classList), '-hidden', 'chapter list is not hidden anymore after activating it');
+          videoPlayer.shadowRoot.querySelectorAll('playlist-chapter-list')[0].shadowRoot.querySelectorAll('#container__playlist_chapter_list .list_item.sublist_item a')[1].click();
           assert.equal(videoPlayer.state.position, 15, 'position value is at value of second chapter');
         });
 
-        test('testing stream switch control', (done) =>  {
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("#streams-container video-stream").length, 3, 'before doing the stream switch, there are three video streams in the stream container');
+        test('testing stream switch control', (done) => {
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('#streams-container video-stream').length, 3, 'before doing the stream switch, there are three video streams in the stream container');
           assert.isFalse(videoPlayer.state.fallbackStreamActive, 'before doing the stream switch, fallbackStreamActive is false');
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("stream-switch-control")[0].shadowRoot.querySelectorAll("#button__stream-switch")[0].click();
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('stream-switch-control')[0].shadowRoot.querySelectorAll('#button__stream-switch')[0].click();
           flush(() => {
-            assert.equal(videoPlayer.shadowRoot.querySelectorAll("#streams-container video-stream").length, 1, 'after doing the stream switch, there are is only one video stream in the stream container');
-            assert.include(videoPlayer.shadowRoot.querySelectorAll("#streams-container video-stream")[0].shadowRoot.querySelectorAll("#video")[0].src, 'test-files/BigBuckBunny30s_fallback.mp4', 'after doing the stream switch, the only shown video is the fallback stream');
+            assert.equal(videoPlayer.shadowRoot.querySelectorAll('#streams-container video-stream').length, 1, 'after doing the stream switch, there are is only one video stream in the stream container');
+            assert.include(videoPlayer.shadowRoot.querySelectorAll('#streams-container video-stream')[0].shadowRoot.querySelectorAll('#video')[0].src, 'test-files/BigBuckBunny30s_fallback.mp4', 'after doing the stream switch, the only shown video is the fallback stream');
             assert.isTrue(videoPlayer.state.fallbackStreamActive, 'after doing the stream switch, fallbackStreamActive is true');
             done();
           });
@@ -238,17 +238,17 @@
 
         test('testing mute control', () => {
           assert.isFalse(videoPlayer.state.muted, 'in its default state, the video player is not muted');
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("mute-control")[0].shadowRoot.querySelectorAll("#button__mute")[0].click();
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('mute-control')[0].shadowRoot.querySelectorAll('#button__mute')[0].click();
           assert.isTrue(videoPlayer.state.muted, 'after clicking the mute button, the video player is muted');
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].style.width, '0%', 'after clicking the mute button, the volume is at 0%');
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("mute-control")[0].shadowRoot.querySelectorAll("#button__mute")[0].click();
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('sound-control')[0].shadowRoot.querySelectorAll('progress-bar')[0].shadowRoot.querySelectorAll('#div__primary_progress')[0].style.width, '0%', 'after clicking the mute button, the volume is at 0%');
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('mute-control')[0].shadowRoot.querySelectorAll('#button__mute')[0].click();
           assert.isFalse(videoPlayer.state.muted, 'when clicking the mute button again, the video player is unmuted');
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].style.width, '75%', 'when clicking the mute button again, the volume goes back to 75%');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('sound-control')[0].shadowRoot.querySelectorAll('progress-bar')[0].shadowRoot.querySelectorAll('#div__primary_progress')[0].style.width, '75%', 'when clicking the mute button again, the volume goes back to 75%');
         });
 
         test('testing sound control', () => {
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].style.width, '75%', 'according to our given configuration, the volume is at 75%');
-          // videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].onchange({"target": {"value": 0.5}});
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('sound-control')[0].shadowRoot.querySelectorAll('progress-bar')[0].shadowRoot.querySelectorAll('#div__primary_progress')[0].style.width, '75%', 'according to our given configuration, the volume is at 75%');
+          // VideoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].onchange({"target": {"value": 0.5}});
           // assert.equal(videoPlayer.state.volume, 0.5, 'setting volume works!');
           // assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].style.width, '50%', 'after our click event, the volume is at 50%');
         });
@@ -258,21 +258,21 @@
           // (we get the error "Failed to execute 'requestFullscreen'").
           // Instead, we will fake being an iOS device / incompatible with the
           // existing full screen APIs so we can at least test the fake full screen.
-          videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].requestFullscreen = undefined;
-          videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].mozRequestFullScreen = undefined;
-          videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].webkitRequestFullScreen = undefined;
-          videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].msRequestFullscreen = undefined;
+          videoPlayer.shadowRoot.querySelectorAll('#video-player-container')[0].requestFullscreen = undefined;
+          videoPlayer.shadowRoot.querySelectorAll('#video-player-container')[0].mozRequestFullScreen = undefined;
+          videoPlayer.shadowRoot.querySelectorAll('#video-player-container')[0].webkitRequestFullScreen = undefined;
+          videoPlayer.shadowRoot.querySelectorAll('#video-player-container')[0].msRequestFullscreen = undefined;
           // Do the same for exit fullscreen
           document.exitFullscreen = undefined;
           document.mozCancelFullScreen = undefined;
           document.webkitCancelFullScreen = undefined;
           document.msExitFullscreen = undefined;
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("full-screen-control")[0].shadowRoot.querySelectorAll("#button__fullscreen")[0].click();
-          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].classList), 'fake-fullscreen', 'clicking the full screen button sets the fake-fullscreen class');
-          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("full-screen-control")[0].shadowRoot.querySelectorAll("#button__fullscreen > i")[0].classList), 'fa-compress', 'after clicking the full screen button, its icon changes to the compress icon');
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("full-screen-control")[0].shadowRoot.querySelectorAll("#button__fullscreen")[0].click();
-          assert.notInclude(Array.from(videoPlayer.shadowRoot.querySelectorAll("#video-player-container")[0].classList), 'fake-fullscreen', 'clicking the full screen button again unsets the fake-fullscreen class');
-          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("full-screen-control")[0].shadowRoot.querySelectorAll("#button__fullscreen > i")[0].classList), 'fa-expand', 'after clicking the full screen button again, its icon changes back to the expand icon');
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('full-screen-control')[0].shadowRoot.querySelectorAll('#button__fullscreen')[0].click();
+          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll('#video-player-container')[0].classList), 'fake-fullscreen', 'clicking the full screen button sets the fake-fullscreen class');
+          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('full-screen-control')[0].shadowRoot.querySelectorAll('#button__fullscreen > i')[0].classList), 'fa-compress', 'after clicking the full screen button, its icon changes to the compress icon');
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('full-screen-control')[0].shadowRoot.querySelectorAll('#button__fullscreen')[0].click();
+          assert.notInclude(Array.from(videoPlayer.shadowRoot.querySelectorAll('#video-player-container')[0].classList), 'fake-fullscreen', 'clicking the full screen button again unsets the fake-fullscreen class');
+          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('full-screen-control')[0].shadowRoot.querySelectorAll('#button__fullscreen > i')[0].classList), 'fa-expand', 'after clicking the full screen button again, its icon changes back to the expand icon');
         });
 
         test('testing mobile settings menu', () => {
@@ -288,8 +288,8 @@
         });
 
         test('testing waiting overlay', () => {
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("waiting-overlay")[0].shadowRoot.querySelectorAll("#container__waiting_overlay")[0].style.visibility, 'hidden', "Test whether the waiting overlay is hidden by default");
-          // videoPlayer.state.playState = PLAY_STATES.WAITING;
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('waiting-overlay')[0].shadowRoot.querySelectorAll('#container__waiting_overlay')[0].style.visibility, 'hidden', 'Test whether the waiting overlay is hidden by default');
+          // VideoPlayer.state.playState = PLAY_STATES.WAITING;
           // setTimeout(() => {
           //   flush(() => {
           //     assert.equal(videoPlayer.shadowRoot.querySelectorAll("waiting-overlay")[0].shadowRoot.querySelectorAll("#container__waiting_overlay")[0].style.visibility, 'visible', "Test whether the waiting overlay is shown when the play state is waiting");
@@ -338,12 +338,12 @@
           // })
         });
 
-        test('testing poster image', (done) =>  {
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll("video-stream")[0].shadowRoot.querySelectorAll("#container__poster_overlay")[0].style.display, '', "Test whether the poster is shown by default");
+        test('testing poster image', (done) => {
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('video-stream')[0].shadowRoot.querySelectorAll('#container__poster_overlay')[0].style.display, '', 'Test whether the poster is shown by default');
           // Click the play button
-          videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("playpause-control")[0].shadowRoot.querySelectorAll("#button__play_pause")[0].click();
+          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('playpause-control')[0].shadowRoot.querySelectorAll('#button__play_pause')[0].click();
           flush(() => {
-            assert.equal(videoPlayer.shadowRoot.querySelectorAll("video-stream")[0].shadowRoot.querySelectorAll("#container__poster_overlay")[0].style.display, 'none', "Test whether the poster is hidden when the video starts playing");
+            assert.equal(videoPlayer.shadowRoot.querySelectorAll('video-stream')[0].shadowRoot.querySelectorAll('#container__poster_overlay')[0].style.display, 'none', 'Test whether the poster is hidden when the video starts playing');
             done();
           });
         });
