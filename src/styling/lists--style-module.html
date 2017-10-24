@@ -14,10 +14,17 @@
         list-style-type: none;
         height: inherit;
       }
+      .container__list .list.sublist {
+        overflow-y: visible;
+      }
 
       .container__list .list_item {
         padding: 5px 5px 5px 20px;
         -webkit-font-smoothing: antialiased;
+      }
+      .container__list .list_item.sublist_item {
+        font-size: 0.9em;
+        padding: 2px 5px 2px 20px;
       }
 
       .container__list .list_item .list_item__link {

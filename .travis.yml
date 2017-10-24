@@ -3,7 +3,6 @@ sudo: required
 language: node_js
 node_js: node
 addons:
-  firefox: latest
   chrome: stable
 branches:
   only:
@@ -21,7 +20,7 @@ before_script:
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3
 script:
-  - npm run test
+  - npm run test-chrome
   - npm run lint || true
   - npm run bundle
   - mv build video-player-$TRAVIS_TAG

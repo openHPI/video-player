@@ -14,7 +14,6 @@ The player configuration is provided as JSON object:
    * **hd** (string): URL of the HD video stream.
    * **sd** (string): URL of the SD video stream.
    * **poster** (string): URL of the poster image.
-   * **ratio** (string): The ratio of the video. This is mandatory when the videoAlignment is set to `height`. It should be in the format `x:y`.
    * **muted** (boolean): Mutes the audio stream of the video. (default: `false`)
 
    *Example*
@@ -32,7 +31,6 @@ The player configuration is provided as JSON object:
    * **hd** (string): URL of the HD video stream.
    * **sd** (string): URL of the SD video stream.
    * **poster** (string): URL of the poster image.
-   * **ratio** (string): The ratio of the video. This is mandatory when the videoAlignment is set to `height`. It should be in the format `x:y`.
    * **muted** (boolean): Mutes the audio stream of the video. (default: `false`)
 * **language** (string): Language used for localizing messages. (default: `"en"`)
 * **initialState** (object): The initial state the player has when loaded.
@@ -59,6 +57,17 @@ The player configuration is provided as JSON object:
 * **theme** (string):`<["dark-orange","dark-yellow","dark-blue","light-green"]>` Predefined color theme (can be adjusted by settings the colors explicitly). (default: `"dark-orange"`)
 * **loadFontAwesome** (boolean): [FontAwesome](http://fontawesome.io) is used for the icons of the player. If your site already loads FontAwesome, this can be set to false to save bandwidth. (default: `true`)
 * **videoPreload** (boolean): Turns on/off preloading of the videos when the page loads. (default: `true`)
+* **trimVideo** (object): Restricts the playback on a specific segment of the video.
+   * **start** (number): The start position of the segment. (default: `0`)
+   * **end** (number): The end position of the segment (default: `"duration of video"`)
+
+   *Example*
+```JSON
+   {
+     "start": 60,
+     "end": 300
+   }
+```
 * **chapters** (array): List of timestamps with chapter names.
    * **title** (string): Title of the chapter. (*Required*)
    * **startPosition** (number): Start position of the chapter in seconds. (*Required*)
@@ -115,17 +124,33 @@ The player configuration is provided as JSON object:
      }
    ]
 ```
-* **playlist** (object): URLs of the previous and/or next video, if video is in a playlist.
+* **playlist** (object): The playlist, the video is part of.
+   * **currentPosition** (number): The current position in the playlist. (*Required*)
+   * **entries** (array): Videos of the playlist. (*Required*)
+       * **url** (string): The url of the page containing the video. (*Required*)
+       * **title** (string): The title of the video.
    * **autoPlay** (boolean): If enabled, the user is redirected to the next video page after the video has ended. (default: `false`)
-   * **previousVideo** (string): The URL of the previous video in the playlist.
-   * **nextVideo** (string): The URL of the next video in the playlist.
+   * **hideInList** (boolean): If enabled, the playlist entries are not shown in the playlist/chapter list. (default: `false`)
 
    *Example*
 ```JSON
    {
      "autoPlay": true,
-     "previousVideo": "/url/of/previous/video",
-     "nextVideo": "/url/of/next/video"
+     "currentPosition": 1,
+     "entries": [
+       {
+         "title": "Previous Video",
+         "url": "/url/of/previous/video"
+       },
+       {
+         "title": "Current Video",
+         "url": "/url/of/current/video"
+       },
+       {
+         "title": "Next Video",
+         "url": "/url/of/next/video"
+       }
+     ]
    }
 ```
 * **videoObject** (object): Video metadata defined in the [VideoObject](http://schema.org/VideoObject) schema as JSON-LD, which is rendered by the player.

@@ -1,4 +1,4 @@
-<link rel="import" href="../../../../imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 <link rel="import" href="../../../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
@@ -75,7 +75,7 @@
   </template>
 
   <script>
-    define('mobile-settings-menu', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    IMD.define('mobile-settings-menu', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
 
       class MobileSettingsMenu extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'mobile-settings-menu'; }

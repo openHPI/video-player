@@ -1,4 +1,4 @@
-<link rel="import" href="../../../imd/imd.html">
+<link rel="import" href="../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../constants.html">
 <link rel="import" href="../3rd-imports/hls-js.html">
@@ -38,7 +38,7 @@
 
     <div id="container__video_stream">
       <!-- "playsinline" is for iOS to not use its native video player -->
-      <video id="video" preload="[[ifThenElse(preload, 'auto', 'metadata')]]" on-click="_handleClick" playsinline="true">
+      <video id="video" preload="[[ifThenElse(preload, 'auto', 'metadata')]]" on-click="_handleClick" on-loadedmetadata="_handleLoadedMetadata" playsinline="true">
         <template is="dom-repeat" items="[[captions]]">
           <track src="[[item.url]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
         </template>
@@ -52,7 +52,7 @@
   </template>
 
   <script>
-    define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, Hls, constants) => {
+    IMD.define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, Hls, constants) => {
       const {PLAY_STATES, QUALITY_MODES, HLS_MIME_TYPE, SEEK_DIFF_THRESHOLD} = constants;
 
       class VideoStream extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
@@ -88,7 +88,7 @@
             },
             _isPosterVisible: {
               type: Boolean,
-              computed: '_getIsPosterVisible(state.playState, state.position, state.duration)',
+              computed: '_getIsPosterVisible(state.playState, state.position, state.trimStart, state.trimEnd)',
             },
           };
         }
@@ -113,14 +113,19 @@
         disconnectedCallback() {
           super.disconnectedCallback();
           this._synchronizationManager.unregisterVideo(this.$.video);
+
+          // Stop playback and unload source
+          this.$.video.pause();
+          this.$.video.src = '';
+          this.$.video.load();
         }
 
         _getNativeHlsSupport() {
           return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
         }
 
-        _getIsPosterVisible(playState, position, duration) {
-          return playState === PLAY_STATES.PAUSED && (position === 0 || position === duration);
+        _getIsPosterVisible(playState, position, trimStart, trimEnd) {
+          return playState === PLAY_STATES.PAUSED && (position === trimStart || position === trimEnd);
         }
 
         _playStateChanged(playState) {
@@ -128,11 +133,25 @@
             return;
           }
 
+          let promise;
           if (playState === PLAY_STATES.PLAYING) {
-            this.$.video.play();
-          } else if (playState === PLAY_STATES.PAUSED || playState === PLAY_STATES.WAITING) {
-            if(!this.$.video.paused && this.$.video.readyState > 2)
-              this.$.video.pause();
+            promise = this.$.video.play();
+          } else if(!this.$.video.paused && this.$.video.readyState > 2) {
+            promise = this.$.video.pause();
+          }
+
+          // If error occured while applying play state on video, update the
+          // play state with regard to the video status.
+          // This can happen for example in Safari when autoplay is active,
+          // because Safari does not allow to play a video without the user
+          // clicking a button
+          if(promise) {
+            promise.catch(() => {
+              if(this.$.video.paused)
+                this._stateManager.pause();
+              else
+                this._stateManager.play();
+            });
           }
         }
 
@@ -201,7 +220,10 @@
               this._applyState();
             }, true);
           } else {
-            this._isInitializingVideo = false;
+            this.$.video.addEventListener('canplay', () => {
+              this._isInitializingVideo = false;
+              this._applyState();
+            }, true);
           }
         }
 
@@ -242,6 +264,19 @@
 
         _handleClick() {
           this._stateManager.togglePlayPause();
+        }
+
+        _handleLoadedMetadata() {
+          // Dispatch event letting other components know that the video has
+          // been loaded (i.e. ResizerControl)
+          this.dispatchEvent(new CustomEvent('loaded-video', {
+            detail: {
+              resolution: {
+                height: this.$.video.videoHeight,
+                width: this.$.video.videoWidth,
+              },
+            },
+          }));
         }
 
         _applyState() {

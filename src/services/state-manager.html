@@ -1,7 +1,8 @@
+<link rel="import" href="../3rd-imports/scoped-imd.html">
 <link rel="import" href="../constants.html">
 
 <script>
-  define('state-manager', ['constants'], (constants) => {
+  IMD.define('state-manager', ['constants'], (constants) => {
     const {PLAY_STATES, PLAYBACK_RATES, QUALITY_MODES} = constants;
 
     class StateManager {
@@ -40,6 +41,9 @@
        * @returns {void}
        */
       play() {
+        if(this.state.playState === PLAY_STATES.FINISHED) {
+          this.setPosition(this.state.trimStart);
+        }
         this.setPlayState(PLAY_STATES.PLAYING);
       }
 
@@ -88,13 +92,13 @@
        * @returns {void}
        */
       setPosition(seconds) {
-        if(seconds < 0 || this.state.duration && seconds > this.state.duration) {
-          throw new RangeError('Value must be between 0 and duration of the video.');
+        if(seconds < this.state.trimStart || this.state.trimEnd && seconds > this.state.trimEnd) {
+          throw new RangeError('Value must be between 0 and duration of the video and within the trimmed range.');
         }
 
         this.setState('position', seconds);
 
-        if(this.state.position === this.state.duration && this.state.duration > 0) {
+        if(this.state.position === this.state.trimEnd && this.state.trimEnd > 0) {
           this.setPlayState(PLAY_STATES.FINISHED);
         } else if(this.state.playState === PLAY_STATES.FINISHED) {
           this.setPlayState(PLAY_STATES.PAUSED);
@@ -107,7 +111,7 @@
        * @returns {void}
        */
       skipSeconds(seconds) {
-        let position = Math.max(0, Math.min(this.state.position + seconds, this.state.duration));
+        let position = Math.max(this.state.trimStart, Math.min(this.state.position + seconds, this.state.trimEnd));
         this.setPosition(position);
       }
 
@@ -135,6 +139,43 @@
         }
 
         this.setState('duration', seconds);
+        if(!this.state.trimEnd) {
+          this.trimEnd(seconds);
+        }
+      }
+
+      /**
+       * Sets the trimmed start position of the video.
+       * @param  {number} seconds The position in seconds.
+       * @return {void}
+       */
+      trimStart(seconds) {
+        if(seconds < 0 || this.state.duration && seconds > this.state.duration) {
+          throw new RangeError('Value must be between 0 and duration of the video.');
+        }
+
+        this.setState('trimStart', seconds || 0);
+        if(seconds && typeof this.state.position === 'undefined' || this.state.position < seconds) {
+          this.setPosition(seconds);
+        }
+      }
+
+      /**
+       * Sets the trimmed end position of the video.
+       * @param  {number} seconds The position in seconds.
+       * @return {void}
+       */
+      trimEnd(seconds) {
+        if(seconds <= 0 || this.state.duration && seconds > this.state.duration) {
+          throw new RangeError('Value must be between 0 and duration of the video.');
+        }
+
+        if(seconds || this.state.duration) {
+          this.setState('trimEnd', seconds || this.state.duration);
+        }
+        if(seconds && this.state.position > seconds) {
+          this.setPosition(seconds);
+        }
       }
 
 

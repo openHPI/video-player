@@ -1,4 +1,4 @@
-<link rel="import" href="../../../../imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../../constants.html">
 <link rel="import" href="../../mixins/binding-helpers.html">
@@ -28,7 +28,7 @@
   </template>
 
   <script>
-    define('quality-control', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
+    IMD.define('quality-control', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
       const {ANALYTICS_TOPICS} = constants;
 
       class QualityControl extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {

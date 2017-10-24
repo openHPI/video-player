@@ -1,4 +1,4 @@
-<link rel="import" href="../../../../imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
@@ -7,7 +7,7 @@
 <link rel="import" href="sound-control.html">
 <link rel="import" href="videotime-display.html">
 <link rel="import" href="speed-control.html">
-<link rel="import" href="chapter-list-switch.html">
+<link rel="import" href="playlist-chapter-list-switch.html">
 <link rel="import" href="interactive-transcript-control.html">
 <link rel="import" href="quality-control.html">
 <link rel="import" href="mute-control.html">
@@ -51,12 +51,12 @@
 
     <div id="container__control_bar">
       <!-- Left button section -->
-      <template is="dom-if" if="[[playlist.previousVideo]]">
-        <playlist-navigation-control direction="backward" video-url="[[playlist.previousVideo]]"></playlist-navigation-control>
+      <template is="dom-if" if="[[previousVideo]]">
+        <playlist-navigation-control direction="backward" video-url="[[previousVideo.url]]"></playlist-navigation-control>
       </template>
       <playpause-control state="[[state]]"></playpause-control>
-      <template is="dom-if" if="[[playlist.nextVideo]]">
-        <playlist-navigation-control direction="forward" video-url="[[playlist.nextVideo]]"></playlist-navigation-control>
+      <template is="dom-if" if="[[nextVideo]]">
+        <playlist-navigation-control direction="forward" video-url="[[nextVideo.url]]"></playlist-navigation-control>
       </template>
 
       <!-- Video Time -->
@@ -74,7 +74,7 @@
         <quality-control state="[[state]]" qualities="[[availableQualities]]" class="hidden-for-mobile"></quality-control>
       </template>
       <template is="dom-if" if="[[hasChapters]]">
-        <chapter-list-switch state="[[state]]" class="hidden-for-mobile"></chapter-list-switch>
+        <playlist-chapter-list-switch state="[[state]]" class="hidden-for-mobile"></playlist-chapter-list-switch>
       </template>
       <template is="dom-if" if="[[hasFallbackStream]]">
         <stream-switch-control state="[[state]]" class="hidden-for-mobile"></stream-switch-control>
@@ -100,7 +100,7 @@
   </template>
 
   <script>
-    define('control-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    IMD.define('control-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
       const SKIP_SECONDS = 15;
       const TEXT_ELEMENT_TAG_NAMES = ['INPUT', 'TEXTAREA'];
 
@@ -112,7 +112,8 @@
             state: Object,
             hasChapters: Boolean,
             hasFallbackStream: Boolean,
-            playlist: Object,
+            previousVideo: Object,
+            nextVideo: Object,
             captionLanguages: Array,
             availableQualities: Boolean,
             numberOfStreams: Number,

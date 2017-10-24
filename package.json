@@ -45,24 +45,35 @@
     "url-polyfill": "^1.0.8"
   },
   "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "css-slam": "^2.0.2",
     "eslint": "^4.2.0",
     "eslint-plugin-html": "^3.1.0",
     "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.0",
+    "gulp-clean": "^0.3.2",
     "gulp-concat": "^2.6.1",
+    "gulp-html-minifier": "^0.1.8",
+    "gulp-if": "^2.0.2",
+    "gulp-uglify-es": "^0.1.3",
     "htmlhint": "^0.9.13",
-    "polymer-cli": "^1.3.0"
+    "merge-stream": "^1.0.1",
+    "node-glob": "^1.2.0",
+    "polymer-build": "^2.1.0",
+    "polymer-cli": "^1.3.0",
+    "run-sequence": "^2.2.0"
   },
   "scripts": {
-    "test": "node_modules/web-component-tester/bin/wct test/test-suite.html",
-    "test-firefox": "node_modules/web-component-tester/bin/wct  test/test-suite.html -l firefox",
-    "test-safari": "node_modules/web-component-tester/bin/wct  test/test-suite.html -l safari",
-    "test-chrome": "node_modules/web-component-tester/bin/wct  test/test-suite.html -l chrome",
-    "testdebugging": "node_modules/web-component-tester/bin/wct -p test/test-suite.html",
+    "test": "wct test/test-suite.html -l chrome -l firefox",
+    "test-firefox": "wct test/test-suite.html -l firefox",
+    "test-safari": "wct test/test-suite.html -l safari",
+    "test-chrome": "wct test/test-suite.html -l chrome",
+    "testdebugging": "wct -p test/test-suite.html",
     "generate-docs": "node ./utils/generate-docs.js",
-    "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html && polymer lint",
+    "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html && polymer lint -i ./src/*",
     "postinstall": "bower install",
     "serve": "polymer serve",
-    "bundle": "polymer build && gulp polyfills",
+    "bundle": "gulp bundle",
     "deploy": "./utils/deploy.sh"
   }
 }

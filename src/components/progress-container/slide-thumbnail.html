@@ -1,4 +1,4 @@
-<link rel="import" href="../../../../imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
@@ -24,7 +24,7 @@
         position: absolute;
         /* Cancel out the top border */
         bottom: calc(100% + 1px);
-        max-width: 170px;
+        height: 120px;
         border: 1px solid black;;
         background-color: white;
       }
@@ -42,15 +42,15 @@
 
     <div id="container__slide_thumbnail_element"
          on-click="_handleClick"
-         style$="left: [[_stylePercentage(slide.startPosition, state.duration)]]%;"
-         class$="[[_getSlidePosition(slide.startPosition, state.duration)]]">
+         style$="left: [[_stylePercentage(slide.startPosition, state.duration, state.trimStart, state.trimEnd)]]%;"
+         class$="[[_getSlidePosition(slide.startPosition, state.duration, state.trimStart, state.trimEnd)]]">
         <img id="image__slide_preview" src="[[slide.thumbnail]]">
     </div>
 
   </template>
 
   <script>
-    define('slide-thumbnail', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+    IMD.define('slide-thumbnail', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
       const {ANALYTICS_TOPICS} = constants;
 
       class SlideThumbnail extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
@@ -71,12 +71,18 @@
           };
         }
 
-        _stylePercentage(position, duration) {
-          return position / duration * 100;
+        _stylePercentage(position, duration, trimStart, trimEnd) {
+          // Apply video trimming
+          if(typeof trimStart !== 'undefined')
+            position = position - trimStart;
+          if(typeof trimEnd !== 'undefined')
+            duration = trimEnd - trimStart;
+
+          return Math.max(0, Math.min(position / duration * 100, 100));
         }
 
-        _getSlidePosition(position, duration) {
-          let percentage = this._stylePercentage(position, duration);
+        _getSlidePosition(position, duration, trimStart, trimEnd) {
+          let percentage = this._stylePercentage(position, duration, trimStart, trimEnd);
           // This is an approximation
           // to avoid that the slide image overflows the video container
           if(percentage > 85) {

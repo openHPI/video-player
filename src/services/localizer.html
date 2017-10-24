@@ -1,16 +1,19 @@
+<link rel="import" href="../3rd-imports/scoped-imd.html">
+
 <script>
-  define('localizer', () => {
+  IMD.define('localizer', () => {
     class Localizer {
       /**
        * Initializes a new Localizer instance.
        * @param {object} locales  The localized messages.
-       * @param {string} defaultLanguage  The default language.
+       * @param {string} fallbackLanguage  The fallback language.
        * @param {boolean} useKeyIfMissing Determines, if the key should be used if translation is missing.
        * @return {Localizer}  The new Localizer instance.
        */
-      constructor(locales, defaultLanguage = 'en', useKeyIfMissing = true) {
+      constructor(locales, fallbackLanguage = 'en', useKeyIfMissing = true) {
         this._locales = locales;
-        this._language = defaultLanguage;
+        this._language = fallbackLanguage;
+        this._fallbackLanguage = fallbackLanguage;
         this._useKeyIfMissing = useKeyIfMissing;
         this._languageChangedCallbacks = [];
       }
@@ -40,16 +43,35 @@
        * @return {string} The localized message.
        */
       localize(key) {
-        if(!key || !this._locales || !this._language || !this._locales[this._language]) {
+        return this._getMessage(key, this._language) ||
+               this._getMessage(key, this._fallbackLanguage) ||
+               this._getFallbackMessage(key);
+      }
+
+      /**
+       * Gets a mesage in a specific language.
+       * @param  {stirng} key The key of the message.
+       * @param  {string} language The language of the message.
+       * @return {string} The localized message.
+       */
+      _getMessage(key, language) {
+        if(!key || !this._locales || !this._language || !this._locales[language]) {
           return;
         }
 
-        let translatedValue = this._locales[this._language][key];
-        if (!translatedValue) {
-          return this._useKeyIfMissing ? key : '';
+        let translatedValue = this._locales[language][key];
+        if(translatedValue) {
+          return translatedValue;
         }
+      }
 
-        return translatedValue;
+      /**
+       * Gets a fallback message that is used if a translation is missing.
+       * @param  {stirng} key The key of the message.
+       * @return {string} The fallback message.
+       */
+      _getFallbackMessage(key) {
+        return this._useKeyIfMissing ? key : '';
       }
     }
 

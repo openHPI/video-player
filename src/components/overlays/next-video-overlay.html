@@ -1,4 +1,4 @@
-<link rel="import" href="../../../../imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 <link rel="import" href="../../../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
@@ -39,8 +39,19 @@
         animation-timing-function: linear;
       }
 
+      #container__next_video_text {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        margin-bottom: 20px;
+      }
+
       #text__next_video {
         font-size: 20px;
+      }
+
+      #text__next_video_title {
+        margin-top: 5px;
       }
 
       #button__disable_next_video {
@@ -77,7 +88,12 @@
     </style>
 
     <div id="container__next-video_overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
-      <p id="text__next_video">[[localize('next-video-overlay--next-video-label')]]</p>
+      <div id="container__next_video_text">
+        <span id="text__next_video">[[localize('next-video-overlay--next-video-label')]]</span>
+        <template is="dom-if" if="[[nextVideo.title]]">
+          <span id="text__next_video_title">[[nextVideo.title]]</span>
+        </template>
+      </div>
       <div class="container__spinner">
         <i id="icon_spinner" class="fa fa-spinner" aria-hidden="true"></i>
         <span id="timer">[[_secondsToNextVideo]]</span>
@@ -87,7 +103,7 @@
   </template>
 
   <script>
-    define('next-video-overlay', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
+    IMD.define('next-video-overlay', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
       const {PLAY_STATES, SECONDS_TO_NEXT_VIDEO} = constants;
 
       class NextVideoOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
@@ -165,7 +181,8 @@
           this._timer = setInterval(() => {
             this._secondsToNextVideo = this._secondsToNextVideo - 1;
             if(this._secondsToNextVideo === 0) {
-              window.open(this.nextVideo, '_self');
+              window.open(this.nextVideo.url, '_self');
+              this._clearTimer();
             }
           }, 1000);
         }

@@ -1,4 +1,4 @@
-<link rel="import" href="../../../../imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../styling/global--style-module.html">
@@ -64,7 +64,7 @@
   </template>
 
   <script>
-    define('progress-bar', ['binding-helpers'], (BindingHelpersMixin) => {
+    IMD.define('progress-bar', ['binding-helpers'], (BindingHelpersMixin) => {
       class ProgressBar extends BindingHelpersMixin(Polymer.Element) {
         static get is() { return 'progress-bar'; }
 
