@@ -113,6 +113,11 @@
         disconnectedCallback() {
           super.disconnectedCallback();
           this._synchronizationManager.unregisterVideo(this.$.video);
+
+          // Stop playback and unload source
+          this.$.video.pause();
+          this.$.video.src = '';
+          this.$.video.load();
         }
 
         _getNativeHlsSupport() {
