@@ -38,7 +38,7 @@
 
     <div id="container__video_stream">
       <!-- "playsinline" is for iOS to not use its native video player -->
-      <video id="video" preload="[[ifThenElse(preload, 'auto', 'metadata')]]" on-click="_handleClick" on-loadedmetadata="_handleLoadedMetadata" playsinline="true">
+      <video id="video" preload$="[[ifThenElse(preload, 'auto', 'metadata')]]" on-click="_handleClick" on-loadedmetadata="_handleLoadedMetadata" playsinline="true">
         <template is="dom-repeat" items="[[captions]]">
           <track src="[[item.url]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
         </template>
