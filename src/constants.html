@@ -1,6 +1,12 @@
 <script>
   IMD.define('constants', () => {
     /**
+     * Contains the version of the video-player. Is automatically set during build.
+     * @type {String}
+     */
+    const VERSION = '1.0.0'; // auto-generated-version
+
+    /**
      * Contains the different play states.
      * @type {Object.<string, string>}
      */
@@ -188,8 +194,9 @@
       VIDEO_DUAL_STREAM_CHANGE: 'video_dual_stream_change',
       VIDEO_VOLUME_CHANGE: 'video_volume_change',
     };
-    
+
     return {
+      VERSION,
       PLAY_STATES,
       PLAYBACK_RATES,
       QUALITY_MODES,

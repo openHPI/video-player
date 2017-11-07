@@ -49,14 +49,14 @@ See [features.md](docs/features.md)
 ## Extending the Framework
 See [extending.md](docs/extending.md)
 
-## Tests 
+## Tests
 See [tests.md](docs/tests.md)
 
 ## Linter
 The framework comes with several linter configurations. All linters can by executed using `npm run lint`.
 
 ## Releases
-A new GitHub release can be created by merging in the master branch and executing `npm run deploy [major|minor|patch]`. This creates a new version tag and pushes the branch. 
+A new GitHub release can be created by merging in the master branch and executing `npm version [major|minor|patch]`. This creates a new version tag and pushes the branch. 
 
 The sources are bundled and the release is created afterwards by Travis, if the tests are passing.
 
