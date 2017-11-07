@@ -128,15 +128,17 @@
         }
 
         _getVisibleChapters(chapters, trimStart, trimEnd) {
-          let visibleChapters = [];
-          for(let i = 0; i < chapters.length; i++) {
-            let chapter = chapters[i];
-            if((chapter.startPosition >= trimStart || chapters[i + 1] && chapters[i + 1].startPosition > trimStart) && chapter.startPosition <= trimEnd) {
-              visibleChapters.push(chapter);
+          if(chapters) {
+            let visibleChapters = [];
+            for(let i = 0; i < chapters.length; i++) {
+              let chapter = chapters[i];
+              if((chapter.startPosition >= trimStart || chapters[i + 1] && chapters[i + 1].startPosition > trimStart) && chapter.startPosition <= trimEnd) {
+                visibleChapters.push(chapter);
+              }
             }
-          }
 
-          return visibleChapters;
+            return visibleChapters;
+          }
         }
 
         _getActiveChapter(chapters, position) {

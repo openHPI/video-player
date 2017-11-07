@@ -54,4 +54,7 @@ git add -A .
 git commit -am 'seed gh-pages'
 git push -u origin gh-pages --force
 
+# Remove cloned repo
+rm -rf $repo
+
 popd >/dev/null
