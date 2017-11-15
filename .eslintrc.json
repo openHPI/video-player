@@ -6,6 +6,7 @@
   },
   "rules": {
     "no-console": "off",
+    "no-debugger": "error",
     "array-callback-return": "warn",
     "indent": "off",
     "indent-legacy": ["error", 2, { "SwitchCase": 1 }],
@@ -30,7 +31,8 @@
     "arrow-body-style": ["error", "as-needed"],
     "valid-jsdoc": "error",
     "capitalized-comments": ["warn", "always", {"ignoreConsecutiveComments": true}],
-    "no-global-assign": "warn"
+    "no-global-assign": "warn",
+    "no-warning-comments": [2, { "terms": ["todo"], "location": "anywhere" }]
   },
   "settings": {
     "html/indent": "+2",
