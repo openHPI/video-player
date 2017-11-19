@@ -37,8 +37,8 @@ const bundle = (compile, dest) => {
 };
 
 const cleanDir = (dir) => gulp.src(dir, {read: false}).pipe(clean());
-gulp.task('clean-es5', () => cleanDir('dist/es5'));
-gulp.task('clean-es6', () => cleanDir('dist/es6'));
+gulp.task('clean-es5', () => cleanDir('build/es5'));
+gulp.task('clean-es6', () => cleanDir('build/es6'));
 gulp.task('clean', ['clean-es5', 'clean-es6']);
 
 gulp.task('polyfills', () => {
