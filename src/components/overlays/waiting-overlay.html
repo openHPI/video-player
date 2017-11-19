@@ -63,13 +63,28 @@
             },
             _isVisible: {
               type: Boolean,
-              computed: '_getIsVisible(state.playState)',
+              value: false,
             },
+            _timer: Object,
           };
         }
 
-        _getIsVisible(playState) {
-          return playState === PLAY_STATES.WAITING;
+        static get observers() {
+          return [
+            '_playStateChanged(state.playState)',
+          ];
+        }
+
+        _playStateChanged(playState) {
+          // Show overlay only if state is WAITING for at least 250ms
+          if(playState === PLAY_STATES.WAITING) {
+            this._timer = setTimeout(() => {
+              this._isVisible = playState === PLAY_STATES.WAITING;
+            }, 250);
+          } else {
+            this._isVisible = false;
+            clearTimeout(this._timer);
+          }
         }
       }
 
