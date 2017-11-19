@@ -111,44 +111,22 @@
       secondsToHms(totalSeconds, maxSeconds) {
         maxSeconds = maxSeconds || totalSeconds;
 
-        let seconds = Number(totalSeconds);
-        let hours = Math.floor(seconds / 3600);
-        let minutes = Math.floor(seconds % 3600 / 60);
-        let seconds2 = Math.floor(seconds % 3600 % 60);
-        if(hours < 10) {
-          hours = '0' + hours;
-        }
-        if(minutes < 10) {
-          minutes = '0' + minutes;
-        }
-        if(seconds2 < 10) {
-          seconds2 = '0' + seconds2;
-        }
-        if(maxSeconds > 3600) {
-          return hours + ':' + minutes + ':' + seconds2;
+        let sign = totalSeconds < 0 ? '-' : '';
+        totalSeconds = Math.abs(totalSeconds);
+        let hours = this.pad(Math.floor(totalSeconds / 3600), 2);
+        let minutes = this.pad(Math.floor(totalSeconds % 3600 / 60), 2);
+        let seconds = this.pad(Math.floor(totalSeconds % 3600 % 60), 2);
+        if(Math.abs(maxSeconds) < 3600) {
+          return `${sign}${minutes}:${seconds}`;
         } else {
-          return minutes + ':' + seconds2;
+          return `${sign}${hours}:${minutes}:${seconds}`;
         }
       }
 
-
-      hmsToSeconds(timeString){
-        let array = timeString.split(':');
-        if (array.length === 1) {
-          // Just seconds
-          return parseInt(array[0]);
-        } else if (array.length === 2) {
-          // Minutes + seconds
-          let m = parseInt(array[0]) * 60;
-          let s = parseInt(array[1]);
-          return m + s;
-        } else if (array.length === 3) {
-        // Hours + minutes + seconds
-          let h = parseInt(array[0]) * 3600;
-          let m = parseInt(array[1]) * 60;
-          let s = parseInt(array[2]);
-          return h + m + s;
-        }
+      pad(number, places) {
+        let absNumber = Math.abs(number);
+        let numZeroes = places - absNumber.toString().length + 1;
+        return Array(numZeroes).join(0) + absNumber;
       }
     };
 

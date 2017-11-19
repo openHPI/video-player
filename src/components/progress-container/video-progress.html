@@ -13,11 +13,11 @@
     <div class="progress_indicator">
       <progress-bar
         id="progress__video_progress"
-        max="[[toStringOrEmpty(_duration)]]"
-        value$="[[toStringOrEmpty(_position)]]"
-        secondary-value$="[[toStringOrEmpty(_bufferPosition)]]"
+        max="[[ifThenElse(state.live, state.livePosition, _duration)]]"
+        value="[[_position]]"
+        secondary-value="[[_bufferPosition]]"
         on-change="_handleChange"
-        show-target-position-on-hover>
+        hover-box="[[ifThenElse(state.live, 'rel', 'abs')]]">
       </progress-bar>
     </div>
   </template>

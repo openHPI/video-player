@@ -73,6 +73,7 @@
      * @type {Object.<string, Object>}
      */
     const DEFAULT_STATE = {
+      alreadyPlayed: false,
       playState: PLAY_STATES.PAUSED,
       position: 0,
       bufferPosition: 0,
@@ -80,6 +81,9 @@
       trimStart: 0,
       trimEnd: 0,
       live: false,
+      liveDvr: false,
+      livePosition: 0,
+      liveFragmentDuration: 0,
       playbackRate: 1.0,
       volume: 1.0,
       muted: false,
@@ -104,7 +108,6 @@
       slides: [],
       relatedVideos: [],
       initialState: {},
-      live: false,
       videoPreload: true,
       loadFontAwesome: true,
       theme: 'dark-orange',

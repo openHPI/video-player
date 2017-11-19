@@ -3,6 +3,7 @@
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../mixins/localization.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
 
 <dom-module id="videotime-display">
@@ -12,33 +13,19 @@
       #container__videotime_display {
         white-space: nowrap;
       }
-
-      #span__live_indicator {
-        font-weight: bold;
-        margin-right: 10px;
-        @apply --set-accent-color-foreground;
-      }
-      #span__live_indicator::before {
-        content: '\f111';
-        font-family: FontAwesome;
-        margin-right: 4px;
-      }
     </style>
 
     <div id="container__videotime_display" class="user_controls">
-      <template is="dom-if" if="[[state.live]]">
-        <span id="span__live_indicator">LIVE</span>
-      </template>
-      [[secondsToHms(_position, _duration)]]
+      <span>[[secondsToHms(_position, _duration)]]</span>
       <template is="dom-if" if="[[!state.live]]">
-        / [[secondsToHms(_duration)]]
+        <span> / [[secondsToHms(_duration)]]</span>
       </template>
     </div>
   </template>
 
   <script>
-    IMD.define('videotime-display', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
-      class VideoTimeDisplay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+    IMD.define('videotime-display', ['binding-helpers', 'ioc-requester', 'localization'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin) => {
+      class VideoTimeDisplay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
         static get is() { return 'videotime-display'; }
 
         static get properties() {

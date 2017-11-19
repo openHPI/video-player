@@ -88,11 +88,6 @@ const configurationSchema = {
     description: 'Contains a fallback stream that the user can switch to, i.e. a single stream source.',
     schema: streamSchema,
   },
-  live: {
-    type: 'boolean',
-    description: 'If enabled, streams are considered as live streams.',
-    default: false,
-  },
   language: {
     type: 'string',
     default: 'en',

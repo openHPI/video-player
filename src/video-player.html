@@ -16,6 +16,7 @@
 <link rel="import" href="services/configuration-validator.html">
 <link rel="import" href="services/fullscreen-manager.html">
 <link rel="import" href="services/synchronization-manager.html">
+<link rel="import" href="services/live-stream-controller.html">
 <link rel="import" href="services/user-preferences-manager.html">
 <link rel="import" href="services/analytics-manager.html">
 <link rel="import" href="services/localizer.html">
@@ -172,7 +173,7 @@
       </div>
 
       <!-- Progress Bars -->
-      <template is="dom-if" if="[[!state.live]]">
+      <template is="dom-if" if="[[_showProgressBar]]">
         <div id="progress-container">
           <template is="dom-if" if="[[hasItems(configuration.slides)]]">
             <slide-preview-bar state="[[state]]" slides="[[configuration.slides]]" class="hidden-for-mobile"></slide-preview-bar>
@@ -185,6 +186,7 @@
       <control-bar
         id="control-bar"
         state="[[state]]"
+        live="[[configuration.live]]"
         has-chapters="[[hasItems(configuration.chapters)]]"
         has-fallback-stream="[[_hasFallbackStream]]"
         caption-languages="[[_captionLanguages]]"
@@ -209,7 +211,8 @@
   </template>
 
   <script>
-    IMD.define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-js', 'analytics-manager', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, Localizer, Hls, AnalyticsManager, constants, locales, configurationSchema) => {
+
+    IMD.define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'live-stream-controller', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-js', 'analytics-manager', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, LiveStreamController, UserPreferencesManager, ConfigurationValidator, Localizer, Hls, AnalyticsManager, constants, locales, configurationSchema) => {
       const {VERSION, DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, HLS_MIME_TYPE, ANALYTICS_TOPICS} = constants;
 
       class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
@@ -289,6 +292,7 @@
               type: Boolean,
               computed: '_getIsIOS()',
             },
+            _showProgressBar: Boolean,
             _isConfigurationInitialized: Boolean,
             _isConfigurationObserverLocked: {
               type: Boolean,
@@ -311,12 +315,12 @@
             '_languageChanged(configuration.language, _localizer)',
             '_trimStartChanged(configuration.trimVideo.start)',
             '_trimEndChanged(configuration.trimVideo.end)',
-            '_liveChanged(configuration.live)',
             '_playStateChanged(state.playState)',
             '_fullscreenChanged(state.fullscreen)',
             '_userPreferencesStateChanged(state.*)',
             '_positionChanged(state.position)',
             '_checkIfReady(state.playState, state.duration)',
+            '_setShowProgressBar(state.live, state.liveDvr)',
           ];
         }
 
@@ -327,6 +331,7 @@
           iocKernel.bind('UserPreferencesManager').toFunction(() => new UserPreferencesManager()).inSingletonScope();
           iocKernel.bind('ConfigurationValidator').toFunction(() => new ConfigurationValidator(configurationSchema)).inSingletonScope();
           iocKernel.bind('SynchronizationManager').toFunction(() => new SynchronizationManager(iocKernel.get('StateManager'))).inSingletonScope();
+          iocKernel.bind('LiveStreamController').toFunction(() => new LiveStreamController(iocKernel.get('StateManager'))).inSingletonScope();
           iocKernel.bind('FullscreenManager').toFunction(() => new FullscreenManager(this.$['video-player-container'])).inSingletonScope();
           iocKernel.bind('AnalyticsManager').toFunction(() => new AnalyticsManager(this, iocKernel.get('StateManager'))).inSingletonScope();
           iocKernel.bind('Localizer').toFunction(() => new Localizer(locales)).inSingletonScope();
@@ -493,14 +498,16 @@
         }
 
         _playStateChanged(playState) {
-          // Dispatch event if video is playing to stop playback on other instances
           if(playState === PLAY_STATES.PLAYING) {
+            // Set alreadyPlayed flag indicating that the video was initially played.
+            this._stateManager.setAlreadyPlayed();
+
+            // Dispatch event if video is playing to stop playback on other instances
             let event = new CustomEvent(PLAYING_EVENT_NAME, {
               detail: {
                 sender: this,
               },
             });
-
             window.dispatchEvent(event);
           }
         }
@@ -593,16 +600,17 @@
           }
         }
 
-        _liveChanged(live) {
-          if(this._stateManager) {
-            this._stateManager.setLive(live);
-          }
-        }
-
         _userPreferencesStateChanged() {
           if (this._userPreferencesManager) {
             this._userPreferencesManager.setPreferences(this.state);
           }
+        }
+
+        _setShowProgressBar(live, dvr) {
+          // Strangely enough, defining _showProgressBar as computed property
+          // breaks property binding within dom-if template.
+          // Therefore, _showProgressBar is set explicitly.
+          this._showProgressBar = !live || dvr;
         }
 
         _needResizer(index, length) {

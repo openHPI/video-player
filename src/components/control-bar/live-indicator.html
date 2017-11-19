@@ -1,0 +1,75 @@
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
+<link rel="import" href="../../../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
+
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../mixins/localization.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
+
+<dom-module id="live-indicator">
+
+  <template>
+    <style type="text/css" include="control-bar--style-module font-awesome">
+      #span__live_indicator {
+        width: initial;
+        text-align: initial;
+        font-weight: bold;
+        @apply --set-accent-color-foreground;
+      }
+      #span__live_indicator.inactive {
+        color: grey;
+      }
+      #span__live_indicator::before {
+        content: '\f111';
+        font-family: FontAwesome;
+        margin-right: 4px;
+      }
+    </style>
+
+    <div id="container__live_indicator" class="user_controls">
+      <a id="span__live_indicator" href="javascript:void(0)" class$="[[ifNotThen(_isLiveSync, 'inactive')]]" on-click="_handleClick">
+        [[localize('live-indicator--label')]]
+      </a>
+    </div>
+  </template>
+
+  <script>
+    IMD.define('live-indicator', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
+      const {ANALYTICS_TOPICS, PLAY_STATES} = constants;
+
+      class LiveIndicator extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
+        static get is() { return 'live-indicator'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
+            _isLiveSync: {
+              type: Boolean,
+              computed: '_getIsLive(state.playState, state.position, state.livePosition, state.liveFragmentDuration)',
+            },
+          };
+        }
+
+        _getIsLive(playState, position, livePosition, liveFragmentDuration) {
+          // Playback is considered as live if current position is within
+          // the last liveSyncDurationCount + 1 fragments
+          return playState === PLAY_STATES.PLAYING && position >= Math.max(0, livePosition - liveFragmentDuration);
+        }
+
+        _handleClick() {
+          this._analyticsManager.changeState('setPosition', [this.state.livePosition], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
+          if(this.state.playState !== PLAY_STATES.PLAYING) {
+            this._analyticsManager.changeState('play', [], {verb: ANALYTICS_TOPICS.PLAY});
+          }
+        }
+      }
+
+      window.customElements.define(LiveIndicator.is, LiveIndicator);
+    });
+  </script>
+
+</dom-module>

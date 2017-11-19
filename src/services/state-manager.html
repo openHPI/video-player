@@ -66,6 +66,11 @@
           throw new RangeError(`Value must be in [${Object.values(PLAY_STATES).toString()}].`);
         }
 
+        // Skip to live sync point when playing if its the first time playing or DVR is disabled
+        if(this.state.live && playState === PLAY_STATES.PLAYING && (!this.state.alreadyPlayed || !this.state.liveDvr)) {
+          this.setPosition(this.state.livePosition);
+        }
+
         this.setState('playState', playState);
       }
 
@@ -84,6 +89,15 @@
             this.pause();
             break;
         }
+      }
+
+      /**
+       * Sets alreadyPlayed flag indicating whether the video was initially played by the user.
+       * @param {boolean} value The new flag value.
+       * @returns {void}
+       */
+      setAlreadyPlayed(value = true) {
+        this.setState('alreadyPlayed', value);
       }
 
 
@@ -182,16 +196,6 @@
         if(seconds && this.state.position > seconds) {
           this.setPosition(seconds);
         }
-      }
-
-
-      /**
-       * Sets the live indicator, which determines if streams are live or not.
-       * @param  {boolean} live The live indicator.
-       * @return {void}
-       */
-      setLive(live) {
-        this.setState('live', live);
       }
 
 
@@ -359,6 +363,49 @@
        */
       setFallbackStreamActive(fallbackStreamActive) {
         this.setState('fallbackStreamActive', fallbackStreamActive);
+      }
+
+
+      /**
+       * Sets the live indicator, which determines if streams are live or not.
+       * @param  {Boolean} live The live indicator.
+       * @return {void}
+       */
+      setLive(live) {
+        this.setState('live', live);
+      }
+
+      /**
+       * Sets the live DVR indicator, which determines if live stream supportd DVR or not.
+       * @param  {Boolean} liveDvr The live DVR indicator.
+       * @return {void}
+       */
+      setLiveDvr(liveDvr) {
+        this.setState('liveDvr', liveDvr);
+      }
+
+      /**
+       * Sets the position of the live sync point.
+       * @param {number} seconds The live sync point in seconds.
+       * @returns {void}
+       */
+      setLivePosition(seconds) {
+        if(seconds < 0 || this.state.duration && seconds > this.state.duration) {
+          throw new RangeError('Value must be between 0 and duration of the stream.');
+        }
+        this.setState('livePosition', seconds);
+      }
+
+      /**
+       * Sets the duration of a live-stream fragment.
+       * @param {number} seconds The duration of a fragment in seconds.
+       * @returns {void}
+       */
+      setLiveFragmentDuration(seconds) {
+        if(seconds < 0) {
+          throw new RangeError('Value must be greater or equal 0.');
+        }
+        this.setState('liveFragmentDuration', seconds);
       }
     }
 

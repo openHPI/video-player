@@ -32,7 +32,6 @@ The player configuration is provided as JSON object:
    * **sd** (string): URL of the SD video stream.
    * **poster** (string): URL of the poster image.
    * **muted** (boolean): Mutes the audio stream of the video. (default: `false`)
-* **live** (boolean): Determines, whether streams are live streams. (default: `false`)
 * **language** (string): Language used for localizing messages. (default: `"en"`)
 * **initialState** (object): The initial state the player has when loaded.
    * **playState** (string):`<["PLAYING","PAUSED"]>` (default: `"PAUSED"`)

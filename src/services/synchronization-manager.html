@@ -247,8 +247,10 @@
 
           // Update global buffer position with minimum buffer position of all
           // videos, which is the common buffer
-          let globalBuffer = Math.min(...Array.from(this._videoBufferPositions.values()));
-          this._stateManager.setBufferPosition(globalBuffer);
+          if(this._videoBufferPositions.size > 0) {
+            let globalBuffer = Math.min(...Array.from(this._videoBufferPositions.values()));
+            this._stateManager.setBufferPosition(globalBuffer);
+          }
         }
       }
 

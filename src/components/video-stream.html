@@ -28,6 +28,7 @@
         top: 0;
         right: 0;
         bottom: 0;
+        z-index: 5;
       }
 
       #image__poster {
@@ -68,12 +69,16 @@
               value: true,
             },
             _stateManager: {
-              typeof: Object,
+              type: Object,
               inject: 'StateManager',
             },
             _synchronizationManager: {
-              typeof: Object,
+              type: Object,
               inject: 'SynchronizationManager',
+            },
+            _liveStreamController: {
+              type: Object,
+              inject: 'LiveStreamController',
             },
             _currentUrl: String,
             _isRegistered: {
@@ -92,7 +97,7 @@
             },
             _isPosterVisible: {
               type: Boolean,
-              computed: '_getIsPosterVisible(state.playState, state.position, state.trimStart, state.trimEnd)',
+              computed: '_getIsPosterVisible(state.playState, state.live, state.position, state.trimStart, state.trimEnd)',
             },
           };
         }
@@ -112,12 +117,15 @@
         servicesInjectedCallback() {
           super.servicesInjectedCallback();
           this._synchronizationManager.registerVideo(this.$.video);
+          if(this._hlsClient)
+            this._liveStreamController.registerClient(this._hlsClient);
           this._isRegistered = true;
         }
 
         disconnectedCallback() {
           super.disconnectedCallback();
           this._synchronizationManager.unregisterVideo(this.$.video);
+          this._liveStreamController.unregisterClient(this._hlsClient);
           this._isRegistered = false;
 
           // Stop playback and unload source
@@ -130,8 +138,12 @@
           return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
         }
 
-        _getIsPosterVisible(playState, position, trimStart, trimEnd) {
-          return playState === PLAY_STATES.PAUSED && (position === trimStart || position === trimEnd);
+        _getIsPosterVisible(playState, live, position, trimStart, trimEnd) {
+          if(!this.state.alreadyPlayed || playState === PLAY_STATES.FINISHED) {
+            return true;
+          }
+
+          return !live && playState === PLAY_STATES.PAUSED && (position === trimStart || position === trimEnd);
         }
 
         _playStateChanged(playState) {
@@ -208,6 +220,7 @@
           if(this._nativeHlsSupport || quality !== QUALITY_MODES.HLS) {
             // Destroy old hls client
             if(this._hlsClient) {
+              this._liveStreamController.unregisterClient(this._hlsClient);
               this._hlsClient.destroy();
             }
 
@@ -220,6 +233,9 @@
             this._hlsClient = new Hls();
             this._hlsClient.loadSource(url);
             this._hlsClient.attachMedia(this.$.video);
+            if(this._liveStreamController) {
+              this._liveStreamController.registerClient(this._hlsClient);
+            }
           }
 
           // Reapply current state to video element after the new source has been loaded
