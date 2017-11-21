@@ -71,6 +71,11 @@
           this.setPosition(this.state.livePosition);
         }
 
+        // Skip to end position explicitly
+        if(playState === PLAY_STATES.FINISHED && this.state.position !== this.state.duration) {
+            this.setPosition(this.state.duration);
+        }
+
         this.setState('playState', playState);
       }
 

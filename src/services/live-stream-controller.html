@@ -46,8 +46,15 @@
        * @return {void}
        */
       _handleLevelLoaded(client, data) {
-        this._stateManager.setLive(data.details.live);
-        if(!data.details.live) {
+        let live = data.details.live;
+        let oldLive = this._stateManager.state.live;
+        this._stateManager.setLive(live);
+        if(!live)
+        {
+          // Transition from live to not live indicates that the stream has ended
+          if(oldLive) {
+            this._stateManager.setPlayState(PLAY_STATES.FINISHED);
+          }
           return;
         }
 
@@ -62,7 +69,7 @@
 
         this._stateManager.setLivePosition(livePosition);
         this._stateManager.setLiveFragmentDuration(fragmentDuration);
-        this._stateManager.setLiveDvr(hiddenAreaDuration <= totalDuration);
+        this._stateManager.setLiveDvr(data.details.fragments.length > client.config.liveSyncDurationCount);
       }
     }
 

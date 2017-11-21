@@ -115,10 +115,10 @@
        * @return {void}
        */
       _videoEnded(e) {
-        // Explicitly propagate end position (needed for HLS.js)
+        // Explicitly propagate end of video (needed for HLS.js)
         let video = e.target;
         if(this._isMaster(video) && !this._anyWaiting()) {
-          this._stateManager.setPosition(this._stateManager.state.duration);
+          this._stateManager.setPlayState(PLAY_STATES.FINISHED);
         }
       }
 
