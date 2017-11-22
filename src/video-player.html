@@ -16,7 +16,6 @@
 <link rel="import" href="services/configuration-validator.html">
 <link rel="import" href="services/fullscreen-manager.html">
 <link rel="import" href="services/synchronization-manager.html">
-<link rel="import" href="services/live-stream-controller.html">
 <link rel="import" href="services/user-preferences-manager.html">
 <link rel="import" href="services/analytics-manager.html">
 <link rel="import" href="services/localizer.html">
@@ -212,7 +211,7 @@
 
   <script>
 
-    IMD.define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'live-stream-controller', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-js', 'analytics-manager', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, LiveStreamController, UserPreferencesManager, ConfigurationValidator, Localizer, Hls, AnalyticsManager, constants, locales, configurationSchema) => {
+    IMD.define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-js', 'analytics-manager', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, Localizer, Hls, AnalyticsManager, constants, locales, configurationSchema) => {
       const {VERSION, DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, HLS_MIME_TYPE, ANALYTICS_TOPICS} = constants;
 
       class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
@@ -331,7 +330,6 @@
           iocKernel.bind('UserPreferencesManager').toFunction(() => new UserPreferencesManager()).inSingletonScope();
           iocKernel.bind('ConfigurationValidator').toFunction(() => new ConfigurationValidator(configurationSchema)).inSingletonScope();
           iocKernel.bind('SynchronizationManager').toFunction(() => new SynchronizationManager(iocKernel.get('StateManager'))).inSingletonScope();
-          iocKernel.bind('LiveStreamController').toFunction(() => new LiveStreamController(iocKernel.get('StateManager'))).inSingletonScope();
           iocKernel.bind('FullscreenManager').toFunction(() => new FullscreenManager(this.$['video-player-container'])).inSingletonScope();
           iocKernel.bind('AnalyticsManager').toFunction(() => new AnalyticsManager(this, iocKernel.get('StateManager'))).inSingletonScope();
           iocKernel.bind('Localizer').toFunction(() => new Localizer(locales)).inSingletonScope();

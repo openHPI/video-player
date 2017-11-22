@@ -85,7 +85,7 @@
        * @param  {HTMLElement} video The video element to be checked.
        * @return {Boolean} The value.
        */
-      _isMaster(video) {
+      isMaster(video) {
         return this._videos.indexOf(video) === 0;
       }
 
@@ -97,7 +97,7 @@
        */
       _videoTimeUpdate(e) {
         let video = e.target;
-        if(this._isMaster(video) && !this._anyWaiting()) {
+        if(this.isMaster(video) && !this._anyWaiting()) {
           // Stay within trimmed range, if set
           if(this._stateManager.state.trimStart && video.currentTime < this._stateManager.state.trimStart) {
             this._stateManager.setPosition(this._stateManager.state.trimStart);
@@ -117,7 +117,7 @@
       _videoEnded(e) {
         // Explicitly propagate end of video (needed for HLS.js)
         let video = e.target;
-        if(this._isMaster(video) && !this._anyWaiting()) {
+        if(this.isMaster(video) && !this._anyWaiting()) {
           this._stateManager.setPlayState(PLAY_STATES.FINISHED);
         }
       }
@@ -130,7 +130,7 @@
        */
       _videoDurationChanged(e) {
         let video = e.target;
-        if(this._isMaster(video)) {
+        if(this.isMaster(video)) {
           this._stateManager.setDuration(video.duration);
         }
       }

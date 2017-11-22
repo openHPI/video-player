@@ -47,7 +47,7 @@
           let video1 = document.getElementById("video1"), video2 = document.getElementById("video2");
           synchronizationManager.registerVideo(video1);
           synchronizationManager.registerVideo(video2);
-          assert.isTrue(synchronizationManager._isMaster(video1), true, 'first video is master video');
+          assert.isTrue(synchronizationManager.isMaster(video1), true, 'first video is master video');
           video1.currentTime = 10;
           assert.equal(video2.currentTime, 0, 'videos are de-synchronized!');
           synchronizationManager._syncVideos();

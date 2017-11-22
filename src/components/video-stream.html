@@ -76,10 +76,6 @@
               type: Object,
               inject: 'SynchronizationManager',
             },
-            _liveStreamController: {
-              type: Object,
-              inject: 'LiveStreamController',
-            },
             _currentUrl: String,
             _isRegistered: {
               type: Boolean,
@@ -117,15 +113,12 @@
         servicesInjectedCallback() {
           super.servicesInjectedCallback();
           this._synchronizationManager.registerVideo(this.$.video);
-          if(this._hlsClient)
-            this._liveStreamController.registerClient(this._hlsClient);
           this._isRegistered = true;
         }
 
         disconnectedCallback() {
           super.disconnectedCallback();
           this._synchronizationManager.unregisterVideo(this.$.video);
-          this._liveStreamController.unregisterClient(this._hlsClient);
           this._isRegistered = false;
 
           // Stop playback and unload source
@@ -220,7 +213,6 @@
           if(this._nativeHlsSupport || quality !== QUALITY_MODES.HLS) {
             // Destroy old hls client
             if(this._hlsClient) {
-              this._liveStreamController.unregisterClient(this._hlsClient);
               this._hlsClient.destroy();
             }
 
@@ -231,11 +223,9 @@
           } else {
             // Create and configure new hls client for existing video element
             this._hlsClient = new Hls();
+            this._hlsClient.on(Hls.Events.LEVEL_LOADED, this._handleHlsLevelLoaded.bind(this));
             this._hlsClient.loadSource(url);
             this._hlsClient.attachMedia(this.$.video);
-            if(this._liveStreamController) {
-              this._liveStreamController.registerClient(this._hlsClient);
-            }
           }
 
           // Reapply current state to video element after the new source has been loaded
@@ -299,6 +289,38 @@
               },
             },
           }));
+        }
+
+        _handleHlsLevelLoaded(e, data) {
+          if(this._synchronizationManager && !this._synchronizationManager.isMaster(this.$.video)) {
+            return;
+          }
+
+          // Set live indicator
+          let live = data.details.live;
+          let oldLive = this._stateManager.state.live;
+          this._stateManager.setLive(live);
+          if(!live)
+          {
+            // Transition from live to not live indicates that the stream has ended
+            if(oldLive) {
+              this._stateManager.setPlayState(PLAY_STATES.FINISHED);
+            }
+            return;
+          }
+
+          // Update live states
+          let livePosition = this._hlsClient.liveSyncPosition;
+          let totalDuration = data.details.totalduration;
+          let fragmentDuration = data.details.targetduration;
+          let hiddenAreaDuration = this._hlsClient.config.liveSyncDurationCount * fragmentDuration;
+          if(!livePosition) {
+            // Calculate fallback live position if liveSyncPosition is not set, yet.
+            livePosition = Math.max(0, totalDuration - hiddenAreaDuration);
+          }
+          this._stateManager.setLivePosition(livePosition);
+          this._stateManager.setLiveFragmentDuration(fragmentDuration);
+          this._stateManager.setLiveDvr(data.details.fragments.length > this._hlsClient.config.liveSyncDurationCount);
         }
 
         _applyState() {
