@@ -158,6 +158,13 @@
           throw new RangeError('Value must be positive.');
         }
 
+        // In Safari, the duration is Infinity, if it is a live stream.
+        if(seconds === Infinity) {
+          this.setLive(true);
+        } else if(this.state.duration === Infinity) {
+          this.setLive(false);
+        }
+
         this.setState('duration', seconds);
         if(!this.state.trimEnd || this.stickyTrimEnd) {
           this.trimEnd(seconds);
