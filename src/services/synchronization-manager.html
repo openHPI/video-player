@@ -141,7 +141,7 @@
        * @return {void}
        */
       _syncVideos() {
-        if(!this._anyWaiting()) {
+        if(!this._anyWaiting() && !this._stateManager.state.live) {
           let master = this._videos[0];
           if(this._stateManager.state.playState === PLAY_STATES.PAUSED) {
             // The positions can be set instantly if playback is paused
@@ -272,7 +272,7 @@
       _restorePlayState() {
         if(this.backupPlayState) {
           if(this._stateManager.state.playState === PLAY_STATES.WAITING) {
-            this._stateManager.setPlayState(this.backupPlayState);
+            this._stateManager.setPlayState(this.backupPlayState, false);
           }
           this.backupPlayState = null;
         }

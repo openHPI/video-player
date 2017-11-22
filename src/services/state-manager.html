@@ -59,21 +59,24 @@
       /**
        * Sets the play state to specified value.
        * @param {string} playState The new play state.
+       * @param {boolean} updatePosition If true, current position is updated depending on the new play state.
        * @returns {void}
        */
-      setPlayState(playState) {
+      setPlayState(playState, updatePosition = true) {
         if(!Object.values(PLAY_STATES).includes(playState)) {
           throw new RangeError(`Value must be in [${Object.values(PLAY_STATES).toString()}].`);
         }
 
-        // Skip to live sync point when playing if its the first time playing or DVR is disabled
-        if(this.state.live && playState === PLAY_STATES.PLAYING && (!this.state.alreadyPlayed || !this.videoPlayer.configuration.liveDvr) && this.state.livePosition) {
-          this.setPosition(this.state.livePosition);
-        }
+        if(updatePosition) {
+          // Skip to live sync point when playing if its the first time playing or DVR is disabled
+          if(this.state.live && playState === PLAY_STATES.PLAYING && (!this.state.alreadyPlayed || !this.videoPlayer.configuration.liveDvr) && this.state.livePosition) {
+            this.setPosition(this.state.livePosition);
+          }
 
-        // Skip to end position explicitly
-        if(playState === PLAY_STATES.FINISHED && this.state.position !== this.state.duration) {
+          // Skip to end position explicitly
+          if(playState === PLAY_STATES.FINISHED && this.state.position !== this.state.duration) {
             this.setPosition(this.state.duration);
+          }
         }
 
         this.setState('playState', playState);
