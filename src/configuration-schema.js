@@ -335,6 +335,11 @@ const configurationSchema = {
     defaul: 'width',
     description: 'If there is more than one video this property decides whether they should have the same height or the same width.',
   },
+  liveDvr: {
+    type: 'boolean',
+    description: 'If given stream is a live stream that supports DVR, this flag must be enabled to make seeking possible.',
+    default: false,
+  },
 };
 
 // Export schema as IMD module in browser context and as object in Node context

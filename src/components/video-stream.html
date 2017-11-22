@@ -313,14 +313,13 @@
           let livePosition = this._hlsClient.liveSyncPosition;
           let totalDuration = data.details.totalduration;
           let fragmentDuration = data.details.targetduration;
-          let hiddenAreaDuration = this._hlsClient.config.liveSyncDurationCount * fragmentDuration;
           if(!livePosition) {
             // Calculate fallback live position if liveSyncPosition is not set, yet.
+            let hiddenAreaDuration = this._hlsClient.config.liveSyncDurationCount * fragmentDuration;
             livePosition = Math.max(0, totalDuration - hiddenAreaDuration);
           }
           this._stateManager.setLivePosition(livePosition);
           this._stateManager.setLiveFragmentDuration(fragmentDuration);
-          this._stateManager.setLiveDvr(data.details.fragments.length > this._hlsClient.config.liveSyncDurationCount);
         }
 
         _applyState() {

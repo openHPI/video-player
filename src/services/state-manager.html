@@ -67,7 +67,7 @@
         }
 
         // Skip to live sync point when playing if its the first time playing or DVR is disabled
-        if(this.state.live && playState === PLAY_STATES.PLAYING && (!this.state.alreadyPlayed || !this.state.liveDvr)) {
+        if(this.state.live && playState === PLAY_STATES.PLAYING && (!this.state.alreadyPlayed || !this.videoPlayer.configuration.liveDvr) && this.state.livePosition) {
           this.setPosition(this.state.livePosition);
         }
 
@@ -158,7 +158,8 @@
           throw new RangeError('Value must be positive.');
         }
 
-        // In Safari, the duration is Infinity, if it is a live stream.
+        // In Safari (native HLS support), the duration of a stream is Infinity,
+        // if it is a live stream.
         if(seconds === Infinity) {
           this.setLive(true);
         } else if(this.state.duration === Infinity) {
@@ -385,15 +386,6 @@
        */
       setLive(live) {
         this.setState('live', live);
-      }
-
-      /**
-       * Sets the live DVR indicator, which determines if live stream supportd DVR or not.
-       * @param  {Boolean} liveDvr The live DVR indicator.
-       * @return {void}
-       */
-      setLiveDvr(liveDvr) {
-        this.setState('liveDvr', liveDvr);
       }
 
       /**

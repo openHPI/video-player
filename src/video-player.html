@@ -192,7 +192,8 @@
         available-qualities="[[_availableQualities]]"
         previous-video="[[_previousVideo]]"
         next-video="[[_nextVideo]]"
-        number-of-streams="[[configuration.streams.length]]">
+        number-of-streams="[[configuration.streams.length]]"
+        live-dvr="[[configuration.liveDvr]]">
       </control-bar>
 
       <!-- Chapter List -->
@@ -320,6 +321,7 @@
             '_positionChanged(state.position)',
             '_checkIfReady(state.playState, state.duration)',
             '_setShowProgressBar(state.live, state.liveDvr)',
+            '_setShowProgressBar(state.live, configuration.liveDvr)',
           ];
         }
 
