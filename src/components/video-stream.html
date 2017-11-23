@@ -107,6 +107,7 @@
 
         servicesInjectedCallback() {
           super.servicesInjectedCallback();
+          console.log('register');
           this._synchronizationManager.registerVideo(this.$.video);
         }
 
@@ -189,6 +190,7 @@
         }
 
         _qualityChanged(props, quality) {
+          console.log('qualitychange');
           this._isInitializingVideo = true;
           if(this._synchronizationManager) {
             this._synchronizationManager.setWaiting(this.$.video);
@@ -223,7 +225,7 @@
             this.$.video.addEventListener('canplay', () => {
               this._isInitializingVideo = false;
               this._applyState();
-            }, true);
+            }, {once: true});
           }
         }
 
@@ -284,8 +286,9 @@
         }
 
         _applyState() {
+          console.log('apply state');
           // Make sure that playState is first applies after seek process
-          this.$.video.addEventListener('seeked', () => this._playStateChanged(this.state.playState), true);
+          this.$.video.addEventListener('seeked', () => this._playStateChanged(this.state.playState), {once: true});
           let seeked = this._positionChanged(this.state.position);
           this._playbackRateChanged(this.state.playbackRate);
           this._volumeChanged(this.state.volume);
