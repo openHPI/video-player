@@ -41,6 +41,8 @@ The player configuration is provided as JSON object:
    * **volume** (number):`<0...1>` (default: `1`)
    * **muted** (boolean): (default: `false`)
    * **captionLanguage** (string): (default: `"off"`)
+   * **showCaptions** (boolean): Enables captions. Additionally, `captionLanguage` needs to be set. (default: `false`)
+   * **showInteractiveTranscript** (boolean): Enables interactive transcript. Additionally, `captionLanguage` needs to be set. (default: `false`)
 * **userPreferences** (object): Override parts of the default/initial/saved state. Meant to be provided by the server based on the current user.
    * **playState** (string):`<["PLAYING","PAUSED"]>` (default: `"PAUSED"`)
    * **position** (number): Video position in seconds. (default: `0`)
@@ -49,6 +51,8 @@ The player configuration is provided as JSON object:
    * **volume** (number):`<0...1>` (default: `1`)
    * **muted** (boolean): (default: `false`)
    * **captionLanguage** (string): (default: `"off"`)
+   * **showCaptions** (boolean): Enables captions. Additionally, `captionLanguage` needs to be set. (default: `false`)
+   * **showInteractiveTranscript** (boolean): Enables interactive transcript. Additionally, `captionLanguage` needs to be set. (default: `false`)
 * **foregroundColor** (string): HEX code of the color for text and all other main content.
 * **accentColor** (string): HEX code of the highlighting color.
 * **fontColorOnAccentColor** (string): HEX code of the font color on the `accentColor`. Take care that the contrast ratio is high enough.

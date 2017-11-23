@@ -3,6 +3,7 @@ const gulp = require('gulp');
 const gulpif = require('gulp-if');
 const babel = require('gulp-babel');
 const clean = require('gulp-clean');
+const insert = require('gulp-insert');
 const uglify = require('gulp-uglify-es').default;
 const concat = require('gulp-concat');
 const cssSlam = require('css-slam').gulp;
@@ -21,6 +22,8 @@ const needsEs5Compilation = (file) => !ES5_FILES.includes(file.relative) && file
 const bundle = (compile, dest) => {
   const htmlSplitter = new HtmlSplitter();
   const project = new PolymerProject(require('./polymer.json'));
+  const version = require('./package.json').version;
+
   return mergeStream(project.sources(), project.dependencies())
       .pipe(htmlSplitter.split())
       .pipe(gulpif(compile ? needsEs5Compilation : false, babel({presets: [babelPresetES2015NoModules]})))
@@ -29,12 +32,13 @@ const bundle = (compile, dest) => {
       .pipe(gulpif(/\.html$/, htmlMinifier()))
       .pipe(htmlSplitter.rejoin())
       .pipe(project.bundler())
+      .pipe(gulpif(/^video-player.html$/, insert.prepend(`<!-- video-player v${version} -->\r\n`)))
       .pipe(gulp.dest(dest));
 };
 
 const cleanDir = (dir) => gulp.src(dir, {read: false}).pipe(clean());
-gulp.task('clean-es5', () => cleanDir('dist/es5'));
-gulp.task('clean-es6', () => cleanDir('dist/es6'));
+gulp.task('clean-es5', () => cleanDir('build/es5'));
+gulp.task('clean-es6', () => cleanDir('build/es6'));
 gulp.task('clean', ['clean-es5', 'clean-es6']);
 
 gulp.task('polyfills', () => {

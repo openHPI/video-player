@@ -15,11 +15,11 @@
     <select-control
       state="[[state]]"
       items="[[_items]]"
-      selected-value="[[ifThenElse(state.isCaptionShown, state.captionLanguage, _offValue)]]"
+      selected-value="[[ifThenElse(state.showCaptions, state.captionLanguage, _offValue)]]"
       on-change="_selectionChanged"
       icon-classes="fa fa-cc"
       is-in-mobile-menu="[[isInMobileMenu]]"
-      active="[[or(state.isCaptionShown, isInMobileMenu)]]">
+      active="[[or(state.showCaptions, isInMobileMenu)]]">
     </select-control>
   </template>
 
@@ -75,17 +75,17 @@
         _selectionChanged(e) {
           if (e.target.selectedValue !== this._offValue) {
             this._stateManager.setCaptionLanguage(e.target.selectedValue);
-            if(!this.state.isCaptionShown) {
+            if(!this.state.showCaptions) {
               this._stateManager.toggleCaptions();
             }
           }
 
-          if (e.target.selectedValue === this._offValue && this.state.isCaptionShown) {
+          if (e.target.selectedValue === this._offValue && this.state.showCaptions) {
             this._stateManager.toggleCaptions();
           }
 
           this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SUBTITLE}, {
-            currentSubtitleStatus: this.state.isCaptionShown,
+            currentSubtitleStatus: this.state.showCaptions,
             currentSubtitleLanguage: this.state.captionLanguage,
           });
         }

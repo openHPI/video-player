@@ -40,7 +40,7 @@
       <!-- "playsinline" is for iOS to not use its native video player -->
       <video id="video" preload$="[[ifThenElse(preload, 'auto', 'metadata')]]" on-click="_handleClick" on-loadedmetadata="_handleLoadedMetadata" playsinline="true">
         <template is="dom-repeat" items="[[captions]]">
-          <track src="[[item.url]]" kind="subtitles" srclang="[[item.language]]" label="English" on-load="_handleTrackLoaded">
+          <track src="[[item.url]]" kind="subtitles" srclang="[[item.language]]" label="[[item.language]]" on-load="_handleTrackLoaded" default$="[[equals(state.captionLanguage, item.language)]]">
         </template>
       </video>
       <template is="dom-if" if="[[and(props.poster, _isPosterVisible)]]">
@@ -76,6 +76,10 @@
               inject: 'SynchronizationManager',
             },
             _currentUrl: String,
+            _isRegistered: {
+              type: Boolean,
+              value: false,
+            },
             _isInitializingVideo: {
               type: Boolean,
               value: true,
@@ -100,19 +104,21 @@
             '_playbackRateChanged(state.playbackRate)',
             '_volumeChanged(state.volume)',
             '_mutedChanged(state.muted, props.muted)',
-            '_captionLanguageChanged(state.captionLanguage)',
-            '_qualityChanged(props, state.quality)',
+            '_captionLanguageChanged(state.captionLanguage, _stateManager)',
+            '_qualityChanged(props, state.quality, _isRegistered)',
           ];
         }
 
         servicesInjectedCallback() {
           super.servicesInjectedCallback();
           this._synchronizationManager.registerVideo(this.$.video);
+          this._isRegistered = true;
         }
 
         disconnectedCallback() {
           super.disconnectedCallback();
           this._synchronizationManager.unregisterVideo(this.$.video);
+          this._isRegistered = false;
 
           // Stop playback and unload source
           this.$.video.pause();
@@ -188,11 +194,14 @@
           }
         }
 
-        _qualityChanged(props, quality) {
-          this._isInitializingVideo = true;
-          if(this._synchronizationManager) {
-            this._synchronizationManager.setWaiting(this.$.video);
+        _qualityChanged(props, quality, isRegistered) {
+          if(!isRegistered) {
+            return;
           }
+
+          // Initialize video source change
+          this._isInitializingVideo = true;
+          this._synchronizationManager.setWaiting(this.$.video);
 
           // Change source depending on quality
           let url = props[quality];
@@ -214,20 +223,13 @@
           }
 
           // Reapply current state to video element after the new source has been loaded
-          if(this._synchronizationManager) {
-            this._synchronizationManager.onVideosReady(() => {
-              this._isInitializingVideo = false;
-              this._applyState();
-            }, true);
-          } else {
-            this.$.video.addEventListener('canplay', () => {
-              this._isInitializingVideo = false;
-              this._applyState();
-            }, true);
-          }
+          this._synchronizationManager.onVideosReady(() => {
+            this._isInitializingVideo = false;
+            this._applyState();
+          }, true);
         }
 
-        _captionLanguageChanged(language){
+        _captionLanguageChanged(language) {
           if(this.captions && this._stateManager) {
             // Set cues to null, so that they cannot get toggled by interactive-transcript-control
             if(language === 'off') {
@@ -260,6 +262,10 @@
           if(textTrack.language === this.state.captionLanguage) {
             this._stateManager.setActiveCaptions(Array.from(textTrack.cues));
           }
+
+          // Change back to 'hidden' since we have our own HTML elements for
+          // displaying captions. (see above)
+          textTrack.mode = 'hidden';
         }
 
         _handleClick() {
@@ -281,7 +287,7 @@
 
         _applyState() {
           // Make sure that playState is first applies after seek process
-          this.$.video.addEventListener('seeked', () => this._playStateChanged(this.state.playState), true);
+          this.$.video.addEventListener('seeked', () => this._playStateChanged(this.state.playState), {once: true});
           let seeked = this._positionChanged(this.state.position);
           this._playbackRateChanged(this.state.playbackRate);
           this._volumeChanged(this.state.volume);

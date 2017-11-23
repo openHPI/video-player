@@ -57,6 +57,16 @@ const stateSchema = {
     type: 'string',
     default: 'off',
   },
+  showCaptions: {
+    type: 'boolean',
+    default: false,
+    description: 'Enables captions. Additionally, `captionLanguage` needs to be set.',
+  },
+  showInteractiveTranscript: {
+    type: 'boolean',
+    default: false,
+    description: 'Enables interactive transcript. Additionally, `captionLanguage` needs to be set.',
+  },
 };
 
 const configurationSchema = {

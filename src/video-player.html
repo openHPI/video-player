@@ -133,7 +133,7 @@
         </template>
 
         <!-- Video Streams -->
-        <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.isInteractiveTranscriptShown, configuration.slides)]];">
+        <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.showInteractiveTranscript, configuration.slides)]];">
           <template is="dom-if" if="[[!state.fallbackStreamActive]]" restamp="true">
             <template is="dom-repeat" items="[[configuration.streams]]">
               <video-stream
@@ -162,7 +162,7 @@
             props="[[configuration.fallbackStream]]"
             preload="[[configuration.videoPreload]]"
             class="video-stream"
-            captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
+            captions="[[configuration.captions]]"
             style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
             is-fallback="true">
             </video-stream>
@@ -200,7 +200,7 @@
       </playlist-chapter-list>
 
       <!-- Interactive Transcript -->
-      <interactive-transcript state="[[state]]" show-if="[[state.isInteractiveTranscriptShown]]"></interactive-transcript>
+      <interactive-transcript state="[[state]]" show-if="[[state.showInteractiveTranscript]]"></interactive-transcript>
     </div>
 
   </template>
@@ -309,10 +309,10 @@
             '_trimStartChanged(configuration.trimVideo.start)',
             '_trimEndChanged(configuration.trimVideo.end)',
             '_playStateChanged(state.playState)',
-            '_durationChanged(state.duration)',
             '_fullscreenChanged(state.fullscreen)',
             '_userPreferencesStateChanged(state.*)',
             '_positionChanged(state.position)',
+            '_checkIfReady(state.playState, state.duration)',
           ];
         }
 
@@ -507,8 +507,8 @@
           }
         }
 
-        _durationChanged(duration) {
-          if(duration > 0) {
+        _checkIfReady(playState, duration) {
+          if(playState !== PLAY_STATES.WAITING && duration > 0) {
             this.isReady = true;
           }
         }
@@ -604,19 +604,19 @@
           return Math.ceil(streams.length / 2);
         }
 
-        _calculateHeight(fullscreen, isInteractiveTranscriptShown, isLectureSlides) {
+        _calculateHeight(fullscreen, showInteractiveTranscript, isLectureSlides) {
           if(fullscreen) {
-            return 'calc(100vh - ' + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + 'px)';
+            return 'calc(100vh - ' + [[this._bottomSpace(showInteractiveTranscript, isLectureSlides)]] + 'px)';
           } else {
-            return 'calc(100% - ' + [[this._bottomSpace(isInteractiveTranscriptShown, isLectureSlides)]] + 'px)';
+            return 'calc(100% - ' + [[this._bottomSpace(showInteractiveTranscript, isLectureSlides)]] + 'px)';
           }
         }
 
-        _bottomSpace(isInteractiveTranscriptShown, isLectureSlides) {
+        _bottomSpace(showInteractiveTranscript, isLectureSlides) {
           let value;
           // Controlbar height & progres bar height
           value = 40 + 16;
-          if(isInteractiveTranscriptShown) {
+          if(showInteractiveTranscript) {
             value += 200;
           }
           if(isLectureSlides) {
