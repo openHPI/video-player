@@ -36,16 +36,16 @@
       }
     </style>
 
-    <div id="container__captions" class$="[[ifNotThen(state.isCaptionShown, '-hidden')]]">
-      <template is="dom-if" if="[[activeCue]]">
-        <div class="caption-cue-text">[[activeCue.text]]</div>
+    <div id="container__captions" class$="[[ifNotThen(_showCaptions, '-hidden')]]">
+      <template is="dom-if" if="[[_activeCue]]">
+        <div class="caption-cue-text">[[_activeCue.text]]</div>
       </template>
     </div>
   </template>
 
   <script>
     IMD.define('captions-display', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
-      const {ANALYTICS_TOPICS} = constants;
+      const {ANALYTICS_TOPICS, PLAY_STATES} = constants;
 
       class CaptionsDisplay extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'captions-display'; }
@@ -61,29 +61,36 @@
               type: Object,
               inject: 'StateManager',
             },
-            activeCue: {
-              type: Object,
+            _activeCue: Object,
+            _showCaptions: {
+              type: Boolean,
+              computed: '_getShowCaptions(state.showCaptions, state.playState, state.position, state.trimStart, state.trimEnd)',
             },
           };
         }
         static get observers() {
           return [
-            '_captionsChanged(state.activeCaptions)',
-            '_getActiveCue(state.position)',
-            '_cueChanged(activeCue)',
+            '_setActiveCue(state.position, state.activeCaptions)',
+            '_cueChanged(_activeCue)',
           ];
         }
 
-        _captionsChanged() {
-          this._getActiveCue(this.state.position);
+        _getShowCaptions(showCaptions, playState, position, trimStart, trimEnd) {
+          if(!showCaptions || playState === PLAY_STATES.FINISHED)
+            return false;
+
+          if(playState === PLAY_STATES.PLAYING)
+            return true;
+
+          return playState === PLAY_STATES.PAUSED && position > trimStart && position < trimEnd;
         }
 
-        _getActiveCue(position) {
-          if(this.state.activeCaptions) {
-            let newCue = this.state.activeCaptions.find(cue => cue.startTime <= position &&
-                                                               cue.endTime > position);
-            if (!Object.is(this.activeCue, newCue)) {
-              this.activeCue = newCue;
+        _setActiveCue(position, activeCaptions) {
+          if(activeCaptions) {
+            let newCue = activeCaptions.find(cue => cue.startTime <= position &&
+                                                    cue.endTime > position);
+            if (!Object.is(this._activeCue, newCue)) {
+              this._activeCue = newCue;
             }
           }
         }

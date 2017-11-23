@@ -51,7 +51,7 @@
         </a>
         <div id="mobile-settings-menu__select"
              class$="mobile-settings-menu-content [[ifNotThen(_isMobileSettingsMenuOpen, '-hidden')]]"
-             style$="bottom: [[_calcBottomValue(state.isInteractiveTranscriptShown)]];">
+             style$="bottom: [[_calcBottomValue(state.showInteractiveTranscript)]];">
           <template is="dom-if" if="[[captionLanguages]]">
           <caption-control is-in-mobile-menu="true" state="[[state]]" languages="[[captionLanguages]]">
             </caption-control>
@@ -129,8 +129,8 @@
           return this.availableQualities.length > 1;
         }
 
-        _calcBottomValue(isInteractiveTranscriptShown) {
-          if(isInteractiveTranscriptShown) {
+        _calcBottomValue(showInteractiveTranscript) {
+          if(showInteractiveTranscript) {
             return '240px';
           } else {
             return '40px';

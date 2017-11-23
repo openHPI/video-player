@@ -104,7 +104,7 @@
 
         static get observers() {
           return [
-            '_activeCueChanged(_activeCue, state.isInteractiveTranscriptShown)', // Observe isInteractiveTranscriptShown to scroll to current element when element is shown
+            '_activeCueChanged(_activeCue, state.showInteractiveTranscript)', // Observe showInteractiveTranscript to scroll to current element when element is shown
           ];
         }
 
