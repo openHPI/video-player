@@ -309,10 +309,10 @@
             '_trimStartChanged(configuration.trimVideo.start)',
             '_trimEndChanged(configuration.trimVideo.end)',
             '_playStateChanged(state.playState)',
-            '_durationChanged(state.duration)',
             '_fullscreenChanged(state.fullscreen)',
             '_userPreferencesStateChanged(state.*)',
             '_positionChanged(state.position)',
+            '_checkIfReady(state.playState, state.duration)',
           ];
         }
 
@@ -507,8 +507,8 @@
           }
         }
 
-        _durationChanged(duration) {
-          if(duration > 0) {
+        _checkIfReady(playState, duration) {
+          if(playState !== PLAY_STATES.WAITING && duration > 0) {
             this.isReady = true;
           }
         }
