@@ -53,8 +53,8 @@
   </template>
 
   <script>
-    IMD.define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, Hls, constants) => {
-      const {PLAY_STATES, QUALITY_MODES, HLS_MIME_TYPE, SEEK_DIFF_THRESHOLD} = constants;
+    IMD.define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-helper', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, HlsHelper, Hls, constants) => {
+      const {PLAY_STATES, QUALITY_MODES, SEEK_DIFF_THRESHOLD} = constants;
 
       class VideoStream extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'video-stream'; }
@@ -86,11 +86,6 @@
               value: true,
             },
             _hlsClient: Object,
-            _nativeHlsSupport: {
-              type: Boolean,
-              readOnly: true,
-              computed: '_getNativeHlsSupport()',
-            },
             _isPosterVisible: {
               type: Boolean,
               computed: '_getIsPosterVisible(state.playState, state.live, state.position, state.trimStart, state.trimEnd)',
@@ -125,10 +120,6 @@
           this.$.video.pause();
           this.$.video.src = '';
           this.$.video.load();
-        }
-
-        _getNativeHlsSupport() {
-          return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
         }
 
         _getIsPosterVisible(playState, live, position, trimStart, trimEnd) {
@@ -210,7 +201,7 @@
 
           // Change source depending on quality
           let url = props[quality];
-          if(this._nativeHlsSupport || quality !== QUALITY_MODES.HLS) {
+          if(HlsHelper.hasNativeHlsSupport || quality !== QUALITY_MODES.HLS) {
             // Destroy old hls client
             if(this._hlsClient) {
               this._hlsClient.destroy();

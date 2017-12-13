@@ -9,6 +9,7 @@
 <link rel="import" href="mixins/ioc-requester.html">
 <link rel="import" href="mixins/binding-helpers.html">
 <link rel="import" href="3rd-imports/hls-js.html">
+<link rel="import" href="helpers/hls-helper.html">
 <link rel="import" href="locales/locales.html">
 <link rel="import" href="styling/mixins.html">
 <link rel="import" href="styling/global--style-module.html">
@@ -212,8 +213,8 @@
 
   <script>
 
-    IMD.define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-js', 'analytics-manager', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, Localizer, Hls, AnalyticsManager, constants, locales, configurationSchema) => {
-      const {VERSION, DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, HLS_MIME_TYPE, ANALYTICS_TOPICS} = constants;
+    IMD.define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-helper', 'hls-js', 'analytics-manager', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, Localizer, HlsHelper, Hls, AnalyticsManager, constants, locales, configurationSchema) => {
+      const {VERSION, DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, ANALYTICS_TOPICS} = constants;
 
       class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
         static get is() { return 'video-player'; }
@@ -394,8 +395,7 @@
         _getAvailableQualities(streams, fallbackStreamActive, fallbackStream) {
           if (streams) {
             let supportedQualities = Object.values(QUALITY_MODES);
-            let isHlsSupported = Hls.isSupported() || document.createElement('video').canPlayType(HLS_MIME_TYPE) !== '';
-            if(!isHlsSupported) {
+            if(!HlsHelper.hasHlsSupport) {
               supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
             }
 
@@ -467,12 +467,21 @@
             // Validate configuration
             this._configurationValidator.validate(this.configuration);
 
+            // Lock observer before chaning the configuration
+            this._isConfigurationObserverLocked = true;
+
             // Fill missing properties in provided configuration with default values
             if(Object.keys(DEFAULT_CONFIGURATION).filter(x => !Object.keys(configuration).includes(x)).length > 0) {
-              this._isConfigurationObserverLocked = true;
               this.configuration = Object.assign({}, DEFAULT_CONFIGURATION, configuration);
-              this._isConfigurationObserverLocked = false;
             }
+
+            // Native HLS implementation of Safari does not support DVR for live streams
+            if(HlsHelper.hasNativeHlsSupport) {
+              this.configuration.liveDvr = false;
+            }
+
+            // Enable configuration observer again
+            this._isConfigurationObserverLocked = false;
 
             // Invoke callback, if configuration was initally loaded
             if(!this._isConfigurationInitialized) {

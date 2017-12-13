@@ -1,0 +1,14 @@
+<link rel="import" href="../3rd-imports/hls-js.html">
+
+<script>
+  IMD.define('hls-helper', ['hls-js'], (Hls) => {
+    const nativeHlsSupport = document.createElement('video').canPlayType('application/x-mpegURL') !== '';
+    const hlsJsSupport = Hls.isSupported();
+
+    return {
+      hasHlsSupport: nativeHlsSupport || hlsJsSupport,
+      hasNativeHlsSupport: nativeHlsSupport,
+      hasHlsJsSupport: hlsJsSupport,
+    };
+  });
+</script>
