@@ -196,6 +196,7 @@
           }
 
           // Initialize video source change
+          let initialSetup = !this.$.video.src;
           this._isInitializingVideo = true;
           this._synchronizationManager.setWaiting(this.$.video);
 
@@ -222,7 +223,7 @@
           // Reapply current state to video element after the new source has been loaded
           this._synchronizationManager.onVideosReady(() => {
             this._isInitializingVideo = false;
-            this._applyState();
+            this._applyState(initialSetup);
           }, true);
         }
 
@@ -315,10 +316,16 @@
           this._stateManager.setLiveStartPosition(startPosition);
         }
 
-        _applyState() {
+        _applyState(initial) {
+          // If live-stream is played initially, skip to livePosition
+          let position = this.state.position
+          if(initial && this.state.live && this.state.livePosition) {
+            position = this.state.livePosition;
+          }
+
           // Make sure that playState is first applies after seek process
           this.$.video.addEventListener('seeked', () => this._playStateChanged(this.state.playState), {once: true});
-          let seeked = this._positionChanged(this.state.position);
+          let seeked = this._positionChanged(position);
           this._playbackRateChanged(this.state.playbackRate);
           this._volumeChanged(this.state.volume);
           this._mutedChanged(this.state.muted);
