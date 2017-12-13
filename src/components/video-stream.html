@@ -311,6 +311,7 @@
 
           // Update live states
           let livePosition = this._hlsClient.liveSyncPosition;
+          let startPosition = data.details.fragments[0].start;
           let totalDuration = data.details.totalduration;
           let fragmentDuration = data.details.targetduration;
           if(!livePosition) {
@@ -320,6 +321,7 @@
           }
           this._stateManager.setLivePosition(livePosition);
           this._stateManager.setLiveFragmentDuration(fragmentDuration);
+          this._stateManager.setLiveStartPosition(startPosition);
         }
 
         _applyState() {

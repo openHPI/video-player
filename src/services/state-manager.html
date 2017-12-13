@@ -404,6 +404,18 @@
       }
 
       /**
+       * Sets the position of the first live-stream fragment that can be played.
+       * @param {number} seconds The live start position in seconds.
+       * @returns {void}
+       */
+      setLiveStartPosition(seconds) {
+          if(seconds < 0 || this.state.duration && seconds > this.state.duration) {
+            throw new RangeError('Value must be between 0 and duration of the stream.');
+          }
+          this.setState('liveStartPosition', seconds);
+      }
+
+      /**
        * Sets the duration of a live-stream fragment.
        * @param {number} seconds The duration of a fragment in seconds.
        * @returns {void}
