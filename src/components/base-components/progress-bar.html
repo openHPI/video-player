@@ -22,6 +22,11 @@
         border: none;
       }
 
+      #container__progress {
+        width: 100%;
+        height: 100%;
+      }
+
       .progress-overlay {
         position: absolute;
         height: 100%;
@@ -53,16 +58,13 @@
       }
     </style>
 
-    <div id="container__progress_bar"
-         on-click="_handleClick"
-         on-mouseover="_showHoverBox"
-         on-mousemove="_updateHoverBoxPosition"
-         on-mouseout="_hideHoverBox"
-         class$="[[ifThenElse(border, '', '-no-border')]]">
-      <div id="div__primary_progress" class="progress-overlay" style$="width: [[_calcWidth(value, min, max)]]%;"></div>
-      <div id="div__secondary_progress" class="progress-overlay" style$="width: [[_calcWidth(secondaryValue, min, max)]]%;"></div>
-      <div id="div__hover_box" style$="visibility: [[ifThenElse(_hoverBoxVisible, 'visible', 'hidden')]];">
-        [[_hoverBoxContent]]
+    <div id="container__progress_bar" class$="[[ifThenElse(border, '', '-no-border')]]">
+      <div id="container__progress" on-click="_handleClick" on-mouseover="_showHoverBox" on-mousemove="_updateHoverBoxPosition" on-mouseout="_hideHoverBox">
+        <div id="div__primary_progress" class="progress-overlay" style$="width: [[_calcWidth(value, min, max)]]%;"></div>
+        <div id="div__secondary_progress" class="progress-overlay" style$="width: [[_calcWidth(secondaryValue, min, max)]]%;"></div>
+      </div>
+      <div id="container__hover_box" style$="visibility: [[ifThenElse(_hoverBoxVisible, 'visible', 'hidden')]];">
+        <div id="div__hover_box">[[_hoverBoxContent]]</div>
       </div>
     </div>
 
