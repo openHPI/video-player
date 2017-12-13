@@ -100,11 +100,11 @@
         if(this.isMaster(video) && !this._anyWaiting()) {
           // Stay within trimmed range, if set
           if(this._stateManager.state.trimStart && video.currentTime < this._stateManager.state.trimStart) {
-            this._stateManager.setPosition(this._stateManager.state.trimStart);
+            this._stateManager.setPosition(this._stateManager.state.trimStart, false);
           } else if(this._stateManager.state.trimEnd && video.currentTime > this._stateManager.state.trimEnd) {
-            this._stateManager.setPosition(this._stateManager.state.trimEnd);
+            this._stateManager.setPosition(this._stateManager.state.trimEnd, false);
           } else {
-            this._stateManager.setPosition(video.currentTime);
+            this._stateManager.setPosition(video.currentTime, false);
           }
         }
       }

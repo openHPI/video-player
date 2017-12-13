@@ -109,6 +109,13 @@
           super.servicesInjectedCallback();
           this._synchronizationManager.registerVideo(this.$.video);
           this._isRegistered = true;
+
+          // Preserve liveSync while waiting for new live fragments
+          this._synchronizationManager.onVideosReady(() => {
+            if(this.state.live && this.state.liveSync) {
+              this._stateManager.setPosition(this.state.livePosition);
+            }
+          });
         }
 
         disconnectedCallback() {
@@ -317,20 +324,19 @@
         }
 
         _applyState(initial) {
-          // If live-stream is played initially, skip to livePosition
-          let position = this.state.position
-          if(initial && this.state.live && this.state.livePosition) {
-            position = this.state.livePosition;
-          }
-
           // Make sure that playState is first applies after seek process
           this.$.video.addEventListener('seeked', () => this._playStateChanged(this.state.playState), {once: true});
-          let seeked = this._positionChanged(position);
+          let seeked = this._positionChanged(this.state.position);
           this._playbackRateChanged(this.state.playbackRate);
           this._volumeChanged(this.state.volume);
           this._mutedChanged(this.state.muted);
           if(!seeked) {
             this._playStateChanged(this.state.playState);
+          }
+
+          // If live-stream was initially loaded, enable liveSync
+          if(initial && this.state.live) {
+            this._stateManager.setLiveSync(true);
           }
         }
       }

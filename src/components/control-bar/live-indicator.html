@@ -27,7 +27,7 @@
     </style>
 
     <div id="container__live_indicator" class="user_controls">
-      <a id="span__live_indicator" href="javascript:void(0)" class$="[[ifNotThen(_isLiveSync, 'inactive')]]" on-click="_handleClick">
+      <a id="span__live_indicator" href="javascript:void(0)" class$="[[ifNotThen(state.liveSync, 'inactive')]]" on-click="_handleClick">
         [[localize('live-indicator--label')]]
       </a>
     </div>
@@ -47,21 +47,11 @@
               type: Object,
               inject: 'AnalyticsManager',
             },
-            _isLiveSync: {
-              type: Boolean,
-              computed: '_getIsLive(state.playState, state.position, state.livePosition, state.liveFragmentDuration)',
-            },
           };
         }
 
-        _getIsLive(playState, position, livePosition, liveFragmentDuration) {
-          // Playback is considered as live if current position is within
-          // the last liveSyncDurationCount + 1 fragments
-          return playState === PLAY_STATES.PLAYING && position >= Math.max(0, livePosition - liveFragmentDuration);
-        }
-
         _handleClick() {
-          this._analyticsManager.changeState('setPosition', [this.state.livePosition], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
+          this._analyticsManager.changeState('setLiveSync', [true], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
           if(this.state.playState !== PLAY_STATES.PLAYING) {
             this._analyticsManager.changeState('play', [], {verb: ANALYTICS_TOPICS.PLAY});
           }

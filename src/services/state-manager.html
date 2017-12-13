@@ -68,9 +68,9 @@
         }
 
         if(updatePosition) {
-          // Skip to live sync point when playing if its the first time playing or DVR is disabled
+          // Enable live sync when playing if its the first time playing or DVR is disabled
           if(this.state.live && playState === PLAY_STATES.PLAYING && (!this.state.alreadyPlayed || !this.videoPlayer.configuration.liveDvr) && this.state.livePosition) {
-            this.setPosition(this.state.livePosition);
+            this.setLiveSync(true);
           }
 
           // Skip to end position explicitly
@@ -80,6 +80,11 @@
         }
 
         this.setState('playState', playState);
+
+        // Disable live sync when pausing the playback
+        if(this.state.live && this.state.playState === PLAY_STATES.PAUSED) {
+          this.setLiveSync(false);
+        }
       }
 
       /**
@@ -114,12 +119,18 @@
        * @param {number} seconds The current position in seconds.
        * @returns {void}
        */
-      setPosition(seconds) {
+      setPosition(seconds, userSeek = true) {
         if(seconds < this.state.trimStart || this.state.trimEnd && seconds > this.state.trimEnd) {
           throw new RangeError('Value must be between 0 and duration of the video and within the trimmed range.');
         }
 
         this.setState('position', seconds);
+
+        // Enable live sync when user seeked to last second of a live stream
+        if(this.state.live && userSeek) {
+          let liveSync = this.state.livePosition - this.state.position < 1;
+          this.setLiveSync(liveSync);
+        }
 
         if(this.state.position === this.state.trimEnd && this.state.trimEnd > 0) {
           this.setPlayState(PLAY_STATES.FINISHED);
@@ -188,7 +199,7 @@
 
         this.setState('trimStart', seconds || 0);
         if(seconds && typeof this.state.position === 'undefined' || this.state.position < seconds) {
-          this.setPosition(seconds);
+          this.setPosition(seconds, false);
         }
       }
 
@@ -210,7 +221,7 @@
           this.stickyTrimEnd = true;
         }
         if(seconds && this.state.position > seconds) {
-          this.setPosition(seconds);
+          this.setPosition(seconds, false);
         }
       }
 
@@ -389,6 +400,19 @@
        */
       setLive(live) {
         this.setState('live', live);
+      }
+
+      /**
+       * Sets the live sync indicator, which determines whether playback is at the live edge of the stream.
+       * @param {boolean} liveSync The live sync indicator.
+       */
+      setLiveSync(liveSync) {
+        if(liveSync && this.state.livePosition - this.state.position > this.state.liveFragmentDuration) {
+          this.setPosition(this.state.livePosition);
+        }
+
+        this.setState('liveSync', liveSync);
+
       }
 
       /**
