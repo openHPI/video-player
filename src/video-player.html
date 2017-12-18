@@ -207,7 +207,7 @@
 
   <script>
     IMD.define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-js', 'analytics-manager', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, Localizer, Hls, AnalyticsManager, constants, locales, configurationSchema) => {
-      const {VERSION, DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, HLS_MIME_TYPE, ANALYTICS_TOPICS} = constants;
+      const {VERSION, DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, POSITION_FRAGMENT_REGEX, THEMES, HLS_MIME_TYPE, ANALYTICS_TOPICS} = constants;
 
       class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
         static get is() { return 'video-player'; }
@@ -330,6 +330,14 @@
 
         servicesInjectedCallback() {
           super.servicesInjectedCallback();
+
+          // Reads initial position from URL fragment, if config option is enabled
+          if(this.configuration.positionInUrlFragment) {
+            let matches = document.location.hash.match(POSITION_FRAGMENT_REGEX);
+            if(matches) {
+              this.configuration.initialState.position = parseInt(matches[0]);
+            }
+          }
 
           // Build state from provided intial state configuration and default values
           this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState, this._userPreferencesManager.getPreferences(), this.configuration.userPreferences);

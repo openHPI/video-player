@@ -332,8 +332,13 @@ const configurationSchema = {
   videoAlignment: {
     type: 'string',
     options: ['width', 'height'],
-    defaul: 'width',
+    default: 'width',
     description: 'If there is more than one video this property decides whether they should have the same height or the same width.',
+  },
+  positionInUrlFragment: {
+    type: 'boolean',
+    description: 'If enabled, the initial video position is read from the URL fragment parameter `t` (e.g. `#t=25`).',
+    default: false,
   },
 };
 

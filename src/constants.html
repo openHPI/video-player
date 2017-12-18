@@ -69,6 +69,13 @@
     const PLAYING_EVENT_NAME = 'videoPlaying';
 
     /**
+     * Contains the regex that matches with the value of the video position
+     * URL fragment parameter.
+     * @type {RegExp}
+     */
+    const POSITION_FRAGMENT_REGEX = /(?<=(#|&)t=)(\d)+/g;
+
+    /**
      * Contains the default state properties.
      * @type {Object.<string, Object>}
      */
@@ -207,6 +214,7 @@
       SYNC_DIFF_THRESHOLD,
       SEEK_DIFF_THRESHOLD,
       PLAYING_EVENT_NAME,
+      POSITION_FRAGMENT_REGEX,
       DEFAULT_STATE,
       DEFAULT_CONFIGURATION,
       USER_PREFERENCES_KEYS,
