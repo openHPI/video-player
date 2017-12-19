@@ -10,6 +10,7 @@
 <link rel="import" href="mixins/binding-helpers.html">
 <link rel="import" href="3rd-imports/hls-js.html">
 <link rel="import" href="helpers/hls-helper.html">
+<link rel="import" href="helpers/url-fragment-helper.html">
 <link rel="import" href="locales/locales.html">
 <link rel="import" href="styling/mixins.html">
 <link rel="import" href="styling/global--style-module.html">
@@ -212,8 +213,8 @@
   </template>
 
   <script>
-    IMD.define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-helper', 'hls-js', 'analytics-manager', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, Localizer, HlsHelper, Hls, AnalyticsManager, constants, locales, configurationSchema) => {
-      const {VERSION, DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, POSITION_FRAGMENT_REGEX, THEMES, ANALYTICS_TOPICS} = constants;
+    IMD.define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-helper', 'url-fragment-helper', 'hls-js', 'analytics-manager', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, Localizer, HlsHelper, UrlFragmentHelper, Hls, AnalyticsManager, constants, locales, configurationSchema) => {
+      const {VERSION, DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, ANALYTICS_TOPICS} = constants;
 
       class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
         static get is() { return 'video-player'; }
@@ -342,9 +343,9 @@
 
           // Reads initial position from URL fragment, if config option is enabled
           if(this.configuration.positionInUrlFragment) {
-            let matches = document.location.hash.match(POSITION_FRAGMENT_REGEX);
-            if(matches) {
-              this.configuration.initialState.position = parseInt(matches[0]);
+            let startPosition = parseInt(UrlFragmentHelper.getParameter('t'));
+            if(startPosition) {
+              this.configuration.initialState.position = startPosition;
             }
           }
 
