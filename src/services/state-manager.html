@@ -117,6 +117,7 @@
       /**
        * Sets the current position in the video.
        * @param {number} seconds The current position in seconds.
+       * @param {boolean} userSeek Indicates whether the seek was performed by the user.
        * @returns {void}
        */
       setPosition(seconds, userSeek = true) {
@@ -396,7 +397,7 @@
       /**
        * Sets the live indicator, which determines if streams are live or not.
        * @param  {Boolean} live The live indicator.
-       * @return {void}
+       * @returns {void}
        */
       setLive(live) {
         this.setState('live', live);
@@ -405,6 +406,7 @@
       /**
        * Sets the live sync indicator, which determines whether playback is at the live edge of the stream.
        * @param {boolean} liveSync The live sync indicator.
+       * @returns {void}
        */
       setLiveSync(liveSync) {
         if(liveSync && this.state.livePosition - this.state.position > this.state.liveFragmentDuration) {
@@ -412,7 +414,6 @@
         }
 
         this.setState('liveSync', liveSync);
-
       }
 
       /**
@@ -433,10 +434,10 @@
        * @returns {void}
        */
       setLiveStartPosition(seconds) {
-          if(seconds < 0 || this.state.duration && seconds > this.state.duration) {
-            throw new RangeError('Value must be between 0 and duration of the stream.');
-          }
-          this.setState('liveStartPosition', seconds);
+        if(seconds < 0 || this.state.duration && seconds > this.state.duration) {
+          throw new RangeError('Value must be between 0 and duration of the stream.');
+        }
+        this.setState('liveStartPosition', seconds);
       }
 
       /**
