@@ -15,6 +15,7 @@
       constructor(videoPlayer, statePath) {
         this.videoPlayer = videoPlayer;
         this.statePath = statePath;
+        this.stickyTrimEnd = true;
       }
 
       /**
@@ -58,14 +59,32 @@
       /**
        * Sets the play state to specified value.
        * @param {string} playState The new play state.
+       * @param {boolean} updatePosition If true, current position is updated depending on the new play state.
        * @returns {void}
        */
-      setPlayState(playState) {
+      setPlayState(playState, updatePosition = true) {
         if(!Object.values(PLAY_STATES).includes(playState)) {
           throw new RangeError(`Value must be in [${Object.values(PLAY_STATES).toString()}].`);
         }
 
+        if(updatePosition) {
+          // Enable live sync when playing if its the first time playing or DVR is disabled
+          if(this.state.live && playState === PLAY_STATES.PLAYING && (!this.state.alreadyPlayed || !this.videoPlayer.configuration.liveDvr) && this.state.livePosition) {
+            this.setLiveSync(true);
+          }
+
+          // Skip to end position explicitly
+          if(playState === PLAY_STATES.FINISHED && this.state.position !== this.state.duration) {
+            this.setPosition(this.state.duration);
+          }
+        }
+
         this.setState('playState', playState);
+
+        // Disable live sync when pausing the playback
+        if(this.state.live && this.state.playState === PLAY_STATES.PAUSED) {
+          this.setLiveSync(false);
+        }
       }
 
       /**
@@ -85,18 +104,33 @@
         }
       }
 
+      /**
+       * Sets alreadyPlayed flag indicating whether the video was initially played by the user.
+       * @param {boolean} value The new flag value.
+       * @returns {void}
+       */
+      setAlreadyPlayed(value = true) {
+        this.setState('alreadyPlayed', value);
+      }
+
 
       /**
        * Sets the current position in the video.
        * @param {number} seconds The current position in seconds.
        * @returns {void}
        */
-      setPosition(seconds) {
+      setPosition(seconds, userSeek = true) {
         if(seconds < this.state.trimStart || this.state.trimEnd && seconds > this.state.trimEnd) {
           throw new RangeError('Value must be between 0 and duration of the video and within the trimmed range.');
         }
 
         this.setState('position', seconds);
+
+        // Enable live sync when user seeked to last second of a live stream
+        if(this.state.live && userSeek) {
+          let liveSync = this.state.livePosition - this.state.position < 1;
+          this.setLiveSync(liveSync);
+        }
 
         if(this.state.position === this.state.trimEnd && this.state.trimEnd > 0) {
           this.setPlayState(PLAY_STATES.FINISHED);
@@ -138,9 +172,18 @@
           throw new RangeError('Value must be positive.');
         }
 
+        // In Safari (native HLS support), the duration of a stream is Infinity,
+        // if it is a live stream.
+        if(seconds === Infinity) {
+          this.setLive(true);
+        } else if(this.state.duration === Infinity) {
+          this.setLive(false);
+        }
+
         this.setState('duration', seconds);
-        if(!this.state.trimEnd) {
+        if(!this.state.trimEnd || this.stickyTrimEnd) {
           this.trimEnd(seconds);
+          this.stickyTrimEnd = true;
         }
       }
 
@@ -156,7 +199,7 @@
 
         this.setState('trimStart', seconds || 0);
         if(seconds && typeof this.state.position === 'undefined' || this.state.position < seconds) {
-          this.setPosition(seconds);
+          this.setPosition(seconds, false);
         }
       }
 
@@ -170,11 +213,15 @@
           throw new RangeError('Value must be between 0 and duration of the video.');
         }
 
-        if(seconds || this.state.duration) {
-          this.setState('trimEnd', seconds || this.state.duration);
+        if(seconds) {
+          this.setState('trimEnd', seconds);
+          this.stickyTrimEnd = false;
+        } else if(this.state.duration) {
+          this.setState('trimEnd', this.state.duration);
+          this.stickyTrimEnd = true;
         }
         if(seconds && this.state.position > seconds) {
-          this.setPosition(seconds);
+          this.setPosition(seconds, false);
         }
       }
 
@@ -343,6 +390,65 @@
        */
       setFallbackStreamActive(fallbackStreamActive) {
         this.setState('fallbackStreamActive', fallbackStreamActive);
+      }
+
+
+      /**
+       * Sets the live indicator, which determines if streams are live or not.
+       * @param  {Boolean} live The live indicator.
+       * @return {void}
+       */
+      setLive(live) {
+        this.setState('live', live);
+      }
+
+      /**
+       * Sets the live sync indicator, which determines whether playback is at the live edge of the stream.
+       * @param {boolean} liveSync The live sync indicator.
+       */
+      setLiveSync(liveSync) {
+        if(liveSync && this.state.livePosition - this.state.position > this.state.liveFragmentDuration) {
+          this.setPosition(this.state.livePosition);
+        }
+
+        this.setState('liveSync', liveSync);
+
+      }
+
+      /**
+       * Sets the position of the live sync point.
+       * @param {number} seconds The live sync point in seconds.
+       * @returns {void}
+       */
+      setLivePosition(seconds) {
+        if(seconds < 0 || this.state.duration && seconds > this.state.duration) {
+          throw new RangeError('Value must be between 0 and duration of the stream.');
+        }
+        this.setState('livePosition', seconds);
+      }
+
+      /**
+       * Sets the position of the first live-stream fragment that can be played.
+       * @param {number} seconds The live start position in seconds.
+       * @returns {void}
+       */
+      setLiveStartPosition(seconds) {
+          if(seconds < 0 || this.state.duration && seconds > this.state.duration) {
+            throw new RangeError('Value must be between 0 and duration of the stream.');
+          }
+          this.setState('liveStartPosition', seconds);
+      }
+
+      /**
+       * Sets the duration of a live-stream fragment.
+       * @param {number} seconds The duration of a fragment in seconds.
+       * @returns {void}
+       */
+      setLiveFragmentDuration(seconds) {
+        if(seconds < 0) {
+          throw new RangeError('Value must be greater or equal 0.');
+        }
+        this.setState('liveFragmentDuration', seconds);
       }
     }
 

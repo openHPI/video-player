@@ -168,5 +168,7 @@ The player configuration is provided as JSON object:
      "duration": "Duration of the video"
    }
 ```
-* **videoAlignment** (string):`<["width","height"]>` If there is more than one video this property decides whether they should have the same height or the same width.
+* **videoAlignment** (string):`<["width","height"]>` If there is more than one video this property decides whether they should have the same height or the same width. (default: `"width"`)
+* **liveDvr** (boolean): If given stream is a live stream that supports DVR, this flag must be enabled to make seeking possible. (default: `false`)
+* **positionInUrlFragment** (boolean): If enabled, the initial video position is read from the URL fragment parameter `t` (e.g. `#t=25`). (default: `false`)
 <!-- END-SECTION CONFIGURATION -->

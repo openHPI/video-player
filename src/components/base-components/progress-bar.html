@@ -22,6 +22,11 @@
         border: none;
       }
 
+      #container__progress {
+        width: 100%;
+        height: 100%;
+      }
+
       .progress-overlay {
         position: absolute;
         height: 100%;
@@ -53,11 +58,13 @@
       }
     </style>
 
-    <div id="container__progress_bar" on-click="_handleClick" on-mousemove="_showTargetPosition" on-mouseout="_toggleTargetPosition" class$="[[ifThenElse(border, '', '-no-border')]]">
-      <div id="div__primary_progress" class="progress-overlay" style$="width: [[_calcWidth(value, min, max)]]%;"></div>
-      <div id="div__secondary_progress" class="progress-overlay" style$="width: [[_calcWidth(secondaryValue, min, max)]]%;"></div>
-      <div id="div__hover_box" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
-        [[targetValue]]
+    <div id="container__progress_bar" class$="[[ifThenElse(border, '', '-no-border')]]">
+      <div id="container__progress" on-click="_handleClick" on-mouseover="_showHoverBox" on-mousemove="_updateHoverBoxPosition" on-mouseout="_hideHoverBox">
+        <div id="div__primary_progress" class="progress-overlay" style$="width: [[_calcWidth(value, min, max)]]%;"></div>
+        <div id="div__secondary_progress" class="progress-overlay" style$="width: [[_calcWidth(secondaryValue, min, max)]]%;"></div>
+      </div>
+      <div id="container__hover_box" style$="visibility: [[ifThenElse(_hoverBoxVisible, 'visible', 'hidden')]];">
+        <div id="div__hover_box">[[_hoverBoxContent]]</div>
       </div>
     </div>
 
@@ -65,6 +72,12 @@
 
   <script>
     IMD.define('progress-bar', ['binding-helpers'], (BindingHelpersMixin) => {
+      const HOVER_BOX_STATES = {
+        ABSOLUE: 'abs',
+        RELATIVE: 'rel',
+        HIDDEN: 'hiden',
+      };
+
       class ProgressBar extends BindingHelpersMixin(Polymer.Element) {
         static get is() { return 'progress-bar'; }
 
@@ -90,70 +103,73 @@
               type: Boolean,
               value: false,
             },
-            _isVisible: {
+            hoverBox: {
+              type: String,
+              value: HOVER_BOX_STATES.HIDDEN,
+            },
+            _hoverBoxVisible: {
               type: Boolean,
               value: false,
             },
-            targetValue: {
+            _hoverBoxContent: {
               type: String,
               value: 0,
-            },
-            showTargetPositionOnHover: {
-              type: Boolean,
-              value: false,
             },
           };
         }
 
         _calcWidth(value, min, max) {
-          if(max > min && min <= value && max >= value) {
-            return (value - min) / max * 100;
-          }
-
-          return 0;
+          return Math.min(Math.max(0, (value - min) / max * 100), 100);
         }
 
         _handleClick(e) {
           // Check if still within borders
-          let clickedValue = this._getClickedValue(e);
+          let clickedValue = this._getCursorPosition(e);
           if( clickedValue <= this.max) {
             this.value = clickedValue;
             this.dispatchEvent(new CustomEvent('change'));
           }
         }
 
-        _showTargetPosition(e) {
-          if(this.showTargetPositionOnHover) {
-            let timeBox = this.$.div__hover_box;
-            let progressContainer = this.$.container__progress_bar;
-
-            this._isVisible = true;
-            timeBox.style.top = progressContainer.style.top - timeBox.offsetHeight + 'px';
-            this.targetValue = this.secondsToHms(this._getClickedValue(e));
-
-            // Get right end of time box and right end of progress bar in pixels
-            let timeBoxRightEnd = e.pageX - progressContainer.getBoundingClientRect().left + timeBox.offsetWidth;
-            let progressBarRightEnd = progressContainer.offsetLeft + progressContainer.offsetWidth;
-
-            if(timeBoxRightEnd >= progressBarRightEnd) {
-              // Remove class left if contained
-              // add class right if not already contained
-              timeBox.style.left = 'auto';
-              timeBox.style.right = '0px';
-            } else {
-              // Remove class right if contained
-              // add class left if not already contained
-              timeBox.style.left = e.offsetX + 'px';
-              timeBox.style.right = 'auto';
-            }
+        _showHoverBox() {
+          if(this.hoverBox !== HOVER_BOX_STATES.HIDDEN) {
+            this._hoverBoxVisible = true;
           }
         }
 
-        _toggleTargetPosition() {
-          this._isVisible = false;
+        _updateHoverBoxPosition(e) {
+          let timeBox = this.$.div__hover_box;
+          let progressContainer = this.$.container__progress_bar;
+
+          timeBox.style.top = progressContainer.style.top - timeBox.offsetHeight + 'px';
+          let time = this._getCursorPosition(e);
+          if(this.hoverBox === HOVER_BOX_STATES.RELATIVE) {
+            time = time - this.max;
+          }
+          this._hoverBoxContent = this.secondsToHms(time);
+
+          // Get right end of time box and right end of progress bar in pixels
+          let timeBoxRightEnd = e.pageX - progressContainer.getBoundingClientRect().left + timeBox.offsetWidth;
+          let progressBarRightEnd = progressContainer.offsetLeft + progressContainer.offsetWidth;
+
+          if(timeBoxRightEnd >= progressBarRightEnd) {
+            // Remove class left if contained
+            // add class right if not already contained
+            timeBox.style.left = 'auto';
+            timeBox.style.right = '0px';
+          } else {
+            // Remove class right if contained
+            // add class left if not already contained
+            timeBox.style.left = e.offsetX + 'px';
+            timeBox.style.right = 'auto';
+          }
         }
 
-        _getClickedValue(e){
+        _hideHoverBox() {
+          this._hoverBoxVisible = false;
+        }
+
+        _getCursorPosition(e) {
           // Get x value by substracting offsetleft of control
           let borderLeftWidth = parseInt(getComputedStyle(this.$.container__progress_bar, null).getPropertyValue('border-left-width'), 10);
           let x = e.pageX - this.getBoundingClientRect().left - borderLeftWidth;

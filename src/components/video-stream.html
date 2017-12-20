@@ -28,6 +28,7 @@
         top: 0;
         right: 0;
         bottom: 0;
+        z-index: 4;
       }
 
       #image__poster {
@@ -52,8 +53,8 @@
   </template>
 
   <script>
-    IMD.define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, Hls, constants) => {
-      const {PLAY_STATES, QUALITY_MODES, HLS_MIME_TYPE, SEEK_DIFF_THRESHOLD} = constants;
+    IMD.define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-helper', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, HlsHelper, Hls, constants) => {
+      const {PLAY_STATES, QUALITY_MODES, SEEK_DIFF_THRESHOLD} = constants;
 
       class VideoStream extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'video-stream'; }
@@ -68,11 +69,11 @@
               value: true,
             },
             _stateManager: {
-              typeof: Object,
+              type: Object,
               inject: 'StateManager',
             },
             _synchronizationManager: {
-              typeof: Object,
+              type: Object,
               inject: 'SynchronizationManager',
             },
             _currentUrl: String,
@@ -85,14 +86,9 @@
               value: true,
             },
             _hlsClient: Object,
-            _nativeHlsSupport: {
-              type: Boolean,
-              readOnly: true,
-              computed: '_getNativeHlsSupport()',
-            },
             _isPosterVisible: {
               type: Boolean,
-              computed: '_getIsPosterVisible(state.playState, state.position, state.trimStart, state.trimEnd)',
+              computed: '_getIsPosterVisible(state.playState, state.live, state.position, state.trimStart, state.trimEnd)',
             },
           };
         }
@@ -113,6 +109,13 @@
           super.servicesInjectedCallback();
           this._synchronizationManager.registerVideo(this.$.video);
           this._isRegistered = true;
+
+          // Preserve liveSync while waiting for new live fragments
+          this._synchronizationManager.onVideosReady(() => {
+            if(this.state.live && this.state.liveSync) {
+              this._stateManager.setPosition(this.state.livePosition);
+            }
+          });
         }
 
         disconnectedCallback() {
@@ -126,12 +129,12 @@
           this.$.video.load();
         }
 
-        _getNativeHlsSupport() {
-          return this.$.video.canPlayType(HLS_MIME_TYPE) !== '';
-        }
+        _getIsPosterVisible(playState, live, position, trimStart, trimEnd) {
+          if(!this.state.alreadyPlayed || playState === PLAY_STATES.FINISHED) {
+            return true;
+          }
 
-        _getIsPosterVisible(playState, position, trimStart, trimEnd) {
-          return playState === PLAY_STATES.PAUSED && (position === trimStart || position === trimEnd);
+          return !live && playState === PLAY_STATES.PAUSED && (position === trimStart || position === trimEnd);
         }
 
         _playStateChanged(playState) {
@@ -200,12 +203,13 @@
           }
 
           // Initialize video source change
+          let initialSetup = !this.$.video.src;
           this._isInitializingVideo = true;
           this._synchronizationManager.setWaiting(this.$.video);
 
           // Change source depending on quality
           let url = props[quality];
-          if(this._nativeHlsSupport || quality !== QUALITY_MODES.HLS) {
+          if(HlsHelper.hasNativeHlsSupport || quality !== QUALITY_MODES.HLS) {
             // Destroy old hls client
             if(this._hlsClient) {
               this._hlsClient.destroy();
@@ -218,6 +222,7 @@
           } else {
             // Create and configure new hls client for existing video element
             this._hlsClient = new Hls();
+            this._hlsClient.on(Hls.Events.LEVEL_LOADED, this._handleHlsLevelLoaded.bind(this));
             this._hlsClient.loadSource(url);
             this._hlsClient.attachMedia(this.$.video);
           }
@@ -225,7 +230,7 @@
           // Reapply current state to video element after the new source has been loaded
           this._synchronizationManager.onVideosReady(() => {
             this._isInitializingVideo = false;
-            this._applyState();
+            this._applyState(initialSetup);
           }, true);
         }
 
@@ -285,7 +290,40 @@
           }));
         }
 
-        _applyState() {
+        _handleHlsLevelLoaded(e, data) {
+          if(this._synchronizationManager && !this._synchronizationManager.isMaster(this.$.video)) {
+            return;
+          }
+
+          // Set live indicator
+          let live = data.details.live;
+          let oldLive = this._stateManager.state.live;
+          this._stateManager.setLive(live);
+          if(!live)
+          {
+            // Transition from live to not live indicates that the stream has ended
+            if(oldLive) {
+              this._stateManager.setPlayState(PLAY_STATES.FINISHED);
+            }
+            return;
+          }
+
+          // Update live states
+          let livePosition = this._hlsClient.liveSyncPosition;
+          let startPosition = data.details.fragments[0].start;
+          let totalDuration = data.details.totalduration;
+          let fragmentDuration = data.details.targetduration;
+          if(!livePosition) {
+            // Calculate fallback live position if liveSyncPosition is not set, yet.
+            let hiddenAreaDuration = this._hlsClient.config.liveSyncDurationCount * fragmentDuration;
+            livePosition = Math.max(0, totalDuration - hiddenAreaDuration);
+          }
+          this._stateManager.setLivePosition(livePosition);
+          this._stateManager.setLiveFragmentDuration(fragmentDuration);
+          this._stateManager.setLiveStartPosition(startPosition);
+        }
+
+        _applyState(initial) {
           // Make sure that playState is first applies after seek process
           this.$.video.addEventListener('seeked', () => this._playStateChanged(this.state.playState), {once: true});
           let seeked = this._positionChanged(this.state.position);
@@ -294,6 +332,11 @@
           this._mutedChanged(this.state.muted);
           if(!seeked) {
             this._playStateChanged(this.state.playState);
+          }
+
+          // If live-stream was initially loaded, enable liveSync
+          if(initial && this.state.live) {
+            this._stateManager.setLiveSync(true);
           }
         }
       }

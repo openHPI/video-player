@@ -5,6 +5,7 @@
 
 <link rel="import" href="playpause-control.html">
 <link rel="import" href="sound-control.html">
+<link rel="import" href="live-indicator.html">
 <link rel="import" href="videotime-display.html">
 <link rel="import" href="speed-control.html">
 <link rel="import" href="playlist-chapter-list-switch.html">
@@ -21,6 +22,10 @@
 <dom-module id="control-bar">
   <template>
     <style type="text/css" include="global--style-module">
+      :host {
+        display: block;
+      }
+
       #container__control_bar {
         display: flex;
         align-items: stretch;
@@ -59,8 +64,15 @@
         <playlist-navigation-control direction="forward" video-url="[[nextVideo.url]]"></playlist-navigation-control>
       </template>
 
+      <!-- Live Indicator -->
+      <template is="dom-if" if="[[state.live]]">
+        <live-indicator state="[[state]]" class="-flex-grow"></live-indicator>
+      </template>
+
       <!-- Video Time -->
-      <videotime-display state="[[state]]" class="-flex-grow"></videotime-display>
+      <template is="dom-if" if="[[_showVideoTime]]">
+        <videotime-display state="[[state]]" class$="[[ifNotThen(state.live, '-flex-grow')]]"></videotime-display>
+      </template>
 
       <!-- Right button section -->
       <template is="dom-if" if="[[hasItems(captionLanguages)]]">
@@ -69,7 +81,9 @@
       <template is="dom-if" if="[[hasItems(captionLanguages)]]">
         <interactive-transcript-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></interactive-transcript-control>
       </template>
-      <speed-control state="[[state]]" class="hidden-for-mobile"></speed-control>
+      <template is="dom-if" if="[[!state.live]]">
+        <speed-control state="[[state]]" class="hidden-for-mobile"></speed-control>
+      </template>
       <template is="dom-if" if="[[hasItems(availableQualities, 2)]]">
         <quality-control state="[[state]]" qualities="[[availableQualities]]" class="hidden-for-mobile"></quality-control>
       </template>
@@ -110,6 +124,7 @@
         static get properties() {
           return {
             state: Object,
+            live: Object,
             hasChapters: Boolean,
             hasFallbackStream: Boolean,
             previousVideo: Object,
@@ -117,11 +132,19 @@
             captionLanguages: Array,
             availableQualities: Boolean,
             numberOfStreams: Number,
+            liveDvr: Boolean,
             _stateManager: {
               type: Object,
               inject: 'StateManager',
             },
+            _showVideoTime: Boolean,
           };
+        }
+
+        static get observers() {
+          return [
+            '_setShowVideoTime(state.live, liveDvr)',
+          ];
         }
 
         ready() {
@@ -156,6 +179,13 @@
             // keyboard interaction, like scrolling the page
             e.preventDefault();
           });
+        }
+
+        _setShowVideoTime(live, dvr) {
+          // Strangely enough, defining _showVideoTime as computed property
+          // breaks property binding within dom-if template.
+          // Therefore, _showVideoTime is set explicitly.
+          this._showVideoTime = !live || dvr;
         }
       }
 

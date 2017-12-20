@@ -34,12 +34,6 @@
     };
 
     /**
-     * Contains the MIME type of HLS streams.
-     * @type {String}
-     */
-    const HLS_MIME_TYPE = 'application/x-mpegURL';
-
-    /**
      * Contains the interval in seconds between two syncronization procedures.
      * @type {Number}
      */
@@ -72,12 +66,18 @@
      * @type {Object.<string, Object>}
      */
     const DEFAULT_STATE = {
+      alreadyPlayed: false,
       playState: PLAY_STATES.PAUSED,
       position: 0,
       bufferPosition: 0,
       duration: 0,
       trimStart: 0,
       trimEnd: 0,
+      live: false,
+      liveSync: true,
+      livePosition: 0,
+      liveStartPosition: 0,
+      liveFragmentDuration: 0,
       playbackRate: 1.0,
       volume: 1.0,
       muted: false,
@@ -104,6 +104,7 @@
       initialState: {},
       videoPreload: true,
       loadFontAwesome: true,
+      liveDvr: false,
       theme: 'dark-orange',
       language: 'en',
       videoAlignment: 'width',
@@ -201,7 +202,6 @@
       PLAY_STATES,
       PLAYBACK_RATES,
       QUALITY_MODES,
-      HLS_MIME_TYPE,
       SYNC_INTERVAL,
       SYNC_DIFF_THRESHOLD,
       SEEK_DIFF_THRESHOLD,

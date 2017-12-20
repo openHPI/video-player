@@ -9,6 +9,8 @@
 <link rel="import" href="mixins/ioc-requester.html">
 <link rel="import" href="mixins/binding-helpers.html">
 <link rel="import" href="3rd-imports/hls-js.html">
+<link rel="import" href="helpers/hls-helper.html">
+<link rel="import" href="helpers/url-fragment-helper.html">
 <link rel="import" href="locales/locales.html">
 <link rel="import" href="styling/mixins.html">
 <link rel="import" href="styling/global--style-module.html">
@@ -97,8 +99,8 @@
         flex: 1 1 49%;
       }
 
-      #progress-container {
-        border-bottom: 1px solid black;
+      #control-bar {
+        border-top: 1px solid black;
       }
 
       @media (max-width: 768px) {
@@ -137,10 +139,10 @@
           <template is="dom-if" if="[[!state.fallbackStreamActive]]" restamp="true">
             <template is="dom-repeat" items="[[configuration.streams]]">
               <video-stream
+                class="video-stream"
                 state="[[state]]"
                 props="[[item]]"
                 preload="[[configuration.videoPreload]]"
-                class="video-stream"
                 captions="[[ifEqualsThen(index, 0, configuration.captions)]]"
                 style$="height: calc(100% / [[_rowCount(configuration.streams)]]);"
                 ondragover="return false;"
@@ -172,23 +174,28 @@
       </div>
 
       <!-- Progress Bars -->
-      <div id="progress-container">
-        <template is="dom-if" if="[[hasItems(configuration.slides)]]">
-          <slide-preview-bar state="[[state]]" slides="[[configuration.slides]]" class="hidden-for-mobile"></slide-preview-bar>
-        </template>
-        <video-progress state="[[state]]"></video-progress>
-      </div>
+      <template is="dom-if" if="[[_showProgressBar]]">
+        <div id="progress-container">
+          <template is="dom-if" if="[[hasItems(configuration.slides)]]">
+            <slide-preview-bar state="[[state]]" slides="[[configuration.slides]]" class="hidden-for-mobile"></slide-preview-bar>
+          </template>
+          <video-progress state="[[state]]"></video-progress>
+        </div>
+      </template>
 
       <!-- Control Bar -->
       <control-bar
+        id="control-bar"
         state="[[state]]"
+        live="[[configuration.live]]"
         has-chapters="[[hasItems(configuration.chapters)]]"
         has-fallback-stream="[[_hasFallbackStream]]"
         caption-languages="[[_captionLanguages]]"
         available-qualities="[[_availableQualities]]"
         previous-video="[[_previousVideo]]"
         next-video="[[_nextVideo]]"
-        number-of-streams="[[configuration.streams.length]]">
+        number-of-streams="[[configuration.streams.length]]"
+        live-dvr="[[configuration.liveDvr]]">
       </control-bar>
 
       <!-- Chapter List -->
@@ -206,8 +213,8 @@
   </template>
 
   <script>
-    IMD.define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-js', 'analytics-manager', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, Localizer, Hls, AnalyticsManager, constants, locales, configurationSchema) => {
-      const {VERSION, DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, HLS_MIME_TYPE, ANALYTICS_TOPICS} = constants;
+    IMD.define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'state-manager', 'fullscreen-manager', 'synchronization-manager', 'user-preferences-manager', 'configuration-validator', 'localizer', 'hls-helper', 'url-fragment-helper', 'hls-js', 'analytics-manager', 'constants', 'locales', 'configuration-schema'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, StateManager, FullscreenManager, SynchronizationManager, UserPreferencesManager, ConfigurationValidator, Localizer, HlsHelper, UrlFragmentHelper, Hls, AnalyticsManager, constants, locales, configurationSchema) => {
+      const {VERSION, DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, ANALYTICS_TOPICS} = constants;
 
       class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
         static get is() { return 'video-player'; }
@@ -286,6 +293,7 @@
               type: Boolean,
               computed: '_getIsIOS()',
             },
+            _showProgressBar: Boolean,
             _isConfigurationInitialized: Boolean,
             _isConfigurationObserverLocked: {
               type: Boolean,
@@ -313,6 +321,8 @@
             '_userPreferencesStateChanged(state.*)',
             '_positionChanged(state.position)',
             '_checkIfReady(state.playState, state.duration)',
+            '_setShowProgressBar(state.live, state.liveDvr)',
+            '_setShowProgressBar(state.live, configuration.liveDvr)',
           ];
         }
 
@@ -330,6 +340,14 @@
 
         servicesInjectedCallback() {
           super.servicesInjectedCallback();
+
+          // Reads initial position from URL fragment, if config option is enabled
+          if(this.configuration.positionInUrlFragment) {
+            let startPosition = parseInt(UrlFragmentHelper.getParameter('t'));
+            if(startPosition) {
+              this.configuration.initialState.position = startPosition;
+            }
+          }
 
           // Build state from provided intial state configuration and default values
           this.state = Object.assign({}, DEFAULT_STATE, this.state, this.configuration.initialState, this._userPreferencesManager.getPreferences(), this.configuration.userPreferences);
@@ -385,8 +403,7 @@
         _getAvailableQualities(streams, fallbackStreamActive, fallbackStream) {
           if (streams) {
             let supportedQualities = Object.values(QUALITY_MODES);
-            let isHlsSupported = Hls.isSupported() || document.createElement('video').canPlayType(HLS_MIME_TYPE) !== '';
-            if(!isHlsSupported) {
+            if(!HlsHelper.hasHlsSupport) {
               supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
             }
 
@@ -458,12 +475,21 @@
             // Validate configuration
             this._configurationValidator.validate(this.configuration);
 
+            // Lock observer before chaning the configuration
+            this._isConfigurationObserverLocked = true;
+
             // Fill missing properties in provided configuration with default values
             if(Object.keys(DEFAULT_CONFIGURATION).filter(x => !Object.keys(configuration).includes(x)).length > 0) {
-              this._isConfigurationObserverLocked = true;
               this.configuration = Object.assign({}, DEFAULT_CONFIGURATION, configuration);
-              this._isConfigurationObserverLocked = false;
             }
+
+            // Native HLS implementation of Safari does not support DVR for live streams
+            if(HlsHelper.hasNativeHlsSupport) {
+              this.configuration.liveDvr = false;
+            }
+
+            // Enable configuration observer again
+            this._isConfigurationObserverLocked = false;
 
             // Invoke callback, if configuration was initally loaded
             if(!this._isConfigurationInitialized) {
@@ -489,14 +515,16 @@
         }
 
         _playStateChanged(playState) {
-          // Dispatch event if video is playing to stop playback on other instances
           if(playState === PLAY_STATES.PLAYING) {
+            // Set alreadyPlayed flag indicating that the video was initially played.
+            this._stateManager.setAlreadyPlayed();
+
+            // Dispatch event if video is playing to stop playback on other instances
             let event = new CustomEvent(PLAYING_EVENT_NAME, {
               detail: {
                 sender: this,
               },
             });
-
             window.dispatchEvent(event);
           }
         }
@@ -593,6 +621,13 @@
           if (this._userPreferencesManager) {
             this._userPreferencesManager.setPreferences(this.state);
           }
+        }
+
+        _setShowProgressBar(live, dvr) {
+          // Strangely enough, defining _showProgressBar as computed property
+          // breaks property binding within dom-if template.
+          // Therefore, _showProgressBar is set explicitly.
+          this._showProgressBar = !live || dvr;
         }
 
         _needResizer(index, length) {
