@@ -12,12 +12,17 @@
       #container__videotime_display {
         white-space: nowrap;
       }
+
+      #span__videotime_separator {
+        margin: 0px 3px;
+      }
     </style>
 
     <div id="container__videotime_display" class="user_controls">
-      <span>[[secondsToHms(_position, _duration)]]</span>
+      <span id="span__videotime_position">[[secondsToHms(_position, _duration)]]</span>
       <template is="dom-if" if="[[!state.live]]">
-        <span> / [[secondsToHms(_duration)]]</span>
+        <span id="span__videotime_separator">/</span>
+        <span id="span__videotime_duration">[[secondsToHms(_duration)]]</span>
       </template>
     </div>
   </template>
