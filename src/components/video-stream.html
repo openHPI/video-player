@@ -299,8 +299,7 @@
           let live = data.details.live;
           let oldLive = this._stateManager.state.live;
           this._stateManager.setLive(live);
-          if(!live)
-          {
+          if(!live) {
             // Transition from live to not live indicates that the stream has ended
             if(oldLive) {
               this._stateManager.setPlayState(PLAY_STATES.FINISHED);
