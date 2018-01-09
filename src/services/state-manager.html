@@ -74,8 +74,8 @@
           }
 
           // Skip to end position explicitly
-          if(playState === PLAY_STATES.FINISHED && this.state.position !== this.state.duration) {
-            this.setPosition(this.state.duration);
+          if(playState === PLAY_STATES.FINISHED && this.state.position !== this.state.trimEnd) {
+            this.setPosition(this.state.trimEnd);
           }
         }
 
