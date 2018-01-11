@@ -207,7 +207,7 @@
       </playlist-chapter-list>
 
       <!-- Interactive Transcript -->
-      <interactive-transcript state="[[state]]" show-if="[[state.showInteractiveTranscript]]"></interactive-transcript>
+      <interactive-transcript state="[[state]]" show-if="[[and(state.activeCaptions, state.showInteractiveTranscript)]]"></interactive-transcript>
     </div>
 
   </template>

@@ -15,11 +15,11 @@
     <select-control
       state="[[state]]"
       items="[[_items]]"
-      selected-value="[[ifThenElse(state.showCaptions, state.captionLanguage, _offValue)]]"
+      selected-value="[[_selectedValue]]"
       on-change="_selectionChanged"
       icon-classes="fa fa-cc"
-      is-in-mobile-menu="[[isInMobileMenu]]"
-      active="[[or(state.showCaptions, isInMobileMenu)]]">
+      active="[[_isActive]]"
+      is-in-mobile-menu="[[isInMobileMenu]]">
     </select-control>
   </template>
 
@@ -54,6 +54,14 @@
               readOnly: true,
               value: null,
             },
+            _selectedValue: {
+              type: Object,
+              computed: '_getSelectedValue(state.showCaptions, state.captionLanguage, languages)',
+            },
+            _isActive: {
+              type: Boolean,
+              computed: '_getIsActive(_selectedValue, _offValue, isInMobileMenu)',
+            },
           };
         }
 
@@ -70,6 +78,18 @@
 
             return [offItem].concat(languageItems);
           }
+        }
+
+        _getSelectedValue(showCaptions, captionLanguage, languages) {
+          if(showCaptions && languages.includes(captionLanguage)) {
+            return captionLanguage;
+          } else {
+            return this._offValue;
+          }
+        }
+
+        _getIsActive(_selectedValue, _offValue, isInMobileMenu) {
+          return isInMobileMenu || _selectedValue !== _offValue;
         }
 
         _selectionChanged(e) {
