@@ -54,7 +54,7 @@
 
   <script>
     IMD.define('video-stream', ['binding-helpers', 'ioc-requester', 'hls-helper', 'hls-js', 'constants'], (BindingHelpersMixin, IocRequesterMixin, HlsHelper, Hls, constants) => {
-      const {PLAY_STATES, QUALITY_MODES, SEEK_DIFF_THRESHOLD} = constants;
+      const {PLAY_STATES, QUALITY_MODES, SEEK_DIFF_THRESHOLD, ANALYTICS_TOPICS} = constants;
 
       class VideoStream extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
         static get is() { return 'video-stream'; }
@@ -71,6 +71,10 @@
             _stateManager: {
               type: Object,
               inject: 'StateManager',
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
             },
             _synchronizationManager: {
               type: Object,
@@ -274,7 +278,7 @@
         }
 
         _handleClick() {
-          this._stateManager.togglePlayPause();
+          this._analyticsManager.changeState('togglePlayPause', [], {verb: ANALYTICS_TOPICS.PLAY_PAUSE});
         }
 
         _handleLoadedMetadata() {
