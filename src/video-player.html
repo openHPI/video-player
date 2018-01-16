@@ -354,7 +354,9 @@
 
           // Initialize FullscreenManager
           this._fullscreenManager.onFullscreenChanged((fullscreen) => {
-            this._stateManager.setFullscreen(fullscreen);
+            if(this.state.fullscreen !== fullscreen) {
+              this._analyticsManager.changeState('setFullscreen', [fullscreen], {verb: ANALYTICS_TOPICS.VIDEO_FULLSCREEN});
+            }
           });
 
           // Set volume to 1 for mobile devices
@@ -376,7 +378,7 @@
           // another instance starts playing
           window.addEventListener(PLAYING_EVENT_NAME, (e) => {
             if(e.detail && e.detail.sender !== this) {
-              this._stateManager.pause();
+              this._analyticsManager.changeState('pause', [], {verb: ANALYTICS_TOPICS.VIDEO_PAUSE});
             }
           });
         }

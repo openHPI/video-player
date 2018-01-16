@@ -114,7 +114,8 @@
   </template>
 
   <script>
-    IMD.define('control-bar', ['binding-helpers', 'ioc-requester'], (BindingHelpersMixin, IocRequesterMixin) => {
+    IMD.define('control-bar', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
       const SKIP_SECONDS = 15;
       const TEXT_ELEMENT_TAG_NAMES = ['INPUT', 'TEXTAREA'];
 
@@ -136,6 +137,10 @@
             _stateManager: {
               type: Object,
               inject: 'StateManager',
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
             },
             _showVideoTime: Boolean,
           };
@@ -159,17 +164,17 @@
             }
 
             if (e.key === 'ArrowRight' || e.key === 'Right') {
-              this._stateManager.skipSeconds(SKIP_SECONDS);
+              this._analyticsManager.changeState('skipSeconds', [SKIP_SECONDS], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
             } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
-              this._stateManager.skipSeconds(-SKIP_SECONDS);
+              this._analyticsManager.changeState('skipSeconds', [-SKIP_SECONDS], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
             } else if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'p') {
-              this._stateManager.togglePlayPause();
+              this._analyticsManager.changeState('togglePlayPause', [], {verb: ANALYTICS_TOPICS.PLAY_PAUSE});
             } else if (e.key === 'f') {
               // In IE, fullscreen cannot be enabled by keyboard events.
               // Therefore, fullscreen is only enabled in other browsers.
               // However, disabling fullscreen works in IE.
               if(!('ActiveXObject' in window) || this.state.fullscreen) {
-                this._stateManager.toggleFullscreen();
+                this._analyticsManager.changeState('toggleFullscreen', [], {verb: ANALYTICS_TOPICS.VIDEO_FULLSCREEN});
               }
             } else {
               return;
