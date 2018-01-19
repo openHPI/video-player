@@ -69,7 +69,7 @@
 
         if(updatePosition) {
           // Enable live sync when playing if its the first time playing or DVR is disabled
-          if(this.state.live && playState === PLAY_STATES.PLAYING && (!this.state.alreadyPlayed || !this.videoPlayer.configuration.liveDvr) && this.state.livePosition) {
+          if(this.state.live && playState === PLAY_STATES.PLAYING && (!this.state.alreadyPlayed || !this.videoPlayer.configuration.liveDvr)) {
             this.setLiveSync(true);
           }
 

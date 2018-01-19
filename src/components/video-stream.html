@@ -211,6 +211,12 @@
           this._isInitializingVideo = true;
           this._synchronizationManager.setWaiting(this.$.video);
 
+          // Reapply current state to video element after the new source has been loaded
+          this._synchronizationManager.onVideosReady(() => {
+            this._isInitializingVideo = false;
+            this._applyState(initialSetup);
+          }, true);
+
           // Change source depending on quality
           let url = props[quality];
           if(HlsHelper.hasNativeHlsSupport || quality !== QUALITY_MODES.HLS) {
@@ -230,12 +236,6 @@
             this._hlsClient.loadSource(url);
             this._hlsClient.attachMedia(this.$.video);
           }
-
-          // Reapply current state to video element after the new source has been loaded
-          this._synchronizationManager.onVideosReady(() => {
-            this._isInitializingVideo = false;
-            this._applyState(initialSetup);
-          }, true);
         }
 
         _captionLanguageChanged(language) {
