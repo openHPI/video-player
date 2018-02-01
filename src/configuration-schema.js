@@ -345,6 +345,11 @@ const configurationSchema = {
     description: 'If enabled, the initial video position is read from the URL fragment parameter `t` (e.g. `#t=25`).',
     default: false,
   },
+  mobileMenu: {
+    type: 'boolean',
+    description: 'If disabled, the control bar icons are forced to be shown inline instead of being part of a separated mobile menu. This might cause the control bar content to overflow, if there are two much controls!',
+    default: true,
+  },
 };
 
 // Export schema as IMD module in browser context and as object in Node context
