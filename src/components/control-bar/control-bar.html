@@ -76,37 +76,39 @@
 
       <!-- Right button section -->
       <template is="dom-if" if="[[hasItems(captionLanguages)]]">
-        <caption-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></caption-control>
+        <caption-control state="[[state]]" languages="[[captionLanguages]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></caption-control>
       </template>
       <template is="dom-if" if="[[hasItems(captionLanguages)]]">
-        <interactive-transcript-control state="[[state]]" languages="[[captionLanguages]]" class="hidden-for-mobile"></interactive-transcript-control>
+        <interactive-transcript-control state="[[state]]" languages="[[captionLanguages]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></interactive-transcript-control>
       </template>
       <template is="dom-if" if="[[!state.live]]">
-        <speed-control state="[[state]]" class="hidden-for-mobile"></speed-control>
+        <speed-control state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></speed-control>
       </template>
       <template is="dom-if" if="[[hasItems(availableQualities, 2)]]">
-        <quality-control state="[[state]]" qualities="[[availableQualities]]" class="hidden-for-mobile"></quality-control>
+        <quality-control state="[[state]]" qualities="[[availableQualities]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></quality-control>
       </template>
       <template is="dom-if" if="[[hasChapters]]">
-        <playlist-chapter-list-switch state="[[state]]" class="hidden-for-mobile"></playlist-chapter-list-switch>
+        <playlist-chapter-list-switch state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></playlist-chapter-list-switch>
       </template>
       <template is="dom-if" if="[[hasFallbackStream]]">
-        <stream-switch-control state="[[state]]" class="hidden-for-mobile"></stream-switch-control>
+        <stream-switch-control state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></stream-switch-control>
       </template>
 
       <!-- Sound controls -->
-      <mute-control state="[[state]]" class="hidden-for-mobile"></mute-control>
-      <sound-control state="[[state]]" class="hidden-for-mobile"></sound-control>
+      <mute-control state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></mute-control>
+      <sound-control state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></sound-control>
 
       <!-- Settings menu for mobile devices -->
-      <mobile-settings-menu
-        state="[[state]]"
-        class="hidden-for-desktop"
-        caption-languages="[[captionLanguages]]"
-        available-qualities="[[availableQualities]]"
-        has-fallback-stream="[[hasFallbackStream]]"
-        number-of-streams="[[numberOfStreams]]">
-      </mobile-settings-menu>
+      <template is="dom-if" if="[[mobileMenu]]">
+        <mobile-settings-menu
+          state="[[state]]"
+          class="hidden-for-desktop"
+          caption-languages="[[captionLanguages]]"
+          available-qualities="[[availableQualities]]"
+          has-fallback-stream="[[hasFallbackStream]]"
+          number-of-streams="[[numberOfStreams]]">
+        </mobile-settings-menu>
+      </template>
 
       <!-- Fullscreen -->
       <full-screen-control state="[[state]]"></full-screen-control>
@@ -133,6 +135,7 @@
             captionLanguages: Array,
             availableQualities: Boolean,
             numberOfStreams: Number,
+            mobileMenu: Boolean,
             liveDvr: Boolean,
             _stateManager: {
               type: Object,
