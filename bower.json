@@ -13,8 +13,6 @@
   "homepage": "https://github.com/openHPI/video-player#readme",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
-    "imd": "PolymerLabs/IMD#^1.0.0",
-    "hls.js": "^0.8.7",
     "iron-test-helpers": "^2.0.0"
   },
   "devDependencies": {

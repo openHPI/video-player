@@ -65,3 +65,6 @@ dist
 # Ignore IntelliJ files
 .idea/
 *.iml
+
+# Ignore Visual Studio Code
+.vscode/

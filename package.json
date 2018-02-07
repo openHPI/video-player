@@ -41,6 +41,8 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.23.0",
+    "hls.js": "^0.8.9",
+    "imd": "github:openHPI/IMD",
     "polymer-font-awesome": "^1.0.0",
     "url-polyfill": "^1.0.8"
   },
