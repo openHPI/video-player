@@ -119,8 +119,8 @@
 
         _getVisibleCaptions(captions, trimStart, trimEnd) {
           if(captions) {
-            return captions.filter(cue => cue.endTime > trimStart &&
-                                          cue.startTime < trimEnd);
+            return captions.filter(cue => (!trimStart || cue.endTime > trimStart) &&
+                                          (!trimEnd || cue.startTime < trimEnd));
           }
         }
 

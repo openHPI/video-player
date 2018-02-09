@@ -6,7 +6,9 @@
   ],
   "extraDependencies": [
       "node_modules/polymer-font-awesome/dist/font-face.html",
-      "node_modules/polymer-font-awesome/dist/fonts/*"
+      "node_modules/polymer-font-awesome/dist/fonts/*",
+      "bower_components/webcomponentsjs/webcomponents-lite.js",
+      "bower_components/webcomponentsjs/custom-elements-es5-adapter.js"
   ],
   "lint": {
     "rules": [
