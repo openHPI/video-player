@@ -40,11 +40,11 @@
       }
 
       and(...values) {
-        return values.reduce((x, y) => x && y);
+        return Boolean(values.reduce((x, y) => x && y));
       }
 
       or(...values) {
-        return values.reduce((x, y) => x || y);
+        return Boolean(values.reduce((x, y) => x || y));
       }
 
       exists(value) {
