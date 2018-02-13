@@ -3,7 +3,7 @@
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/control-bar--style-module.html">
-<link rel="import" href="../base-components/progress-bar.html">
+<link rel="import" href="../base-components/custom-progress.html">
 
 <dom-module id="sound-control">
   <template>
@@ -17,12 +17,12 @@
     </style>
 
     <div id="container__sound_control" class="user_controls -no-padding-left">
-      <progress-bar
+      <custom-progress
         id="progress__sound_control"
         value$="[[toStringOrEmpty(_effectiveVolume)]]"
         on-change="_handleChange"
         border>
-      </progress-bar>
+      </custom-progress>
     </div>
 
   </template>

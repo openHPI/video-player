@@ -3,7 +3,7 @@
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../styling/progress-container--style-module.html">
-<link rel="import" href="../base-components/progress-bar.html">
+<link rel="import" href="../base-components/custom-progress.html">
 
 <dom-module id="video-progress">
   <template>
@@ -11,14 +11,14 @@
     </style>
 
     <div class="progress_indicator">
-      <progress-bar
+      <custom-progress
         id="progress__video_progress"
         max="[[_duration]]"
         value="[[_position]]"
         secondary-value="[[_bufferPosition]]"
         on-change="_handleChange"
         hover-box="[[ifThenElse(state.live, 'rel', 'abs')]]">
-      </progress-bar>
+      </custom-progress>
     </div>
   </template>
 
