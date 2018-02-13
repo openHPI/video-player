@@ -241,17 +241,17 @@
           assert.isFalse(videoPlayer.state.muted, 'in its default state, the video player is not muted');
           videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('mute-control')[0].shadowRoot.querySelectorAll('#button__mute')[0].click();
           assert.isTrue(videoPlayer.state.muted, 'after clicking the mute button, the video player is muted');
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('sound-control')[0].shadowRoot.querySelectorAll('progress-bar')[0].shadowRoot.querySelectorAll('#div__primary_progress')[0].style.width, '0%', 'after clicking the mute button, the volume is at 0%');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('sound-control')[0].shadowRoot.querySelectorAll('custom-progress')[0].shadowRoot.querySelectorAll('#div__primary_progress')[0].style.width, '0%', 'after clicking the mute button, the volume is at 0%');
           videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('mute-control')[0].shadowRoot.querySelectorAll('#button__mute')[0].click();
           assert.isFalse(videoPlayer.state.muted, 'when clicking the mute button again, the video player is unmuted');
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('sound-control')[0].shadowRoot.querySelectorAll('progress-bar')[0].shadowRoot.querySelectorAll('#div__primary_progress')[0].style.width, '75%', 'when clicking the mute button again, the volume goes back to 75%');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('sound-control')[0].shadowRoot.querySelectorAll('custom-progress')[0].shadowRoot.querySelectorAll('#div__primary_progress')[0].style.width, '75%', 'when clicking the mute button again, the volume goes back to 75%');
         });
 
         test('testing sound control', () => {
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('sound-control')[0].shadowRoot.querySelectorAll('progress-bar')[0].shadowRoot.querySelectorAll('#div__primary_progress')[0].style.width, '75%', 'according to our given configuration, the volume is at 75%');
-          // VideoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].onchange({"target": {"value": 0.5}});
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('sound-control')[0].shadowRoot.querySelectorAll('custom-progress')[0].shadowRoot.querySelectorAll('#div__primary_progress')[0].style.width, '75%', 'according to our given configuration, the volume is at 75%');
+          // VideoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("custom-progress")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].onchange({"target": {"value": 0.5}});
           // assert.equal(videoPlayer.state.volume, 0.5, 'setting volume works!');
-          // assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].style.width, '50%', 'after our click event, the volume is at 50%');
+          // assert.equal(videoPlayer.shadowRoot.querySelectorAll("control-bar")[0].shadowRoot.querySelectorAll("sound-control")[0].shadowRoot.querySelectorAll("custom-progress")[0].shadowRoot.querySelectorAll("#div__primary_progress")[0].style.width, '50%', 'after our click event, the volume is at 50%');
         });
 
         test('testing fullscreen-control', () => {
@@ -302,7 +302,7 @@
         test('testing video progress bar', () => {
           // This does not work, even though we use the progress bar in the
           // same way as in the sound-control test.
-          // videoPlayer.shadowRoot.querySelectorAll("video-progress")[0].shadowRoot.querySelectorAll("progress-bar")[0].shadowRoot.querySelectorAll("#container__progress_bar")[0].click({"target": {"value": 0.5}});
+          // videoPlayer.shadowRoot.querySelectorAll("video-progress")[0].shadowRoot.querySelectorAll("custom-progress")[0].shadowRoot.querySelectorAll("#container__progress_bar")[0].click({"target": {"value": 0.5}});
           // flush(() => {
           //   setTimeout(() => {
           //     assert.equal(videoPlayer.state.position, 15, 'position value is at newly set value');
