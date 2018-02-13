@@ -3,7 +3,7 @@
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../styling/global--style-module.html">
 
-<dom-module id="progress-bar">
+<dom-module id="custom-progress">
 
   <template>
     <style type="text/css" include="global--style-module">
@@ -71,15 +71,15 @@
   </template>
 
   <script>
-    IMD.define('progress-bar', ['binding-helpers'], (BindingHelpersMixin) => {
+    IMD.define('custom-progress', ['binding-helpers'], (BindingHelpersMixin) => {
       const HOVER_BOX_STATES = {
         ABSOLUE: 'abs',
         RELATIVE: 'rel',
         HIDDEN: 'hiden',
       };
 
-      class ProgressBar extends BindingHelpersMixin(Polymer.Element) {
-        static get is() { return 'progress-bar'; }
+      class CustomProgress extends BindingHelpersMixin(Polymer.Element) {
+        static get is() { return 'custom-progress'; }
 
         static get properties() {
           return {
@@ -150,9 +150,9 @@
 
           // Get right end of time box and right end of progress bar in pixels
           let timeBoxRightEnd = e.pageX - progressContainer.getBoundingClientRect().left + timeBox.offsetWidth;
-          let progressBarRightEnd = progressContainer.offsetLeft + progressContainer.offsetWidth;
+          let CustomProgressRightEnd = progressContainer.offsetLeft + progressContainer.offsetWidth;
 
-          if(timeBoxRightEnd >= progressBarRightEnd) {
+          if(timeBoxRightEnd >= CustomProgressRightEnd) {
             // Remove class left if contained
             // add class right if not already contained
             timeBox.style.left = 'auto';
@@ -186,7 +186,7 @@
         }
       }
 
-      window.customElements.define(ProgressBar.is, ProgressBar);
+      window.customElements.define(CustomProgress.is, CustomProgress);
     });
   </script>
 
