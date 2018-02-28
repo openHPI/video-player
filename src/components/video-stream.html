@@ -217,22 +217,50 @@
             this._applyState(initialSetup);
           }, true);
 
+          // Destroy old hls client
+          if(this._hlsClient) {
+            this._hlsClient.destroy();
+          }
+
           // Change source depending on quality
           let url = props[quality];
           if(HlsHelper.hasNativeHlsSupport || quality !== QUALITY_MODES.HLS) {
-            // Destroy old hls client
-            if(this._hlsClient) {
-              this._hlsClient.destroy();
-            }
-
             // The src attribute can not be updated using data bindings
             // since the binding may be overwritten by hls.js
             this.$.video.setAttribute('src', url);
             this.$.video.load();
           } else {
             // Create and configure new hls client for existing video element
-            this._hlsClient = new Hls();
+            this._hlsClient = new Hls({
+              nudgeMaxRetry: 20,
+              fragLoadingMaxRetry: 20,
+              levelLoadingMaxRetry: 20,
+              manifestLoadingMaxRetry: 20,
+            });
             this._hlsClient.on(Hls.Events.LEVEL_LOADED, this._handleHlsLevelLoaded.bind(this));
+            this._hlsClient.on(Hls.Events.ERROR, (e, data) => {
+              // Reload manifest, if error occurred during loading
+              if(data.details === 'manifestLoadError') {
+                setTimeout(() => {
+                  if(this._hlsClient.url === url) {
+                    this._hlsClient.loadSource(url);
+                  }
+                }, 2000);
+                return;
+              }
+
+              // Try to recover from other errors
+              if (data.fatal) {
+                switch(data.type) {
+                  case Hls.ErrorTypes.NETWORK_ERROR:
+                    this._hlsClient.startLoad();
+                    break;
+                  case Hls.ErrorTypes.MEDIA_ERROR:
+                    this._hlsClient.recoverMediaError();
+                    break;
+                }
+              }
+            });
             this._hlsClient.loadSource(url);
             this._hlsClient.attachMedia(this.$.video);
           }
