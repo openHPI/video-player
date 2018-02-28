@@ -237,7 +237,9 @@
           throw new RangeError(`Value must be in [${PLAYBACK_RATES.toString()}].`);
         }
 
-        this.setState('playbackRate', playbackRate);
+        if(!this.state.live) {
+          this.setState('playbackRate', playbackRate);
+        }
       }
 
       /**
@@ -400,6 +402,11 @@
        * @returns {void}
        */
       setLive(live) {
+        // Set playback rate to 1 when live stream is played
+        if(live) {
+          this.setPlaybackRate(1);
+        }
+
         this.setState('live', live);
       }
 
