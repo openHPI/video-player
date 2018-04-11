@@ -96,13 +96,9 @@
         _selectionChanged(e) {
           if (e.target.selectedValue !== this._offValue) {
             this._stateManager.setCaptionLanguage(e.target.selectedValue);
-
-            if(!this.state.showInteractiveTranscript) {
-              this._stateManager.toggleInteractiveTranscript();
-            }
-          }
-          if (e.target.selectedValue === this._offValue && this.state.showInteractiveTranscript) {
-            this._stateManager.toggleInteractiveTranscript();
+            this._stateManager.setInteractiveTranscriptVisibility(true);
+          } else {
+            this._stateManager.setInteractiveTranscriptVisibility(false);
           }
 
           this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_TRANSCRIPT}, {

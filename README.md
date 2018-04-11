@@ -40,6 +40,9 @@ The component can then be used in any HTML site in the following way:
 
 The bundle is automatically created for each version tag and attached to the corresponding [GitHub release](https://github.com/openHPI/video-player/releases).
 
+## API
+See [api.md](docs/api.md)
+
 ## Configuration
 See [configuration.md](docs/configuration.md)
 

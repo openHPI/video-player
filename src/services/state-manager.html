@@ -10,11 +10,13 @@
        * Initializes a new StateManager instance.
        * @param {VideoPlayer} videoPlayer  The VideoPlayer, whose state should be controlled.
        * @param {string} statePath  The path of the state property on the VideoPlayer.
+       * @param {string} configurationPath  The path of the configuration property on the VideoPlayer.
        * @return {StateManager}  The new StateManager instance.
        */
-      constructor(videoPlayer, statePath) {
+      constructor(videoPlayer, statePath, configurationPath) {
         this.videoPlayer = videoPlayer;
         this.statePath = statePath;
+        this.configurationPath = configurationPath;
         this.stickyTrimEnd = true;
       }
 
@@ -24,6 +26,14 @@
        */
       get state() {
         return this.videoPlayer[this.statePath];
+      }
+
+      /**
+       * Gets the configuration object of the attatched VideoPlayer.
+       * @return {Object} The configuration object.
+       */
+      get configuration() {
+        return this.videoPlayer[this.configurationPath];
       }
 
       /**
@@ -292,13 +302,20 @@
 
 
       /**
+       * Sets the list of qualities, which are available for all streams.
+       * @param {Array} qualities Available qualities
+       */
+      setAvailableQualities(qualities) {
+        this.setState('availableQualities', qualities)
+      }
+      /**
        * Sets the quality.
        * @param {string} quality The new quality.
        * @returns {void}
        */
       setQuality(quality) {
-        if(!Object.values(QUALITY_MODES).includes(quality)) {
-          throw new RangeError(`Value must be in [${Object.values(QUALITY_MODES).toString()}].`);
+        if(!this.state.availableQualities.includes(quality)) {
+          throw new Error('No stream in specified quality available.');
         }
 
         this.setState('quality', quality);
@@ -331,19 +348,19 @@
       }
 
       /**
-       * Toggles the visibility of the interactive transcript.
-       * @returns {void}
+       * Sets the visibility of the interactive transcript.
+       * @param {void}
        */
-      toggleInteractiveTranscript() {
-        this.setState('showInteractiveTranscript', !this.state.showInteractiveTranscript);
+      setInteractiveTranscriptVisibility(isVisible) {
+        this.setState('showInteractiveTranscript', isVisible);
       }
 
       /**
-       * Toggles the visibility of the captions.
-       * @returns {void}
+       * Sets the visibility of the captions.
+       * @param {void}
        */
-      toggleCaptions() {
-        this.setState('showCaptions', !this.state.showCaptions);
+      setCaptionsVisibility(isVisible) {
+        this.setState('showCaptions', isVisible);
       }
 
       /**
@@ -353,6 +370,10 @@
        * @returns {void}
        */
       setCaptionLanguage(language) {
+        if(!this.configuration.captions || !this.configuration.captions.map(x => x.language).includes(language)) {
+          throw new Error('No captions in specified language available.');
+        }
+
         this.setState('captionLanguage', language);
       }
 
