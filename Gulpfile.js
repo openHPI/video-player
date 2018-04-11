@@ -4,12 +4,11 @@ const gulpif = require('gulp-if');
 const babel = require('gulp-babel');
 const clean = require('gulp-clean');
 const insert = require('gulp-insert');
+const htmlmin = require('gulp-htmlmin');
 const uglify = require('gulp-uglify-es').default;
 const concat = require('gulp-concat');
-const cssSlam = require('css-slam').gulp;
 const mergeStream = require('merge-stream');
 const runSequence = require('run-sequence');
-const htmlMinifier = require('gulp-html-minifier');
 const HtmlSplitter = require('polymer-build').HtmlSplitter;
 const PolymerProject = require('polymer-build').PolymerProject;
 const babelPresetES2015 = require('babel-preset-es2015');
@@ -28,10 +27,9 @@ const bundle = (compile, dest) => {
       .pipe(htmlSplitter.split())
       .pipe(gulpif(compile ? needsEs5Compilation : false, babel({presets: [babelPresetES2015NoModules]})))
       .pipe(gulpif(/\.js$/, uglify()))
-      .pipe(gulpif(/\.css$/, cssSlam()))
-      .pipe(gulpif(/\.html$/, htmlMinifier()))
       .pipe(htmlSplitter.rejoin())
       .pipe(project.bundler())
+      .pipe(gulpif(/\.html$/, htmlmin({collapseWhitespace: true, minifyCSS: true, removeComments: true})))
       .pipe(gulpif(/^video-player.html$/, insert.prepend(`<!-- video-player v${version} -->\r\n`)))
       .pipe(gulp.dest(dest));
 };
