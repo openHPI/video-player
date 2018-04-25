@@ -338,18 +338,6 @@
             // }, 200);
           // })
         });
-
-        test('testing poster image', (done) => {
-          assert.equal(videoPlayer.shadowRoot.querySelectorAll('video-stream')[0].shadowRoot.querySelectorAll('#container__poster_overlay')[0].style.display, '', 'Test whether the poster is shown by default');
-          // Click the play button
-          videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('playpause-control')[0].shadowRoot.querySelectorAll('#button__play_pause')[0].click();
-          flush(() => {
-            setTimeout(() => {
-              assert.equal(videoPlayer.shadowRoot.querySelectorAll('video-stream')[0].shadowRoot.querySelectorAll('#container__poster_overlay')[0].style.display, 'none', 'Test whether the poster is hidden when the video starts playing');
-              done();
-            }, 1000);
-          });
-        });
       });
     </script>
 
