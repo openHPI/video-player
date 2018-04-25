@@ -1,0 +1,24 @@
+{
+  "entrypoint": "video-player.html",
+  "sources": [
+    "src/**/*",
+    "bower.json"
+  ],
+  "extraDependencies": [
+      "node_modules/polymer-font-awesome/dist/font-face.html",
+      "node_modules/polymer-font-awesome/dist/fonts/*",
+      "bower_components/webcomponentsjs/webcomponents-lite.js",
+      "bower_components/webcomponentsjs/custom-elements-es5-adapter.js"
+  ],
+  "lint": {
+    "rules": [
+      "polymer-2"
+    ],
+    "ignoreWarnings": [
+      "unknown-superclass",
+      "set-unknown-attribute",
+      "databinding-calls-must-be-functions",
+      "databind-with-unknown-property"
+    ]
+  }
+}

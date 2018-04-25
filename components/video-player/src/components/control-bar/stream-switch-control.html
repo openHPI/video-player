@@ -1,0 +1,113 @@
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
+<link rel="import" href="../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
+<link rel="import" href="../../../../polymer/polymer-element.html">
+
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../base-components/select-control.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
+
+<dom-module id="stream-switch-control">
+  <template>
+    <style type="text/css" include="control-bar--style-module font-awesome">
+      :host {
+        /* Avoid flickering with changing icons */
+        /* It should be about twice the icon size */
+        min-width: 33px;
+      }
+    </style>
+
+    <template is="dom-if" if="[[!isInMobileMenu]]">
+      <div id="container__stream-switch_control" class="user_controls">
+        <a id="button__stream-switch" class="button" on-click="_handleClick" href="javascript:void(0)">
+          <i class$="fa [[iconClass]]"></i>
+        </a>
+      </div>
+    </template>
+    <template is="dom-if" if="[[isInMobileMenu]]">
+        <select-control
+        state="[[state]]"
+        items="[[_getItems()]]"
+        selected-value="[[_getSelectedValue()]]"
+        on-change="_selectionChanged"
+        icon-classes="fa fa-columns"
+        is-in-mobile-menu="true">
+      </select-control>
+    </template>
+
+  </template>
+
+  <script>
+    IMD.define('stream-switch-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
+      class streamSwitchControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'stream-switch-control'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            iconClass: String,
+            numberOfStreams: Number,
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
+            isInMobileMenu: {
+              type: Boolean,
+              value: false,
+            },
+          };
+        }
+
+        static get observers() {
+          return [
+            '_streamChanged(state.fallbackStreamActive)',
+          ];
+        }
+
+        _getItems() {
+          return [
+            {
+              text: '1',
+              value: 1,
+            },
+            {
+              value: this.numberOfStreams,
+              text: '' + this.numberOfStreams,
+            },
+          ];
+        }
+
+        _getSelectedValue() {
+          return this.state.fallbackStreamActive? 1 : this.numberOfStreams;
+        }
+
+        _streamChanged(fallbackStream) {
+          if (fallbackStream) {
+            this.iconClass = 'fa-columns';
+          } else {
+            this.iconClass = 'fa-clone';
+          }
+        }
+
+        _selectionChanged(e) {
+          if (this._getSelectedValue() !== e.target.selectedValue) {
+            this._stateManager.toggleFallbackStream();
+          }
+        }
+
+        _handleClick() {
+          this._analyticsManager.changeState('toggleFallbackStream', [], {verb: ANALYTICS_TOPICS.VIDEO_DUAL_STREAM_CHANGE});
+        }
+      }
+
+      window.customElements.define(streamSwitchControl.is, streamSwitchControl);
+    });
+  </script>
+
+</dom-module>

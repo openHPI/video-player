@@ -1,0 +1,41 @@
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
+<link rel="import" href="../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
+
+<link rel="import" href="../../styling/control-bar--style-module.html">
+
+<dom-module id="playlist-navigation-control">
+  <template>
+    <style type="text/css" include="control-bar--style-module font-awesome">
+      :host {
+        /* Avoid flickering with changing icons */
+        /* It should be about twice the icon size */
+        min-width: 48px;
+      }
+    </style>
+
+    <div id="container__playlist_navigation_control" class="user_controls">
+      <a id="button__navigate_to_video" class="button" href="{{videoUrl}}">
+        <i class$="fa fa-step-[[direction]]"></i>
+      </a>
+    </div>
+
+  </template>
+
+  <script>
+    IMD.define('playlist-navigation-control', ['binding-helpers'], (BindingHelpersMixin) => {
+      class PlaylistNavigationControl extends BindingHelpersMixin(Polymer.Element) {
+        static get is() { return 'playlist-navigation-control'; }
+
+        static get properties() {
+          return {
+            videoUrl: String,
+            direction: String,
+          };
+        }
+      }
+
+      window.customElements.define(PlaylistNavigationControl.is, PlaylistNavigationControl);
+    });
+  </script>
+
+</dom-module>

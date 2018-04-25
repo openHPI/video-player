@@ -1,0 +1,58 @@
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
+<link rel="import" href="../../../node_modules/polymer-font-awesome/dist/font-awesome.html">
+
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
+
+<dom-module id="full-screen-control">
+  <template>
+    <style type="text/css" include="control-bar--style-module font-awesome">
+      #container__fullscreen_control {
+        border-right: none;
+      }
+      :host {
+        /* Avoid flickering with changing icons */
+        /* It should be about twice the icon size */
+        min-width: 48px;
+      }
+    </style>
+
+    <div id="container__fullscreen_control" class="user_controls">
+      <a id="button__fullscreen" class="button" on-click="handleClick" href="javascript:void(0)">
+        <i class$="fa [[ifThenElse(state.fullscreen, 'fa-compress', 'fa-expand')]]"></i>
+      </a>
+    </div>
+    </template>
+
+  <script>
+    IMD.define('full-screen-control', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
+      class FullscreenControl extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'full-screen-control'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
+          };
+        }
+
+        handleClick() {
+          this._analyticsManager.changeState('toggleFullscreen', [], {verb: ANALYTICS_TOPICS.VIDEO_FULLSCREEN});
+        }
+      }
+
+      window.customElements.define(FullscreenControl.is, FullscreenControl);
+    });
+  </script>
+
+</dom-module>

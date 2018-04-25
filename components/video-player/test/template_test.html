@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>template test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../imd/imd.html">
+
+    <link rel="import" href="../video-player.html">
+  </head>
+  <body>
+
+    <test-fixture id="TemplateTestFixture">
+      <template>
+        <video-player></video-player>
+      </template>
+    </test-fixture> 
+
+    <script>
+      // Here imports can be defined like this:
+      // define('template-test', ['template-test-import'], (templateTestImport) => {
+      define('template-test', [], () => {
+
+        let template;
+
+        // This function gets run before every test function
+        setup(function() {
+          // We want to run tests with an empty local storage to avoid
+          // unintended side effects and to start with a clean slate in each
+          // test file.
+          if (localStorage) {
+            localStorage.clear();
+          } else if (window.localStorage) {
+            window.localStorage.clear();
+          }
+          template = fixture('TemplateTestFixture');
+        });
+
+        test('testing something', function() {
+          assert.equal('1', '1', 'one equals one');
+        });
+      });
+    </script>
+
+  </body>
+</html>

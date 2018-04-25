@@ -1,0 +1,66 @@
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
+
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../mixins/localization.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
+
+<dom-module id="videotime-display">
+
+  <template>
+    <style type="text/css" include="control-bar--style-module">
+      #container__videotime_display {
+        white-space: nowrap;
+      }
+
+      #span__videotime_separator {
+        margin: 0px 3px;
+      }
+    </style>
+
+    <div id="container__videotime_display" class="user_controls">
+      <span id="span__videotime_position">[[secondsToHms(_position, _duration)]]</span>
+      <template is="dom-if" if="[[!state.live]]">
+        <span id="span__videotime_separator">/</span>
+        <span id="span__videotime_duration">[[secondsToHms(_duration)]]</span>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    IMD.define('videotime-display', ['binding-helpers', 'ioc-requester', 'localization'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin) => {
+      class VideoTimeDisplay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
+        static get is() { return 'videotime-display'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _position: {
+              type: Number,
+              computed: '_getPosition(state.position, state.trimStart)',
+            },
+            _duration: {
+              type: Number,
+              computed: '_getDuration(state.trimStart, state.trimEnd)',
+            },
+          };
+        }
+
+        _getPosition(position, trimStart) {
+          return position - trimStart;
+        }
+
+        _getDuration(trimStart, trimEnd) {
+          return trimEnd - trimStart;
+        }
+      }
+
+      window.customElements.define(VideoTimeDisplay.is, VideoTimeDisplay);
+    });
+  </script>
+
+</dom-module>

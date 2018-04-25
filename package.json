@@ -1,0 +1,82 @@
+{
+  "name": "video-player",
+  "version": "1.3.3",
+  "description": "Universal tele-TASK and openHPI player",
+  "contributors": [
+    {
+      "name": "Henriette Dinger"
+    },
+    {
+      "name": "Jonathan Herdt"
+    },
+    {
+      "name": "Marcus Konrad"
+    },
+    {
+      "name": "Sebastian Kliem"
+    },
+    {
+      "name": "Sören Oldag"
+    }
+  ],
+  "keywords": [
+    "video",
+    "player",
+    "multi-stream",
+    "tele-TASK",
+    "openHPI"
+  ],
+  "main": "video-player.html",
+  "homepage": "https://github.com/openHPI/video-player#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openHPI/video-player.git"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/openHPI/video-player/issues"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.23.0",
+    "polymer-font-awesome": "^1.0.0",
+    "url-polyfill": "^1.0.8"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "eslint": "^4.2.0",
+    "eslint-plugin-html": "^3.1.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.0",
+    "gulp-clean": "^0.3.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-htmlmin": "^4.0.0",
+    "gulp-if": "^2.0.2",
+    "gulp-insert": "^0.5.0",
+    "gulp-uglify-es": "^0.1.3",
+    "htmlhint": "^0.9.13",
+    "merge-stream": "^1.0.1",
+    "node-glob": "^1.2.0",
+    "polymer-build": "^2.1.0",
+    "polymer-cli": "^1.3.0",
+    "replace-in-file": "^3.0.0",
+    "run-sequence": "^2.2.0"
+  },
+  "scripts": {
+    "test": "wct test/test-suite.html -l chrome -l firefox",
+    "test-firefox": "wct test/test-suite.html -l firefox",
+    "test-safari": "wct test/test-suite.html -l safari",
+    "test-chrome": "wct test/test-suite.html -l chrome",
+    "testdebugging": "wct -p test/test-suite.html",
+    "generate-docs": "node ./utils/generate-docs.js",
+    "lint": "eslint src --ext .html && htmlhint --config .htmlhintrc src/**/*.html video-player.html && polymer lint -i ./src/*",
+    "postinstall": "bower install",
+    "serve": "polymer serve",
+    "bundle": "gulp bundle",
+    "preversion": "npm test",
+    "version": "node ./utils/update-version.js && git add src/constants.html",
+    "postversion": "git push && git push --tags && ./utils/github-pages.sh openHPI video-player"
+  }
+}

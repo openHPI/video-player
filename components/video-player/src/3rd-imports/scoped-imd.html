@@ -1,0 +1,10 @@
+<!-- If host page uses another AMD registry, loading IMD would overwrite existing one.
+     Therefore, define function of IMD is renamed to IMD.define. And existing define function is preserved. -->
+<script>
+  this._backupDefine = this.define;
+</script>
+<link rel="import" href="../../../imd/imd.html">
+<script>
+  this.IMD = {define: this.define};
+  this.define = this._backupDefine;
+</script>

@@ -1,0 +1,24 @@
+{
+  "name": "video-player",
+  "description": "Universal tele-TASK and openHPI player",
+  "main": "video-player.html",
+  "authors": [
+    "Henriette Dinger",
+    "Jonathan Herdt",
+    "Marcus Konrad",
+    "Sebastian Kliem",
+    "Sören Oldag"
+  ],
+  "license": "LICENSE",
+  "homepage": "https://github.com/openHPI/video-player#readme",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0",
+    "imd": "PolymerLabs/IMD#^1.0.0",
+    "hls.js": "^0.8.7",
+    "iron-test-helpers": "^2.0.0"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+  }
+}

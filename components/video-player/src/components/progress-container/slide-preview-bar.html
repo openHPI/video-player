@@ -1,0 +1,93 @@
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
+
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../styling/progress-container--style-module.html">
+<link rel="import" href="slide-thumbnail.html">
+
+<dom-module id="slide-preview-bar">
+  <template>
+    <style type="text/css" include="progress-container--style-module">
+    #container__slide_preview_bar {
+      height: 10px;
+    }
+    </style>
+
+    <div id="container__slide_preview_bar" class="progress_indicator">
+        <template is="dom-repeat" items="[[_visibleSlides]]">
+          <slide-thumbnail state="[[state]]" slide="[[item]]"></slide-thumbnail>
+        </template>
+    </div>
+
+  </template>
+
+  <script>
+    IMD.define('slide-preview-bar', ['binding-helpers', 'ioc-requester', 'constants'], (BindingHelpersMixin, IocRequesterMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
+      class SlidePreviewBar extends BindingHelpersMixin(IocRequesterMixin(Polymer.Element)) {
+        static get is() { return 'slide-preview-bar'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            slides: Array,
+            activeSlide: {
+              type: Object,
+              value: () => ({}),
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _visibleSlides: {
+              type: Array,
+              computed: '_getVisibleSlides(slides, state.trimStart, state.trimEnd)',
+            },
+          };
+        }
+
+        static get observers() {
+          return [
+            '_checkSlideActivation(state.position)',
+            '_handleSlideChange(activeSlide)',
+          ];
+        }
+
+        _getVisibleSlides(slides, trimStart, trimEnd) {
+          let visibleSlides = [];
+          for(let i = 0; i < slides.length; i++) {
+            let slide = slides[i];
+            if((slide.startPosition >= trimStart || slides[i + 1] && slides[i + 1].startPosition > trimStart) && slide.startPosition <= trimEnd) {
+              visibleSlides.push(slide);
+            }
+          }
+
+          return visibleSlides;
+        }
+
+        _checkSlideActivation() {
+          if (this._analyticsManager) {
+            let currentActiveSlide = this._analyticsManager._getActiveSlide();
+            if (this.activeSlide !== currentActiveSlide) {
+              this.activeSlide = currentActiveSlide;
+            }
+          }
+        }
+
+        _handleSlideChange(slide) {
+          if (this._analyticsManager) {
+            this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_SLIDE_CHANGE}, {newCurrentSlide: slide});
+          }
+        }
+      }
+
+      window.customElements.define(SlidePreviewBar.is, SlidePreviewBar);
+    });
+  </script>
+
+</dom-module>

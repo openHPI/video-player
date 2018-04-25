@@ -1,0 +1,78 @@
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
+
+<link rel="import" href="../../constants.html">
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../styling/control-bar--style-module.html">
+<link rel="import" href="../base-components/select-control.html">
+
+<dom-module id="quality-control">
+
+  <template>
+    <style type="text/css" include="control-bar--style-module">
+      #container__quality_switch {
+        width: 100%;
+      }
+    </style>
+
+    <div id="container__quality_switch">
+      <select-control
+        state="[[state]]"
+        items="[[_items]]"
+        selected-value="[[state.quality]]"
+        on-change="_selectionChanged"
+        icon-classes="fa fa-desktop"
+        is-in-mobile-menu="[[isInMobileMenu]]">
+      </select-control>
+    </div>
+  </template>
+
+  <script>
+    IMD.define('quality-control', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
+      const {ANALYTICS_TOPICS} = constants;
+
+      class QualityControl extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
+        static get is() { return 'quality-control'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            qualities: Array,
+            isInMobileMenu: {
+              type: Boolean,
+              value: false,
+            },
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+            _analyticsManager: {
+              type: Object,
+              inject: 'AnalyticsManager',
+            },
+            _items: {
+              type: Array,
+              computed: '_getItems(qualities, localize)',
+            },
+          };
+        }
+
+        _getItems(qualities) {
+          if(this.localize) {
+            return qualities.map(quality => ({
+              text: this.localize(`quality-control--quality-${quality}`),
+              value: quality,
+            }));
+          }
+        }
+
+        _selectionChanged(e) {
+          this._analyticsManager.changeState('setQuality', [e.target.selectedValue], {verb: ANALYTICS_TOPICS.VIDEO_CHANGE_QUALITY});
+        }
+      }
+
+      window.customElements.define(QualityControl.is, QualityControl);
+    });
+  </script>
+
+</dom-module>
