@@ -191,7 +191,7 @@
         has-chapters="[[hasItems(configuration.chapters)]]"
         has-fallback-stream="[[_hasFallbackStream]]"
         caption-languages="[[_captionLanguages]]"
-        available-qualities="[[_availableQualities]]"
+        available-qualities="[[state.availableQualities]]"
         previous-video="[[_previousVideo]]"
         next-video="[[_nextVideo]]"
         number-of-streams="[[configuration.streams.length]]"
@@ -274,10 +274,6 @@
               type: Array,
               computed: '_getCaptionLanguages(configuration.captions)',
             },
-            _availableQualities: {
-              type: Array,
-              computed: '_getAvailableQualities(configuration.streams, state.fallbackStreamActive, configuration.fallbackStream)',
-            },
             _previousVideo: {
               type: Object,
               computed: '_getPreviousVideo(configuration.playlist.currentPosition, configuration.playlist.entries)',
@@ -307,7 +303,8 @@
           return [
             '_configurationChanged(configuration, _configurationValidator)',
             '_isReadyChanged(isReady)',
-            '_ensureValidQuality(_availableQualities, state.quality)',
+            '_setAvailableQualities(configuration.streams, state.fallbackStreamActive, configuration.fallbackStream, _stateManager)',
+            '_ensureValidQuality(state.availableQualities, state.quality)',
             '_foregroundColorChanged(configuration.foregroundColor)',
             '_accentColorChanged(configuration.accentColor)',
             '_fontColorOnAccentColorChanged(configuration.fontColorOnAccentColor)',
@@ -327,10 +324,40 @@
           ];
         }
 
+        /** Public Interface */
+
+        play() { this._stateManager.play(); }
+        pause() { this._stateManager.pause(); }
+        seek(seconds) { this._stateManager.setPosition(seconds); }
+        setPlaybackRate(playbackRate) { this._stateManager.setPlaybackRate(playbackRate); }
+        setQuality(quality) { this._stateManager.setQuality(quality); }
+        setVolume(volume) { this._stateManager.setVolume(volume); }
+        mute() { this._stateManager.mute(); }
+        unmute() { this._stateManager.unmute(); }
+        showCaptions(language) {
+          this._stateManager.setCaptionLanguage(language);
+          this._stateManager.setCaptionsVisibility(true);
+        }
+        hideCaptions() { this._stateManager.setCaptionsVisibility(false); }
+        showInteractiveTranscript(language) {
+          this._stateManager.setCaptionLanguage(language);
+          this._stateManager.setInteractiveTranscriptVisibility(true);
+        }
+        hideInteractiveTranscript() { this._stateManager.setInteractiveTranscriptVisibility(false); }
+        enterFullscreen() { this._stateManager.setFullscreen(true); }
+        exitFullscreen() { this._stateManager.setFullscreen(false); }
+        reloadConfiguration() {
+          // Clone configuration to reevaluate all observers
+          this.configuration = Object.assign({}, this.configuration);
+        }
+
+
+        /** Internal Methods */
+
         bindServices(iocKernel) {
           super.bindServices(iocKernel);
 
-          iocKernel.bind('StateManager').toFunction(() => new StateManager(this, 'state')).inSingletonScope();
+          iocKernel.bind('StateManager').toFunction(() => new StateManager(this, 'state', 'configuration')).inSingletonScope();
           iocKernel.bind('UserPreferencesManager').toFunction(() => new UserPreferencesManager()).inSingletonScope();
           iocKernel.bind('ConfigurationValidator').toFunction(() => new ConfigurationValidator(configurationSchema)).inSingletonScope();
           iocKernel.bind('SynchronizationManager').toFunction(() => new SynchronizationManager(iocKernel.get('StateManager'))).inSingletonScope();
@@ -403,21 +430,20 @@
           }
         }
 
-        _getAvailableQualities(streams, fallbackStreamActive, fallbackStream) {
-          if (streams) {
+        _setAvailableQualities(streams, fallbackStreamActive, fallbackStream) {
+          if (this._stateManager && streams) {
             let supportedQualities = Object.values(QUALITY_MODES);
             if(!HlsHelper.hasHlsSupport) {
               supportedQualities = supportedQualities.filter(quality => quality !== QUALITY_MODES.HLS);
             }
 
+            let qualities;
             if(fallbackStreamActive) {
-              return supportedQualities.filter(quality => Object.keys(fallbackStream)
-                                                                .includes(quality));
+              qualities = supportedQualities.filter(quality => Object.keys(fallbackStream).includes(quality));
             } else {
-              return supportedQualities
-                       .filter(quality => streams.every(stream => Object.keys(stream)
-                                                                        .includes(quality)));
+              qualities = supportedQualities.filter(quality => streams.every(stream => Object.keys(stream).includes(quality)));
             }
+            this._stateManager.setAvailableQualities(qualities);
           }
         }
 
@@ -458,11 +484,6 @@
           }
 
           return false;
-        }
-
-        reloadConfiguration() {
-          // Clone configuration to reevaluate all observers
-          this.configuration = Object.assign({}, this.configuration);
         }
 
         _configurationChanged(configuration) {
