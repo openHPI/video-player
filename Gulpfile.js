@@ -14,7 +14,7 @@ const PolymerProject = require('polymer-build').PolymerProject;
 const babelPresetES2015 = require('babel-preset-es2015');
 const babelPresetES2015NoModules = babelPresetES2015.buildPreset({}, {modules: false});
 
-const ES5_FILE_PATTERNS = ['bower_components/hls.js/dist/**/*.js'];
+const ES5_FILE_PATTERNS = ['bower_components/hls.js/dist/**/*.js', 'bower_components/webcomponentsjs/**/*.js'];
 const ES5_FILES = [].concat(...ES5_FILE_PATTERNS.map(pattern => glob.sync(pattern)));
 
 const needsEs5Compilation = (file) => !ES5_FILES.includes(file.relative) && file.extname === '.js';
