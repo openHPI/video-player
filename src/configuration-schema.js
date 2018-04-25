@@ -131,7 +131,7 @@ const configurationSchema = {
   },
   theme: {
     type: 'string',
-    options: ['dark-orange', 'dark-yellow', 'dark-blue', 'light-green', 'dark-red'],
+    options: ['dark-orange', 'dark-yellow', 'dark-blue', 'light-green', 'dark-red', 'light-red'],
     default: 'dark-orange',
     description: 'Predefined color theme (can be adjusted by settings the colors explicitly).',
   },
