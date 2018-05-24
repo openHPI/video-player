@@ -68,7 +68,29 @@
     <div class="container">
       <video-player
      configuration='{
-        "streams": [
+        "quizQuestions" : [
+          {
+            "id" : 1,
+            "text" : "Question text 1",
+            "type" : "single-choice",
+            "position" : 3,
+            "answers" : [
+              {
+                "id" : 1,
+                "text" : "Answer text 1"
+              },
+              {
+                "id" : 2,
+                "text" : "Answer text 2"
+              },
+              {
+                "id" : 3,
+                "text" : "Answer text 3"
+              }
+            ]
+          }
+        ],
+        "streams" : [
           {
             "hls": "https://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_14/hls/video.m3u8",
             "sd": "https://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_14/sd/video.mp4",
