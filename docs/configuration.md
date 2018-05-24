@@ -116,6 +116,40 @@ The player configuration is provided as JSON object:
      }
    ]
 ```
+* **quizQuestions** (array): List of questions that are shown to the user during playback.
+   * **id** (number): The id for this question, used to call the answer validation function with. (*Required*)
+   * **text** (string): The question text that is shown to the user. (*Required*)
+   * **type** (string): The questions type. Should be `single-choice`, `multiple-choice` or `freetext`. (*Required*)
+   * **position** (number): The point in the video where the question should be shown, in seconds. (*Required*)
+   * **answers** (array): A list of possible answers for `single-choice` or `multiple-choice` questions.
+       * **id** (number): The id for this answer, used to call the answer validation function with. (*Required*)
+       * **text** (string): The text of this answer. (*Required*)
+
+   *Example*
+```JSON
+   [
+     {
+       "id": 1,
+       "text": "What is HTML?",
+       "type": "single-choice",
+       "position": 3600,
+       "answers": [
+         {
+           "id": 1,
+           "text": "A standard internet protocol for information exchange."
+         },
+         {
+           "id": 2,
+           "text": "A markup language for creating web sites."
+         },
+         {
+           "id": 3,
+           "text": "A program used to download files to your computer"
+         }
+       ]
+     }
+   ]
+```
 * **relatedVideos** (array): List of related videos that are shown after the video has ended.
    * **title** (string): Title of the video. (*Required*)
    * **url** (string): URL of the video page. (*Required*)

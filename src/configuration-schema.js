@@ -243,6 +243,70 @@ export const configurationSchema = {
       },
     ],
   },
+  quizQuestions: {
+    type: 'array',
+    description: 'List of questions that are shown to the user during playback.',
+    schema: {
+      id: {
+        required: true,
+        type: 'number',
+        description: 'The id for this question, used to call the answer validation function with.',
+      },
+      text: {
+        required: true,
+        type: 'string',
+        description: 'The question text that is shown to the user.',
+      },
+      type: {
+        required: true,
+        type: 'string',
+        description: 'The questions type. Should be `single-choice`, `multiple-choice` or `freetext`.',
+      },
+      position: {
+        required: true,
+        type: 'number',
+        description: 'The point in the video where the question should be shown, in seconds.',
+      },
+      answers: {
+        type: 'array',
+        description: 'A list of possible answers for `single-choice` or `multiple-choice` questions.',
+        schema: {
+          id: {
+            required: true,
+            type: 'number',
+            description: 'The id for this answer, used to call the answer validation function with.',
+          },
+          text: {
+            required: true,
+            type: 'string',
+            description: 'The text of this answer.',
+          },
+        },
+      },
+    },
+    example: [
+      {
+        id: 1,
+        text: 'What is HTML?',
+        type: 'single-choice',
+        position: 3600,
+        answers: [
+          {
+            id: 1,
+            text: 'A standard internet protocol for information exchange.',
+          },
+          {
+            id: 2,
+            text: 'A markup language for creating web sites.',
+          },
+          {
+            id: 3,
+            text: 'A program used to download files to your computer',
+          },
+        ],
+      },
+    ],
+  },
   relatedVideos: {
     type: 'array',
     description: 'List of related videos that are shown after the video has ended.',

@@ -1,0 +1,121 @@
+<!-- Paths might need to be adapted depending on the file location of the component -->
+<link rel="import" href="../../../imd/imd.html">
+
+<link rel="import" href="../../mixins/binding-helpers.html">
+<link rel="import" href="../../mixins/ioc-requester.html">
+<link rel="import" href="../../mixins/localization.html">
+
+<dom-module id="quiz-overlay">
+  <template>
+    <style type="text/css">
+      /* Styling of component goes here */
+    </style>
+
+    <div id="container__quiz-overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
+      <div id="container__quiz-question-text">
+        <span id="text__quiz-question">[[_currentQuestion.title]]</span>
+      </div>
+
+      <template is="dom-if" if=[[_isTextQuestion(_currentQuestion)]]">
+        <input type="text"></input>
+      </template>
+
+      <template is="dom-repeat" items="[[_currentQuestion.answers]]">
+        <input type="[[ifThenElse(_isSingleChoiceQuestion(_currentQuestion), 'radio', 'checkbox']]"></input>
+        <span>[[item.text]]</span>
+      </template>
+
+      <a id="button__hide_question" class="button" on-click="_hide_question" href="#">[[localize('general--cancel')]]</a>
+      <a id="button__submit_question" class="button" on-click="_submit_question" href="#">[[localize('general--ok')]]</a>
+    </div>
+  </template>
+
+  <script>
+    define('quiz-overlay', ['binding-helpers', 'ioc-requester', 'localization'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixing) => {
+      class NewComponent extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
+        static get is() { return 'quiz-overlay'; }
+
+        static get properties() {
+          return {
+            state: Object,
+            questions: Array,
+
+            _validationCallback: {
+              type: Object,
+              value: null,
+            },
+
+            _currentQuestion: {
+              type: Object,
+              value: null,
+            },
+
+            _stateManager: {
+              type: Object,
+              inject: 'StateManager',
+            },
+
+            _isEnabled: {
+              type: Boolean,
+              value: true,
+            },
+
+            _isVisible: {
+              type: Boolean,
+              computed: '_getIsVisible(state.playState, _currentQuestion)',
+            },
+          };
+        }
+
+        static get observers() {
+          return [
+            '_playStateChanged(state.playState)',
+            '_positionChanged(state.position, state.duration)',
+          ];
+        }
+
+        setQuizValidationCallback(validationCallback) {
+          _validationCallback = validationCallback;
+        }
+
+        _isSingleChoiceQuestion(question) {
+          return question.type == 'single_choice';
+        }
+
+        _isTextQuestion(question) {
+          return question.type == 'freetext';
+        }
+
+        _getIsVisible(playState, hasCurrentQuestion) {
+          return playState === PLAY_STATES.PAUSED && hasCurrentQuestion;
+        }
+
+        _playStateChanged(playState) {
+          this._currentQuestion = null;
+        }
+
+        _positionChanged(position, duration) {
+          let question = this._getQuestionForPositionOrNull(position);
+
+          if(question && this._isEnabled) {
+            this._stateManager.pause();
+            this._question = question;
+          }
+        }
+
+        _getQuestionForPositionOrNull(position) {
+          let index = 0;
+          for(index = 0; index < this.questions.length; ++index) {
+            if(this.questions[index].position == position) {
+              return this.questions[index];
+            }
+          }
+          return null;
+        }
+      }
+
+      window.customElements.define(QuizOverlay.is, QuizOverlay);
+    });
+  </script>
+
+</dom-module>
