@@ -1,14 +1,14 @@
-<!-- Paths might need to be adapted depending on the file location of the component -->
-<link rel="import" href="../../../imd/imd.html">
+<link rel="import" href="../../3rd-imports/scoped-imd.html">
 
 <link rel="import" href="../../mixins/binding-helpers.html">
 <link rel="import" href="../../mixins/ioc-requester.html">
 <link rel="import" href="../../mixins/localization.html">
 
+<link rel="import" href="../../styling/overlay--style-module.html">
+
 <dom-module id="quiz-overlay">
   <template>
-    <style type="text/css">
-      /* Styling of component goes here */
+    <style type="text/css" include="overlay--style-module">
     </style>
 
     <div id="container__quiz-overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
@@ -25,14 +25,16 @@
         <span>[[item.text]]</span>
       </template>
 
-      <a id="button__hide_question" class="button" on-click="_hide_question" href="#">[[localize('general--cancel')]]</a>
-      <a id="button__submit_question" class="button" on-click="_submit_question" href="#">[[localize('general--ok')]]</a>
+      <a id="button__hide_question" class="button" on-click="_handleCancelClick" href="#">[[localize('general--cancel')]]</a>
+      <a id="button__submit_question" class="button" on-click="_submitCurrentQuestion" href="#">[[localize('general--ok')]]</a>
     </div>
   </template>
 
   <script>
-    define('quiz-overlay', ['binding-helpers', 'ioc-requester', 'localization'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixing) => {
-      class NewComponent extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
+    IMD.define('quiz-overlay', ['binding-helpers', 'ioc-requester', 'localization', 'constants'], (BindingHelpersMixin, IocRequesterMixin, LocalizationMixin, constants) => {
+      const {PLAY_STATES} = constants;
+
+      class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
         static get is() { return 'quiz-overlay'; }
 
         static get properties() {
@@ -40,12 +42,22 @@
             state: Object,
             questions: Array,
 
-            _validationCallback: {
+            _currentQuestions: {  // questions that should be shown in the current playback second (could be more than one)
+              type: Array,
+              value: [],
+            },
+
+            _currentQuestion: {  // the first question that has to be shown in the current second. Used for displaying the overlay. Should probably be computed, that didn't work though
               type: Object,
               value: null,
             },
 
-            _currentQuestion: {
+            _lastProcessedPosition: {  // The last playback position second that questions where added to currentQuestions for
+              type: Number,
+              value: 0,
+            },
+
+            _validationCallback: {
               type: Object,
               value: null,
             },
@@ -62,7 +74,7 @@
 
             _isVisible: {
               type: Boolean,
-              computed: '_getIsVisible(state.playState, _currentQuestion)',
+              computed: '_getIsVisible(_isEnabled, _currentQuestion)',
             },
           };
         }
@@ -78,39 +90,74 @@
           _validationCallback = validationCallback;
         }
 
+
         _isSingleChoiceQuestion(question) {
-          return question.type == 'single_choice';
+          return question != null && question.type == 'single_choice';
         }
 
         _isTextQuestion(question) {
-          return question.type == 'freetext';
+          return question != null && question.type == 'freetext';
         }
 
-        _getIsVisible(playState, hasCurrentQuestion) {
-          return playState === PLAY_STATES.PAUSED && hasCurrentQuestion;
+        _getIsVisible(enabled, currentQuestion) {
+          return enabled && currentQuestion != null;
         }
 
         _playStateChanged(playState) {
-          this._currentQuestion = null;
+          if(playState === PLAY_STATES.PAUSED || playState === PLAY_STATES.WAITING)
+            return;
+
+          this._currentQuestions = [];
+          this._setCurrentQuestion();
         }
 
         _positionChanged(position, duration) {
-          let question = this._getQuestionForPositionOrNull(position);
+          let flooredPosition = Math.floor(position);
 
-          if(question && this._isEnabled) {
+          if(flooredPosition <= this._lastProcessedPosition) {
+            return;
+          }
+
+          this._addCurrentQuestionsForPosition(flooredPosition);
+          this._lastProcessedPosition = flooredPosition;
+
+          if(this._isVisible) {
             this._stateManager.pause();
-            this._question = question;
           }
         }
 
-        _getQuestionForPositionOrNull(position) {
+        _setCurrentQuestion() {
+          if(this._currentQuestions.length > 0) {
+            this._currentQuestion = this._currentQuestions[0];
+          }
+          else {
+            this._currentQuestion = null;
+          }
+        };
+
+        _addCurrentQuestionsForPosition(position) {
           let index = 0;
           for(index = 0; index < this.questions.length; ++index) {
             if(this.questions[index].position == position) {
-              return this.questions[index];
+              this.push('_currentQuestions', this.questions[index]);
             }
           }
-          return null;
+
+          this._setCurrentQuestion();
+        }
+
+        _dismissCurrentQuestion() {
+          this.shift('_currentQuestions');
+          this._setCurrentQuestion();
+
+          if(this._currentQuestion == null) {
+            this._stateManager.play();
+          }
+        }
+
+        _handleCancelClick(e) {
+          this._dismissCurrentQuestion();
+          e.preventDefault();
         }
       }
 
