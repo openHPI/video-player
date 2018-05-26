@@ -9,24 +9,62 @@
 <dom-module id="quiz-overlay">
   <template>
     <style type="text/css" include="overlay--style-module">
+      #container__quiz-overlay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background-color: rgba(0, 0, 0, 0.85);
+        color: white;
+      }
+
+      .container__centered-row input {
+        margin: 0 !important;
+      }
+
+      .text__quiz-answer {
+        padding-left: 10px;
+      }
+
+      .container__centered-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+      }
+
+      .button__quiz {
+        margin-top: 10px;
+        text-decoration: none;
+        color: white;
+      }
+
     </style>
 
     <div id="container__quiz-overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
-      <div id="container__quiz-question-text">
-        <span id="text__quiz-question">[[_currentQuestion.title]]</span>
-      </div>
+      <h3 id="text__quiz-question">[[_currentQuestion.text]]</h3>
 
-      <template is="dom-if" if=[[_isTextQuestion(_currentQuestion)]]">
-        <input type="text"></input>
+      <template is="dom-if" if="[[_isTextQuestion(_currentQuestion)]]">
+        <input id="input__freetext-answer" type="text"></input>
       </template>
 
       <template is="dom-repeat" items="[[_currentQuestion.answers]]">
-        <input type="[[ifThenElse(_isSingleChoiceQuestion(_currentQuestion), 'radio', 'checkbox']]"></input>
-        <span>[[item.text]]</span>
+        <div class="container__centered-row">
+          <input name="answer" value$="[[item.id]]" type$="[[ifThenElse(_isSingleChoiceQuestion, 'radio', 'checkbox')]]"></input>
+          <span class="text__quiz-answer">[[item.text]]</span>
+        </div>
       </template>
 
-      <a id="button__hide_question" class="button" on-click="_handleCancelClick" href="#">[[localize('general--cancel')]]</a>
-      <a id="button__submit_question" class="button" on-click="_submitCurrentQuestion" href="#">[[localize('general--ok')]]</a>
+      <div class="container__centered-row">
+        <template is="dom-if" if="[[_correctAnswersShown]]">
+          <a class="button button__quiz" on-click="_handleCancelClick" href="#">[[localize('general--continue')]]</a>
+        </template>
+
+        <template is="dom-if" if="[[!_correctAnswersShown]]">
+          <a class="button button__quiz" on-click="_handleCancelClick" href="#">[[localize('general--cancel')]]</a>
+          <a class="button button__quiz" on-click="_handleSubmitClick" href="#">[[localize('quiz--submit')]]</a>
+        </template>
+      </div>
     </div>
   </template>
 
@@ -62,6 +100,11 @@
               value: null,
             },
 
+            _correctAnswersShown: {
+              type: Boolean,
+              value: false,
+            },
+
             _stateManager: {
               type: Object,
               inject: 'StateManager',
@@ -75,6 +118,11 @@
             _isVisible: {
               type: Boolean,
               computed: '_getIsVisible(_isEnabled, _currentQuestion)',
+            },
+
+            _isSingleChoiceQuestion: {
+              type: Boolean,
+              computed: '_getIsSingleChoiceQuestion(_currentQuestion)',
             },
           };
         }
@@ -91,12 +139,12 @@
         }
 
 
-        _isSingleChoiceQuestion(question) {
-          return question != null && question.type == 'single_choice';
-        }
-
         _isTextQuestion(question) {
           return question != null && question.type == 'freetext';
+        }
+
+        _getIsSingleChoiceQuestion(question) {
+          return question != null && question.type == 'single-choice';
         }
 
         _getIsVisible(enabled, currentQuestion) {
@@ -147,6 +195,7 @@
         }
 
         _dismissCurrentQuestion() {
+          this._correctAnswersShown = false;
           this.shift('_currentQuestions');
           this._setCurrentQuestion();
 
@@ -155,8 +204,18 @@
           }
         }
 
+        _submitCurrentQuestion() {
+          // todo
+          this._correctAnswersShown = true;
+        }
+
         _handleCancelClick(e) {
           this._dismissCurrentQuestion();
+          e.preventDefault();
+        }
+
+        _handleSubmitClick(e) {
+          this._submitCurrentQuestion();
           e.preventDefault();
         }
       }
