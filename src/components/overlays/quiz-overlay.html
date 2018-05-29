@@ -45,13 +45,24 @@
       <h3 id="text__quiz-question">[[_currentQuestion.text]]</h3>
 
       <template is="dom-if" if="[[_isTextQuestion(_currentQuestion)]]">
-        <input id="input__freetext-answer" type="text"></input>
+        <div class$="[[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, null)]]">
+          <input id="input__freetext-answer" type="text"></input>
+        </div>
+
+        <template is="dom-if" if="[[_correctAnswersShown]]">
+          <h5>[[localize('quiz--correct-answers')]]</h5>
+          <template is="dom-repeat" items="[[_correctAnswers]]">
+            <span class="">[[item.text]]</span>
+          </template>
+        </template>
       </template>
 
       <template is="dom-repeat" items="[[_currentQuestion.answers]]">
-        <div class="container__centered-row">
-          <input name="answer" value$="[[item.id]]" type$="[[ifThenElse(_isSingleChoiceQuestion, 'radio', 'checkbox')]]"></input>
-          <span class="text__quiz-answer">[[item.text]]</span>
+        <div class$="[[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, item)]]">
+          <div class="container__centered-row">
+            <input name="answer" class="select__quiz-answer" value$="[[item.id]]" id="select__quiz-answer-[[item.id]]" type$="[[ifThenElse(_isSingleChoiceQuestion, 'radio', 'checkbox')]]"></input>
+            <span class="text__quiz-answer">[[item.text]]</span>
+          </div>
         </div>
       </template>
 
@@ -100,10 +111,17 @@
               value: null,
             },
 
-            _correctAnswersShown: {
+            _correctAnswersShown: {  // could probably be computed from _correctAnswers too
               type: Boolean,
               value: false,
             },
+
+            _correctAnswers: {
+              type: Array,
+              value: [],
+            },
+
+            _isAnswerCorrect: Boolean,
 
             _stateManager: {
               type: Object,
@@ -181,7 +199,7 @@
           else {
             this._currentQuestion = null;
           }
-        };
+        }
 
         _addCurrentQuestionsForPosition(position) {
           let index = 0;
@@ -204,9 +222,75 @@
           }
         }
 
+        _getValidationClass(currentQuestion, correctAnswersShown, correctAnswers, isAnswerCorrect, answer) {
+          var correct = false;
+          var selected = false;
+
+          if(!correctAnswersShown)
+            return '';
+
+          if(currentQuestion.type == 'freetext') {
+            correct = isAnswerCorrect;
+          }
+          else {
+            selected = document.getElementById('select__quiz-answer-' + answer.id).checked;
+
+            for(var index = 0; index < correctAnswers.length(); ++index) {
+              if(correctAnswers[index].id == answer.id) {
+                correct = true;
+              }
+            }
+          }
+
+          if(correct)
+            return 'quiz__highlighing-correct';
+
+          if(!correct && selected)
+            return 'quiz__highlighting-wrong quiz__highlighting-strikethrough';
+
+          return 'quiz__highlighting-wrong';
+        }
+
         _submitCurrentQuestion() {
-          // todo
+          if(this._validationCallback == null) {
+            throw "No answer validation callback given";
+          }
+
+          if(this._isTextQuestion()) {
+            let retval = this._validationCallback({
+              question: this._currentQuestion,
+              answer: document.getElementById("input__freetext-answer").value,
+            })
+            this._correctAnswers = retval.correctAnswers;
+            this._isAnswerCorrect = retval.isAnswerCorrect;
+
+          } else { // single or multiple choice question
+            let retval = this._validationCallback({
+              question: this._currentQuestion,
+              answers: this._getSelectedAnswers(),
+            })
+            this._correctAnswers = retval.correctAnswers;
+            this._isAnswerCorrect = retval.isAnswerCorrect;
+          }
+
           this._correctAnswersShown = true;
+        }
+
+        _getSelectedAnswers() {
+          ids = []
+          result = [];
+
+          let inputs = document.getElementsByClassName("select__quiz-answer");
+          for(let index = 1; index < inputs.length(); ++index) {
+            if(inputs[index].checked) {
+              let answerid = inputs[index].id.split("-").slice(-1)[0];
+              ids.push(answerid);
+            }
+          }
+
+          return this._currentQuestion.answers.filter(function(answer) {
+            return ids.includes(answer.id);
+          });
         }
 
         _handleCancelClick(e) {
