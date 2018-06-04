@@ -58,8 +58,7 @@ The player configuration is provided as JSON object:
 * **fontColorOnAccentColor** (string): HEX code of the font color on the `accentColor`. Take care that the contrast ratio is high enough.
 * **backgroundColor** (string): HEX code of the background for the `foregroundColor`.
 * **secondaryBackgroundColor** (string): HEX code of another background color used for example for displaying the buffer. Take care that the `foregroundColor` has a high contrast to both background colors.
-* **theme** (string):`<["dark-orange","dark-yellow","dark-blue","light-green", "dark-red", "light-red"]>` Predefined color theme (can be adjusted by settings the colors explicitly). (default: `"dark-orange"`)
-* **loadFontAwesome** (boolean): [FontAwesome](http://fontawesome.io) is used for the icons of the player. If your site already loads FontAwesome, this can be set to false to save bandwidth. (default: `true`)
+* **theme** (string):`<["dark-orange","dark-yellow","dark-blue","light-green","dark-red","light-red"]>` Predefined color theme (can be adjusted by settings the colors explicitly). (default: `"dark-orange"`)
 * **videoPreload** (boolean): Turns on/off preloading of the videos when the page loads. (default: `true`)
 * **trimVideo** (object): Restricts the playback on a specific segment of the video.
    * **start** (number): The start position of the segment. (default: `0`)

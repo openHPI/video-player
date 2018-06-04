@@ -6,12 +6,12 @@
 
     <title>video-player test</title>
 
-    <link rel="import" href="../../polymer/polymer-element.html">
-    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
+    <script type="module" src="../../@polymer/polymer/polymer-element.js"></script>
+    <script type="module" src="../../@polymer/iron-test-helpers/iron-test-helpers.js"></script>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
 
-    <link rel="import" href="../src/video-player.html">
+    <script type="module" src="../video-player.js"></script>
   </head>
   <body>
 
@@ -100,7 +100,7 @@
       }'></video-player>
       </template>
     </test-fixture>
-    <script>
+    <script type="module">
       // We use the ES6 method `Array.from` to convert classlists to arrays
       // so we can use chaijs' include functionality.
       // Behold: This file is full of `setTimeout`s with awful magic numbers
@@ -339,7 +339,7 @@
           // })
         });
       });
-    </script>
+      </script>
 
   </body>
 </html>

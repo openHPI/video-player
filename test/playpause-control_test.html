@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
     <title>video-player test</title>
-    
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
 
-    <link rel="import" href="../src/components/control-bar/playpause-control.html">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+
+    <script type="module" src="../src/components/control-bar/playpause-control.js"></script>
   </head>
   <body>
 
@@ -19,9 +19,8 @@
       </template>
     </test-fixture>
 
-    <script>
-      suite('playpause-control-test', function (){
-
+    <script type="module">
+      suite('playpause-control-test', () => {
         let playpauseControl;
         let mockStateManager = {
           togglePlayPause: function() {

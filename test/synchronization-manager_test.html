@@ -6,10 +6,10 @@
 
     <title>synchronization-manager test</title>
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
 
-    <link rel="import" href="../src/services/synchronization-manager.html">
+    <script type="module" src="../src/services/synchronization-manager.js"></script>
   </head>
   <body>
 
@@ -18,8 +18,8 @@
     <video id="video2" src="/components/video-player/test/BigBuckBunny30s.mp4">
     </video>
 
-    <script>
-      define('synchronization-manager-test', ['synchronization-manager'], (SynchronizationManager) => {
+    <script type="module">
+      suite('synchronization-manager-test', () => {
         let synchronizationManager = new SynchronizationManager(
           // Mocking a state manager with basic functionality
           // needed for testing synchronization manager.

@@ -1,45 +1,44 @@
-## Analytics
+current## Analytics
 
 Events like play/pause, changing the speed or the subtitle language are tracked. The `AnalyticsManager` handles collecting all necessary data and firing JavaScript events containing the tracked data. It offers two methods for firing events which are called in the component where the action occurs. For the components the `AnalyticsManager` is available through dependency injection (defined in `video-player` component). It holds a reference to the top level `VideoPlayer` component and the `StateManager`. Thus, it is also possible to track state changes during an action and include before/after states in the event.
 
 **Events** consist of
-* a *verb* identifying the kind of action that happened. Verbs are set as constants `ANALYTICS_TOPICS.*` in `constants.html` and are specified as follows:
+* a *verb* identifying the kind of action that happened. Verbs are set as constants `ANALYTICS_TOPICS.*` in `constants.js` and are specified as follows:
     ```JS
     ANALYTICS_TOPICS = {
         VERB_NAME = 'verb_name',
     };
     ```
     `VERB_NAME` is the constant that is used in all components. `verb_name` is the actual name of the verb in the fired event.
-* a set of *basic data* which is collected for every event, e.g. curreent position, volume, ...
-* a set of *event specific data* only needed or appliccable for particular events
+* a set of *basic data* which is collected for every event, e.g. current position, volume, ...
+* a set of *event specific data* only needed or applicable for particular events
 
 ### Firing Events
-Normally firing an event is handled right where it occures: in the particular component. There are two exceptions from that: Closing a tab and changing the screen orientation is directly tracked and handled by the `AnalyticsManager` as there is no relation to any other component.
+Normally firing an event is handled right where it occurs: in the particular component. There are two exceptions from that: Closing a tab and changing the screen orientation is directly tracked and handled by the `AnalyticsManager` as there is no relation to any other component.
 
-To fire an event in a component you need to load the `constants` module, the `ANALYTICS_TOPICS` constants and the `AnalyticsManager` itself as follows for a component named `ExampleComponent`:
+To fire an event in a component you need to load the `ANALYTICS_TOPICS` from the `constants` module and the `AnalyticsManager` itself as follows for a component named `ExampleComponent`:
 ```HTML
 <script>
-    // Include AnalyticsManager and constants
-    define(['binding-helpers', 'ioc-provider', 'ioc-requester', 'analytics-manager', 'constants'], (BindingHelpersMixin, IocProviderMixin, IocRequesterMixin, AnalyticsManager, constants) => {
-      // Load necessary constants
-      const {ANALYTICS_TOPICS} = constants;
+    import { ANALYTICS_TOPICS } from '../constants.js';
+    import { IocRequesterMixin } from '../mixins/ioc-requester.js';
+    import { BindingHelpersMixin } from '../mixins/binding-helpers.js';
+    import { PolymerElement, html } from '@polymer/polymer';
 
-      class ExampleComponent extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
-        static get is() { return 'example-component'; }
+    class ExampleComponent extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin(Polymer.Element))) {
+      static get is() { return 'example-component'; }
 
-        static get properties() {
-          return {
-            // load AnalyticsManager
-            _analyticsManager: {
-              type: Object,
-              inject: 'AnalyticsManager',
-            },
-          }
+      static get properties() {
+        return {
+          // load AnalyticsManager
+          _analyticsManager: {
+            type: Object,
+            inject: 'AnalyticsManager',
+          },
         }
       }
+    }
 
-      window.customElements.define(ExampleComponent.is, ExampleComponent);
-    });
+    window.customElements.define(ExampleComponent.is, ExampleComponent);
 </script>
 ```
 

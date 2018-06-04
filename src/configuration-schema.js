@@ -69,7 +69,7 @@ const stateSchema = {
   },
 };
 
-const configurationSchema = {
+export const configurationSchema = {
   streams: {
     required: true,
     type: 'array',
@@ -134,11 +134,6 @@ const configurationSchema = {
     options: ['dark-orange', 'dark-yellow', 'dark-blue', 'light-green', 'dark-red', 'light-red'],
     default: 'dark-orange',
     description: 'Predefined color theme (can be adjusted by settings the colors explicitly).',
-  },
-  loadFontAwesome: {
-    type: 'boolean',
-    default: true,
-    description: '[FontAwesome](http://fontawesome.io) is used for the icons of the player. If your site already loads FontAwesome, this can be set to false to save bandwidth.',
   },
   videoPreload: {
     type: 'boolean',
@@ -351,10 +346,3 @@ const configurationSchema = {
     default: true,
   },
 };
-
-// Export schema as IMD module in browser context and as object in Node context
-if (typeof window === 'undefined') {
-  exports.schema = configurationSchema;
-} else {
-  IMD.define('configuration-schema', () => configurationSchema);
-}

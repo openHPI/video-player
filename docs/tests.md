@@ -1,6 +1,6 @@
 ## Tests
 
-Tests are realized via the web-component-tester module. General information about testing with Polymer can be found [here](https://www.polymer-project.org/2.0/docs/tools/tests). Polymer uses [Mocha](http://mochajs.org) as its test framework, [Chai](http://chaijs.com) for assertions, [Sinon](http://sinonjs.org/) for spies, stubs, and mocks, [Selenium](http://www.seleniumhq.org/) for running tests against multiple browsers, and [Accessibility Developer Tools](https://github.com/GoogleChrome/accessibility-developer-tools) for accessibility audits. To support you in your testing, you can additionally use [iron-test-helpers](https://github.com/PolymerElements/iron-test-helpers), a small library of Polymer testing utitlity tools.
+Tests are realized via the web-component-tester module. General information about testing with Polymer can be found [here](https://www.polymer-project.org/3.0/docs/tools/tests). Polymer uses [Mocha](http://mochajs.org) as its test framework, [Chai](http://chaijs.com) for assertions, [Sinon](http://sinonjs.org/) for spies, stubs, and mocks, [Selenium](http://www.seleniumhq.org/) for running tests against multiple browsers, and [Accessibility Developer Tools](https://github.com/GoogleChrome/accessibility-developer-tools) for accessibility audits. To support you in your testing, you can additionally use [iron-test-helpers](https://github.com/PolymerElements/iron-test-helpers), a small library of Polymer testing utility tools.
 
 ### Prerequisites
 
@@ -8,7 +8,7 @@ For Safari, you need to install the extension [SafariDriver.safariextz](http://s
 
 ### Running tests
 
-The component is set up to be tested via [web-component-tester](https://github.com/Polymer/web-component-tester). The test suite can be executed locally by running
+The component is set up to be tested via [web-component-tester](https://github.com/Polymer/tools/tree/master/packages/web-component-tester). The test suite can be executed locally by running
 ```
 $ npm test
 ```
