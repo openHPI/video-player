@@ -10,6 +10,16 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
   static get template() {
     return html`
       <style type="text/css" include="global--style-module">
+        :host {
+          user-drag: none;
+          user-select: none;
+          -moz-user-select: none;
+          -webkit-user-drag: none;
+          -webkit-user-select: none;
+          -ms-user-select: none;
+          background-color: black;
+        }
+
         #container__video_stream {
           position: relative;
           width: 100%;
@@ -309,6 +319,7 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
     // Dispatch event letting other components know that the video has
     // been loaded (i.e. ResizerControl)
     this.dispatchEvent(new CustomEvent('loaded-video', {
+      bubbles: true,
       detail: {
         resolution: {
           height: this.$.video.videoHeight,

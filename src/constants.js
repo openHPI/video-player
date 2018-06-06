@@ -61,6 +61,18 @@ export const SEEK_DIFF_THRESHOLD = 1;
 export const PLAYING_EVENT_NAME = 'videoPlaying';
 
 /**
+ * Contains the minimum width ratio a single video can occupy when resizing.
+ * @type {Number}
+ */
+export const MIN_VIDEO_WIDTH_PERCENTAGE = 0.2;
+
+/**
+ * Contains the percentage of the total width that the resizer should be moved on button tap.
+ * @type {Number}
+ */
+export const RESIZER_TAP_STEP = 0.2;
+
+/**
  * Contains the default state properties.
  * @type {Object.<string, Object>}
  */

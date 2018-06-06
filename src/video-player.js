@@ -25,7 +25,7 @@ import './components/overlays/captions-display.js';
 import './components/control-bar/control-bar.js';
 import './components/progress-container/video-progress.js';
 import './components/progress-container/slide-preview-bar.js';
-import './components/resizer-control.js';
+import './components/dual-stream.js';
 import './components/video-object-renderer.js';
 import '@polymer/polymer/lib/elements/dom-repeat.js';
 import '@polymer/polymer/lib/elements/dom-if.js';
@@ -41,18 +41,6 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
           display: block;
           border: 1px solid grey;
           background-color: black;
-        }
-
-        /* For some reason, just chaining those fullscreen selectors into one big
-           selector doesn't work so we're stupid-duplicating all the rules. */
-        #video-player-container:-webkit-full-screen #streams-container {
-          align-items: stretch;
-        }
-        #video-player-container:-moz-full-screen #streams-container {
-          align-items: stretch;
-        }
-        #video-player-container:-ms-fullscreen #streams-container {
-          align-items: stretch;
         }
 
         #video-player-container:-webkit-full-screen {
@@ -89,12 +77,12 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
 
         #streams-container {
           display: flex;
-          flex-wrap: wrap;
+          flex-direction: column;
+          align-items: stretch;
           overflow: hidden;
         }
-        .video-stream {
-          /* 49 to leave a bit space for the resizer */
-          flex: 1 1 49%;
+        #streams-container > .video-presenter:not(.first) {
+          margin-top: 4px;
         }
 
         #control-bar {
@@ -104,14 +92,6 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
         @media (max-width: 768px) {
           .hidden-for-mobile {
             display: none;
-          }
-
-          /* On vertical mobile screens the videos should be shown below each other */
-          @media screen and (orientation:portrait) {
-            .video-stream {
-              flex-basis: 100% !important;
-              height: 100% !important;
-            }
           }
         }
       </style>
@@ -135,17 +115,20 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
           <!-- Video Streams -->
           <div id="streams-container" style$="height: [[_calculateHeight(state.fullscreen, state.showInteractiveTranscript, configuration.slides)]];">
             <template is="dom-if" if="[[!state.fallbackStreamActive]]" restamp="true">
-              <template is="dom-repeat" items="[[configuration.streams]]">
-                <video-stream class="video-stream" state="[[state]]" props="[[item]]" preload="[[configuration.videoPreload]]" captions="[[ifEqualsThen(index, 0, configuration.captions)]]" style$="height: calc(100% / [[_rowCount(configuration.streams)]]);" ondragover="return false;" ondrag="return false;">
-                </video-stream>
-                <template is="dom-if" if="[[_needResizer(index, configuration.streams.length)]]">
-                  <resizer-control state="[[state]]" style$="visibility: [[ifThenElse(_isResizerShown, 'visible', 'hidden')]]" class="hidden-for-mobile" video-alignment="[[configuration.videoAlignment]]">
-                  </resizer-control>
+              <template is="dom-repeat" items="[[_partitionStreams(configuration.streams)]]">
+                <template is="dom-if" if="[[hasItems(item, 2)]]">
+                  <dual-stream class$="video-presenter [[ifEqualsThen(index, 0, 'first')]]" style$="height: calc(100% / [[_rowCount(configuration.streams)]]);">
+                    <video-stream slot="video1" state="[[state]]" props="[[arrayItem(item, 0)]]" preload="[[configuration.videoPreload]]" captions="[[ifEqualsThen(index, 0, configuration.captions)]]"></video-stream>
+                    <video-stream slot="video2" state="[[state]]" props="[[arrayItem(item, 1)]]" preload="[[configuration.videoPreload]]"></video-stream>
+                  </dual-stream>
+                </template>
+                <template is="dom-if" if="[[!hasItems(item, 2)]]">
+                  <video-stream slot="video1" class$="video-presenter [[ifEqualsThen(index, 0, 'first')]]" state="[[state]]" props="[[arrayItem(item, 0)]]" preload="[[configuration.videoPreload]]" captions="[[ifEqualsThen(index, 0, configuration.captions)]]"></video-stream>
                 </template>
               </template>
             </template>
             <template is="dom-if" if="[[state.fallbackStreamActive]]" restamp="true">
-              <video-stream state="[[state]]" props="[[configuration.fallbackStream]]" preload="[[configuration.videoPreload]]" class="video-stream" captions="[[configuration.captions]]" style$="height: calc(100% / [[_rowCount(configuration.streams)]]);" is-fallback="true">
+              <video-stream state="[[state]]" props="[[configuration.fallbackStream]]" preload="[[configuration.videoPreload]]" captions="[[configuration.captions]]" style$="height: calc(100% / [[_rowCount(configuration.streams)]]);" is-fallback="true">
               </video-stream>
             </template>
           </div>
@@ -223,10 +206,6 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
       _localizer: {
         type: Object,
         inject: 'Localizer',
-      },
-      _isResizerShown: {
-        type: Boolean,
-        value: false,
       },
       _captionLanguages: {
         type: Array,
@@ -355,10 +334,6 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
 
   ready() {
     super.ready();
-
-    // Add event handlers for mouse events to show/hide resizer
-    this.$['streams-container'].addEventListener('mouseenter', () => this._isResizerShown = true);
-    this.$['streams-container'].addEventListener('mouseleave', () => this._isResizerShown = false);
 
     // Listen for events from other instances to pause playback when
     // another instance starts playing
@@ -607,9 +582,15 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
     this._showProgressBar = !live || dvr;
   }
 
-  _needResizer(index, length) {
-    // Do not show the resizer when there is no second video to resize
-    return (index % 2 === 0) && (index !== length - 1);
+  _partitionStreams(streams) {
+    return streams.reduce((acc, item) => {
+      if(acc.length === 0 || acc[acc.length - 1].length === 2) {
+        acc.push([item]);
+      } else {
+        acc[acc.length - 1].push(item);
+      }
+      return acc;
+    }, []);
   }
 
   _rowCount(streams) {

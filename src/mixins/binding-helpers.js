@@ -126,4 +126,8 @@ export const BindingHelpersMixin = (superClass) => class extends superClass {
     let numZeroes = places - absNumber.toString().length + 1;
     return Array(numZeroes).join(0) + absNumber;
   }
+
+  arrayItem(array, index) {
+    return array[index];
+  }
 };
