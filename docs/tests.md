@@ -20,14 +20,10 @@ Note: Safari will fail this test when accessing a fixture because of a bug.
 If tests fail, it can be very helpful to see more information about why they fail. To be able to debug tests, you should run the following command:
 
 ```
-$ npm run testdebugging
+$ npm run serve
 ```
 
-This will leave the browser window open, enabling you to re-run the tests and set breakpoints in your preferred browser. Unfortunately, if you open the Developer Tools, the testing environment decides to close them repeatedly, pretty much defeating the purpose of the persistent environment. Fret not, dear friend, as there is a shitty workaround you can use, described [in the bug report for this problem](https://github.com/Polymer/web-component-tester/issues/242):
-
-- polymer test -p
-- copy URL
-- close chrome
-- open a new chrome manually
-- paste url + enter
-- Voilà, devtools now stays open, but becomes more slow over time (seems like a memory leak), you'll have to reboot it after some time
+You can then open the URL of a certain unit test in the browser, for example:
+```
+http://localhost:8080/components/video-player/test/video-player_test.html
+```

@@ -22,6 +22,9 @@
     <script type="module">
       suite('playpause-control-test', () => {
         let playpauseControl;
+        let state = {
+          playState: 'PAUSED'
+        };
         let mockStateManager = {
           togglePlayPause: function() {
             if (state.playState === 'PLAYING') {
@@ -35,10 +38,6 @@
           changeState: function(changeFunction, changeParameters, options) {
             mockStateManager.togglePlayPause();
           }
-        };
-
-        state = {
-          playState: 'PAUSED'
         };
 
         // This function gets run before every test function
@@ -58,13 +57,13 @@
 
         test('Test whether CSS class gets adjusted accordingly', function() {
           playpauseControl._playStateChanged(state.playState);
-          assert.isTrue(playpauseControl.shadowRoot.querySelectorAll('#button__play_pause i.fa')[0].classList.contains('fa-play'));
+          assert.equal(playpauseControl.shadowRoot.querySelectorAll('#button__play_pause fontawesome-icon')[0].name, 'play');
           playpauseControl._handleClick();
           // The observers apparently do not work in test mode so we
           // manually have to call the corresponding method
           playpauseControl._playStateChanged(state.playState);
           // The icon shows pause when a video is playing
-          assert.isTrue(playpauseControl.shadowRoot.querySelectorAll('#button__play_pause i.fa')[0].classList.contains('fa-pause'));
+          assert.equal(playpauseControl.shadowRoot.querySelectorAll('#button__play_pause fontawesome-icon')[0].name, 'pause');
         });
       });
     </script>

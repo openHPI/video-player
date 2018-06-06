@@ -74,7 +74,6 @@
     "test-firefox": "polymer test -l firefox",
     "test-safari": "polymer test -l safari",
     "test-chrome": "polymer test -l chrome",
-    "testdebugging": "wct -p test/test-suite.html",
     "generate-docs": "./utils/generate-docs.sh",
     "lint": "eslint src && polymer lint -i ./src/*",
     "serve": "polymer serve",

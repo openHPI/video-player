@@ -6,8 +6,6 @@
 
     <title>video-player test</title>
 
-    <script type="module" src="../../@polymer/polymer/polymer-element.js"></script>
-    <script type="module" src="../../@polymer/iron-test-helpers/iron-test-helpers.js"></script>
     <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <script src="../node_modules/wct-browser-legacy/browser.js"></script>
 
@@ -147,7 +145,7 @@
           // Click the play button
           videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('playpause-control')[0].shadowRoot.querySelectorAll('#button__play_pause')[0].click();
           assert.equal(videoPlayer.state.playState, 'PLAYING', 'pressing play works');
-          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('playpause-control')[0].shadowRoot.querySelectorAll('#button__play_pause i.fa')[0].classList), 'fa-pause', 'pressing play turns the play button into the pause button');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('playpause-control')[0].shadowRoot.querySelectorAll('#button__play_pause fontawesome-icon')[0].name, 'pause', 'pressing play turns the play button into the pause button');
         });
 
         test('testing playlist navigation', () => {
@@ -186,7 +184,7 @@
           // It is possible that 80ms is not enough. In this case, the value needs to be increased.
           flush(() => {
             setTimeout(() => {
-              assert.equal(videoPlayer.shadowRoot.querySelectorAll('interactive-transcript')[0].shadowRoot.querySelectorAll('li.-active .list_item__link')[0].innerText, ' 00:00 - 00:10:', 'the first transcript item shows the correct time frame');
+              assert.equal(videoPlayer.shadowRoot.querySelectorAll('interactive-transcript')[0].shadowRoot.querySelectorAll('li.-active .list_item__link')[0].innerText, '00:00 - 00:10:', 'the first transcript item shows the correct time frame');
               assert.equal(videoPlayer.shadowRoot.querySelectorAll('interactive-transcript')[0].shadowRoot.querySelectorAll('li.-active .list_item__link')[1].innerText, 'This is a test caption', 'the first interactive transcript item displays with the correct text');
               // Click the second transcript item to jump to its corresponding position
               videoPlayer.shadowRoot.querySelectorAll('interactive-transcript')[0].shadowRoot.querySelectorAll('li:nth-of-type(2) .list_item__prefix')[0].click();
@@ -270,10 +268,10 @@
           document.msExitFullscreen = undefined;
           videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('full-screen-control')[0].shadowRoot.querySelectorAll('#button__fullscreen')[0].click();
           assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll('#video-player-container')[0].classList), 'fake-fullscreen', 'clicking the full screen button sets the fake-fullscreen class');
-          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('full-screen-control')[0].shadowRoot.querySelectorAll('#button__fullscreen > i')[0].classList), 'fa-compress', 'after clicking the full screen button, its icon changes to the compress icon');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('full-screen-control')[0].shadowRoot.querySelectorAll('#button__fullscreen > fontawesome-icon')[0].name, 'compress', 'after clicking the full screen button, its icon changes to the compress icon');
           videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('full-screen-control')[0].shadowRoot.querySelectorAll('#button__fullscreen')[0].click();
           assert.notInclude(Array.from(videoPlayer.shadowRoot.querySelectorAll('#video-player-container')[0].classList), 'fake-fullscreen', 'clicking the full screen button again unsets the fake-fullscreen class');
-          assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('full-screen-control')[0].shadowRoot.querySelectorAll('#button__fullscreen > i')[0].classList), 'fa-expand', 'after clicking the full screen button again, its icon changes back to the expand icon');
+          assert.equal(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('full-screen-control')[0].shadowRoot.querySelectorAll('#button__fullscreen > fontawesome-icon')[0].name, 'expand', 'after clicking the full screen button again, its icon changes back to the expand icon');
         });
 
         test('testing mobile settings menu', () => {
