@@ -56,7 +56,7 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
         }
 
         playlist-navigation-control, playpause-control {
-          margin-right: 14px;
+          margin-right: 10px;
         }
         playlist-chapter-list-switch {
             margin-left: 12px;
