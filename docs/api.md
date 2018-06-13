@@ -19,6 +19,8 @@ The video-player provides the following public interface for accessing and manip
 * `hideCaptions()` Hides captions.
 * `showInteractiveTranscript(language)` Shows interactive transcript in the specified language.
 * `hideInteractiveTranscript()` Hides interactive transcript.
+* `setResizerRatio(ratio, index)` Sets the ratio of a single resizer. If index is omitted, first resizer is affected.
+* `setResizerRatios(ratios)` Sets the ratios of all resizers.
 * `enterFullscreen()` Enters the fullscreen mode.
 * `exitFullscreen()` Exits the fullscreen mode.
 * `reloadConfiguration()` Reloads the configuration.

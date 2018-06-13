@@ -477,4 +477,27 @@ export class StateManager {
     }
     this.setState('liveFragmentDuration', seconds);
   }
+
+
+  /**
+   * Sets the ratio of a certain resizer.
+   * @param {Number} resizerIndex The index of the resizer.
+   * @param {Number} ratio        Thew new ratio.
+   * @returns {void}
+   */
+  setResizerRatio(resizerIndex, ratio) {
+    if(resizerIndex < 0 || resizerIndex > this.state.resizerRatios.length) {
+      throw new RangeError('resizerIndex must be between 0 and the number of resizers.');
+    }
+    this.setState('resizerRatios.' + resizerIndex, ratio);
+  }
+
+  /**
+   * Sets the ratio of all resizer.
+   * @param {Array} ratios Thew new ratios.
+   * @returns {void}
+   */
+  setResizerRatios(ratios) {
+    this.setState('resizerRatios', ratios);
+  }
 }

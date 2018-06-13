@@ -118,7 +118,7 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
             <template is="dom-if" if="[[!state.fallbackStreamActive]]" restamp="true">
               <template is="dom-repeat" items="[[_partitionStreams(configuration.streams)]]">
                 <template is="dom-if" if="[[hasItems(item, 2)]]">
-                  <dual-stream class$="video-presenter [[ifEqualsThen(index, 0, 'first')]]" style$="height: calc(100% / [[_rowCount(configuration.streams)]]);">
+                  <dual-stream class$="video-presenter [[ifEqualsThen(index, 0, 'first')]]" state="[[state]]" index="[[index]]"  style$="height: calc(100% / [[_rowCount(configuration.streams)]]);">
                     <video-stream slot="video1" state="[[state]]" props="[[arrayItem(item, 0)]]" preload="[[configuration.videoPreload]]" captions="[[ifEqualsThen(index, 0, configuration.captions)]]"></video-stream>
                     <video-stream slot="video2" state="[[state]]" props="[[arrayItem(item, 1)]]" preload="[[configuration.videoPreload]]"></video-stream>
                   </dual-stream>
@@ -282,6 +282,8 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
     this._stateManager.setInteractiveTranscriptVisibility(true);
   }
   hideInteractiveTranscript() { this._stateManager.setInteractiveTranscriptVisibility(false); }
+  setResizerRatio(ratio, index = 0) { this._stateManager.setResizerRatio(index, ratio); }
+  setResizerRatios(ratios) { this._stateManager.setResizerRatios(ratios); }
   enterFullscreen() { this._stateManager.setFullscreen(true); }
   exitFullscreen() { this._stateManager.setFullscreen(false); }
   reloadConfiguration() {

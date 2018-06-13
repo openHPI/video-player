@@ -99,6 +99,7 @@ export const DEFAULT_STATE = {
   showInteractiveTranscript: false,
   mobileSettingsMenuOpen: false,
   fallbackStreamActive: false,
+  resizerRatios: [],
 };
 
 /**
@@ -116,7 +117,6 @@ export const DEFAULT_CONFIGURATION = {
   liveDvr: false,
   theme: 'dark-orange',
   language: 'en',
-  videoAlignment: 'width',
   mobileMenu: true,
 };
 

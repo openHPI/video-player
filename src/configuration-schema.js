@@ -67,6 +67,10 @@ const stateSchema = {
     default: false,
     description: 'Enables interactive transcript. Additionally, `captionLanguage` needs to be set.',
   },
+  resizerRatios: {
+    type: 'array',
+    description: 'The ratios of the resizers. Ratio is calculated by `leftVideo.width / rightVideo.width`. Per default, videos were aligned to have the same height.',
+  },
 };
 
 export const configurationSchema = {
@@ -323,12 +327,6 @@ export const configurationSchema = {
       name: 'Name of the video',
       duration: 'Duration of the video',
     },
-  },
-  videoAlignment: {
-    type: 'string',
-    options: ['width', 'height'],
-    default: 'width',
-    description: 'If there is more than one video this property decides whether they should have the same height or the same width.',
   },
   liveDvr: {
     type: 'boolean',

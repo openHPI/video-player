@@ -99,7 +99,12 @@ class DualStream extends BindingHelpersMixin(IocRequesterMixin(GestureEventListe
 
   static get properties() {
     return {
-      ratio: Number,
+      state: Object,
+      index: Number,
+      _ratio: {
+        type: Number,
+        computed: '_getRatio(state.resizerRatios.*, index)',
+      },
       _mouseResizerDistance: Number,
       _isResizing: Boolean,
       _hasResized: Boolean,
@@ -107,34 +112,47 @@ class DualStream extends BindingHelpersMixin(IocRequesterMixin(GestureEventListe
         type: Object,
         inject: 'AnalyticsManager',
       },
+      _stateManager: {
+        type: Object,
+        inject: 'StateManager',
+      },
     };
   }
 
   static get observers() {
     return [
-      '_ratioChanged(ratio)',
+      '_ratioChanged(_ratio)',
     ];
   }
 
-  connectedCallback() {
-    super.connectedCallback();
+  servicesInjectedCallback() {
+    super.servicesInjectedCallback();
 
     // Initially align videos according to their resolution, if no ratio is specified
-    let resolutions = {};
-    for(let slot of this.shadowRoot.querySelectorAll('.video-slot')) {
-      slot.assignedNodes()[0].addEventListener('loaded-video', (e) => {
-        resolutions[e.target.slot] = e.detail.resolution;
-        if(!this.ratio && Object.keys(resolutions).length === 2) {
-          this.ratio = (resolutions.video1.width * resolutions.video2.height) /
-                       (resolutions.video2.width * resolutions.video1.height);
-        }
-      });
+    if(!this._ratio) {
+      let resolutions = {};
+      for(let slot of this.shadowRoot.querySelectorAll('.video-slot')) {
+        slot.assignedNodes()[0].addEventListener('loaded-video', (e) => {
+          resolutions[e.target.slot] = e.detail.resolution;
+          if(!this. ratio && Object.keys(resolutions).length === 2) {
+            let ratio = (resolutions.video1.width * resolutions.video2.height) /
+                        (resolutions.video2.width * resolutions.video1.height);
+            this._stateManager.setResizerRatio(this.index, ratio);
+          }
+        });
+      }
+    }
+  }
+
+  _getRatio(resizerRatios, index) {
+    if(this.state.resizerRatios) {
+      return this.state.resizerRatios[index];
     }
   }
 
   _ratioChanged(ratio) {
     if(ratio) {
-      let percentage = ratio / (ratio + 1);
+      let percentage = this._ensureWidthPercentage(ratio / (ratio + 1));
       this._setFlexBasis(this.$.videoSlot1, percentage);
       this._setFlexBasis(this.$.videoSlot2, 1 - percentage);
     }
@@ -150,7 +168,7 @@ class DualStream extends BindingHelpersMixin(IocRequesterMixin(GestureEventListe
     let parentBounds = this.parentElement.getBoundingClientRect();
     let percentage1 = this._ensureWidthPercentage((e.detail.x + this._mouseResizerDistance - parentBounds.left) / parentBounds.width);
     let percentage2 = this._ensureWidthPercentage(1 - percentage1);
-    this.ratio = percentage1 / percentage2;
+    this._stateManager.setResizerRatio(this.index, percentage1 / percentage2);
   }
 
   _handleResizerUp() {
@@ -162,11 +180,13 @@ class DualStream extends BindingHelpersMixin(IocRequesterMixin(GestureEventListe
   }
 
   _handleResizerLeftTap() {
-    this.ratio = this.ratio - RESIZER_TAP_STEP * this.ratio;
+    let ratio = this._ratio - RESIZER_TAP_STEP * this._ratio;
+    this._stateManager.setResizerRatio(this.index, ratio);
   }
 
   _handleResizerRightTap() {
-    this.ratio = this.ratio + RESIZER_TAP_STEP * this.ratio;
+    let ratio = this._ratio + RESIZER_TAP_STEP * this._ratio;
+    this._stateManager.setResizerRatio(this.index, ratio);
   }
 
   _ensureWidthPercentage(ratio) {
@@ -184,7 +204,7 @@ class DualStream extends BindingHelpersMixin(IocRequesterMixin(GestureEventListe
   _fireAnalyticsEvent() {
     let dualStreams = Array.from(this.parentElement.querySelectorAll('dual-stream'));
     this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_CHANGE_SIZE}, {
-      newCurrentRatio: this.ratio,
+      newCurrentRatio: this._ratio,
       resizerIndex: dualStreams.indexOf(this),
       resizerCount: dualStreams.length,
     });
