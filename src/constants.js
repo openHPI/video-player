@@ -183,6 +183,10 @@ export const USER_PREFERENCES_KEYS = [
   'quality',
   'playbackRate',
   'volume',
+  'captionLanguage',
+  'showCaptions',
+  'showInteractiveTranscript',
+  'resizerRatios',
 ];
 
 /**
