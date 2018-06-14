@@ -43,6 +43,7 @@ The player configuration is provided as JSON object:
    * **captionLanguage** (string): (default: `"off"`)
    * **showCaptions** (boolean): Enables captions. Additionally, `captionLanguage` needs to be set. (default: `false`)
    * **showInteractiveTranscript** (boolean): Enables interactive transcript. Additionally, `captionLanguage` needs to be set. (default: `false`)
+   * **resizerRatios** (array): The ratios of the resizers. Ratio is calculated by `leftVideo.width / rightVideo.width`. Per default, videos were aligned to have the same height.
 * **userPreferences** (object): Override parts of the default/initial/saved state. Meant to be provided by the server based on the current user.
    * **playState** (string):`<["PLAYING","PAUSED"]>` (default: `"PAUSED"`)
    * **position** (number): Video position in seconds. (default: `0`)
@@ -53,13 +54,13 @@ The player configuration is provided as JSON object:
    * **captionLanguage** (string): (default: `"off"`)
    * **showCaptions** (boolean): Enables captions. Additionally, `captionLanguage` needs to be set. (default: `false`)
    * **showInteractiveTranscript** (boolean): Enables interactive transcript. Additionally, `captionLanguage` needs to be set. (default: `false`)
+   * **resizerRatios** (array): The ratios of the resizers. Ratio is calculated by `leftVideo.width / rightVideo.width`. Per default, videos were aligned to have the same height.
 * **foregroundColor** (string): HEX code of the color for text and all other main content.
 * **accentColor** (string): HEX code of the highlighting color.
 * **fontColorOnAccentColor** (string): HEX code of the font color on the `accentColor`. Take care that the contrast ratio is high enough.
 * **backgroundColor** (string): HEX code of the background for the `foregroundColor`.
 * **secondaryBackgroundColor** (string): HEX code of another background color used for example for displaying the buffer. Take care that the `foregroundColor` has a high contrast to both background colors.
-* **theme** (string):`<["dark-orange","dark-yellow","dark-blue","light-green", "dark-red", "light-red"]>` Predefined color theme (can be adjusted by settings the colors explicitly). (default: `"dark-orange"`)
-* **loadFontAwesome** (boolean): [FontAwesome](http://fontawesome.io) is used for the icons of the player. If your site already loads FontAwesome, this can be set to false to save bandwidth. (default: `true`)
+* **theme** (string):`<["dark-orange","dark-yellow","dark-blue","light-green","dark-red","light-red"]>` Predefined color theme (can be adjusted by settings the colors explicitly). (default: `"dark-orange"`)
 * **videoPreload** (boolean): Turns on/off preloading of the videos when the page loads. (default: `true`)
 * **trimVideo** (object): Restricts the playback on a specific segment of the video.
    * **start** (number): The start position of the segment. (default: `0`)
@@ -168,7 +169,6 @@ The player configuration is provided as JSON object:
      "duration": "Duration of the video"
    }
 ```
-* **videoAlignment** (string):`<["width","height"]>` If there is more than one video this property decides whether they should have the same height or the same width. (default: `"width"`)
 * **liveDvr** (boolean): If given stream is a live stream that supports DVR, this flag must be enabled to make seeking possible. (default: `false`)
 * **positionInUrlFragment** (boolean): If enabled, the initial video position is read from the URL fragment parameter `t` (e.g. `#t=25`). (default: `false`)
 * **mobileMenu** (boolean): If disabled, the control bar icons are forced to be shown inline instead of being part of a separated mobile menu. This might cause the control bar content to overflow, if there are two much controls! (default: `true`)

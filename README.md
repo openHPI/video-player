@@ -5,7 +5,7 @@ Dev: [![Build Status](https://travis-ci.org/openHPI/video-player.svg?branch=dev)
 
 ## Getting Started
 
-Make sure you have [NPM](https://www.npmjs.com/get-npm), [Bower](https://www.npmjs.com/package/bower) and the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed.
+Make sure you have [NPM](https://www.npmjs.com/get-npm) installed.
 
 1. Clone the repository with `git clone https://github.com/openHPI/video-player`.
 2. Change the directory with `cd video-player`.
@@ -25,10 +25,10 @@ The component can then be used in any HTML site in the following way:
 <html>
   <head>
     <!-- HTML Custom Elements Adapter is only needed when using the transpiled ES5 version of the component. -->
-    <script src="bower_components/webcomponentsjs/custom-elements-es5-adapter.js"></script>
+    <script src="custom-elements-es5-adapter.js"></script>
 
-    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="video-player.html">
+    <script src="webcomponents-bundle.js"></script>
+    <script type="module" src="video-player.js"></script>
   </head>
   <body>
     <video-player configuration='{

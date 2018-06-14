@@ -16,12 +16,13 @@
         document.write('<!--');
       }
     </script>
-    <script src="../../../node_modules/url-polyfill/url-polyfill.min.js"></script>
-    <script src="../../../node_modules/babel-polyfill/dist/polyfill.min.js"></script>
+    <script src="../node_modules/url-polyfill/url-polyfill.min.js"></script>
+    <script src="../node_modules/babel-polyfill/dist/polyfill.min.js"></script>
     <!-- DO NOT REMOVE -->
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="../video-player.html">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+
+    <script crossorigin="anonymous" type="module" src="../video-player.js"></script>
 
     <style>
       body {
@@ -67,208 +68,305 @@
     <div class="container">
       <video-player
      configuration='{
-        "streams" : [
+        "streams": [
           {
-            "hd" : "http://player.vimeo.com/external/93238287.sd.mp4?s=8aa8ca257eb64f31ec7bbb01e89e2341",
-            "sd" : "http://player.vimeo.com/external/93238287.sd.mp4?s=8aa8ca257eb64f31ec7bbb01e89e2341",
-            "poster": "http://i.vimeocdn.com/video/473240734_640.jpg"
-
+            "hls": "https://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_14/hls/video.m3u8",
+            "sd": "https://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_14/sd/video.mp4",
+            "hd": "https://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_14/hd/video.mp4",
+            "poster": "images/poster_0.png"
           },
           {
-            "hd" : "http://player.vimeo.com/external/93239242.hd.mp4?s=37e3de4baf9eccb834e176bf202490d3",
-            "sd" : "http://player.vimeo.com/external/93239242.sd.mp4?s=0ce80d8b675a69c92009a8e63774232b",
-            "poster" : "http://i.vimeocdn.com/video/473241977_960.jpg"
+            "hls": "https://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_14/hls/desktop.m3u8",
+            "sd": "https://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_14/sd/desktop.mp4",
+            "hd": "https://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_14/hd/desktop.mp4",
+            "poster": "images/poster_1.png"
           }
         ],
         "language": "de",
-        "fallbackStream" :
+        "fallbackStream":
         {
-          "hd" : "http://player.vimeo.com/external/93238367.hd.mp4?s=0301bf3baa250b11536afd98540dcc95",
-          "sd" : "http://player.vimeo.com/external/93238367.sd.mp4?s=92e2d091627202eab664ddc2006f5a30",
-          "poster" : "http://i.vimeocdn.com/video/473240835_1280.jpg"
+          "hls": "https://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_14/hls/podcast.m3u8",
+          "sd": "https://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_14/sd/podcast.mp4",
+          "hd": "https://www10-fms.hpi.uni-potsdam.de/vod/media/SS_2016/WWW_SS16/WWW_2016_04_14/hd/podcast.mp4",
+          "poster": "images/poster_fallback.png"
         },
         "playlist": {
           "autoPlay": true,
           "currentPosition": 1,
           "entries": [
             {
-              "title": "Get to Know the Internet of Things",
-              "url": "https://testing.openhpi.de/courses/videoplayer/items/5xa1AWl3L7AqpLw9VMGBWQ"
+              "title": "Internet - Erste Einführung",
+              "url": "https://www.tele-task.de/lecture/video/6746"
             },
             {
-              "title": "Introduction to Buisness Process Management",
-              "url": "https://testing.openhpi.de/courses/videoplayer/items/2KNJwtTFXFacCdzGpYR3vX"
+              "title": "WWW - Erste Einführung",
+              "url": "https://www.tele-task.de/lecture/video/6747"
             },
             {
-              "title": "On Modeling",
-              "url": "https://testing.openhpi.de/courses/videoplayer/items/6ZKdGPHCVZPem2u0RlTxtv"
+              "title": "Kurze Geschichte der Kommunikation",
+              "url": "https://www.tele-task.de/lecture/video/6767"
             }
           ]
         },
-        "captions" : [
+        "captions": [
           {
-            "language" : "de",
-            "url" : "captions/subtitles_de.vtt"
+            "language": "de",
+            "url": "captions/subtitles_de.vtt"
           },
           {
-            "language" : "en",
-            "url" : "captions/subtitles_en.vtt"
+            "language": "en",
+            "url": "captions/subtitles_en.vtt"
           },
           {
-            "language" : "fr",
-            "url" : "captions/subtitles_fr.vtt"
+            "language": "fr",
+            "url": "captions/subtitles_fr.vtt"
           }
         ],
-        "slides" : [
+        "slides": [
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/75?format=jpg",
-            "startPosition" : 2
+            "startPosition": 1,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/1.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/125?format=jpg",
-            "startPosition" : 5
+            "startPosition": 36,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/36.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/400?format=jpg",
-            "startPosition" : 16
+            "startPosition": 38,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/38.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/2125?format=jpg",
-            "startPosition" : 85
+            "startPosition": 41,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/41.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/2825?format=jpg",
-            "startPosition" : 88
+            "startPosition": 263,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/263.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/3575?format=jpg",
-            "startPosition" : 143
+            "startPosition": 527,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/527.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/4350?format=jpg",
-            "startPosition" : 174
+            "startPosition": 548,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/548.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/4400?format=jpg",
-            "startPosition" : 176
+            "startPosition": 567,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/567.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/6350?format=jpg",
-            "startPosition" : 254
+            "startPosition": 678,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/678.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/8675?format=jpg",
-            "startPosition" : 282
+            "startPosition": 851,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/851.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/10000?format=jpg",
-            "startPosition" : 367
+            "startPosition": 1032,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/1032.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/10150?format=jpg",
-            "startPosition" : 406
+            "startPosition": 1261,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/1261.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/16025?format=jpg",
-            "startPosition" : 530
+            "startPosition": 1336,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/1336.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/16600?format=jpg",
-            "startPosition" : 664
+            "startPosition": 1489,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/1489.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/18700?format=jpg",
-            "startPosition" : 748
+            "startPosition": 1630,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/1630.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/21075?format=jpg",
-            "startPosition" : 843
+            "startPosition": 1775,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/1775.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/21750?format=jpg",
-            "startPosition" : 870
+            "startPosition": 1941,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/1941.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/22400?format=jpg",
-            "startPosition" : 896
+            "startPosition": 2223,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/2223.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/24400?format=jpg",
-            "startPosition" : 976
+            "startPosition": 2305,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/2305.jpeg"
           },
           {
-            "thumbnail" : "https://testing.openhpi.de/files/7c1ca24c-efa0-47b7-b315-62e465b0bd80/thumbnails/25452?format=jpg",
-            "startPosition" : 1017
+            "startPosition": 2466,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/2466.jpeg"
+          },
+          {
+            "startPosition": 2674,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/2674.jpeg"
+          },
+          {
+            "startPosition": 2864,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/2864.jpeg"
+          },
+          {
+            "startPosition": 2940,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/2940.jpeg"
+          },
+          {
+            "startPosition": 3001,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/3001.jpeg"
+          },
+          {
+            "startPosition": 3078,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/3078.jpeg"
+          },
+          {
+            "startPosition": 3154,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/3154.jpeg"
+          },
+          {
+            "startPosition": 3219,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/3219.jpeg"
+          },
+          {
+            "startPosition": 3352,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/3352.jpeg"
+          },
+          {
+            "startPosition": 3394,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/3394.jpeg"
+          },
+          {
+            "startPosition": 3482,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/3482.jpeg"
+          },
+          {
+            "startPosition": 3727,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/3727.jpeg"
+          },
+          {
+            "startPosition": 3928,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/3928.jpeg"
+          },
+          {
+            "startPosition": 4053,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/4053.jpeg"
+          },
+          {
+            "startPosition": 4619,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/4619.jpeg"
+          },
+          {
+            "startPosition": 4724,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/4724.jpeg"
+          },
+          {
+            "startPosition": 4802,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/4802.jpeg"
+          },
+          {
+            "startPosition": 4836,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/4836.jpeg"
+          },
+          {
+            "startPosition": 4916,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/4916.jpeg"
+          },
+          {
+            "startPosition": 4972,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/4972.jpeg"
+          },
+          {
+            "startPosition": 5082,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/5082.jpeg"
+          },
+          {
+            "startPosition": 5112,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/5112.jpeg"
+          },
+          {
+            "startPosition": 5224,
+            "thumbnail": "https://www.tele-task.de/static/media/slides/1201/10119/5224.jpeg"
           }
         ],
-        "theme" : "light-green",
-        "videoAlignment" : "height",
+        "theme": "light-green",
         "initialState": {
           "volume": 0.75
         },
-        "userPreferences" : {
-          "quality" : "sd",
-          "playbackRate" : 1.0
+        "userPreferences": {
+          "quality": "sd",
+          "playbackRate": 1.0
         },
-        "chapters" : [
+        "chapters": [
           {
-            "title" : "Introduction",
-            "startPosition" : 0
+            "title": "WWW - Erste Annäherung",
+            "startPosition": 0
           },
           {
-            "title" : "Defining Business Processes",
-            "startPosition" : 85
+            "title": "Hypertext und HTML-Dokumente",
+            "startPosition": 853
           },
           {
-            "title" : "Roles of Business Processes",
-            "startPosition" : 254
+            "title": "Browser und Server",
+            "startPosition": 1776
           },
           {
-            "title" : "Business Process Management (BPM)",
-            "startPosition" : 664
+            "title": "XML und Skriptsprachen",
+            "startPosition": 3219
+          },
+          {
+            "title": "Kurze Geschichte des WWW",
+            "startPosition": 3727
+          },
+          {
+            "title": "Organisation und Standardisierung des Internets",
+            "startPosition": 4619
           }
         ],
-        "relatedVideos" : [
+        "relatedVideos": [
           {
-            "title" : "Single Stream Video",
-            "thumbnail" : "http://i.vimeocdn.com/video/477504123_1280.jpg",
-            "url" : "http://player.vimeo.com/external/97203550.sd.mp4?s=ec578e17cb8070aab0c322d35ca6b411",
-            "duration": 884
+            "title": "Kurze Geschichte der Kommunikation",
+            "thumbnail": "images/related_video_0.png",
+            "url": "https://www.tele-task.de/lecture/video/6767",
+            "duration": 5860
           },
           {
-            "title" : "Single Stream mit Captions",
-            "thumbnail" : "https://i.vimeocdn.com/video/636311940_1280x720.jpg?r=pad",
-            "url" : "https://player.vimeo.com/external/218749067.sd.mp4?s=19c4ca6d3edacc8fb124939f3726e3a132997037",
-            "duration": 700
+            "title": "Information und Ihre Kodierung",
+            "thumbnail": "images/related_video_1.png",
+            "url": "https://www.tele-task.de/lecture/video/6777",
+            "duration": 5075
           },
           {
-            "title" : "Dual Stream ohne Fallback",
-            "thumbnail" : "http://i.vimeocdn.com/video/474100112_640.jpg",
-            "url" : "http://player.vimeo.com/external/93239074.sd.mp4?s=a077a48108077dce7c5a928d3facc2b1",
-            "duration": 885
+            "title": "Grafikkodierung und -Kompression",
+            "thumbnail": "images/related_video_2.png",
+            "url": "https://www.tele-task.de/lecture/video/6795",
+            "duration": 5345
           },
           {
-            "title" : "Single Stream mit Captions",
-            "thumbnail" : "https://i.vimeocdn.com/video/636311940_1280x720.jpg?r=pad",
-            "url" : "https://player.vimeo.com/external/218749067.sd.mp4?s=19c4ca6d3edacc8fb124939f3726e3a132997037",
-            "duration": 700
+            "title": "Audiokodierung und -Kompression",
+            "thumbnail": "images/related_video_3.png",
+            "url": "https://www.tele-task.de/lecture/video/6828",
+            "duration": 4808
           },
           {
-            "title" : "Dual Stream ohne Fallback",
-            "thumbnail" : "http://i.vimeocdn.com/video/474100112_640.jpg",
-            "url" : "http://player.vimeo.com/external/93239074.sd.mp4?s=a077a48108077dce7c5a928d3facc2b1",
-            "duration": 885
+            "title": "Videokodierung und -Kompression",
+            "thumbnail": "images/related_video_4.png",
+            "url": "https://www.tele-task.de/lecture/video/6838",
+            "duration": 5447
           }
         ],
         "videoObject": {
-          "@context": "http://schema.org/",
+          "@context": "http://schema.org",
           "@type": "VideoObject",
-          "name": "Dual Stream mit Fallback und Slide Preview",
-          "@id": "https://testing.openhpi.de/courses/videoplayer/items/2KNJwtTFXFacCdzGpYR3vX",
-          "datePublished": "2017-04-19",
+          "name": "WWW - Erste Einführung",
+          "@id": "https://www.tele-task.de/lecture/video/6747",
+          "datePublished": "2018-04-12",
           "author": {
             "@type": "Person",
-            "name": "Prof. Dr. Matthias Weske"
+            "name": "Prof. Dr. Christoph Meinel"
           }
         }
       }'>

@@ -3,7 +3,7 @@ const path = require('path');
 const replace = require('replace-in-file');
 
 const PACKAGE_FILE = path.join(__dirname, '../package.json');
-const CONSTANTS_FILE = path.join(__dirname, '../src/constants.html');
+const CONSTANTS_FILE = path.join(__dirname, '../src/constants.js');
 
 fs.readFile(PACKAGE_FILE, (error, data) => {
   if(error) {

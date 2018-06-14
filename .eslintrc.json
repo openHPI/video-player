@@ -4,6 +4,13 @@
     "browser": true,
     "es6": true
   },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
   "rules": {
     "no-console": "off",
     "no-debugger": "error",
@@ -34,18 +41,8 @@
     "no-global-assign": "warn",
     "no-warning-comments": [2, { "terms": ["todo"], "location": "anywhere" }]
   },
-  "settings": {
-    "html/indent": "+2",
-    "html/report-bad-indent": "error"
-  },
-  "plugins": [
-    "html"
-  ],
   "globals": {
-    "Polymer": false,
-    "IMD": false,
-    "require": false,
-    "exports": false,
-    "__dirname": false
+    "require": true,
+    "Hls": true
   }
 }

@@ -67,9 +67,13 @@ const stateSchema = {
     default: false,
     description: 'Enables interactive transcript. Additionally, `captionLanguage` needs to be set.',
   },
+  resizerRatios: {
+    type: 'array',
+    description: 'The ratios of the resizers. Ratio is calculated by `leftVideo.width / rightVideo.width`. Per default, videos were aligned to have the same height.',
+  },
 };
 
-const configurationSchema = {
+export const configurationSchema = {
   streams: {
     required: true,
     type: 'array',
@@ -134,11 +138,6 @@ const configurationSchema = {
     options: ['dark-orange', 'dark-yellow', 'dark-blue', 'light-green', 'dark-red', 'light-red'],
     default: 'dark-orange',
     description: 'Predefined color theme (can be adjusted by settings the colors explicitly).',
-  },
-  loadFontAwesome: {
-    type: 'boolean',
-    default: true,
-    description: '[FontAwesome](http://fontawesome.io) is used for the icons of the player. If your site already loads FontAwesome, this can be set to false to save bandwidth.',
   },
   videoPreload: {
     type: 'boolean',
@@ -329,12 +328,6 @@ const configurationSchema = {
       duration: 'Duration of the video',
     },
   },
-  videoAlignment: {
-    type: 'string',
-    options: ['width', 'height'],
-    default: 'width',
-    description: 'If there is more than one video this property decides whether they should have the same height or the same width.',
-  },
   liveDvr: {
     type: 'boolean',
     description: 'If given stream is a live stream that supports DVR, this flag must be enabled to make seeking possible.',
@@ -351,10 +344,3 @@ const configurationSchema = {
     default: true,
   },
 };
-
-// Export schema as IMD module in browser context and as object in Node context
-if (typeof window === 'undefined') {
-  exports.schema = configurationSchema;
-} else {
-  IMD.define('configuration-schema', () => configurationSchema);
-}
