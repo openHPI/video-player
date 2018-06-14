@@ -39,6 +39,18 @@
         color: white;
       }
 
+      .quiz__highlighting-correct {
+        color: green;
+      }
+
+      .quiz__highlighting-wrong {
+        color: red;
+      }
+
+      .quiz__highlighting-strikethrough {
+        text-decoration: line-through
+      }
+
     </style>
 
     <div id="container__quiz-overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
@@ -224,19 +236,25 @@
             correct = isAnswerCorrect;
           }
           else {
-            selected = this.$$('#select__quiz-answer-' + answer.id).checked;
+            selected = this.shadowRoot.querySelector('#select__quiz-answer-' + answer.id).checked;
 
-            for(var index = 0; index < correctAnswers.length(); ++index) {
+            var shouldBeSelected = false;
+            for(var index = 0; index < correctAnswers.length; ++index) {
               if(correctAnswers[index].id == answer.id) {
-                correct = true;
+                shouldBeSelected = true;
+                break;
               }
+            }
+
+            if(selected && shouldBeSelected || !selected && !shouldBeSelected) {
+              correct = true;
             }
           }
 
           if(correct)
-            return 'quiz__highlighing-correct';
+            return 'quiz__highlighting-correct';
 
-          if(!correct && selected)
+          if(selected)
             return 'quiz__highlighting-wrong quiz__highlighting-strikethrough';
 
           return 'quiz__highlighting-wrong';
