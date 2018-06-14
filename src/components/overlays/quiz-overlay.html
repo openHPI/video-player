@@ -45,7 +45,7 @@
       <h3 id="text__quiz-question">[[_currentQuestion.text]]</h3>
 
       <template is="dom-if" if="[[_isTextQuestion(_currentQuestion)]]">
-        <div class$="[[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, null)]]">
+        <div class$="[[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, null)]]">
           <input id="input__freetext-answer" type="text"></input>
         </div>
 
@@ -58,7 +58,7 @@
       </template>
 
       <template is="dom-repeat" items="[[_currentQuestion.answers]]">
-        <div class$="[[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, item)]]">
+        <div class$="[[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, item)]]">
           <div class="container__centered-row">
             <input name="answer" class="select__quiz-answer" value$="[[item.id]]" id="select__quiz-answer-[[item.id]]" type$="[[ifThenElse(_isSingleChoiceQuestion, 'radio', 'checkbox')]]"></input>
             <span class="text__quiz-answer">[[item.text]]</span>
@@ -90,6 +90,7 @@
           return {
             state: Object,
             questions: Array,
+            callback: Object,
 
             _currentQuestions: {  // questions that should be shown in the current playback second (could be more than one)
               type: Array,
@@ -104,11 +105,6 @@
             _lastProcessedPosition: {  // The last playback position second that questions where added to currentQuestions for
               type: Number,
               value: 0,
-            },
-
-            _validationCallback: {
-              type: Object,
-              value: null,
             },
 
             _correctAnswersShown: {  // could probably be computed from _correctAnswers too
@@ -151,11 +147,6 @@
             '_positionChanged(state.position, state.duration)',
           ];
         }
-
-        setQuizValidationCallback(validationCallback) {
-          _validationCallback = validationCallback;
-        }
-
 
         _isTextQuestion(question) {
           return question != null && question.type == 'freetext';
@@ -233,7 +224,7 @@
             correct = isAnswerCorrect;
           }
           else {
-            selected = document.getElementById('select__quiz-answer-' + answer.id).checked;
+            selected = this.$$('#select__quiz-answer-' + answer.id).checked;
 
             for(var index = 0; index < correctAnswers.length(); ++index) {
               if(correctAnswers[index].id == answer.id) {
@@ -252,23 +243,16 @@
         }
 
         _submitCurrentQuestion() {
-          if(this._validationCallback == null) {
-            throw "No answer validation callback given";
-          }
+          var callback = window[this.callback];
 
           if(this._isTextQuestion()) {
-            let retval = this._validationCallback({
-              question: this._currentQuestion,
-              answer: document.getElementById("input__freetext-answer").value,
-            })
+            let retval = callback(this._currentQuestion, document.getElementById("input__freetext-answer").value);
+
             this._correctAnswers = retval.correctAnswers;
             this._isAnswerCorrect = retval.isAnswerCorrect;
-
           } else { // single or multiple choice question
-            let retval = this._validationCallback({
-              question: this._currentQuestion,
-              answers: this._getSelectedAnswers(),
-            })
+            let retval = callback(this._currentQuestion, this._getSelectedAnswers());
+
             this._correctAnswers = retval.correctAnswers;
             this._isAnswerCorrect = retval.isAnswerCorrect;
           }
@@ -277,14 +261,14 @@
         }
 
         _getSelectedAnswers() {
-          ids = []
-          result = [];
+          var ids = []
+          var result = [];
 
           let inputs = document.getElementsByClassName("select__quiz-answer");
-          for(let index = 1; index < inputs.length(); ++index) {
+          for(let index = 0; index < inputs.length; ++index) {
             if(inputs[index].checked) {
               let answerid = inputs[index].id.split("-").slice(-1)[0];
-              ids.push(answerid);
+              ids.push(parseInt(answerid));
             }
           }
 

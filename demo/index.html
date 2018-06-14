@@ -29,6 +29,46 @@
         font-family: 'Open Sans', sans-serif;
       }
     </style>
+
+    <!-- quiz answer validation for the player --!>
+    <script>
+      function validationCallback(question, answer_info) {
+        if(question.id == 1) {  // single choice question, thus one or none answer given
+          return {
+            'isAnswerCorrect': answer_info.length == 1 && answer_info[0].id == 3,
+            'correctAnswers': {
+              "id" : 3,
+              "text" : "Answer text 3"
+            }
+          }
+        }
+        if(question.id == 2) {  // multiple choice question
+          var ids = [];
+          for(index = 0; index < answer_info.length; ++index) {
+            ids.push(answer_info[index].id);
+          }
+          ids.sort();
+
+          return {
+            'isAnswerCorrect': ids == [4, 5, 6],
+            'correctAnswers': [
+              {
+                "id" : 4,
+                "text" : "Answer text 1"
+              },
+              {
+                "id" : 5,
+                "text" : "Answer text 2"
+              },
+              {
+                "id" : 6,
+                "text" : "Answer text 3"
+              }
+            ]
+          }
+        }
+      }
+    </script>
   </head>
   <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -66,8 +106,9 @@
     </div>
 
     <div class="container">
-      <video-player
+      <video-player id="player"
      configuration='{
+        "quizValidationCallback": "validationCallback",
         "quizQuestions" : [
           {
             "id" : 1,
