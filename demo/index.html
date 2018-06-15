@@ -36,10 +36,10 @@
         if(question.id == 1) {  // single choice question, thus one or none answer given
           return {
             'isAnswerCorrect': answer_info.length == 1 && answer_info[0].id == 3,
-            'correctAnswers': {
+            'correctAnswers': [{
               "id" : 3,
               "text" : "Answer text 3"
-            }
+            }]
           }
         }
         if(question.id == 2) {  // multiple choice question
