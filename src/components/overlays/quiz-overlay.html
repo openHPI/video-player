@@ -138,14 +138,9 @@
               inject: 'StateManager',
             },
 
-            _isEnabled: {
-              type: Boolean,
-              value: true,
-            },
-
             _isVisible: {
               type: Boolean,
-              computed: '_getIsVisible(_isEnabled, _currentQuestion)',
+              computed: '_getIsVisible(_currentQuestion)',
             },
 
             _disableSubmitButton: {
@@ -175,8 +170,8 @@
           return question !== null && question.type === 'single-choice';
         }
 
-        _getIsVisible(enabled, currentQuestion) {
-          return enabled && currentQuestion !== null;
+        _getIsVisible(currentQuestion) {
+          return currentQuestion !== null;
         }
 
         _playStateChanged(playState) {
@@ -189,6 +184,11 @@
 
         _positionChanged(position) {
           let flooredPosition = Math.floor(position);
+
+          if(!this.state.isQuizOverlayEnabled) {
+            this._lastProcessedPosition = flooredPosition;
+            return;
+          }
 
           if(flooredPosition <= this._lastProcessedPosition) {
             return;
@@ -279,7 +279,7 @@
         _submitCurrentQuestion() {
           let callback = window[this.callback];
 
-          if(this._isTextQuestion()) {
+          if(this._isTextQuestion(this._currentQuestion)) {
             let retval = callback(this._currentQuestion, document.getElementById('input__freetext-answer').value);
 
             this._correctAnswers = retval.correctAnswers;
