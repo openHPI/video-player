@@ -106,22 +106,22 @@
             questions: Array,
             callback: Object,
 
-            _currentQuestions: {  // questions that should be shown in the current playback second (could be more than one)
+            _currentQuestions: { // Questions that should be shown in the current playback second (could be more than one)
               type: Array,
               value: [],
             },
 
-            _currentQuestion: {  // the first question that has to be shown in the current second. Used for displaying the overlay. Should probably be computed, that didn't work though
+            _currentQuestion: { // The first question that has to be shown in the current second. Used for displaying the overlay. Should probably be computed, that didn't work though
               type: Object,
               value: null,
             },
 
-            _lastProcessedPosition: {  // The last playback position second that questions where added to currentQuestions for
+            _lastProcessedPosition: { // The last playback position second that questions where added to currentQuestions for
               type: Number,
               value: 0,
             },
 
-            _correctAnswersShown: {  // could probably be computed from _correctAnswers too
+            _correctAnswersShown: { // Could probably be computed from _correctAnswers too
               type: Boolean,
               value: false,
             },
@@ -163,20 +163,20 @@
         static get observers() {
           return [
             '_playStateChanged(state.playState)',
-            '_positionChanged(state.position, state.duration)',
+            '_positionChanged(state.position)',
           ];
         }
 
         _isTextQuestion(question) {
-          return question != null && question.type == 'freetext';
+          return question !== null && question.type === 'freetext';
         }
 
         _getIsSingleChoiceQuestion(question) {
-          return question != null && question.type == 'single-choice';
+          return question !== null && question.type === 'single-choice';
         }
 
         _getIsVisible(enabled, currentQuestion) {
-          return enabled && currentQuestion != null;
+          return enabled && currentQuestion !== null;
         }
 
         _playStateChanged(playState) {
@@ -187,7 +187,7 @@
           this._setCurrentQuestion();
         }
 
-        _positionChanged(position, duration) {
+        _positionChanged(position) {
           let flooredPosition = Math.floor(position);
 
           if(flooredPosition <= this._lastProcessedPosition) {
@@ -202,10 +202,10 @@
           }
         }
 
-        _selectionChanged(e) {
-          var selected = this._getSelectedAnswers();
+        _selectionChanged() {
+          let selected = this._getSelectedAnswers();
 
-          if(selected.length == 0) {
+          if(selected.length === 0) {
             this._disableSubmitButton = true;
           } else {
             this._disableSubmitButton = false;
@@ -215,8 +215,7 @@
         _setCurrentQuestion() {
           if(this._currentQuestions.length > 0) {
             this._currentQuestion = this._currentQuestions[0];
-          }
-          else {
+          } else {
             this._currentQuestion = null;
           }
         }
@@ -224,7 +223,7 @@
         _addCurrentQuestionsForPosition(position) {
           let index = 0;
           for(index = 0; index < this.questions.length; ++index) {
-            if(this.questions[index].position == position) {
+            if(this.questions[index].position === position) {
               this.push('_currentQuestions', this.questions[index]);
             }
           }
@@ -238,27 +237,26 @@
           this._setCurrentQuestion();
           this._disableSubmitButton = true;
 
-          if(this._currentQuestion == null) {
+          if(this._currentQuestion === null) {
             this._stateManager.play();
           }
         }
 
         _getValidationClass(currentQuestion, correctAnswersShown, correctAnswers, isAnswerCorrect, answer) {
-          var correct = false;
-          var selected = false;
+          let correct = false;
+          let selected = false;
 
           if(!correctAnswersShown)
             return '';
 
-          if(currentQuestion.type == 'freetext') {
+          if(currentQuestion.type === 'freetext') {
             correct = isAnswerCorrect;
-          }
-          else {
+          } else {
             selected = this.shadowRoot.querySelector('#select__quiz-answer-' + answer.id).checked;
 
-            var shouldBeSelected = false;
-            for(var index = 0; index < correctAnswers.length; ++index) {
-              if(correctAnswers[index].id == answer.id) {
+            let shouldBeSelected = false;
+            for(let index = 0; index < correctAnswers.length; ++index) {
+              if(correctAnswers[index].id === answer.id) {
                 shouldBeSelected = true;
                 break;
               }
@@ -279,14 +277,14 @@
         }
 
         _submitCurrentQuestion() {
-          var callback = window[this.callback];
+          let callback = window[this.callback];
 
           if(this._isTextQuestion()) {
-            let retval = callback(this._currentQuestion, document.getElementById("input__freetext-answer").value);
+            let retval = callback(this._currentQuestion, document.getElementById('input__freetext-answer').value);
 
             this._correctAnswers = retval.correctAnswers;
             this._isAnswerCorrect = retval.isAnswerCorrect;
-          } else { // single or multiple choice question
+          } else { // Single or multiple choice question
             let retval = callback(this._currentQuestion, this._getSelectedAnswers());
 
             this._correctAnswers = retval.correctAnswers;
@@ -297,20 +295,19 @@
         }
 
         _getSelectedAnswers() {
-          var ids = []
-          var result = [];
+          let ids = [];
 
-          let inputs = document.getElementsByClassName("select__quiz-answer");
+          let inputs = document.getElementsByClassName('select__quiz-answer');
           for(let index = 0; index < inputs.length; ++index) {
             if(inputs[index].checked) {
-              let answerid = inputs[index].id.split("-").slice(-1)[0];
+              let answerid = inputs[index].id.split('-').slice(-1)[0];
               ids.push(parseInt(answerid));
             }
           }
 
-          return this._currentQuestion.answers.filter(function(answer) {
-            return ids.includes(answer.id);
-          });
+          let filterFunction = function(answer) { return ids.includes(answer.id); };
+
+          return this._currentQuestion.answers.filter(filterFunction);
         }
 
         _handleCancelClick(e) {
