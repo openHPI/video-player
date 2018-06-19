@@ -43,7 +43,7 @@
     "@polymer/polymer": "^3.0.0",
     "fontawesome-icon": "^1.0.3",
     "gulp-debug": "^4.0.0",
-    "hls.js": "^0.9.1"
+    "hls.js": "^0.10.1"
   },
   "devDependencies": {
     "@polymer/iron-test-helpers": "^3.0.0-pre.18",
