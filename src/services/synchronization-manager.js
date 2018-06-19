@@ -139,7 +139,8 @@ export class SynchronizationManager {
       let master = this._videos[0];
       if(this._stateManager.state.playState === PLAY_STATES.PAUSED) {
         // The positions can be set instantly if playback is paused
-        this._videos.forEach(video => video.currentTime = master.currentTime);
+        this._videos.filter(video => video.currentTime !== master.currentTime)
+                    .forEach(video => video.currentTime = master.currentTime);
       } else {
         // The state is set to waiting before setting the positions if videoa are playing
         this._videos.filter(video => Math.abs(video.currentTime - master.currentTime) > SYNC_DIFF_THRESHOLD)
