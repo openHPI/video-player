@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@polymer/polymer": "^3.0.0",
-    "fontawesome-icon": "^1.0.2",
+    "fontawesome-icon": "^1.0.3",
     "gulp-debug": "^4.0.0",
     "hls.js": "^0.9.1"
   },
