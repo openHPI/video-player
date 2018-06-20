@@ -103,6 +103,7 @@ export const DEFAULT_STATE = {
   muted: false,
   fullscreen: false,
   isChapterListShown: false,
+  isQuizOverlayEnabled: true,
   captionLanguage: 'off',
   captionType: CAPTION_TYPES.DEFAULT,
   showCaptions: false,
@@ -122,6 +123,8 @@ export const DEFAULT_CONFIGURATION = {
   captions: [],
   slides: [],
   relatedVideos: [],
+  quizValidationCallback: null,
+  quizQuestions: [],
   initialState: {},
   videoPreload: true,
   liveDvr: false,
@@ -234,4 +237,5 @@ export const ANALYTICS_TOPICS = {
   VIDEO_TIME_CHANGE: 'video_time_change',
   VIDEO_DUAL_STREAM_CHANGE: 'video_dual_stream_change',
   VIDEO_VOLUME_CHANGE: 'video_volume_change',
+  QUIZ_OVERLAY: 'quiz_overlay',
 };
