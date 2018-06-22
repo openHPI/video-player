@@ -1,3 +1,4 @@
+import { ANALYTICS_TOPICS } from '../../constants.js';
 import { IocRequesterMixin } from '../../mixins/ioc-requester.js';
 import { BindingHelpersMixin } from '../../mixins/binding-helpers.js';
 import { LocalizationMixin } from '../../mixins/localization.js';
@@ -5,15 +6,15 @@ import '../../styling/control-bar--style-module.js';
 import 'fontawesome-icon';
 import { PolymerElement, html } from '@polymer/polymer';
 
-class QuizOverlaySwitch extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
+class QuizOverlaySwitch extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(PolymerElement))) {
   static get template() {
     return html`
-      <style type="text/css" include="control-bar--style-module font-awesome">
+      <style type="text/css" include="control-bar--style-module">
       </style>
 
       <div id="container__quiz_overlay_switch" class="user_controls">
         <a id="button__quiz_overlay" class$="button [[ifNotThen(state.isQuizOverlayEnabled, 'inactive')]]" on-click="_handleClick" href="#">
-          <i class="fa fa-question" title$="[[localize('quiz-overlay-switch-title')]]"></i>
+          <fontawesome-icon prefix="fas" name="question" fixed-width title$="[[localize('quiz-overlay-switch-title')]]"></fontawesome-icon>
         </a>
       </div>
     `;

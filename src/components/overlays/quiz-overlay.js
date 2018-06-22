@@ -1,10 +1,11 @@
+import { PLAY_STATES }  from '../../constants.js';
 import { IocRequesterMixin } from '../../mixins/ioc-requester.js';
 import { BindingHelpersMixin } from '../../mixins/binding-helpers.js';
 import { LocalizationMixin } from '../../mixins/localization.js';
 import '../../styling/overlay--style-module.js';
 import { PolymerElement, html } from '@polymer/polymer';
 
-class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(Polymer.Element))) {
+class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(PolymerElement))) {
   static get template() {
     return html`
       <style type="text/css" include="overlay--style-module">
