@@ -15,9 +15,9 @@ The video-player provides the following public interface for accessing and manip
 * `setVolume(volume)` Sets the volume of the playback (0.0-1.0).
 * `mute()` Enables muting.
 * `unmute()` Disables muting.
-* `showCaptions(language)` Shows captions in the specified language.
+* `showCaptions(language[, type])` Shows captions in the specified language and type (optional).
 * `hideCaptions()` Hides captions.
-* `showInteractiveTranscript(language)` Shows interactive transcript in the specified language.
+* `showInteractiveTranscript(language[, type])` Shows interactive transcript in the specified language (optional).
 * `hideInteractiveTranscript()` Hides interactive transcript.
 * `setResizerRatio(ratio, index)` Sets the ratio of a single resizer. If index is omitted, first resizer is affected.
 * `setResizerRatios(ratios)` Sets the ratios of all resizers.

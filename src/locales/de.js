@@ -1,7 +1,10 @@
 const locales = {
   // General strings
-  'general--off': 'aus',
+  'general--off': 'Aus',
   'general--cancel': 'Abbrechen',
+
+  // Caption types
+  'caption-types--auto-generated': 'Automatisch übersetzt',
 
   // Component live-indicator
   'live-indicator--label': 'LIVE',

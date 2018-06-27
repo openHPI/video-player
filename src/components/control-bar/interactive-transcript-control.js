@@ -1,4 +1,4 @@
-import { ANALYTICS_TOPICS } from '../../constants.js';
+import { ANALYTICS_TOPICS, CAPTION_TYPES } from '../../constants.js';
 import { IocRequesterMixin } from '../../mixins/ioc-requester.js';
 import { BindingHelpersMixin } from '../../mixins/binding-helpers.js';
 import { LocalizationMixin } from '../../mixins/localization.js';
@@ -24,7 +24,7 @@ class InteractiveTranscriptControl extends BindingHelpersMixin(IocRequesterMixin
   static get properties() {
     return {
       state: Object,
-      languages: Array,
+      captions: Array,
       isInMobileMenu: {
         type: Boolean,
         value: false,
@@ -39,7 +39,7 @@ class InteractiveTranscriptControl extends BindingHelpersMixin(IocRequesterMixin
       },
       _items: {
         type: Array,
-        computed: '_getItems(languages.*, localize)',
+        computed: '_getItems(captions.*, localize)',
       },
       _offValue: {
         readOnly: true,
@@ -47,7 +47,7 @@ class InteractiveTranscriptControl extends BindingHelpersMixin(IocRequesterMixin
       },
       _selectedValue: {
         type: Object,
-        computed: '_getSelectedValue(state.showInteractiveTranscript, state.captionLanguage, languages)',
+        computed: '_getSelectedValue(state.showInteractiveTranscript, state.captionLanguage, state.captionType, captions)',
       },
       _isActive: {
         type: Boolean,
@@ -58,22 +58,37 @@ class InteractiveTranscriptControl extends BindingHelpersMixin(IocRequesterMixin
 
   _getItems() {
     if(this.localize) {
-      let languageItems = this.languages.map(language => ({
-        text: language,
-        value: language,
-      }));
+      const buildItem = (captionConfig) => ({
+        text: captionConfig.name || captionConfig.language,
+        badgeValue: captionConfig.language,
+        value: captionConfig,
+      });
+
+      let defaultCaptions = this.captions.filter(config => typeof config.type === 'undefined' || config.type === CAPTION_TYPES.DEFAULT);
+      let listItems = defaultCaptions.map(buildItem.bind(this));
+      for(let type of Object.values(CAPTION_TYPES).filter(type => type !== CAPTION_TYPES.DEFAULT)) {
+        let typeItems = this.captions.filter(config => config.type === type).map(buildItem.bind(this));
+        if(typeItems.length > 0) {
+          listItems.push({
+            text: this.localize(`caption-types--${type}`),
+            children: typeItems,
+          });
+        }
+      }
+
       let offItem = {
         text: this.localize('general--off'),
         value: this._offValue,
       };
 
-      return [offItem].concat(languageItems);
+      return [offItem].concat(listItems);
     }
   }
 
-  _getSelectedValue(showInteractiveTranscript, captionLanguage, languages) {
-    if(showInteractiveTranscript && languages.includes(captionLanguage)) {
-      return captionLanguage;
+  _getSelectedValue(showInteractiveTranscript, captionLanguage, captionType, captions) {
+    let selectedValue = captions.find(item => item.language === captionLanguage && item.type === captionType);
+    if(showInteractiveTranscript && selectedValue) {
+      return selectedValue;
     } else {
       return this._offValue;
     }
@@ -85,7 +100,7 @@ class InteractiveTranscriptControl extends BindingHelpersMixin(IocRequesterMixin
 
   _selectionChanged(e) {
     if (e.target.selectedValue !== this._offValue) {
-      this._stateManager.setCaptionLanguage(e.target.selectedValue);
+      this._stateManager.setSelectedCaptions(e.target.selectedValue.language, e.target.selectedValue.type);
       this._stateManager.setInteractiveTranscriptVisibility(true);
     } else {
       this._stateManager.setInteractiveTranscriptVisibility(false);
@@ -94,6 +109,7 @@ class InteractiveTranscriptControl extends BindingHelpersMixin(IocRequesterMixin
     this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_TRANSCRIPT}, {
       currentTranscriptStatus: this.state.showInteractiveTranscript,
       currentTranscriptLanguage: this.state.captionLanguage,
+      currentSubtitleType: this.state.captionType,
     });
   }
 }

@@ -2,6 +2,7 @@ import { BindingHelpersMixin } from '../../mixins/binding-helpers.js';
 import '../../styling/control-bar--style-module.js';
 import 'fontawesome-icon';
 import { PolymerElement, html } from '@polymer/polymer';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 
 class SelectControl extends BindingHelpersMixin(PolymerElement) {
   static get template() {
@@ -15,32 +16,55 @@ class SelectControl extends BindingHelpersMixin(PolymerElement) {
           position: relative;
           height: 40px;
         }
-        .dropdown .dropdown-content {
+        .dropdown .dropdown-content-container {
           position: absolute;
           /* Equals control bar height. This is set to assure that the dropdown opens to the top. */
           bottom: 40px;
-          /* Cancel out the padding */
-          left: -10px;
-          right: -10px;
+          left: -5px;
           z-index: 10;
 
+          display: flex;
+          align-items: flex-end;
+        }
+        .dropdown .dropdown-content {
+          display: flex;
+          white-space: nowrap;
+          flex-direction: column;
+          justify-content: stretch;
           border: 1px solid black;
-          border-bottom: none;
+          margin-left: -1px;
 
           @apply --set-foreground-color;
           @apply --set-background-color;
         }
+        .dropdown .dropdown-content:first-of-type {
+          border-bottom: 1px solid transparent;
+          margin-left: 0;
+        }
+        .dropdown .dropdown-content:not(:first-of-type):not(.active) {
+          display: none;
+        }
+
         .dropdown .dropdown-content a {
-          display: inline-block;
+          display: flex;
+          justify-content: space-between;
+          width: auto;
+          padding: 0 5px;
+          text-align: left;
           line-height: 2;
           cursor: pointer;
           overflow: hidden;
           text-overflow: ellipsis;
         }
-
         .dropdown .dropdown-content a:hover,
+        .dropdown .dropdown-content a.active,
         .dropdown .dropdown-content a.selected {
           background-color: grey;
+          text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+        }
+        .dropdown .dropdown-content .children-indicator {
+          display: inline-block;
+          margin-left: 6px;
         }
 
         .dropdown #button__select.with-badge:after {
@@ -89,16 +113,28 @@ class SelectControl extends BindingHelpersMixin(PolymerElement) {
         }
       </style>
 
-      <div id="container__select_control" class$="user_controls [[ifNotThen(isInMobileMenu, 'dropdown')]] [[ifThen(isInMobileMenu, 'in-menu-entry')]]">
-        <div id="inner_container__select_control" on-mouseover="_handleMouseOver" on-mouseout="_handleMouseOut">
-          <a id="button__select" class$="button [[ifThen(selectedItem.value, 'with-badge')]] [[ifNotThen(active, 'inactive')]]" badge-value$="[[selectedItem.text]]" href="javascript:void(0)" on-click="_handleClick">
+      <div id="container__select_control" on-mouseover="_handleMouseOver" on-mouseout="_handleMouseOut" class$="user_controls [[ifNotThen(isInMobileMenu, 'dropdown')]] [[ifThen(isInMobileMenu, 'in-menu-entry')]]">
+        <div id="inner_container__select_control">
+          <a id="button__select" class$="button [[ifThen(selectedItem.value, 'with-badge')]] [[ifNotThen(active, 'inactive')]]" badge-value$="[[_getBagdeValue(selectedItem)]]" href="javascript:void(0)" on-click="_handleClick">
             <fontawesome-icon prefix="[[iconPrefix]]" name="[[iconName]]" fixed-width></fontawesome-icon>
           </a>
-          <div id="dropdown__select" class$="dropdown-content [[ifNotThen(_isDropDownOpen, '-hidden')]]">
-            <template is="dom-repeat" items="[[items]]">
-              <a on-click="_handleDropDownElementClick" name="[[item.text]]" class$="[[ifEqualsThen(item.value, selectedValue, 'selected')]]" href="javascript:void(0)">
-                [[item.text]]
-              </a>
+          <div id="dropdown__select" class$="dropdown-content-container [[ifNotThen(_isDropDownOpen, '-hidden')]]" on-mouseout="_handleDropdownMouseOut">
+            <template is="dom-repeat" items="[[_sublists]]" as="sublist" index-as="sublistIndex">
+              <div class$="dropdown-content [[_isSublistActiveThen(sublist, _navigationPath.*, 'active')]]" data-level$="[[sublist.level]]">
+                <template is="dom-repeat" items="[[sublist.items]]">
+                  <a name="[[item.text]]"
+                     class$="[[ifEqualsThen(item.value, selectedValue, 'selected')]] [[_isItemActiveThen(index, sublist.level, _navigationPath.*, _selectedPath.*, 'active')]]"
+                     href="javascript:void(0)"
+                     data-level$="[[sublist.level]]"
+                     on-click="_handleItemClick"
+                     on-mouseover="_handleItemMouseOver">
+                    <span>[[item.text]]</span>
+                    <template is="dom-if" if="[[hasItems(item.children)]]">
+                      <fontawesome-icon class="children-indicator" prefix="fas" name="caret-right"></fontawesome-icon>
+                    </template>
+                  </a>
+                </template>
+              </div>
             </template>
           </div>
         </div>
@@ -126,13 +162,25 @@ class SelectControl extends BindingHelpersMixin(PolymerElement) {
         type: Boolean,
         value: false,
       },
-      _isDropDownOpen: {
-        type: Boolean,
-        value: false,
-      },
       active: {
         type: Boolean,
         value: true,
+      },
+      _sublists: {
+        type: Array,
+        computed: '_getSubLists(items)',
+      },
+      _navigationPath: {
+        type: Array,
+        value: [],
+      },
+      _selectedPath: {
+        type: Array,
+        computed: '_getSelectedPath(items, selectedItem)',
+      },
+      _isDropDownOpen: {
+        type: Boolean,
+        value: false,
       },
     };
   }
@@ -173,18 +221,100 @@ class SelectControl extends BindingHelpersMixin(PolymerElement) {
     }
   }
 
-  _handleDropDownElementClick(e) {
-    this.selectedValue = e.model.item.value;
-    this.dispatchEvent(new CustomEvent('change'));
+  _handleItemMouseOver(e) {
+    let index = e.model.index;
+    let level = parseInt(e.currentTarget.dataset.level);
+    this.splice('_navigationPath', level, this._navigationPath.length - level, {index});
+  }
 
-    if(!this.state.mobileSettingsMenuOpen) {
-      this._hideDropDown();
+  _handleDropdownMouseOut(e) {
+    let target = e.currentTarget;
+    // Wait for sublists to be rendered
+    afterNextRender(this, () => {
+      // Only reset navigation path if mouse actually left all sublists
+      let bounds = target.getBoundingClientRect();
+      if(e.clientX < bounds.x || e.clientX > bounds.x + bounds.width &&
+         e.clientY < bounds.y || e.clientY > bounds.y + bounds.height) {
+        this.set('_navigationPath', []);
+      }
+    });
+  }
+
+  _handleItemClick(e) {
+    let value = e.model.item.value;
+    if(typeof value !== 'undefined') {
+      this.selectedValue = value;
+      this.dispatchEvent(new CustomEvent('change'));
+
+      if(!this.state.mobileSettingsMenuOpen) {
+        this._hideDropDown();
+      }
     }
+  }
+
+  _getBagdeValue(item) {
+    return item.badgeValue || item.text;
   }
 
   _getSelectedItem(items, selectedValue) {
     if(items) {
-      return items.find(item => item.value === selectedValue);
+      // Check for item on current level
+      let selectedItem = items.find(item => item.value === selectedValue);
+      if(selectedItem) {
+        return selectedItem;
+      }
+
+      // Check for item recursively on descendant levels
+      return items.filter(item => typeof item.children !== 'undefined')
+                  .map(item => this._getSelectedItem(item.children, selectedValue))[0];
+    }
+  }
+
+  _getSelectedPath(items, selectedItem) {
+    if(items) {
+      // Check for item on current level
+      let index = items.indexOf(selectedItem);
+      if(index >= 0) {
+        return [{index}];
+      }
+
+      // Check for item recursively on descendant levels
+      for(let i = 0; i < items.length; i++) {
+        let item = items[i];
+        let subPath = this._getSelectedPath(item.children, selectedItem);
+        if(subPath) {
+          return [{index: i}].concat(subPath);
+        }
+      }
+    }
+  }
+
+  _getSubLists(items, level = 0, parentIndex = null) {
+    if(typeof items === 'undefined' || items.length === 0) {
+      return [];
+    }
+
+    let currentList = {level, parentIndex, items };
+    let sublists = items.map((item, index) => {
+      if(!item.children) {
+        return null;
+      }
+      return this._getSubLists(item.children, level + 1, index);
+    }).filter(sublist => sublist).reduce((acc, val) => acc.concat(val), []);
+
+    return [currentList].concat(sublists);
+  }
+
+  _isSublistActiveThen(sublist, navigationPathChange, thenValue) {
+    if(this._navigationPath.some((navItem, level) => level === sublist.level - 1 && navItem.index === sublist.parentIndex)) {
+      return thenValue;
+    }
+  }
+
+  _isItemActiveThen(index, level, navigationPathChange, activePathChange, thenValue) {
+    if((this._navigationPath[level] && this._navigationPath[level].index === index) ||
+       (this._selectedPath[level] && this._selectedPath[level].index === index)) {
+      return thenValue;
     }
   }
 

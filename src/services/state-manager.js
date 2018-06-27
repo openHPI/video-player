@@ -1,4 +1,4 @@
-import {PLAY_STATES, PLAYBACK_RATES} from '../constants.js';
+import {PLAY_STATES, PLAYBACK_RATES, CAPTION_TYPES} from '../constants.js';
 
 export class StateManager {
   /**
@@ -361,18 +361,34 @@ export class StateManager {
     this.setState('showCaptions', isVisible);
   }
 
+
   /**
-   * Sets the new caption language or turns captions off by setting the
+   * Sets the new caption selection or turns captions off by setting the
    * language to 'off'.
    * @param {string} language The language to be set.
+   * @param {string} type The type to be set.
    * @returns {void}
    */
-  setCaptionLanguage(language) {
-    if(!this.configuration.captions || !this.configuration.captions.map(x => x.language).includes(language)) {
-      throw new Error('No captions in specified language available.');
+  setSelectedCaptions(language, type = null) {
+    if(!this.configuration.captions) {
+      throw new Error('No captions available.');
     }
 
-    this.setState('captionLanguage', language);
+    // Get captions that match given language and type (if provided)
+    let matchingCaptions = this.configuration.captions.filter(item => {
+      let match = item.language === language;
+      if(type) {
+        match = match && item.type === type;
+      }
+      return match;
+    });
+    let captions = matchingCaptions.filter(item => item.type === CAPTION_TYPES.DEFAULT)[0] || matchingCaptions[0];
+    if(!captions) {
+      throw new Error('Specified captions are not available.');
+    }
+
+    this.setState('captionLanguage', captions.language);
+    this.setState('captionType', captions.type);
   }
 
   /**
@@ -380,7 +396,7 @@ export class StateManager {
    * @param {Array} captions The active captions.
    * @returns {void}
    */
-  setActiveCaptions(captions){
+  setActiveCaptions(captions) {
     this.setState('activeCaptions', captions);
   }
 
