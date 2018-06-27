@@ -33,6 +33,15 @@ export const QUALITY_MODES = {
 };
 
 /**
+ * Contains the supported caption types.
+ * @type {Object.<string, string>}
+ */
+export const CAPTION_TYPES = {
+  DEFAULT: 'default',
+  GENERATED: 'auto-generated',
+};
+
+/**
  * Contains the interval in seconds between two syncronization procedures.
  * @type {Number}
  */
@@ -95,6 +104,7 @@ export const DEFAULT_STATE = {
   fullscreen: false,
   isChapterListShown: false,
   captionLanguage: 'off',
+  captionType: CAPTION_TYPES.DEFAULT,
   showCaptions: false,
   showInteractiveTranscript: false,
   mobileSettingsMenuOpen: false,
@@ -184,6 +194,7 @@ export const USER_PREFERENCES_KEYS = [
   'playbackRate',
   'volume',
   'captionLanguage',
+  'captionType',
   'showCaptions',
   'showInteractiveTranscript',
   'resizerRatios',

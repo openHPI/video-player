@@ -1,4 +1,4 @@
-import { VERSION, DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES,
+import { VERSION, DEFAULT_STATE, DEFAULT_CONFIGURATION, PLAY_STATES, CAPTION_TYPES,
          QUALITY_MODES, PLAYING_EVENT_NAME, THEMES, ANALYTICS_TOPICS } from './constants.js';
 import { configurationSchema } from './configuration-schema.js';
 import { IocProviderMixin } from './mixins/ioc-provider.js';
@@ -147,7 +147,7 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
         </template>
 
         <!-- Control Bar -->
-        <control-bar id="control-bar" state="[[state]]" live="[[configuration.live]]" has-chapters="[[hasItems(configuration.chapters)]]" has-fallback-stream="[[_hasFallbackStream]]" caption-languages="[[_captionLanguages]]" available-qualities="[[state.availableQualities]]" previous-video="[[_previousVideo]]" next-video="[[_nextVideo]]" number-of-streams="[[configuration.streams.length]]" live-dvr="[[configuration.liveDvr]]" mobile-menu="[[configuration.mobileMenu]]">
+        <control-bar id="control-bar" state="[[state]]" live="[[configuration.live]]" has-chapters="[[hasItems(configuration.chapters)]]" has-fallback-stream="[[_hasFallbackStream]]" captions="[[configuration.captions]]" available-qualities="[[state.availableQualities]]" previous-video="[[_previousVideo]]" next-video="[[_nextVideo]]" number-of-streams="[[configuration.streams.length]]" live-dvr="[[configuration.liveDvr]]" mobile-menu="[[configuration.mobileMenu]]">
         </control-bar>
 
         <!-- Chapter List -->
@@ -207,10 +207,6 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
       _localizer: {
         type: Object,
         inject: 'Localizer',
-      },
-      _captionLanguages: {
-        type: Array,
-        computed: '_getCaptionLanguages(configuration.captions)',
       },
       _previousVideo: {
         type: Object,
@@ -272,13 +268,13 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
   setVolume(volume) { this._stateManager.setVolume(volume); }
   mute() { this._stateManager.mute(); }
   unmute() { this._stateManager.unmute(); }
-  showCaptions(language) {
-    this._stateManager.setCaptionLanguage(language);
+  showCaptions(language, type = null) {
+    this._stateManager.setSelectedCaptions(language, type);
     this._stateManager.setCaptionsVisibility(true);
   }
   hideCaptions() { this._stateManager.setCaptionsVisibility(false); }
-  showInteractiveTranscript(language) {
-    this._stateManager.setCaptionLanguage(language);
+  showInteractiveTranscript(language, type = null) {
+    this._stateManager.setSelectedCaptions(language, type);
     this._stateManager.setInteractiveTranscriptVisibility(true);
   }
   hideInteractiveTranscript() { this._stateManager.setInteractiveTranscriptVisibility(false); }
@@ -352,12 +348,6 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
     // Therefore, the fallback is used allways in iOS
     if(this._isIOS && this.hasItems(this.configuration.streams, 2)) {
       this._stateManager.setFallbackStreamActive(true);
-    }
-  }
-
-  _getCaptionLanguages(captions) {
-    if(captions){
-      return captions.map(caption => caption.language);
     }
   }
 
@@ -437,6 +427,10 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
       if(Object.keys(DEFAULT_CONFIGURATION).filter(x => !Object.keys(configuration).includes(x)).length > 0) {
         this.configuration = Object.assign({}, DEFAULT_CONFIGURATION, configuration);
       }
+
+      // Set default caption types
+      this.configuration.captions.filter(item => typeof item.type === 'undefined')
+                                 .forEach(item => item.type = CAPTION_TYPES.DEFAULT);
 
       // Native HLS implementation of Safari does not support DVR for live streams
       if(HlsHelper.hasNativeHlsSupport) {

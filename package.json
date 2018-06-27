@@ -42,9 +42,9 @@
   },
   "dependencies": {
     "@polymer/polymer": "^3.0.0",
-    "fontawesome-icon": "^1.0.2",
+    "fontawesome-icon": "^1.0.4",
     "gulp-debug": "^4.0.0",
-    "hls.js": "^0.9.1"
+    "hls.js": "^0.10.1"
   },
   "devDependencies": {
     "@polymer/iron-test-helpers": "^3.0.0-pre.18",
@@ -81,7 +81,8 @@
     "bundle": "gulp bundle",
     "preversion": "npm test",
     "version": "node ./utils/update-version.js && git add src/constants.js",
-    "postversion": "git push && git push --tags && ./utils/github-pages.sh openHPI video-player"
+    "postversion": "git push && git push --tags && ./utils/github-pages.sh openHPI video-player",
+    "postinstall": "./utils/build-hls-js.sh"
   },
   "resolutions": {
     "inherits": "2.0.3",

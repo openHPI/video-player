@@ -89,11 +89,11 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
         </template>
 
         <!-- Right button section -->
-        <template is="dom-if" if="[[hasItems(captionLanguages)]]">
-          <caption-control state="[[state]]" languages="[[captionLanguages]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></caption-control>
+        <template is="dom-if" if="[[hasItems(captions)]]">
+          <caption-control state="[[state]]" captions="[[captions]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></caption-control>
         </template>
-        <template is="dom-if" if="[[hasItems(captionLanguages)]]">
-          <interactive-transcript-control state="[[state]]" languages="[[captionLanguages]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></interactive-transcript-control>
+        <template is="dom-if" if="[[hasItems(captions)]]">
+          <interactive-transcript-control state="[[state]]" captions="[[captions]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></interactive-transcript-control>
         </template>
         <template is="dom-if" if="[[!state.live]]">
           <speed-control state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></speed-control>
@@ -134,7 +134,7 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
       hasFallbackStream: Boolean,
       previousVideo: Object,
       nextVideo: Object,
-      captionLanguages: Array,
+      captions: Array,
       availableQualities: Boolean,
       numberOfStreams: Number,
       mobileMenu: Boolean,

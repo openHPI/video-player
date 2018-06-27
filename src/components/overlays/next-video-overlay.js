@@ -15,7 +15,7 @@ class NextVideoOverlay extends BindingHelpersMixin(IocRequesterMixin(Localizatio
           align-items: center;
           justify-content: center;
           flex-direction: column;
-          z-index: 7;
+          z-index: 8;
           background-color: rgba(0, 0, 0, 0.85);
           color: white;
         }

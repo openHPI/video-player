@@ -1,4 +1,4 @@
-import {PLAY_STATES, QUALITY_MODES, SEEK_DIFF_THRESHOLD, ANALYTICS_TOPICS} from '../constants.js';
+import {PLAY_STATES, QUALITY_MODES, SEEK_DIFF_THRESHOLD, ANALYTICS_TOPICS, CAPTION_TYPES} from '../constants.js';
 import 'hls.js/dist/hls.light.min.js';
 import { BindingHelpersMixin } from '../mixins/binding-helpers.js';
 import { IocRequesterMixin } from '../mixins/ioc-requester.js';
@@ -51,7 +51,7 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
         <!-- "playsinline" is for iOS to not use its native video player -->
         <video id="video" preload$="[[ifThenElse(preload, 'auto', 'metadata')]]" on-click="_handleClick" on-loadedmetadata="_handleLoadedMetadata" playsinline="true">
           <template is="dom-repeat" items="[[captions]]">
-            <track src="[[item.url]]" kind="subtitles" srclang="[[item.language]]" label="[[item.language]]" on-load="_handleTrackLoaded" default$="[[equals(state.captionLanguage, item.language)]]">
+            <track id="[[index]]" src="[[item.url]]" kind="subtitles" srclang="[[item.language]]" data-type$="[[item.type]]" on-load="_handleTrackLoaded" default$="[[_isActive(item.language, item.type, state.captionLanguage, state.captionType)]]">
           </template>
         </video>
         <template is="dom-if" if="[[and(props.poster, _isPosterVisible)]]">
@@ -110,7 +110,7 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
       '_playbackRateChanged(state.playbackRate)',
       '_volumeChanged(state.volume)',
       '_mutedChanged(state.muted, props.muted)',
-      '_captionLanguageChanged(state.captionLanguage, _stateManager)',
+      '_captionLanguageTypeChanged(state.captionLanguage, state.captionType, _stateManager)',
       '_qualityChanged(props, state.quality, _isRegistered)',
     ];
   }
@@ -145,6 +145,10 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
     }
 
     return !live && playState === PLAY_STATES.PAUSED && (position === trimStart || position === trimEnd);
+  }
+
+  _isActive(language, type, selectedLanguage, selectedType) {
+    return language === selectedLanguage && type === selectedType;
   }
 
   _playStateChanged(playState) {
@@ -272,37 +276,37 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
     }
   }
 
-  _captionLanguageChanged(language) {
+  _captionLanguageTypeChanged(language, type) {
     if(this.captions && this._stateManager) {
       // Set cues to null, so that they cannot get toggled by interactive-transcript-control
       if(language === 'off') {
         this._stateManager.setActiveCaptions(null);
       }
 
-      // Microsoft Edge is old which is why we can't use the following:
-      // for(let textTrack of this.$.video.textTracks) {
-      for(let textTrackIndex = 0; textTrackIndex < this.$.video.textTracks.length; textTrackIndex++) {
-        let textTrack = this.$.video.textTracks[textTrackIndex];
-        if(textTrack.language === language) {
-          textTrack.mode = 'showing';
-          // If captions are not yet loaded, they will be set in
-          // _handleTrackLoaded when load event is dispatched.
-          this._stateManager.setActiveCaptions(Array.from(textTrack.cues));
-          // Change back to 'hidden' since we have our own HTML elements for
-          // displaying captions. Before this, we tried hiding captions
-          // via the CSS ::cue pseudo-class but Firefox and Microsoft Edge
-          // didn't play along. This here works well across browsers.
-          textTrack.mode = 'hidden';
-        } else {
-          textTrack.mode = 'disabled';
-        }
+      // Disable all caption tracks
+      Array.from(this.$.video.textTracks).forEach(textTrack => textTrack.mode = 'disabled');
+
+      // Extract cues of selected caption track and update state accordingly
+      let trackElement = this.$.video.querySelector(`track[srclang='${language}'][data-type='${type}']`);
+      if(trackElement) {
+        let textTrack = this.$.video.textTracks.getTrackById(trackElement.id);
+        textTrack.mode = 'showing';
+        // If captions are not yet loaded, they will be set in
+        // _handleTrackLoaded when load event is dispatched.
+        this._stateManager.setActiveCaptions(Array.from(textTrack.cues));
+        // Change back to 'hidden' since we have our own HTML elements for
+        // displaying captions. Before this, we tried hiding captions
+        // via the CSS ::cue pseudo-class but Firefox and Microsoft Edge
+        // didn't play along. This here works well across browsers.
+        textTrack.mode = 'hidden';
       }
     }
   }
 
   _handleTrackLoaded(e) {
+    // Update state with loaded cues, if corresponding captions are still selected
     let textTrack = e.target.track;
-    if(textTrack.language === this.state.captionLanguage) {
+    if(this.state.captionLanguage === e.model.item.language && this.state.captionType === e.model.item.type) {
       this._stateManager.setActiveCaptions(Array.from(textTrack.cues));
     }
 

@@ -57,6 +57,10 @@ const stateSchema = {
     type: 'string',
     default: 'off',
   },
+  captionType: {
+    type: 'string',
+    default: 'default',
+  },
   showCaptions: {
     type: 'boolean',
     default: false,
@@ -190,15 +194,24 @@ export const configurationSchema = {
     type: 'array',
     description: 'List of caption files for different languages.',
     schema: {
+      name: {
+        type: 'string',
+        description: 'Name of the captions that is shown in the drop-down control.',
+      },
       language: {
         required: true,
         type: 'string',
-        description: 'Language of the captions.',
+        description: 'Language code of the captions.',
       },
       url: {
         required: true,
         type: 'string',
         description: 'URL of the captions WebVTT file.',
+      },
+      type: {
+        type: 'string',
+        description: 'Determines the type of captions. Currently, `default` and `auto-generated` are supported.',
+        default: 'default',
       },
     },
     example: [

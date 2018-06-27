@@ -41,6 +41,7 @@ The player configuration is provided as JSON object:
    * **volume** (number):`<0...1>` (default: `1`)
    * **muted** (boolean): (default: `false`)
    * **captionLanguage** (string): (default: `"off"`)
+   * **captionType** (string): (default: `"default"`)
    * **showCaptions** (boolean): Enables captions. Additionally, `captionLanguage` needs to be set. (default: `false`)
    * **showInteractiveTranscript** (boolean): Enables interactive transcript. Additionally, `captionLanguage` needs to be set. (default: `false`)
    * **resizerRatios** (array): The ratios of the resizers. Ratio is calculated by `leftVideo.width / rightVideo.width`. Per default, videos were aligned to have the same height.
@@ -52,6 +53,7 @@ The player configuration is provided as JSON object:
    * **volume** (number):`<0...1>` (default: `1`)
    * **muted** (boolean): (default: `false`)
    * **captionLanguage** (string): (default: `"off"`)
+   * **captionType** (string): (default: `"default"`)
    * **showCaptions** (boolean): Enables captions. Additionally, `captionLanguage` needs to be set. (default: `false`)
    * **showInteractiveTranscript** (boolean): Enables interactive transcript. Additionally, `captionLanguage` needs to be set. (default: `false`)
    * **resizerRatios** (array): The ratios of the resizers. Ratio is calculated by `leftVideo.width / rightVideo.width`. Per default, videos were aligned to have the same height.
@@ -87,8 +89,10 @@ The player configuration is provided as JSON object:
    ]
 ```
 * **captions** (array): List of caption files for different languages.
-   * **language** (string): Language of the captions. (*Required*)
+   * **language** (string): Language code of the captions. (*Required*)
    * **url** (string): URL of the captions WebVTT file. (*Required*)
+   * **name** (string): Name of the captions that is shown in the drop-down control.
+   * **type** (string): Determines the type of captions. Currently, `default` and `auto-generated` are supported. (default: `"default"`)
 
    *Example*
 ```JSON

@@ -1,7 +1,10 @@
 const locales = {
   // General strings
-  'general--off': 'off',
+  'general--off': 'Off',
   'general--cancel': 'Cancel',
+
+  // Caption types
+  'caption-types--auto-generated': 'Auto-translated',
 
   // Component videotime-display
   'live-indicator--label': 'LIVE',
