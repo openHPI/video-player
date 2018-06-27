@@ -17,7 +17,7 @@ class CaptionsDisplay extends BindingHelpersMixin(IocRequesterMixin(PolymerEleme
           margin: 0 20px;
           text-align: center;
           color: white;
-          z-index: 3;
+          z-index: 5;
         }
         .caption-cue-text {
           /* display:table; is necessary so the inner element (.caption-cue-text)

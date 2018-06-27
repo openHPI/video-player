@@ -14,7 +14,7 @@ documentContainer.innerHTML = `<dom-module id="overlay--style-module">
        position: absolute;
        width: 100%;
        height: 100%;
-       z-index: 5;
+       z-index: 6;
        background-color: rgba(0, 0, 0, 0.25);
        @apply --set-foreground-color;
      }

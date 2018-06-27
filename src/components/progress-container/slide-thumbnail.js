@@ -11,7 +11,7 @@ class SlideThumbnail extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
         #container__slide_thumbnail_element {
           position: absolute;
           right: 0;
-          z-index: 6;
+          z-index: 7;
           border-left: 1px solid black;
           border-right: 1px solid black;
           @apply --set-secondary-background-color;
