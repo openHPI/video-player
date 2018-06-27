@@ -284,12 +284,16 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
       }
 
       // Disable all caption tracks
-      Array.from(this.$.video.textTracks).forEach(textTrack => textTrack.mode = 'disabled');
+      let textTracks = Array.from(this.$.video.textTracks);
+      textTracks.forEach(textTrack => textTrack.mode = 'disabled');
 
       // Extract cues of selected caption track and update state accordingly
       let trackElement = this.$.video.querySelector(`track[srclang='${language}'][data-type='${type}']`);
-      if(trackElement) {
-        let textTrack = this.$.video.textTracks.getTrackById(trackElement.id);
+      if(!trackElement) {
+        return;
+      }
+      let textTrack = textTracks[trackElement.id];
+      if(textTrack) {
         textTrack.mode = 'showing';
         // If captions are not yet loaded, they will be set in
         // _handleTrackLoaded when load event is dispatched.
