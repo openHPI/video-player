@@ -26,6 +26,7 @@ The player configuration is provided as JSON object:
      }
    ]
 ```
+* **quizValidationCallback** (string): Function that is called by the handler to validate user answers for the questions. It will be passed the question that is currently shown as first parameter. The second parameter depends on the question type. For text questions, this will be the text the user entered. For choice questions, the second parameter will be a list of all answer objects that are associated with this question and were selected by the user. The function should return an object that has two attributes, `isAnswerCorrect` and `correctAnswers`. The first, a boolean, indicates whether anything was wrong. The second, a list containing a subset of the answers stored with this question, is used to show the user where he made mistakes or to show him what possible answers could have been. (*Required*)
 * **fallbackStream** (object): Contains a fallback stream that the user can switch to, i.e. a single stream source.
    * **hls** (string): URL of the HLS video stream.
    * **hd** (string): URL of the HD video stream.
@@ -117,12 +118,12 @@ The player configuration is provided as JSON object:
    ]
 ```
 * **quizQuestions** (array): List of questions that are shown to the user during playback.
-   * **id** (number): The id for this question, used to call the answer validation function with. (*Required*)
+   * **id** (number): The id for this question. This is primarily intended to be stored for the validation callback. (*Required*)
    * **text** (string): The question text that is shown to the user. (*Required*)
    * **type** (string): The questions type. Should be `single-choice`, `multiple-choice` or `freetext`. (*Required*)
    * **position** (number): The point in the video where the question should be shown, in seconds. (*Required*)
    * **answers** (array): A list of possible answers for `single-choice` or `multiple-choice` questions.
-       * **id** (number): The id for this answer, used to call the answer validation function with. (*Required*)
+       * **id** (number): The id for this answer. This is primarily intended to be stored for the validation callback. (*Required*)
        * **text** (string): The text of this answer. (*Required*)
 
    *Example*

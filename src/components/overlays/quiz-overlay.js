@@ -1,4 +1,4 @@
-import { PLAY_STATES }  from '../../constants.js';
+import { PLAY_STATES } from '../../constants.js';
 import { IocRequesterMixin } from '../../mixins/ioc-requester.js';
 import { BindingHelpersMixin } from '../../mixins/binding-helpers.js';
 import { LocalizationMixin } from '../../mixins/localization.js';
@@ -241,7 +241,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
   }
 
   _textAnswerChanged() {
-    if(this._getCurrentAnswerText() === "") {
+    if(this._getCurrentAnswerText() === '') {
       this._disableSubmitButton = true;
     } else {
       this._disableSubmitButton = false;
@@ -341,7 +341,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
   }
 
   _getCurrentAnswerText() {
-    return this.shadowRoot.querySelector("#input__freetext-answer").value;
+    return this.shadowRoot.querySelector('#input__freetext-answer').value;
   }
 
   _getSelectedAnswers() {
