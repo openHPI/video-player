@@ -18,6 +18,16 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
           color: grey;
         }
 
+        h3 {
+          color: inherit;
+          font-size: 24px;
+        }
+
+        h5 {
+          color: inherit;
+          font-size: 14px;
+        }
+
         #container__quiz-overlay {
           display: flex;
           align-items: center;
@@ -44,16 +54,20 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
         .button__quiz {
           margin-top: 10px;
           text-decoration: none;
-          color: white;
+          color: inherit;
           font-weight: bold;
         }
 
+        .quiz__highlighting-none {
+          color: inherit;
+        }
+
         .quiz__highlighting-correct {
-          color: lime !important;
+          color: lime;
         }
 
         .quiz__highlighting-wrong {
-          color: red !important;
+          color: red;
         }
 
         .quiz__highlighting-strikethrough label {
@@ -66,6 +80,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
           border-bottom: 1px dashed;
           text-align: center;
           width: 300px;
+          color: inherit;
         }
       </style>
 
@@ -278,7 +293,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
     let selected = false;
 
     if(!correctAnswersShown)
-      return '';
+      return 'quiz__highlighting-none';
 
     if(currentQuestion.type === 'freetext') {
       correct = isAnswerCorrect;
