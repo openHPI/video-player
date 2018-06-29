@@ -6,6 +6,8 @@ const locales = {
 
   // Quiz overlay
   'quiz--submit': 'Submit',
+  'quiz--correct-answers': 'Correct answers:',
+  'quiz--enter-answer-here': 'Enter your answer here',
 
   // Caption types
   'caption-types--auto-generated': 'Auto-translated',

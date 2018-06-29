@@ -34,6 +34,13 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
           flex-direction: row;
         }
 
+        .container__answer-box {
+          display: flex;
+          align-items: left;
+          justify-content: left;
+          flex-direction: column;
+        }
+
         .button__quiz {
           margin-top: 10px;
           text-decoration: none;
@@ -42,15 +49,23 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
         }
 
         .quiz__highlighting-correct {
-          color: lime;
+          color: lime !important;
         }
 
         .quiz__highlighting-wrong {
-          color: red;
+          color: red !important;
         }
 
         .quiz__highlighting-strikethrough label {
-          text-decoration: line-through
+          text-decoration: line-through;
+        }
+
+        #input__freetext-answer {
+          background: transparent;
+          border: none;
+          border-bottom: 1px dashed;
+          text-align: center;
+          width: 300px;
         }
       </style>
 
@@ -59,23 +74,29 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
 
         <template is="dom-if" if="[[_isTextQuestion(_currentQuestion)]]">
           <div class$="[[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, null)]]">
-            <input id="input__freetext-answer" type="text"></input>
+            <input id="input__freetext-answer" type="text" on-input="_textAnswerChanged" placeholder$="[[localize('quiz--enter-answer-here')]]" disabled$="[[_correctAnswersShown]]"></input>
           </div>
 
           <template is="dom-if" if="[[_correctAnswersShown]]">
             <h5>[[localize('quiz--correct-answers')]]</h5>
-            <template is="dom-repeat" items="[[_correctAnswers]]">
+            <div class="container__answer-box">
+              <template is="dom-repeat" items="[[_correctAnswers]]">
                 <span class="">[[item.text]]</span>
-            </template>
+              </template>
+            </div>
           </template>
         </template>
 
-        <template is="dom-repeat" items="[[_currentQuestion.answers]]">
-          <div class$="[[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, item)]]">
-            <div class="form-check">
-              <input name="answer" class="select__quiz-answer form-check-input" value$="[[item.id]]" id="select__quiz-answer-[[item.id]]" type$="[[ifThenElse(_isSingleChoiceQuestion, 'radio', 'checkbox')]]" disabled$="[[_correctAnswersShown]]" on-change="_selectionChanged"></input>
-              <label class="form-check-label" for$="select__quiz-answer-[[item.id]]">[[item.text]]</label>
-            </div>
+        <template is="dom-if" if="[[!_isTextQuestion(_currentQuestion)]]">
+          <div class="container__answer-box">
+            <template is="dom-repeat" items="[[_currentQuestion.answers]]">
+              <div class$="[[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, item)]]">
+                <div class="form-check">
+                  <input name="answer" class="select__quiz-answer form-check-input" value$="[[item.id]]" id="select__quiz-answer-[[item.id]]" type$="[[ifThenElse(_isSingleChoiceQuestion, 'radio', 'checkbox')]]" disabled$="[[_correctAnswersShown]]" on-change="_selectionChanged"></input>
+                  <label class="form-check-label" for$="select__quiz-answer-[[item.id]]">[[item.text]]</label>
+                </div>
+              </div>
+            </template>
           </div>
         </template>
 
@@ -154,7 +175,14 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
     return [
       '_playStateChanged(state.playState)',
       '_positionChanged(state.position)',
+      '_setVisibilityInState(_isVisible)',
     ];
+  }
+
+  _setVisibilityInState(visible) {
+    if(this._stateManager) {
+      this._stateManager.setQuizOverlayVisibility(visible);
+    }
   }
 
   _isTextQuestion(question) {
@@ -194,6 +222,14 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
 
     if(this._isVisible) {
       this._stateManager.pause();
+    }
+  }
+
+  _textAnswerChanged() {
+    if(this._getCurrentAnswerText() === "") {
+      this._disableSubmitButton = true;
+    } else {
+      this._disableSubmitButton = false;
     }
   }
 
@@ -275,7 +311,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
     let callback = window[this.callback];
 
     if(this._isTextQuestion(this._currentQuestion)) {
-      let retval = callback(this._currentQuestion, document.getElementById('input__freetext-answer').value);
+      let retval = callback(this._currentQuestion, this._getCurrentAnswerText());
 
       this._correctAnswers = retval.correctAnswers;
       this._isAnswerCorrect = retval.isAnswerCorrect;
@@ -287,6 +323,10 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
     }
 
     this._correctAnswersShown = true;
+  }
+
+  _getCurrentAnswerText() {
+    return this.shadowRoot.querySelector("#input__freetext-answer").value;
   }
 
   _getSelectedAnswers() {

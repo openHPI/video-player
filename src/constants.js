@@ -104,6 +104,7 @@ export const DEFAULT_STATE = {
   fullscreen: false,
   isChapterListShown: false,
   isQuizOverlayEnabled: true,
+  isQuizOverlayVisible: false,
   captionLanguage: 'off',
   captionType: CAPTION_TYPES.DEFAULT,
   showCaptions: false,

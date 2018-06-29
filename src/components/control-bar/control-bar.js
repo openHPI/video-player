@@ -173,6 +173,11 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
         return;
       }
 
+      if (this.state.isQuizOverlayVisible) {
+        // Do nothing if the quiz overlay is currently shown
+        return;
+      }
+
       if (e.key === 'ArrowRight' || e.key === 'Right') {
         this._analyticsManager.changeState('skipSeconds', [SKIP_SECONDS], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
       } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
