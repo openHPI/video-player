@@ -62,6 +62,9 @@ class SelectControl extends BindingHelpersMixin(PolymerElement) {
           background-color: grey;
           text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
         }
+        .dropdown .dropdown-content a span {
+          line-height: inherit;
+        }
         .dropdown .dropdown-content .children-indicator {
           display: inline-block;
           margin-left: 6px;

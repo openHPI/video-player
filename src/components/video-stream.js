@@ -1,4 +1,4 @@
-import {PLAY_STATES, QUALITY_MODES, SEEK_DIFF_THRESHOLD, ANALYTICS_TOPICS, CAPTION_TYPES} from '../constants.js';
+import {PLAY_STATES, QUALITY_MODES, SEEK_DIFF_THRESHOLD, ANALYTICS_TOPICS} from '../constants.js';
 import 'hls.js/dist/hls.light.min.js';
 import { BindingHelpersMixin } from '../mixins/binding-helpers.js';
 import { IocRequesterMixin } from '../mixins/ioc-requester.js';
