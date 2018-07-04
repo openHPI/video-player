@@ -28,7 +28,7 @@ The component can then be used in any HTML site in the following way:
     <script src="custom-elements-es5-adapter.js"></script>
 
     <script src="webcomponents-bundle.js"></script>
-    <script type="module" src="video-player.js"></script>
+    <script src="video-player.js"></script>
   </head>
   <body>
     <video-player configuration='{
@@ -59,7 +59,7 @@ See [tests.md](docs/tests.md)
 The framework comes with several linter configurations. All linters can by executed using `npm run lint`.
 
 ## Releases
-A new GitHub release can be created by merging in the master branch and executing `npm version [major|minor|patch]`. This creates a new version tag and pushes the branch. 
+A new GitHub release can be created by merging in the master branch and executing `npm version [major|minor|patch]`. This creates a new version tag and pushes the branch.
 
 The sources are bundled and the release is created afterwards by Travis, if the tests are passing.
 
