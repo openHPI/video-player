@@ -151,7 +151,7 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
         </template>
 
         <!-- Control Bar -->
-        <control-bar id="control-bar" state="[[state]]" live="[[configuration.live]]" has-chapters="[[hasItems(configuration.chapters)]]" has-questions="[[and(hasItems(configuration.quizQuestions), configuration.quizValidationCallback)]]" has-fallback-stream="[[_hasFallbackStream]]" captions="[[configuration.captions]]" available-qualities="[[state.availableQualities]]" previous-video="[[_previousVideo]]" next-video="[[_nextVideo]]" number-of-streams="[[configuration.streams.length]]" live-dvr="[[configuration.liveDvr]]" mobile-menu="[[configuration.mobileMenu]]"> </control-bar>
+        <control-bar id="control-bar" state="[[state]]" live="[[configuration.live]]" has-chapters="[[hasItems(configuration.chapters)]]" has-questions="[[_hasQuestions]]" has-fallback-stream="[[_hasFallbackStream]]" captions="[[configuration.captions]]" available-qualities="[[state.availableQualities]]" previous-video="[[_previousVideo]]" next-video="[[_nextVideo]]" number-of-streams="[[configuration.streams.length]]" live-dvr="[[configuration.liveDvr]]" mobile-menu="[[configuration.mobileMenu]]"> </control-bar>
 
         <!-- Chapter List -->
         <playlist-chapter-list state="[[state]]" chapters="[[configuration.chapters]]" playlist="[[configuration.playlist]]" show-if="[[state.isChapterListShown]]">
@@ -222,6 +222,10 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
       _hasFallbackStream: {
         type: Boolean,
         computed: '_getHasFallbackStream(configuration.streams, configuration.fallbackStream, _isIOS)',
+      },
+      _hasQuestions: {
+        type: Boolean,
+        computed: '_getHasQuestions(configuration.quizQuestions, configuration.quizValidationCallback)',
       },
       _isIOS: {
         type: Boolean,
@@ -387,6 +391,10 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
     // In iOS playing multiple videos concurrently is currently not supported.
     // Therefore, the fallback is used allways in iOS
     return !isIOS && this.hasItems(streams, 2) && fallbackStream;
+  }
+
+  _getHasQuestions(questions, validationCallback) {
+    return questions && questions.length > 0 && validationCallback;
   }
 
   _getIsIOS() {
