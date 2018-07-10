@@ -347,7 +347,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
   _getSelectedAnswers() {
     let ids = [];
 
-    let inputs = document.getElementsByClassName('select__quiz-answer');
+    let inputs = this.shadowRoot.querySelectorAll('.select__quiz-answer');
     for(let index = 0; index < inputs.length; ++index) {
       if(inputs[index].checked) {
         let answerid = inputs[index].id.split('-').slice(-1)[0];
