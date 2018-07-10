@@ -1,13 +1,13 @@
 const locales = {
   // General strings
   'general--off': 'Aus',
-  'general--cancel': 'Abbrechen',
   'general--continue': 'Weiter',
 
   // Quiz overlay
   'quiz--submit': 'Antwort überprüfen',
   'quiz--correct-answers': 'Korrekte Antworten:',
   'quiz--enter-answer-here': 'Antwort hier eingeben',
+  'quiz--skip-question': 'Frage überspringen',
 
   // Caption types
   'caption-types--auto-generated': 'Automatisch übersetzt',

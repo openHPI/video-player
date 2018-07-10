@@ -117,11 +117,11 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
 
         <div class="container__centered-row">
           <template is="dom-if" if="[[_correctAnswersShown]]">
-            <a class="button button__quiz" on-click="_handleCancelClick" href="#">[[localize('general--continue')]]</a>
+            <a class="button button__quiz" on-click="_handleSkipClick" href="#">[[localize('general--continue')]]</a>
           </template>
 
           <template is="dom-if" if="[[!_correctAnswersShown]]">
-            <a class="button button__quiz" on-click="_handleCancelClick" href="#">[[localize('general--cancel')]]</a>
+            <a class="button button__quiz" on-click="_handleSkipClick" href="#">[[localize('quiz--skip-question')]]</a>
             <a class="button button__quiz" on-click="_handleSubmitClick" href="#" disabled$="[[_disableSubmitButton]]">[[localize('quiz--submit')]]</a>
           </template>
         </div>
@@ -232,7 +232,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
       return;
     }
 
-    this._addCurrentQuestionsForPosition(flooredPosition);
+    this._addCurrentQuestionsForPosition(flooredPosition, this._lastProcessedPosition);
     this._lastProcessedPosition = flooredPosition;
 
     if(this._isVisible) {
@@ -260,16 +260,21 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
 
   _setCurrentQuestion() {
     if(this._currentQuestions.length > 0) {
+      let inputs = this.shadowRoot.querySelectorAll('.select__quiz-answer');
+      for(let index = 0; index < inputs.length; ++index) {
+        inputs[index].checked = false;
+      }
+
       this._currentQuestion = this._currentQuestions[0];
     } else {
       this._currentQuestion = null;
     }
   }
 
-  _addCurrentQuestionsForPosition(position) {
+  _addCurrentQuestionsForPosition(position, lastPosition) {
     let index = 0;
     for(index = 0; index < this.questions.length; ++index) {
-      if(this.questions[index].position === position) {
+      if(this.questions[index].position <= position && this.questions[index].position > lastPosition) {
         this.push('_currentQuestions', this.questions[index]);
       }
     }
@@ -360,7 +365,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
     return this._currentQuestion.answers.filter(filterFunction);
   }
 
-  _handleCancelClick(e) {
+  _handleSkipClick(e) {
     this._dismissCurrentQuestion();
     e.preventDefault();
   }

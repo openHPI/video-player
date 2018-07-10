@@ -8,6 +8,7 @@ const locales = {
   'quiz--submit': 'Submit',
   'quiz--correct-answers': 'Correct answers:',
   'quiz--enter-answer-here': 'Enter your answer here',
+  'quiz--skip-question': 'Skip this question',
 
   // Caption types
   'caption-types--auto-generated': 'Auto-translated',
