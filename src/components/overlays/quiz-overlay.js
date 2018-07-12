@@ -88,7 +88,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
         <h3 id="text__quiz-question">[[_currentQuestion.text]]</h3>
 
         <template is="dom-if" if="[[_isTextQuestion(_currentQuestion)]]">
-          <div class$="[[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, null)]]">
+          <div class$="quiz__highlighting-none [[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, null)]]">
             <input id="input__freetext-answer" type="text" on-input="_textAnswerChanged" placeholder$="[[localize('quiz--enter-answer-here')]]" disabled$="[[_correctAnswersShown]]"></input>
           </div>
 
@@ -105,7 +105,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
         <template is="dom-if" if="[[!_isTextQuestion(_currentQuestion)]]">
           <div class="container__answer-box">
             <template is="dom-repeat" items="[[_currentQuestion.answers]]">
-              <div class$="[[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, item)]]">
+              <div class$="quiz__highlighting-none [[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, item)]]">
                 <div class="form-check">
                   <input name="answer" class="select__quiz-answer form-check-input" value$="[[item.id]]" id="select__quiz-answer-[[item.id]]" type$="[[ifThenElse(_isSingleChoiceQuestion, 'radio', 'checkbox')]]" disabled$="[[_correctAnswersShown]]" on-change="_selectionChanged"></input>
                   <label class="form-check-label" for$="select__quiz-answer-[[item.id]]">[[item.text]]</label>
@@ -136,49 +136,43 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
       state: Object,
       questions: Array,
       callback: Object,
-
-      _currentQuestions: { // Questions that should be shown in the current playback second (could be more than one)
+      /** Questions that should be shown in the current playback second (could be more than one) */
+      _currentQuestions: {
         type: Array,
         value: [],
       },
-
-      _currentQuestion: { // The first question that has to be shown in the current second. Used for displaying the overlay. Should probably be computed, that didn't work though
+      /** The first question that has to be shown in the current second. Used for displaying the overlay. Should probably be computed, that didn't work though */
+      _currentQuestion: {
         type: Object,
         value: null,
       },
-
-      _lastProcessedPosition: { // The last playback position second that questions where added to currentQuestions for
+      /** The last playback position second that questions where added to currentQuestions for */
+      _lastProcessedPosition: {
         type: Number,
         value: 0,
       },
-
-      _correctAnswersShown: { // Could probably be computed from _correctAnswers too
+      /** Could probably be computed from _correctAnswers too */
+      _correctAnswersShown: {
         type: Boolean,
         value: false,
       },
-
       _correctAnswers: {
         type: Array,
         value: [],
       },
-
       _isAnswerCorrect: Boolean,
-
       _stateManager: {
         type: Object,
         inject: 'StateManager',
       },
-
       _isVisible: {
         type: Boolean,
         computed: '_getIsVisible(_currentQuestion)',
       },
-
       _disableSubmitButton: {
         type: Boolean,
         value: true,
       },
-
       _isSingleChoiceQuestion: {
         type: Boolean,
         computed: '_getIsSingleChoiceQuestion(_currentQuestion)',
@@ -241,28 +235,20 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
   }
 
   _textAnswerChanged() {
-    if(this._getCurrentAnswerText() === '') {
-      this._disableSubmitButton = true;
-    } else {
-      this._disableSubmitButton = false;
-    }
+    this.disableSubmitButton = this._getCurrentAnswerText() === ''
   }
 
   _selectionChanged() {
     let selected = this._getSelectedAnswers();
 
-    if(selected.length === 0) {
-      this._disableSubmitButton = true;
-    } else {
-      this._disableSubmitButton = false;
-    }
+    this._disableSubmitButton = selected.length === 0
   }
 
   _setCurrentQuestion() {
     if(this._currentQuestions.length > 0) {
       let inputs = this.shadowRoot.querySelectorAll('.select__quiz-answer');
-      for(let index = 0; index < inputs.length; ++index) {
-        inputs[index].checked = false;
+      for(let input of inputs) {
+        input.checked = false;
       }
 
       this._currentQuestion = this._currentQuestions[0];
@@ -272,10 +258,9 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
   }
 
   _addCurrentQuestionsForPosition(position, lastPosition) {
-    let index = 0;
-    for(index = 0; index < this.questions.length; ++index) {
-      if(this.questions[index].position <= position && this.questions[index].position > lastPosition) {
-        this.push('_currentQuestions', this.questions[index]);
+    for(let question of this.questions) {
+      if(question.position <= position && question.position > lastPosition) {
+        this.push('_currentQuestions', question);
       }
     }
 
@@ -298,20 +283,14 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
     let selected = false;
 
     if(!correctAnswersShown)
-      return 'quiz__highlighting-none';
+      return '';
 
     if(currentQuestion.type === 'freetext') {
       correct = isAnswerCorrect;
     } else {
       selected = this.shadowRoot.querySelector('#select__quiz-answer-' + answer.id).checked;
 
-      let shouldBeSelected = false;
-      for(let index = 0; index < correctAnswers.length; ++index) {
-        if(correctAnswers[index].id === answer.id) {
-          shouldBeSelected = true;
-          break;
-        }
-      }
+      let shouldBeSelected = correctAnswers.some(correctAnswer => correctAnswer.id === answer.id)
 
       if(selected && shouldBeSelected || !selected && !shouldBeSelected) {
         correct = true;
@@ -353,16 +332,14 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
     let ids = [];
 
     let inputs = this.shadowRoot.querySelectorAll('.select__quiz-answer');
-    for(let index = 0; index < inputs.length; ++index) {
-      if(inputs[index].checked) {
-        let answerid = inputs[index].id.split('-').slice(-1)[0];
+    for(let input of inputs) {
+      if(input.checked) {
+        let answerid = input.id.split('-').slice(-1)[0];
         ids.push(parseInt(answerid));
       }
     }
 
-    let filterFunction = function(answer) { return ids.includes(answer.id); };
-
-    return this._currentQuestion.answers.filter(filterFunction);
+    return this._currentQuestion.answers.filter( (answer) => { return ids.includes(answer.id); } );
   }
 
   _handleSkipClick(e) {

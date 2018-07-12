@@ -113,7 +113,7 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
           <template is="dom-if" if="[[hasItems(configuration.relatedVideos)]]">
             <finished-overlay state="[[state]]" related-videos="[[configuration.relatedVideos]]"></finished-overlay>
           </template>
-          <template is="dom-if" if="[[and(hasItems(configuration.quizQuestions), configuration.quizValidationCallback)]]">
+          <template is="dom-if" if="[[_hasQuestions]]">
             <quiz-overlay state="[[state]]" questions="[[configuration.quizQuestions]]" callback="[[configuration.quizValidationCallback]]"></quiz-overlay>
           </template>
 

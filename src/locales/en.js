@@ -25,7 +25,7 @@ const locales = {
   'next-video-overlay--next-video-label': 'Next video',
 
   // Component control-bar
-  'quiz-overlay-switch-title': 'Toggle whether quizzes are shown during playback',
+  'quiz-overlay-switch--title': 'Toggle whether quizzes are shown during playback',
 };
 
 export default locales;

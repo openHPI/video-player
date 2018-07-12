@@ -24,7 +24,7 @@ const locales = {
   'next-video-overlay--next-video-label': 'Nächstes Video',
 
   // Component control-bar
-  'quiz-overlay-switch-title': 'Anzeige von Selbsttests umschalten',
+  'quiz-overlay-switch--title': 'Anzeige von Selbsttests umschalten',
 
 };
 
