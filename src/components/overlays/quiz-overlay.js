@@ -144,7 +144,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
       /** The first question that has to be shown in the current second. Used for displaying the overlay. Should probably be computed, that didn't work though */
       _currentQuestion: {
         type: Object,
-        value: null,
+        computed: '_getCurrentQuestion(_currentQuestions.splices)',
       },
       /** The last playback position second that questions where added to currentQuestions for */
       _lastProcessedPosition: {
@@ -211,7 +211,6 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
       return;
 
     this._currentQuestions = [];
-    this._setCurrentQuestion();
   }
 
   _positionChanged(position) {
@@ -244,16 +243,16 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
     this._disableSubmitButton = selected.length === 0
   }
 
-  _setCurrentQuestion() {
+  _getCurrentQuestion(currentQuestionsSplices) {
     if(this._currentQuestions.length > 0) {
       let inputs = this.shadowRoot.querySelectorAll('.select__quiz-answer');
       for(let input of inputs) {
         input.checked = false;
       }
 
-      this._currentQuestion = this._currentQuestions[0];
+      return this._currentQuestions[0];
     } else {
-      this._currentQuestion = null;
+      return null;
     }
   }
 
@@ -263,14 +262,11 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
         this.push('_currentQuestions', question);
       }
     }
-
-    this._setCurrentQuestion();
   }
 
   _dismissCurrentQuestion() {
     this._correctAnswersShown = false;
     this.shift('_currentQuestions');
-    this._setCurrentQuestion();
     this._disableSubmitButton = true;
 
     if(this._currentQuestion === null) {
