@@ -82,7 +82,6 @@
     "lint": "eslint src && polymer lint -i ./src/*",
     "serve": "polymer serve",
     "bundle": "gulp bundle",
-    "preversion": "npm test",
     "version": "node ./utils/update-version.js && git add src/constants.js",
     "postversion": "git push && git push --tags && ./utils/github-pages.sh openHPI video-player",
     "postinstall": "./utils/build-hls-js.sh"
