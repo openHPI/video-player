@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/openHPI/video-player#readme",
   "name": "video-player",
-  "version": "1.0.0",
+  "version": "0.0.0-dev",
   "contributors": [
     {
       "name": "Henriette Dinger"
@@ -69,6 +69,7 @@
     "replace-in-file": "^3.0.0",
     "rollup-plugin-commonjs": "^8.4.1",
     "rollup-plugin-node-resolve": "^3.3.0",
+    "semver-regex": "^2.0.0",
     "url-polyfill": "^1.0.8",
     "wct-browser-legacy": "^1.0.1"
   },

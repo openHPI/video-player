@@ -3,7 +3,7 @@
  * @type {String}
  */
 // eslint-disable-next-line capitalized-comments
-export const VERSION = '1.0.0'; // auto-generated-version
+export const VERSION = '0.0.0-dev'; // auto-generated-version
 
 /**
  * Contains the different play states.
