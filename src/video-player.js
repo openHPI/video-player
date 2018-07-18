@@ -114,7 +114,7 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
             <finished-overlay state="[[state]]" related-videos="[[configuration.relatedVideos]]"></finished-overlay>
           </template>
           <template is="dom-if" if="[[_hasQuestions]]">
-            <quiz-overlay state="[[state]]" questions="[[configuration.quizQuestions]]" callback="[[configuration.quizValidationCallback]]"></quiz-overlay>
+            <quiz-overlay state="[[state]]" questions="[[configuration.quiz.questions]]" callback="[[configuration.quiz.validationCallback]]"></quiz-overlay>
           </template>
 
           <!-- Video Streams -->
@@ -225,7 +225,7 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
       },
       _hasQuestions: {
         type: Boolean,
-        computed: '_getHasQuestions(configuration.quizQuestions, configuration.quizValidationCallback)',
+        computed: '_getHasQuestions(configuration.quiz.questions, configuration.quiz.validationCallback)',
       },
       _isIOS: {
         type: Boolean,

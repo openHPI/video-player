@@ -124,8 +124,10 @@ export const DEFAULT_CONFIGURATION = {
   captions: [],
   slides: [],
   relatedVideos: [],
-  quizValidationCallback: null,
-  quizQuestions: [],
+  quiz: {
+    validationCallback: null,
+    questions: [],
+  },
   initialState: {},
   videoPreload: true,
   liveDvr: false,
