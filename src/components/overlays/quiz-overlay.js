@@ -122,7 +122,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
 
           <template is="dom-if" if="[[!_correctAnswersShown]]">
             <a class="button button__quiz" on-click="_handleSkipClick">[[localize('quiz--skip-question')]]</a>
-            <a class="button button__quiz" on-click="_handleSubmitClick">[[localize('quiz--submit')]]</a>
+            <a class="button button__quiz" on-click="_handleSubmitClick" disabled$="[[_disableSubmitButton]]">[[localize('quiz--submit')]]</a>
           </template>
         </div>
       </div>
@@ -234,7 +234,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
   }
 
   _textAnswerChanged() {
-    this.disableSubmitButton = this._getCurrentAnswerText() === ''
+    this._disableSubmitButton = this._getCurrentAnswerText() === ''
   }
 
   _selectionChanged() {
@@ -330,7 +330,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
     let inputs = this.shadowRoot.querySelectorAll('.select__quiz-answer');
     for(let input of inputs) {
       if(input.checked) {
-        let answerid = input.id.split('-').slice(-1)[0];
+        let answerid = input.value;
         ids.push(parseInt(answerid));
       }
     }
