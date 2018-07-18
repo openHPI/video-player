@@ -117,12 +117,12 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
 
         <div class="container__centered-row">
           <template is="dom-if" if="[[_correctAnswersShown]]">
-            <a class="button button__quiz" on-click="_handleSkipClick" href="#">[[localize('general--continue')]]</a>
+            <a class="button button__quiz" on-click="_handleSkipClick">[[localize('general--continue')]]</a>
           </template>
 
           <template is="dom-if" if="[[!_correctAnswersShown]]">
-            <a class="button button__quiz" on-click="_handleSkipClick" href="#">[[localize('quiz--skip-question')]]</a>
-            <a class="button button__quiz" on-click="_handleSubmitClick" href="#" disabled$="[[_disableSubmitButton]]">[[localize('quiz--submit')]]</a>
+            <a class="button button__quiz" on-click="_handleSkipClick">[[localize('quiz--skip-question')]]</a>
+            <a class="button button__quiz" on-click="_handleSubmitClick">[[localize('quiz--submit')]]</a>
           </template>
         </div>
       </div>

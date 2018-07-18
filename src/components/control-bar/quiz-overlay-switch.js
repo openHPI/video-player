@@ -13,7 +13,7 @@ class QuizOverlaySwitch extends BindingHelpersMixin(IocRequesterMixin(Localizati
       </style>
 
       <div id="container__quiz_overlay_switch" class="user_controls">
-        <a id="button__quiz_overlay" class$="button [[ifNotThen(state.isQuizOverlayEnabled, 'inactive')]]" on-click="_handleClick" href="#">
+        <a id="button__quiz_overlay" class$="button [[ifNotThen(state.isQuizOverlayEnabled, 'inactive')]]" on-click="_handleClick">
           <fontawesome-icon prefix="fas" name="check-square" fixed-width title$="[[localize('quiz-overlay-switch--title')]]"></fontawesome-icon>
         </a>
       </div>
