@@ -39,11 +39,21 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
 
         /* This class shall be used to define from which element on
         the content is shown on the right side of the controlbar */
-        .-flex-grow {
+        .filler {
           flex-grow: 1;
           justify-content: flex-end;
         }
 
+        @media (max-width: 290px) {
+          videotime-display {
+            display: none;
+          }
+        }
+        @media (max-width: 390px) {
+          playlist-navigation-control {
+            display: none;
+          }
+        }
         @media (max-width: 768px) {
           .hidden-for-mobile {
             display: none;
@@ -78,14 +88,17 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
           <playlist-navigation-control direction="forward" video-url="[[nextVideo.url]]"></playlist-navigation-control>
         </template>
 
+        <!-- All elements after this one are aligned on the right side -->
+        <div class="filler"></div>
+
         <!-- Live Indicator -->
         <template is="dom-if" if="[[state.live]]">
-          <live-indicator state="[[state]]" class="-flex-grow"></live-indicator>
+          <live-indicator state="[[state]]"></live-indicator>
         </template>
 
         <!-- Video Time -->
         <template is="dom-if" if="[[_showVideoTime]]">
-          <videotime-display state="[[state]]" class$="[[ifNotThen(state.live, '-flex-grow')]]"></videotime-display>
+          <videotime-display state="[[state]]"></videotime-display>
         </template>
 
         <!-- Right button section -->

@@ -39,7 +39,7 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
       <style type="text/css" include="global--style-module">
         :host {
           display: block;
-          min-width: 390px;
+          min-width: 152px;
           border: 1px solid grey;
           background-color: black;
         }
