@@ -58,7 +58,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
           font-weight: bold;
         }
 
-        .quiz__highlighting-none {
+        .quiz__answer {
           color: inherit;
         }
 
@@ -88,7 +88,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
         <h3 id="text__quiz-question">[[_currentQuestion.text]]</h3>
 
         <template is="dom-if" if="[[_isTextQuestion(_currentQuestion)]]">
-          <div class$="quiz__highlighting-none [[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, null)]]">
+          <div class$="quiz__answer [[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, null)]]">
             <input id="input__freetext-answer" type="text" on-input="_textAnswerChanged" placeholder$="[[localize('quiz--enter-answer-here')]]" disabled$="[[_correctAnswersShown]]"></input>
           </div>
 
@@ -105,7 +105,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
         <template is="dom-if" if="[[!_isTextQuestion(_currentQuestion)]]">
           <div class="container__answer-box">
             <template is="dom-repeat" items="[[_currentQuestion.answers]]">
-              <div class$="quiz__highlighting-none [[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, item)]]">
+              <div class$="quiz__answer [[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, item)]]">
                 <div class="form-check">
                   <input name="answer" class="select__quiz-answer form-check-input" value$="[[item.id]]" id="select__quiz-answer-[[item.id]]" type$="[[ifThenElse(_isSingleChoiceQuestion, 'radio', 'checkbox')]]" disabled$="[[_correctAnswersShown]]" on-change="_selectionChanged"></input>
                   <label class="form-check-label" for$="select__quiz-answer-[[item.id]]">[[item.text]]</label>
