@@ -88,7 +88,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
         <h3 id="text__quiz-question">[[_currentQuestion.text]]</h3>
 
         <template is="dom-if" if="[[_isTextQuestion(_currentQuestion)]]">
-          <div class$="quiz__answer [[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, null)]]">
+          <div class$="quiz__answer [[_getValidationClass(_currentQuestion, _correctAnswers, _isAnswerCorrect, null)]]">
             <input id="input__freetext-answer" type="text" on-input="_textAnswerChanged" placeholder$="[[localize('quiz--enter-answer-here')]]" disabled$="[[_correctAnswersShown]]"></input>
           </div>
 
@@ -105,7 +105,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
         <template is="dom-if" if="[[!_isTextQuestion(_currentQuestion)]]">
           <div class="container__answer-box">
             <template is="dom-repeat" items="[[_currentQuestion.answers]]">
-              <div class$="quiz__answer [[_getValidationClass(_currentQuestion, _correctAnswersShown, _correctAnswers, _isAnswerCorrect, item)]]">
+              <div class$="quiz__answer [[_getValidationClass(_currentQuestion, _correctAnswers, _isAnswerCorrect, item)]]">
                 <div class="form-check">
                   <input name="answer" class="select__quiz-answer form-check-input" value$="[[item.id]]" id="select__quiz-answer-[[item.id]]" type$="[[ifThenElse(_isSingleChoiceQuestion, 'radio', 'checkbox')]]" disabled$="[[_correctAnswersShown]]" on-change="_selectionChanged"></input>
                   <label class="form-check-label" for$="select__quiz-answer-[[item.id]]">[[item.text]]</label>
@@ -141,7 +141,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
         type: Array,
         value: [],
       },
-      /** The first question that has to be shown in the current second. Used for displaying the overlay. Should probably be computed, that didn't work though */
+      /** The first question that has to be shown in the current second. Used for displaying the overlay.*/
       _currentQuestion: {
         type: Object,
         computed: '_getCurrentQuestion(_currentQuestions.splices)',
@@ -151,10 +151,9 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
         type: Number,
         value: 0,
       },
-      /** Could probably be computed from _correctAnswers too */
       _correctAnswersShown: {
         type: Boolean,
-        value: false,
+        computed: '_getCorrectAnswersShown(_correctAnswers.splices)',
       },
       _correctAnswers: {
         type: Array,
@@ -243,6 +242,10 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
     this._disableSubmitButton = selected.length === 0
   }
 
+  _getCorrectAnswersShown(correntAnswerSplices) {
+    return this._correctAnswers.length > 0;
+  }
+
   _getCurrentQuestion(currentQuestionsSplices) {
     if(this._currentQuestions.length > 0) {
       let inputs = this.shadowRoot.querySelectorAll('.select__quiz-answer');
@@ -265,7 +268,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
   }
 
   _dismissCurrentQuestion() {
-    this._correctAnswersShown = false;
+    this._correctAnswers = [];
     this.shift('_currentQuestions');
     this._disableSubmitButton = true;
 
@@ -274,11 +277,11 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
     }
   }
 
-  _getValidationClass(currentQuestion, correctAnswersShown, correctAnswers, isAnswerCorrect, answer) {
+  _getValidationClass(currentQuestion, correctAnswers, isAnswerCorrect, answer) {
     let correct = false;
     let selected = false;
 
-    if(!correctAnswersShown)
+    if(!this._correctAnswersShown)
       return '';
 
     if(currentQuestion.type === 'freetext') {
@@ -316,8 +319,6 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
       this._correctAnswers = retval.correctAnswers;
       this._isAnswerCorrect = retval.isAnswerCorrect;
     }
-
-    this._correctAnswersShown = true;
   }
 
   _getCurrentAnswerText() {
