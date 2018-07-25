@@ -344,6 +344,23 @@ export class StateManager {
   }
 
   /**
+   * Toggles whether the quizzes are enabled.
+   * @returns {void}
+   */
+  toggleIsQuizOverlayEnabled() {
+    this.setState('isQuizOverlayEnabled', !this.state.isQuizOverlayEnabled);
+  }
+
+  /**
+   * Sets whether the quiz overlay is currently shown to the user
+   * @param {boolean} visibility Boolean determining whether the quiz overlay is shown
+   * @returns {void}
+   */
+  setQuizOverlayVisibility(visibility) {
+    this.setState('isQuizOverlayVisible', visibility);
+  }
+
+  /**
    * Sets the visibility of the interactive transcript.
    * @param {Boolean} isVisible Boolean determining whether the interactive transcript is shown.
    * @returns {void}
