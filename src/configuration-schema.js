@@ -243,6 +243,82 @@ export const configurationSchema = {
       },
     ],
   },
+  quiz: {
+    type: 'object',
+    description: 'Information for the quiz component of the player.',
+    schema: {
+      validationCallback: {
+        required: true,
+        type: 'string',
+        description: 'Function that is called by the handler to validate user answers for the questions. It will be passed the question that is currently shown as first parameter. The second parameter depends on the question type. For text questions, this will be the text the user entered. For choice questions, the second parameter will be a list of all answer objects that are associated with this question and were selected by the user. The function should return an object that has two attributes, `isAnswerCorrect` and `correctAnswers`. The first, a boolean, indicates whether anything was wrong. The second, a list containing a subset of the answers stored with this question, is used to show the user where he made mistakes or to show him what possible answers could have been.',
+      },
+      questions: {
+        type: 'array',
+        required: true,
+        description: 'List of questions that are shown to the user during playback.',
+        schema: {
+          id: {
+            required: true,
+            type: 'number',
+            description: 'The id for this question. This is primarily intended to be stored for the validation callback.',
+          },
+          text: {
+            required: true,
+            type: 'string',
+            description: 'The question text that is shown to the user.',
+          },
+          type: {
+            required: true,
+            type: 'string',
+            description: 'The questions type. Should be `single-choice`, `multiple-choice` or `freetext`.',
+          },
+          position: {
+            required: true,
+            type: 'number',
+            description: 'The point in the video where the question should be shown, in seconds.',
+          },
+          answers: {
+            type: 'array',
+            description: 'A list of possible answers for `single-choice` or `multiple-choice` questions.',
+            schema: {
+              id: {
+                required: true,
+                type: 'number',
+                description: 'The id for this answer. This is primarily intended to be stored for the validation callback.',
+              },
+              text: {
+                required: true,
+                type: 'string',
+                description: 'The text of this answer.',
+              },
+            },
+          },
+        },
+        example: [
+          {
+            id: 1,
+            text: 'What is HTML?',
+            type: 'single-choice',
+            position: 3600,
+            answers: [
+              {
+                id: 1,
+                text: 'A standard internet protocol for information exchange.',
+              },
+              {
+                id: 2,
+                text: 'A markup language for creating web sites.',
+              },
+              {
+                id: 3,
+                text: 'A program used to download files to your computer',
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
   relatedVideos: {
     type: 'array',
     description: 'List of related videos that are shown after the video has ended.',

@@ -1,7 +1,13 @@
 const locales = {
   // General strings
   'general--off': 'Aus',
-  'general--cancel': 'Abbrechen',
+  'general--continue': 'Weiter',
+
+  // Quiz overlay
+  'quiz--submit': 'Antwort überprüfen',
+  'quiz--correct-answers': 'Korrekte Antworten:',
+  'quiz--enter-answer-here': 'Antwort hier eingeben',
+  'quiz--skip-question': 'Frage überspringen',
 
   // Caption types
   'caption-types--auto-generated': 'Automatisch übersetzt',
@@ -16,6 +22,10 @@ const locales = {
 
   // Component next-video-overlay
   'next-video-overlay--next-video-label': 'Nächstes Video',
+
+  // Component control-bar
+  'quiz-overlay-switch--title': 'Anzeige von Selbsttests umschalten',
+
 };
 
 export default locales;

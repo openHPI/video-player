@@ -2,6 +2,13 @@ const locales = {
   // General strings
   'general--off': 'Off',
   'general--cancel': 'Cancel',
+  'general--continue': 'Continue',
+
+  // Quiz overlay
+  'quiz--submit': 'Submit',
+  'quiz--correct-answers': 'Correct answers:',
+  'quiz--enter-answer-here': 'Enter your answer here',
+  'quiz--skip-question': 'Skip this question',
 
   // Caption types
   'caption-types--auto-generated': 'Auto-translated',
@@ -16,6 +23,9 @@ const locales = {
 
   // Component next-video-overlay
   'next-video-overlay--next-video-label': 'Next video',
+
+  // Component control-bar
+  'quiz-overlay-switch--title': 'Toggle whether quizzes are shown during playback',
 };
 
 export default locales;

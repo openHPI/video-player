@@ -9,6 +9,7 @@ import './videotime-display.js';
 import './speed-control.js';
 import './playlist-chapter-list-switch.js';
 import './interactive-transcript-control.js';
+import './quiz-overlay-switch.js';
 import './quality-control.js';
 import './mute-control.js';
 import './stream-switch-control.js';
@@ -117,6 +118,9 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
         <template is="dom-if" if="[[hasChapters]]">
           <playlist-chapter-list-switch state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></playlist-chapter-list-switch>
         </template>
+        <template is="dom-if" if="[[hasQuestions]]">
+          <quiz-overlay-switch state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></quiz-overlay-switch>
+        </template>
         <template is="dom-if" if="[[hasFallbackStream]]">
           <stream-switch-control state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></stream-switch-control>
         </template>
@@ -144,6 +148,7 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
       state: Object,
       live: Object,
       hasChapters: Boolean,
+      hasQuestions: Boolean,
       hasFallbackStream: Boolean,
       previousVideo: Object,
       nextVideo: Object,
@@ -178,6 +183,11 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
       if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey || TEXT_ELEMENT_TAG_NAMES.includes(document.activeElement.tagName)) {
         // Do nothing, if the event was already processed, a system shortcut
         // including a modifier key was pressed or an text input is focussed
+        return;
+      }
+
+      if (this.state.isQuizOverlayVisible) {
+        // Do nothing if the quiz overlay is currently shown
         return;
       }
 
