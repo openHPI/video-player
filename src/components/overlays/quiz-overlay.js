@@ -233,20 +233,20 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
   }
 
   _textAnswerChanged() {
-    this._disableSubmitButton = this._getCurrentAnswerText() === ''
+    this._disableSubmitButton = this._getCurrentAnswerText() === '';
   }
 
   _selectionChanged() {
     let selected = this._getSelectedAnswers();
 
-    this._disableSubmitButton = selected.length === 0
+    this._disableSubmitButton = selected.length === 0;
   }
 
-  _getCorrectAnswersShown(correntAnswerSplices) {
+  _getCorrectAnswersShown() {
     return this._correctAnswers.length > 0;
   }
 
-  _getCurrentQuestion(currentQuestionsSplices) {
+  _getCurrentQuestion() {
     if(this._currentQuestions.length > 0) {
       let inputs = this.shadowRoot.querySelectorAll('.select__quiz-answer');
       for(let input of inputs) {
@@ -289,7 +289,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
     } else {
       selected = this.shadowRoot.querySelector('#select__quiz-answer-' + answer.id).checked;
 
-      let shouldBeSelected = correctAnswers.some(correctAnswer => correctAnswer.id === answer.id)
+      let shouldBeSelected = correctAnswers.some(correctAnswer => correctAnswer.id === answer.id);
 
       if(selected && shouldBeSelected || !selected && !shouldBeSelected) {
         correct = true;
@@ -336,7 +336,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
       }
     }
 
-    return this._currentQuestion.answers.filter( (answer) => { return ids.includes(answer.id); } );
+    return this._currentQuestion.answers.filter( (answer) => ids.includes(answer.id) );
   }
 
   _handleSkipClick(e) {
