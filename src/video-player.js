@@ -128,7 +128,7 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
                   </dual-stream>
                 </template>
                 <template is="dom-if" if="[[!hasItems(item, 2)]]">
-                  <video-stream slot="video1" class$="video-presenter [[ifEqualsThen(index, 0, 'first')]]" state="[[state]]" props="[[arrayItem(item, 0)]]" preload="[[configuration.videoPreload]]" captions="[[ifEqualsThen(index, 0, configuration.captions)]]" style$="height: 100%;"></video-stream>
+                  <video-stream slot="video1" class$="video-presenter [[ifEqualsThen(index, 0, 'first')]]" state="[[state]]" props="[[arrayItem(item, 0)]]" preload="[[configuration.videoPreload]]" captions="[[ifEqualsThen(index, 0, configuration.captions)]]" style="height: 100%;"></video-stream>
                 </template>
               </template>
             </template>
