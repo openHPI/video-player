@@ -61,12 +61,23 @@ class CustomProgress extends BindingHelpersMixin(PolymerElement) {
         #container__progress_bar:hover #div__hover_box {
           display: block;
         }
+
+        .indicator {
+          position: absolute;
+          color: #000;
+          width: 5px;
+          height: 100%;
+        }
       </style>
 
       <div id="container__progress_bar" class$="[[ifThenElse(border, '', '-no-border')]]">
         <div id="container__progress" on-click="_handleClick" on-mouseover="_showHoverBox" on-mousemove="_updateHoverBoxPosition" on-mouseout="_hideHoverBox">
           <div id="div__primary_progress" class="progress-overlay" style$="width: [[_calcWidth(value, min, max)]]%;"></div>
           <div id="div__secondary_progress" class="progress-overlay" style$="width: [[_calcWidth(secondaryValue, min, max)]]%;"></div>
+
+          <template is="dom-repeat" items="[[indicators]]">
+            <div class="indicator" style$="left: [[_calcWidth(item.position, min, max]]%;"></div>
+          </template
         </div>
         <div id="container__hover_box" style$="visibility: [[ifThenElse(_hoverBoxVisible, 'visible', 'hidden')]];">
           <div id="div__hover_box">[[_hoverBoxContent]]</div>
@@ -79,6 +90,7 @@ class CustomProgress extends BindingHelpersMixin(PolymerElement) {
 
   static get properties() {
     return {
+      indicators: Array,
       min: {
         type: Number,
         value: 0,

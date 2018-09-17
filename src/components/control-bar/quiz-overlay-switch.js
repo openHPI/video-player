@@ -25,10 +25,6 @@ class QuizOverlaySwitch extends BindingHelpersMixin(IocRequesterMixin(Localizati
   static get properties() {
     return {
       state: Object,
-      _stateManager: {
-        type: Object,
-        inject: 'StateManager',
-      },
       _analyticsManager: {
         type: Object,
         inject: 'AnalyticsManager',
