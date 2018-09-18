@@ -65,7 +65,7 @@ export class IndicatorManager{
    */
   addIndicator(position, text) {
     var id = this.api.add(position, text);
-    this.videoPlayer.push(this.indicatorsPath, Indicator(id, position, text));
+    this.videoPlayer.push(this.indicatorsPath, new Indicator(id, position, text));
   }
 
   /**
@@ -100,7 +100,7 @@ export class IndicatorManager{
   loadIndicators() {
     var indicators = this.api.load();
     for(let indicator of indicators) {
-      this.videoPlayer.push(this.indicatorsPath, Indicator(id, position, text));
+      this.videoPlayer.push(this.indicatorsPath, new Indicator(id, position, text));
     }
   }
 }

@@ -27,13 +27,13 @@ class AddMarkerButton extends BindingHelpersMixin(IocRequesterMixin(Localization
       state: Object,
       _indicatorManager: {
         type: Object,
-        inject: 'StateManager',
+        inject: 'IndicatorManager',
       },
     };
   }
 
   _handleClick(e) {
-    this._indicatorManager.addIndicator(state.position, null);
+    this._indicatorManager.addIndicator(this.state.position, null);
     e.preventDefault();
   }
 }
