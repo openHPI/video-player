@@ -434,10 +434,12 @@ export const configurationSchema = {
   },
   noteApi: {
     type: 'string',
-    description: 'Name of a global object that is used to communicate marker and note changes. See markers-and-notes.md for more information.'
+    description: 'Name of a global object that is used to communicate marker and note changes. See markers-and-notes.md for more information.',
+    default: '',
   },
   downloadUri: {
     type: 'string',
-    description: 'Uri that can be used to download a file for the current video. If set, a download button will be shown which is has this uri set as target location. If you want to trigger a file download, make sure you have the content disposition on that url set correctly.'
+    description: 'Uri that can be used to download a file for the current video. If set, a download button will be shown which is has this uri set as target location. If you want to trigger a file download, make sure you have the content disposition on that url set correctly.',
+    default: '',
   },
 };

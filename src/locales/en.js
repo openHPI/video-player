@@ -26,6 +26,9 @@ const locales = {
 
   // Component control-bar
   'quiz-overlay-switch--title': 'Toggle whether quizzes are shown during playback',
+  'download-button--title': 'Download',
+  'add-marker-button--title': 'Add a marker at the current position',
+  'add-note-button--title': 'Add a note at the current position',
 };
 
 export default locales;

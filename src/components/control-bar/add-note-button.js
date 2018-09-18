@@ -14,7 +14,7 @@ class AddNoteButton extends BindingHelpersMixin(IocRequesterMixin(LocalizationMi
 
       <div id="container__add_note_button" class="user_controls">
         <a id="button__add_note" class="button" on-click="_handleClick">
-          <fontawesome-icon prefix="fas" name="bookmark" fixed-width title$="[[localize('add-note-button--title')]]"></fontawesome-icon>
+          <fontawesome-icon prefix="fas" name="comment-dots" fixed-width title$="[[localize('add-note-button--title')]]"></fontawesome-icon>
         </a>
       </div>
     `;

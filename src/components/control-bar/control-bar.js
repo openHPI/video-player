@@ -126,7 +126,7 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
         </template>
 
         <template is="dom-if" if="[[downloadUri]]">
-          <download-button downloadUri="[[downloadUri]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></download-button>
+          <download-button download-uri="[[downloadUri]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></download-button>
         </template>
 
         <template is="dom-if" if="[[noteApi]]">

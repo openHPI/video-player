@@ -152,7 +152,7 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
         </template>
 
         <!-- Control Bar -->
-        <control-bar id="control-bar" state="[[state]]" live="[[configuration.live]]" has-chapters="[[hasItems(configuration.chapters)]]" has-questions="[[_hasQuestions]]" has-fallback-stream="[[_hasFallbackStream]]" captions="[[configuration.captions]]" available-qualities="[[state.availableQualities]]" previous-video="[[_previousVideo]]" next-video="[[_nextVideo]]" number-of-streams="[[configuration.streams.length]]" live-dvr="[[configuration.liveDvr]]" mobile-menu="[[configuration.mobileMenu]]" downloadUri="[[configuration.downloadUri]]" noteApi="[[configuration.noteApi]]"> </control-bar>
+        <control-bar id="control-bar" state="[[state]]" live="[[configuration.live]]" has-chapters="[[hasItems(configuration.chapters)]]" has-questions="[[_hasQuestions]]" has-fallback-stream="[[_hasFallbackStream]]" captions="[[configuration.captions]]" available-qualities="[[state.availableQualities]]" previous-video="[[_previousVideo]]" next-video="[[_nextVideo]]" number-of-streams="[[configuration.streams.length]]" live-dvr="[[configuration.liveDvr]]" mobile-menu="[[configuration.mobileMenu]]" download-uri="[[configuration.downloadUri]]" note-api="[[configuration.noteApi]]"> </control-bar>
 
         <!-- Chapter List -->
         <playlist-chapter-list state="[[state]]" chapters="[[configuration.chapters]]" playlist="[[configuration.playlist]]" show-if="[[state.isChapterListShown]]">

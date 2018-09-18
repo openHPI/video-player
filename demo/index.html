@@ -30,6 +30,32 @@
       }
     </style>
 
+    <!-- fake note api -->
+    <script>
+      var highest_used_id = 2;
+      var noteApi = {
+        load: function () {
+          return [
+            {id: 0, position: 10, text: "Note 1"},
+            {id: 1, position: 35, text: null},
+            {id: 2, position: 60, text: "Note 2"},
+          ];
+        },
+        add: function(position, text) {
+          console.log("Add called: position: " + position + ", text: " + text);
+
+          highest_used_id += 1;
+          return highest_used_id;
+        },
+        remove: function(id) {
+          console.log("Remove called: id: " + id);
+        },
+        setText: function(id, text) {
+          console.log("setText called: id: " + id + ", text: " + text);
+        }
+      };
+    </script>
+
     <!-- quiz answer validation for the player -->
     <script>
       function validationCallback(question, answer_info) {
@@ -484,7 +510,9 @@
               "@type": "Person",
               "name": "Prof. Dr. Christoph Meinel"
             }
-          }
+          },
+          "noteApi": "noteApi",
+          "downloadUri": "/this/is/the/download/URI"
         }'>
       </video-player>
       <!-- Example row of columns -->
