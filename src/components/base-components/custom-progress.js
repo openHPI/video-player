@@ -1,6 +1,7 @@
 import { BindingHelpersMixin } from '../../mixins/binding-helpers.js';
 import '../../styling/global--style-module.js';
 import { PolymerElement, html } from '@polymer/polymer';
+import '../progress-container/indicator-block.js';
 
 const HOVER_BOX_STATES = {
   ABSOLUE: 'abs',
@@ -61,15 +62,6 @@ class CustomProgress extends BindingHelpersMixin(PolymerElement) {
         #container__progress_bar:hover #div__hover_box {
           display: block;
         }
-
-        .indicator {
-          position: absolute;
-          background-color: #000;
-          width: 5px;
-          top: 0px;
-          height: 100%;
-          z-index: 3;
-        }
       </style>
 
       <div id="container__progress_bar" class$="[[ifThenElse(border, '', '-no-border')]]">
@@ -78,7 +70,7 @@ class CustomProgress extends BindingHelpersMixin(PolymerElement) {
           <div id="div__secondary_progress" class="progress-overlay" style$="width: [[_calcWidth(secondaryValue, min, max)]]%;"></div>
 
           <template is="dom-repeat" items="[[indicators]]">
-            <div class="indicator" style$="left: [[_calcWidth(item.position, min, max)]]%;"></div>
+            <indicator-block indicator="[[item]]" min="[[min]]" max="[[max]]"></indicator-block>
           </template>
         </div>
         <div id="container__hover_box" style$="visibility: [[ifThenElse(_hoverBoxVisible, 'visible', 'hidden')]];">
