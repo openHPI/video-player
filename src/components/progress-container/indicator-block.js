@@ -17,74 +17,74 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
           width: 5px;
           top: 0px;
           height: 100%;
-          z-index: 3;
+          z-index: 2;
         }
 
         .indicatorTooltip {
-            visibility: hidden;
-            opacity: 0;
-            transition: visibility 0s 1s, opacity 1s linear;
-            -webkit-transition: visibility 0s 1s, opacity 1s linear;
-            -moz-transition: visibility 0s 1s, opacity 1s linear;
-            -ms-transition: visibility 0s 1s, opacity 1s linear;
-            -o-transition: visibility 0s 1s, opacity 1s linear;
-            z-index: 8;
+          visibility: hidden;
+          opacity: 0;
+          transition: opacity 1s linear, visibility 1s 0s;
+
+          position: absolute;
+          bottom: 16px;
+          z-index: 7;
         }
 
         .indicatorTooltip:hover, .opacity-1 {
-            visibility: visible;
-            opacity: 1;
-            transition: opacity 0s linear;
-            cursor:pointer;
-            z-index: 8;
+          visibility: visible;
+          opacity: 1;
+          transition: opacity 0s linear;
+          cursor: pointer;
         }
 
         .bubble {
-            position:absolute;
-            bottom: 36px;
-            background: #fff;
-            z-index: 8;
-            word-wrap: break-word;
+          position: absolute;
+          bottom: 20px;
+          background: #fff;
+          word-wrap: break-word;
+        }
+
+        .right-0 {
+          right: 0;
         }
 
         .bubbleTriangle {
-            position:absolute;
-            bottom:16px;
+          position: absolute;
+          bottom: 0;
 
-            height: 0;
-            width: 0;
-            border-style:solid;
-            border-color:#fff transparent;
-            z-index: 7;
+          height: 0;
+          width: 0;
+          border-style: solid;
+          border-color: #fff transparent;
         }
 
         .bubbleTriangleLeft {
-            border-width:20px 20px 0 0;
+          border-width: 20px 20px 0 0;
         }
 
         .bubbleTriangleRight {
-            border-width:20px 0 0 20px;
-            margin-left: -20px;
+          border-width:20px 0 0 20px;
+          margin-left: -20px;
         }
 
         .bubble p {
-            padding:10px;
-            margin:0;
+          padding:10px;
+          margin:0;
         }
       </style>
 
-      <div class="indicatorTooltip">
-        <div class$="bubbleTriangle [[_triangleClass(indicator.position, min, max)]]" style$="[[_calcPosition(indicator.position, min, max)]]"></div>
-        <div class="bubble" style$="[[_calcPosition(indicator.position, min, max)]]">
-            <p>
+      <div class$="indicatorTooltip [[_tooltipClass]]" style$="[[_calcPosition(indicator.position, min, max)]]">
+        <div class$="bubbleTriangle [[_triangleClass(indicator.position, min, max)]]"></div>
+        <div class$="bubble [[_bubbleClass(indicator.position, min, max)]]">
+          <p>
             <a class="button">
-                <fontawesome-icon prefix="fas" name="trash"></fontawesome-icon>
+              <fontawesome-icon prefix="fas" name="trash"></fontawesome-icon>
             </a>
-            </p>
+          </p>
         </div>
       </div>
 
-      <div class="indicator" style$="left: [[_calcWidth(indicator.position, min, max)]]%;"></div>
+      <div class="indicator" style$="left: [[_calcWidth(indicator.position, min, max)]]%;" on-mouseover="_showTooltip" on-mouseout="_hideTooltip"></div>
     `;
   }
 
@@ -95,6 +95,10 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
       min: Number,
       max: Number,
       indicator: Object,
+      _tooltipClass: {
+        type: String,
+        default: "",
+      },
 
       _analyticsManager: {
         type: Object,
@@ -128,8 +132,24 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
     return "bubbleTriangleLeft";
   }
 
+  _bubbleClass(position, min, max) {
+    if(this._isRight(position, min, max)) {
+      return "right-0";
+    }
+
+    return "";
+  }
+
   _handleClick(){
     this._analyticsManager.changeState('setPosition', [this.slide.startPosition], {verb: ANALYTICS_TOPICS.VIDEO_SLIDE_SEEK});
+  }
+
+  _showTooltip() {
+    this._tooltipClass = "opacity-1";
+  }
+
+  _hideTooltip() {
+    this._tooltipClass = "";
   }
 }
 
