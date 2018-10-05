@@ -76,7 +76,7 @@ export class IndicatorManager{
   removeIndicator(indicator) {
     var index = this.indicators.indexOf(indicator);
     if(index > -1) {
-      this.videoPlayer.splice(this.indicatorsPath, 1);
+      this.videoPlayer.splice(this.indicatorsPath, index, 1);
     }
 
     this.api.remove(indicator.id);

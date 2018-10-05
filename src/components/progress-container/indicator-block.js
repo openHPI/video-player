@@ -79,11 +79,11 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
         }
       </style>
 
-      <div class$="indicatorTooltip [[_tooltipClass]]" style$="[[_calcPosition(indicator.position, min, max)]]">
+      <div class$="indicatorTooltip [[_tooltipClass]]" style$="[[_calcPosition(indicator.position, min, max)]]" on-click="_handleClick">
         <div class$="bubbleTriangle [[_triangleClass(indicator.position, min, max)]]"></div>
         <div class$="bubble [[_bubbleClass(indicator.position, min, max)]]">
           <p>
-            <a class="button">
+            <a class="button" on-click="_handleDelete">
               <fontawesome-icon prefix="fas" name="trash"></fontawesome-icon>
             </a>
           </p>
@@ -104,6 +104,11 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
       _tooltipClass: {
         type: String,
         default: "",
+      },
+
+      _indicatorManager: {
+        type: Object,
+        inject: 'IndicatorManager',
       },
 
       _analyticsManager: {
@@ -145,8 +150,14 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
     return "";
   }
 
-  _handleClick(){
-    this._analyticsManager.changeState('setPosition', [this.slide.startPosition], {verb: ANALYTICS_TOPICS.VIDEO_SLIDE_SEEK});
+  _handleClick(e) {
+    this._analyticsManager.changeState('setPosition', [this.indicator.position], {verb: ANALYTICS_TOPICS.VIDEO_INDICATOR_SEEK});
+    e.stopPropagation();
+  }
+
+  _handleDelete(e) {
+    this._indicatorManager.removeIndicator(this.indicator);
+    e.stopPropagation();
   }
 
   _showTooltip() {

@@ -133,8 +133,8 @@ class CustomProgress extends BindingHelpersMixin(PolymerElement) {
     }
   }
 
-  _showHoverBox() {
-    if(this.hoverBox !== HOVER_BOX_STATES.HIDDEN) {
+  _showHoverBox(e) {
+    if(e.target.tagName != "INDICATOR-BLOCK" && this.hoverBox !== HOVER_BOX_STATES.HIDDEN) {
       this._hoverBoxVisible = true;
     }
   }
