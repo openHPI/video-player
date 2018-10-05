@@ -9,9 +9,9 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
     return html`
       <style type="text/css" include="progress-container--style-module">
         .indicator {
+          background-color: var(--font-color-on-accent-color);
           cursor: pointer;
           position: absolute;
-          background-color: #000;
           border-left: 1px solid #000;
           border-right: 1px solid #000;
           width: 5px;
@@ -21,6 +21,7 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
         }
 
         .indicatorTooltip {
+          @apply --set-background-color;
           visibility: hidden;
           opacity: 0;
           transition: opacity 1s linear, visibility 1s 0s;
@@ -38,9 +39,10 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
         }
 
         .bubble {
+          @apply --set-background-color;
+          @apply --set-foreground-color;
           position: absolute;
           bottom: 20px;
-          background: #fff;
           word-wrap: break-word;
         }
 
@@ -55,7 +57,7 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
           height: 0;
           width: 0;
           border-style: solid;
-          border-color: #fff transparent;
+          border-color: var(--background-color) transparent;
         }
 
         .bubbleTriangleLeft {
@@ -70,6 +72,10 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
         .bubble p {
           padding:10px;
           margin:0;
+        }
+
+        .bubble p a {
+          @apply --set-font-color-on-accent-color;
         }
       </style>
 
@@ -113,7 +119,6 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
 
   _isRight(position, min, max) {
     return position > ((min + max) / 2);
-
   }
 
   _calcPosition(position, min, max) {
