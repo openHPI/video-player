@@ -15,7 +15,6 @@ export class Indicator{
     this.position = position;
     this.text = text;
   }
-
 }
 
 /**

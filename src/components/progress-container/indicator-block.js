@@ -29,6 +29,7 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
           position: absolute;
           bottom: 16px;
           z-index: 7;
+          background-color: transparent;
         }
 
         .indicatorTooltip:hover, .opacity-1 {
@@ -41,9 +42,12 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
         .bubble {
           @apply --set-background-color;
           @apply --set-foreground-color;
-          position: absolute;
+          position: relative;
           bottom: 20px;
           word-wrap: break-word;
+          padding: 10px;
+          max-width: 500px;
+          min-height: 20px;
         }
 
         .right-0 {
@@ -67,26 +71,41 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
         .bubbleTriangleRight {
           border-width:20px 0 0 20px;
           margin-left: -20px;
+          right: 0;
+        }
+
+        a {
+          @apply --set-font-color-on-accent-color;
         }
 
         .bubble p {
-          padding:10px;
-          margin:0;
+          margin: 0;
         }
 
         .bubble p a {
-          @apply --set-font-color-on-accent-color;
+          margin-left: 5px;
+          float: right;
         }
+
       </style>
 
       <div class$="indicatorTooltip [[_tooltipClass]]" style$="[[_calcPosition(indicator.position, min, max)]]" on-click="_handleClick">
         <div class$="bubbleTriangle [[_triangleClass(indicator.position, min, max)]]"></div>
         <div class$="bubble [[_bubbleClass(indicator.position, min, max)]]">
-          <p>
+          <template is="dom-if" if="[[_isNote(indicator)]]">
+            <p>
+              <a class="button" on-click="_handleDelete">
+                <fontawesome-icon prefix="fas" name="trash"></fontawesome-icon>
+              </a>
+              [[indicator.text]]
+            </p>
+          </template>
+
+          <template is="dom-if" if="[[!_isNote(indicator)]]">
             <a class="button" on-click="_handleDelete">
               <fontawesome-icon prefix="fas" name="trash"></fontawesome-icon>
             </a>
-          </p>
+          </template>
         </div>
       </div>
 
@@ -116,6 +135,10 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
         inject: 'AnalyticsManager',
       },
     };
+  }
+
+  _isNote(indicator) {
+    return indicator.text !== null;
   }
 
   _calcWidth(value, min, max) {

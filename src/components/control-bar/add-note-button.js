@@ -33,7 +33,7 @@ class AddNoteButton extends BindingHelpersMixin(IocRequesterMixin(LocalizationMi
   }
 
   _handleClick(e) {
-    this._indicatorManager.addIndicator(this.state.position, "");
+    this._indicatorManager.addIndicator(this.state.position, "Neue Notiz");
     e.preventDefault();
   }
 }
