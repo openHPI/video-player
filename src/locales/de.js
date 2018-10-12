@@ -26,9 +26,10 @@ const locales = {
   // Component control-bar
   'quiz-overlay-switch--title': 'Anzeige von Selbsttests umschalten',
   'download-button--title': 'Download',
-  'add-marker-button--title': 'Marker an der aktuellen Stelle hinzufügen',
   'add-note-button--title': 'Notiz an der aktuellen Stelle hinzufügen',
 
+  // Component progress bar
+  'indicator-block--click-here-to-edit': 'Hier klicken, um den Text zu editieren...',
 };
 
 export default locales;

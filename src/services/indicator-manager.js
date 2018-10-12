@@ -18,7 +18,7 @@ export class Indicator{
 }
 
 /**
- * Manager for the indicators in the video progress bar used by markers and notes.
+ * Manager for the indicators in the video progress bar used by notes.
  */
 export class IndicatorManager{
   /**

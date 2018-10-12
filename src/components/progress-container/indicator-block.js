@@ -1,10 +1,11 @@
 import { ANALYTICS_TOPICS } from '../../constants.js';
 import { IocRequesterMixin } from '../../mixins/ioc-requester.js';
 import { BindingHelpersMixin } from '../../mixins/binding-helpers.js';
+import { LocalizationMixin } from '../../mixins/localization.js';
 import '../../styling/progress-container--style-module.js';
 import { PolymerElement, html } from '@polymer/polymer';
 
-class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElement)) {
+class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixin(PolymerElement))) {
   static get template() {
     return html`
       <style type="text/css" include="progress-container--style-module">
@@ -48,6 +49,8 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
           padding: 10px;
           max-width: 500px;
           min-height: 20px;
+
+          display: flex;
         }
 
         .right-0 {
@@ -80,11 +83,14 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
 
         .bubble p {
           margin: 0;
+          flex: 1;
         }
 
-        .bubble p a {
+        .bubble a {
           margin-left: 5px;
           float: right;
+          flex: 1;
+          flex-grow: 0;
         }
 
       </style>
@@ -92,20 +98,18 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
       <div class$="indicatorTooltip [[_tooltipClass]]" style$="[[_calcPosition(indicator.position, min, max)]]" on-click="_handleClick">
         <div class$="bubbleTriangle [[_triangleClass(indicator.position, min, max)]]"></div>
         <div class$="bubble [[_bubbleClass(indicator.position, min, max)]]">
-          <template is="dom-if" if="[[_isNote(indicator)]]">
-            <p>
-              <a class="button" on-click="_handleDelete">
-                <fontawesome-icon prefix="fas" name="trash"></fontawesome-icon>
-              </a>
+          <p contenteditable="true">
+            <template is="dom-if" if="[[indicator.text]]">
               [[indicator.text]]
-            </p>
-          </template>
+            </template>
+            <template is="dom-if" if="[[!indicator.text]]">
+              [[localize("indicator-block--click-here-to-edit")]]
+            </template>
+          </p>
 
-          <template is="dom-if" if="[[!_isNote(indicator)]]">
-            <a class="button" on-click="_handleDelete">
-              <fontawesome-icon prefix="fas" name="trash"></fontawesome-icon>
-            </a>
-          </template>
+          <a class="button" on-click="_handleDelete">
+            <fontawesome-icon prefix="fas" name="trash"></fontawesome-icon>
+          </a>
         </div>
       </div>
 
@@ -120,6 +124,7 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
       min: Number,
       max: Number,
       indicator: Object,
+
       _tooltipClass: {
         type: String,
         default: "",
@@ -135,10 +140,6 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(PolymerElemen
         inject: 'AnalyticsManager',
       },
     };
-  }
-
-  _isNote(indicator) {
-    return indicator.text !== null;
   }
 
   _calcWidth(value, min, max) {
