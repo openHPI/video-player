@@ -31,6 +31,8 @@ export class IndicatorManager{
     this.videoPlayer = videoPlayer;
     this.indicatorsPath = indicatorsPath;
     this.configurationPath = configurationPath;
+
+    this.loadIndicators();
   }
 
   /**
@@ -99,7 +101,7 @@ export class IndicatorManager{
   loadIndicators() {
     var indicators = this.api.load();
     for(let indicator of indicators) {
-      this.videoPlayer.push(this.indicatorsPath, new Indicator(id, position, text));
+      this.videoPlayer.push(this.indicatorsPath, new Indicator(indicator.id, indicator.position, indicator.text));
     }
   }
 }

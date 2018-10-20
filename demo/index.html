@@ -35,23 +35,24 @@
       var highest_used_id = 2;
       var noteApi = {
         load: function () {
+          console.log("Fake note api: Load called");
           return [
-            {id: 0, position: 10, text: "Note 1"},
-            {id: 1, position: 35, text: null},
-            {id: 2, position: 60, text: "Note 2"},
+            {id: 0, position: 100, text: "Note 1"},
+            {id: 1, position: 350, text: ""},
+            {id: 2, position: 600, text: "Note 2"},
           ];
         },
         add: function(position, text) {
-          console.log("Add called: position: " + position + ", text: " + text);
+          console.log("Fake note api: Add called: position: " + position + ", text: " + text);
 
           highest_used_id += 1;
           return highest_used_id;
         },
         remove: function(id) {
-          console.log("Remove called: id: " + id);
+          console.log("Fake note api: Remove called: id: " + id);
         },
         setText: function(id, text) {
-          console.log("setText called: id: " + id + ", text: " + text);
+          console.log("Fake note api: setText called: id: " + id + ", text: " + text);
         }
       };
     </script>

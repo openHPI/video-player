@@ -33,7 +33,7 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
           background-color: transparent;
         }
 
-        .indicatorTooltip:hover, .opacity-1 {
+        .indicatorTooltip:hover, .indicatorTooltip:focus-within, .opacity-1 {
           visibility: visible;
           opacity: 1;
           transition: opacity 0s linear;
@@ -86,6 +86,12 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
           flex: 1;
         }
 
+        .bubble textarea {
+          width: 500px;
+          resize: none;
+          overflow: hidden;
+        }
+
         .bubble a {
           margin-left: 5px;
           float: right;
@@ -98,14 +104,7 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
       <div class$="indicatorTooltip [[_tooltipClass]]" style$="[[_calcPosition(indicator.position, min, max)]]" on-click="_handleClick">
         <div class$="bubbleTriangle [[_triangleClass(indicator.position, min, max)]]"></div>
         <div class$="bubble [[_bubbleClass(indicator.position, min, max)]]">
-          <p contenteditable="true">
-            <template is="dom-if" if="[[indicator.text]]">
-              [[indicator.text]]
-            </template>
-            <template is="dom-if" if="[[!indicator.text]]">
-              [[localize("indicator-block--click-here-to-edit")]]
-            </template>
-          </p>
+          <textarea rows="1" placeholder="Hier klicken, um Notiztext einzufügen" on-input="_setTextareaHeight" on-keydown="_onTextareaKeydown" on-change="_onTextareaChange">[[ indicator.text ]]</textarea>
 
           <a class="button" on-click="_handleDelete">
             <fontawesome-icon prefix="fas" name="trash"></fontawesome-icon>
@@ -140,6 +139,21 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
         inject: 'AnalyticsManager',
       },
     };
+  }
+
+  _onTextareaChange(e) {
+    this._indicatorManager.setIndicatorText(this.indicator, e.target.value);
+  }
+
+  _onTextareaKeydown(e) {
+    if (e.key == "Enter" && !e.shiftKey) {
+      e.target.blur();
+    }
+  }
+
+  _setTextareaHeight(e) {
+    e.target.style.height = "5px";
+    e.target.style.height = (e.target.scrollHeight) + "px";
   }
 
   _calcWidth(value, min, max) {
