@@ -112,7 +112,7 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
       <div class$="indicatorTooltip [[_tooltipClass]]" style$="[[_calcPosition(indicator.position, min, max)]]" on-click="_handleClick">
         <div class$="bubbleTriangle [[_triangleClass(indicator.position, min, max)]]"></div>
         <div class$="bubble [[_bubbleClass(indicator.position, min, max)]]">
-          <textarea class$="asd [[_getTextareaClass(_textareaShown)]]" rows="1" placeholder="[[ localize('indicator-block--note-text') ]]" on-input="_setTextareaHeight" on-keydown="_handleTextareaKeydown" on-change="_handleTextareaChange" on-blur="_handleTextareaBlur" on-click="_handleTextareaClick">[[ indicator.text ]]</textarea>
+          <textarea class$="[[_getTextareaClass(_textareaShown)]]" rows="1" placeholder="[[ localize('indicator-block--note-text') ]]" on-input="_setTextareaHeight" on-keydown="_handleTextareaKeydown" on-change="_handleTextareaChange" on-blur="_handleTextareaBlur" on-click="_handleTextareaClick">[[ indicator.text ]]</textarea>
           <p class$="[[_getParagraphClass(_textareaShown)]]" on-click="_handleParagraphClick">[[ _getParagraphText(indicator.text, localize) ]]</p>
 
           <a class="button" on-click="_handleDelete">
@@ -123,13 +123,6 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
 
       <div class="indicator" style$="left: [[_calcWidth(indicator.position, min, max)]]%;" on-mouseover="_showTooltip" on-mouseout="_hideTooltip"></div>
     `;
-  }
-
-  constructor() {
-    super();
-
-    // not set with default value since default does not trigger the calculation in the dom on object creation
-    this._textareaShown = false;
   }
 
   static get is() { return 'indicator-block'; }
@@ -144,7 +137,6 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
 
       _tooltipClass: {
         type: String,
-        default: "",
       },
 
       _indicatorManager: {
@@ -157,6 +149,28 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
         inject: 'AnalyticsManager',
       },
     };
+  }
+
+  static get observers() {
+    return [
+      '_indicatorChanged(indicator)',
+    ];
+  }
+
+  _indicatorChanged(indicator) {
+    if(indicator.initialFocus) {
+      // Show tooltip, wait for browser to apply, then focus, and hide again. Tooltip will stay open since we have it focussed.
+      // I'm sorry... Couldn't get it to work otherwise
+      this._textareaShown = true;
+      this._showTooltip();
+
+      var textarea = this.shadowRoot.querySelector('textarea');
+      var hideFunc = this._hideTooltip.bind(this);
+      setTimeout(function() { textarea.focus(); hideFunc(); }, 0);
+    } else {
+      this._hideTooltip();
+      this._textareaShown = false;
+    }
   }
 
   _getTextareaClass(textareaShown) {

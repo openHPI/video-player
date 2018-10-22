@@ -10,10 +10,11 @@ export class Indicator{
    * @param {string} text The text of the new indicator that will be shown on hover. If empty, the tooltip will contain a delete button.
    * @return {Indicator} The new indicator instance
    */
-  constructor(id, position, text) {
+  constructor(id, position, text, initialFocus = false) {
     this.id = id;
     this.position = position;
     this.text = text;
+    this.initialFocus = initialFocus;
   }
 }
 
@@ -64,9 +65,10 @@ export class IndicatorManager{
    * @param {Indicator} indicator The indicator to be added.
    * @returns {void}
    */
-  addIndicator(position, text) {
+  addIndicator(position, text, setFocus = true) {
     var id = this.api.add(position, text);
-    this.videoPlayer.push(this.indicatorsPath, new Indicator(id, position, text));
+    var indicator = new Indicator(id, position, text, setFocus);
+    this.videoPlayer.push(this.indicatorsPath, indicator);
   }
 
   /**

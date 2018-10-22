@@ -33,8 +33,11 @@ class AddNoteButton extends BindingHelpersMixin(IocRequesterMixin(LocalizationMi
   }
 
   _handleClick(e) {
-    this._indicatorManager.addIndicator(this.state.position, "");
+    var preventFocus = e.ctrlKey || e.shiftKey || e.altKey;
+
+    this._indicatorManager.addIndicator(this.state.position, "", !preventFocus);
     e.preventDefault();
+    e.stopPropagation();
   }
 }
 
