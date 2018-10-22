@@ -38,6 +38,7 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
           opacity: 1;
           transition: opacity 0s linear;
           cursor: pointer;
+          z-index: 8;
         }
 
         .bubble {
@@ -86,6 +87,7 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
           flex: 1;
           display: none;
           white-space: pre-wrap;
+          cursor: text;
         }
 
         .bubble textarea {
