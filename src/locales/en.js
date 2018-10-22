@@ -31,6 +31,7 @@ const locales = {
 
   // Component progress bar
   'indicator-block--click-here-to-edit': 'Click here to edit the text...',
+  'indicator-block--note-text': 'Note text',
 };
 
 export default locales;

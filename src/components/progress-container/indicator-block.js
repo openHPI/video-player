@@ -112,8 +112,8 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
       <div class$="indicatorTooltip [[_tooltipClass]]" style$="[[_calcPosition(indicator.position, min, max)]]" on-click="_handleClick">
         <div class$="bubbleTriangle [[_triangleClass(indicator.position, min, max)]]"></div>
         <div class$="bubble [[_bubbleClass(indicator.position, min, max)]]">
-          <textarea class$="asd [[_getTextareaClass(_textareaShown)]]" rows="1" placeholder="Note text..." on-input="_setTextareaHeight" on-keydown="_handleTextareaKeydown" on-change="_handleTextareaChange" on-blur="_handleTextareaBlur" on-click="_handleTextareaClick">[[ indicator.text ]]</textarea>
-          <p class$="asd [[_getParagraphClass(_textareaShown)]]" on-click="_handleParagraphClick">[[ _getParagraphText(indicator.text) ]]</p>
+          <textarea class$="asd [[_getTextareaClass(_textareaShown)]]" rows="1" placeholder="[[ localize('indicator-block--note-text') ]]" on-input="_setTextareaHeight" on-keydown="_handleTextareaKeydown" on-change="_handleTextareaChange" on-blur="_handleTextareaBlur" on-click="_handleTextareaClick">[[ indicator.text ]]</textarea>
+          <p class$="[[_getParagraphClass(_textareaShown)]]" on-click="_handleParagraphClick">[[ _getParagraphText(indicator.text, localize) ]]</p>
 
           <a class="button" on-click="_handleDelete">
             <fontawesome-icon prefix="fas" name="trash"></fontawesome-icon>
@@ -168,10 +168,8 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
   }
 
   _getParagraphText(text) {
-    if(!text) {
-      // todo - doesn't work: this.localize is undefined.
-      // text = this.localize('indicator-block--click-here-to-edit');
-      text = "Click here to edit...";
+    if(!text && this.localize) {
+      text = this.localize("indicator-block--click-here-to-edit");
     }
 
     return text;
@@ -198,7 +196,7 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
   }
 
   _handleTextareaKeydown(e) {
-    if (e.key == "Enter" && !e.shiftKey) {
+    if (e.key == "Enter" && !e.shiftKey && !e.ctrlKey) {
       e.target.blur();
     }
 
