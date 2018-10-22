@@ -84,12 +84,16 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
         .bubble p {
           margin: 0;
           flex: 1;
+          display: none;
+          white-space: pre-wrap;
         }
 
         .bubble textarea {
           width: 500px;
           resize: none;
           overflow: hidden;
+          flex: 1;
+          display: none;
         }
 
         .bubble a {
@@ -99,12 +103,17 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
           flex-grow: 0;
         }
 
+        .show {
+          display: initial;
+        }
+
       </style>
 
       <div class$="indicatorTooltip [[_tooltipClass]]" style$="[[_calcPosition(indicator.position, min, max)]]" on-click="_handleClick">
         <div class$="bubbleTriangle [[_triangleClass(indicator.position, min, max)]]"></div>
         <div class$="bubble [[_bubbleClass(indicator.position, min, max)]]">
-          <textarea rows="1" placeholder="Hier klicken, um Notiztext einzufügen" on-input="_setTextareaHeight" on-keydown="_onTextareaKeydown" on-change="_onTextareaChange">[[ indicator.text ]]</textarea>
+          <textarea class$="asd [[_getTextareaClass(_textareaShown)]]" rows="1" placeholder="Note text..." on-input="_setTextareaHeight" on-keydown="_handleTextareaKeydown" on-change="_handleTextareaChange" on-blur="_handleTextareaBlur" on-click="_handleTextareaClick">[[ indicator.text ]]</textarea>
+          <p class$="asd [[_getParagraphClass(_textareaShown)]]" on-click="_handleParagraphClick">[[ _getParagraphText(indicator.text) ]]</p>
 
           <a class="button" on-click="_handleDelete">
             <fontawesome-icon prefix="fas" name="trash"></fontawesome-icon>
@@ -116,6 +125,13 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
     `;
   }
 
+  constructor() {
+    super();
+
+    // not set with default value since default does not trigger the calculation in the dom on object creation
+    this._textareaShown = false;
+  }
+
   static get is() { return 'indicator-block'; }
 
   static get properties() {
@@ -123,6 +139,8 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
       min: Number,
       max: Number,
       indicator: Object,
+
+      _textareaShown: Boolean,
 
       _tooltipClass: {
         type: String,
@@ -141,19 +159,55 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
     };
   }
 
-  _onTextareaChange(e) {
-    this._indicatorManager.setIndicatorText(this.indicator, e.target.value);
+  _getTextareaClass(textareaShown) {
+    return textareaShown ? "show" : "";
   }
 
-  _onTextareaKeydown(e) {
+  _getParagraphClass(textareaShown) {
+    return textareaShown ? "" : "show";
+  }
+
+  _getParagraphText(text) {
+    if(!text) {
+      // todo - doesn't work: this.localize is undefined.
+      // text = this.localize('indicator-block--click-here-to-edit');
+      text = "Click here to edit...";
+    }
+
+    return text;
+  }
+
+  _handleParagraphClick(e) {
+    this._textareaShown = true;
+    this.shadowRoot.querySelector('textarea').focus();
+
+    e.stopPropagation();
+  }
+
+  _handleTextareaClick(e) {
+    e.stopPropagation();
+  }
+
+  _handleTextareaBlur(e) {
+    this._textareaShown = false;
+  }
+
+  _handleTextareaChange(e) {
+    this._indicatorManager.setIndicatorText(this.indicator, e.target.value);
+    this.notifyPath('indicator.text');
+  }
+
+  _handleTextareaKeydown(e) {
     if (e.key == "Enter" && !e.shiftKey) {
       e.target.blur();
     }
+
+    e.stopPropagation(); // do not allow shortcuts for controlling the player in a textinput field
   }
 
   _setTextareaHeight(e) {
-    e.target.style.height = "5px";
-    e.target.style.height = (e.target.scrollHeight) + "px";
+    e.target.style.height = "0";
+    e.target.style.height = e.target.scrollHeight + "px";
   }
 
   _calcWidth(value, min, max) {
