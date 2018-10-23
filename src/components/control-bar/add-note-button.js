@@ -1,4 +1,3 @@
-import { ANALYTICS_TOPICS } from '../../constants.js';
 import { IocRequesterMixin } from '../../mixins/ioc-requester.js';
 import { BindingHelpersMixin } from '../../mixins/binding-helpers.js';
 import { LocalizationMixin } from '../../mixins/localization.js';
@@ -33,9 +32,9 @@ class AddNoteButton extends BindingHelpersMixin(IocRequesterMixin(LocalizationMi
   }
 
   _handleClick(e) {
-    var preventFocus = e.ctrlKey || e.shiftKey || e.altKey;
+    let preventFocus = e.ctrlKey || e.shiftKey || e.altKey;
 
-    this._indicatorManager.addIndicator(this.state.position, "", !preventFocus);
+    this._indicatorManager.addIndicator(this.state.position, '', !preventFocus);
     e.preventDefault();
     e.stopPropagation();
   }

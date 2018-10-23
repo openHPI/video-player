@@ -166,9 +166,9 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
       this._textareaShown = true;
       this._showTooltip();
 
-      var textarea = this.shadowRoot.querySelector('textarea');
-      var hideFunc = this._hideTooltip.bind(this);
-      setTimeout(function() { textarea.focus(); hideFunc(); }, 0);
+      let textarea = this.shadowRoot.querySelector('textarea');
+      let hideFunc = this._hideTooltip.bind(this);
+      setTimeout(() => { textarea.focus(); hideFunc(); }, 0);
     } else {
       this._hideTooltip();
       this._textareaShown = false;
@@ -176,16 +176,16 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
   }
 
   _getTextareaClass(textareaShown) {
-    return textareaShown ? "show" : "";
+    return textareaShown ? 'show' : '';
   }
 
   _getParagraphClass(textareaShown) {
-    return textareaShown ? "" : "show";
+    return textareaShown ? '' : 'show';
   }
 
   _getParagraphText(text) {
     if(!text && this.localize) {
-      text = this.localize("indicator-block--click-here-to-edit");
+      text = this.localize('indicator-block--click-here-to-edit');
     }
 
     return text;
@@ -202,7 +202,7 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
     e.stopPropagation();
   }
 
-  _handleTextareaBlur(e) {
+  _handleTextareaBlur() {
     this._textareaShown = false;
   }
 
@@ -212,16 +212,16 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
   }
 
   _handleTextareaKeydown(e) {
-    if (e.key == "Enter" && !e.shiftKey && !e.ctrlKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
       e.target.blur();
     }
 
-    e.stopPropagation(); // do not allow shortcuts for controlling the player in a textinput field
+    e.stopPropagation(); // Do not allow shortcuts for controlling the player in a textinput field
   }
 
   _setTextareaHeight(e) {
-    e.target.style.height = "0";
-    e.target.style.height = e.target.scrollHeight + "px";
+    e.target.style.height = '0';
+    e.target.style.height = e.target.scrollHeight + 'px';
   }
 
   _calcWidth(value, min, max) {
@@ -234,26 +234,26 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
 
   _calcPosition(position, min, max) {
     if(this._isRight(position, min, max)) {
-      return "right: " + (100 - this._calcWidth(position, min, max)) + "%;";
+      return 'right: ' + (100 - this._calcWidth(position, min, max)) + '%;';
     }
 
-    return "left: " + this._calcWidth(position, min, max) + "%;";
+    return 'left: ' + this._calcWidth(position, min, max) + '%;';
   }
 
   _triangleClass(position, min, max) {
     if(this._isRight(position, min, max)) {
-      return "bubbleTriangleRight";
+      return 'bubbleTriangleRight';
     }
 
-    return "bubbleTriangleLeft";
+    return 'bubbleTriangleLeft';
   }
 
   _bubbleClass(position, min, max) {
     if(this._isRight(position, min, max)) {
-      return "right-0";
+      return 'right-0';
     }
 
-    return "";
+    return '';
   }
 
   _handleClick(e) {
@@ -267,11 +267,11 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
   }
 
   _showTooltip() {
-    this._tooltipClass = "opacity-1";
+    this._tooltipClass = 'opacity-1';
   }
 
   _hideTooltip() {
-    this._tooltipClass = "";
+    this._tooltipClass = '';
   }
 }
 

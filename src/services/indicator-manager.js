@@ -26,6 +26,7 @@ export class IndicatorManager{
    * Initializes a new IndicatorManager instance.
    * @param {VideoPlayer} videoPlayer  The VideoPlayer, whose indicators should be controlled.
    * @param {string} indicatorsPath  The path of the indicator property on the VideoPlayer.
+   * @param {string} configurationPath  The path of the configuration property on the VideoPlayer.
    * @return {IndicatorManager}  The new IndicatorManager instance.
    */
   constructor(videoPlayer, indicatorsPath, configurationPath) {
@@ -64,12 +65,14 @@ export class IndicatorManager{
 
   /**
    * Adds an indicator, which will then be shown in the video progress bar.
-   * @param {Indicator} indicator The indicator to be added.
-   * @returns {void}
+   * @param {number} position The position where the new indicator should be added.
+   * @param {string} text The text of the new indicator. May be empty.
+   * @param {boolean} setFocus Boolean value indicating whether the new indicator should receive input focus on creation.
+   * @return {void}
    */
   addIndicator(position, text, setFocus = true) {
-    var id = this.api.add(position, text);
-    var indicator = new Indicator(id, position, text, setFocus);
+    let id = this.api.add(position, text);
+    let indicator = new Indicator(id, position, text, setFocus);
     this.videoPlayer.push(this.indicatorsPath, indicator);
   }
 
@@ -79,7 +82,7 @@ export class IndicatorManager{
    * @returns {void}
    */
   removeIndicator(indicator) {
-    var index = this.indicators.indexOf(indicator);
+    let index = this.indicators.indexOf(indicator);
     if(index > -1) {
       this.videoPlayer.splice(this.indicatorsPath, index, 1);
     }
@@ -103,7 +106,7 @@ export class IndicatorManager{
   * @returns {void}
   */
   loadIndicators() {
-    var indicators = this.api.load();
+    let indicators = this.api.load();
     for(let indicator of indicators) {
       this.videoPlayer.push(this.indicatorsPath, new Indicator(indicator.id, indicator.position, indicator.text));
     }

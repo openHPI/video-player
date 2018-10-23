@@ -1,4 +1,3 @@
-import { ANALYTICS_TOPICS } from '../../constants.js';
 import { IocRequesterMixin } from '../../mixins/ioc-requester.js';
 import { BindingHelpersMixin } from '../../mixins/binding-helpers.js';
 import { LocalizationMixin } from '../../mixins/localization.js';
