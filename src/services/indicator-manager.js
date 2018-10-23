@@ -33,7 +33,9 @@ export class IndicatorManager{
     this.indicatorsPath = indicatorsPath;
     this.configurationPath = configurationPath;
 
-    this.loadIndicators();
+    if(this.api) {
+      this.loadIndicators();
+    }
   }
 
   /**
