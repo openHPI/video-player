@@ -82,6 +82,14 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
           width: 300px;
           color: inherit;
         }
+
+        input[type='checkbox'], input[type='radio'], label {
+          cursor: pointer;
+        }
+
+        input:focus {
+          outline: none;
+        }
       </style>
 
       <div id="container__quiz-overlay" class="overlay" style$="visibility: [[ifThenElse(_isVisible, 'visible', 'hidden')]];">
