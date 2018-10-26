@@ -55,6 +55,9 @@ See [extending.md](docs/extending.md)
 ## Tests
 See [tests.md](docs/tests.md)
 
+## Notes
+See [notes.md](docs/notes.md)
+
 ## Linter
 The framework comes with several linter configurations. All linters can by executed using `npm run lint`.
 
