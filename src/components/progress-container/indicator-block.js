@@ -105,7 +105,7 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
           flex-grow: 0;
         }
 
-        .show {
+        .bubble .show {
           display: initial;
         }
 
