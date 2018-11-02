@@ -64,8 +64,8 @@
     "gulp-uglify-es": "^0.1.3",
     "merge-stream": "^1.0.1",
     "node-glob": "^1.2.0",
-    "polymer-build": "^3.0.4",
-    "polymer-cli": "^1.7.2",
+    "polymer-build": "^3.1.0",
+    "polymer-cli": "^1.8.1",
     "replace-in-file": "^3.0.0",
     "rollup-plugin-commonjs": "^8.4.1",
     "rollup-plugin-node-resolve": "^3.3.0",
@@ -74,7 +74,7 @@
     "wct-browser-legacy": "^1.0.1"
   },
   "scripts": {
-    "test": "polymer test -l chrome -l firefox",
+    "test": "polymer test -l chrome && polymer test -l firefox",
     "test-firefox": "polymer test -l firefox",
     "test-safari": "polymer test -l safari",
     "test-chrome": "polymer test -l chrome",
@@ -84,7 +84,7 @@
     "bundle": "gulp bundle",
     "version": "node ./utils/update-version.js && git add src/constants.js",
     "postversion": "git push && git push --tags && ./utils/github-pages.sh openHPI video-player",
-    "postinstall": "./utils/build-hls-js.sh"
+    "postinstall": "bash ./utils/build-hls-js.sh"
   },
   "resolutions": {
     "inherits": "2.0.3",
