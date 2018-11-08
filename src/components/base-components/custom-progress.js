@@ -1,6 +1,7 @@
 import { BindingHelpersMixin } from '../../mixins/binding-helpers.js';
 import '../../styling/global--style-module.js';
 import { PolymerElement, html } from '@polymer/polymer';
+import '../progress-container/indicator-block.js';
 
 const HOVER_BOX_STATES = {
   ABSOLUE: 'abs',
@@ -67,6 +68,10 @@ class CustomProgress extends BindingHelpersMixin(PolymerElement) {
         <div id="container__progress" on-click="_handleClick" on-mouseover="_showHoverBox" on-mousemove="_updateHoverBoxPosition" on-mouseout="_hideHoverBox">
           <div id="div__primary_progress" class="progress-overlay" style$="width: [[_calcWidth(value, min, max)]]%;"></div>
           <div id="div__secondary_progress" class="progress-overlay" style$="width: [[_calcWidth(secondaryValue, min, max)]]%;"></div>
+
+          <template is="dom-repeat" items="[[indicators]]">
+            <indicator-block indicator="[[item]]" min="[[min]]" max="[[max]]"></indicator-block>
+          </template>
         </div>
         <div id="container__hover_box" style$="visibility: [[ifThenElse(_hoverBoxVisible, 'visible', 'hidden')]];">
           <div id="div__hover_box">[[_hoverBoxContent]]</div>
@@ -79,6 +84,7 @@ class CustomProgress extends BindingHelpersMixin(PolymerElement) {
 
   static get properties() {
     return {
+      indicators: Array,
       min: {
         type: Number,
         value: 0,
@@ -127,8 +133,8 @@ class CustomProgress extends BindingHelpersMixin(PolymerElement) {
     }
   }
 
-  _showHoverBox() {
-    if(this.hoverBox !== HOVER_BOX_STATES.HIDDEN) {
+  _showHoverBox(e) {
+    if(e.target.tagName !== 'INDICATOR-BLOCK' && this.hoverBox !== HOVER_BOX_STATES.HIDDEN) {
       this._hoverBoxVisible = true;
     }
   }

@@ -7,6 +7,7 @@ import { BindingHelpersMixin } from './mixins/binding-helpers.js';
 import { HlsHelper } from './helpers/hls-helper.js';
 import { UrlFragmentHelper } from './helpers/url-fragment-helper.js';
 import { StateManager } from './services/state-manager.js';
+import { IndicatorManager } from './services/indicator-manager.js';
 import { ConfigurationValidator } from './services/configuration-validator.js';
 import { FullscreenManager } from './services/fullscreen-manager.js';
 import { SynchronizationManager } from './services/synchronization-manager.js';
@@ -146,12 +147,12 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
             <template is="dom-if" if="[[hasItems(configuration.slides)]]">
               <slide-preview-bar state="[[state]]" slides="[[configuration.slides]]" class="hidden-for-mobile"></slide-preview-bar>
             </template>
-            <video-progress state="[[state]]"></video-progress>
+            <video-progress state="[[state]]" indicators="[[indicators]]"></video-progress>
           </div>
         </template>
 
         <!-- Control Bar -->
-        <control-bar id="control-bar" state="[[state]]" live="[[configuration.live]]" has-chapters="[[hasItems(configuration.chapters)]]" has-questions="[[_hasQuestions]]" has-fallback-stream="[[_hasFallbackStream]]" captions="[[configuration.captions]]" available-qualities="[[state.availableQualities]]" previous-video="[[_previousVideo]]" next-video="[[_nextVideo]]" number-of-streams="[[configuration.streams.length]]" live-dvr="[[configuration.liveDvr]]" mobile-menu="[[configuration.mobileMenu]]"> </control-bar>
+        <control-bar id="control-bar" state="[[state]]" live="[[configuration.live]]" has-chapters="[[hasItems(configuration.chapters)]]" has-questions="[[_hasQuestions]]" has-fallback-stream="[[_hasFallbackStream]]" captions="[[configuration.captions]]" available-qualities="[[state.availableQualities]]" previous-video="[[_previousVideo]]" next-video="[[_nextVideo]]" number-of-streams="[[configuration.streams.length]]" live-dvr="[[configuration.liveDvr]]" mobile-menu="[[configuration.mobileMenu]]" download-uri="[[configuration.downloadUri]]" note-api="[[configuration.noteApi]]"> </control-bar>
 
         <!-- Chapter List -->
         <playlist-chapter-list state="[[state]]" chapters="[[configuration.chapters]]" playlist="[[configuration.playlist]]" show-if="[[state.isChapterListShown]]">
@@ -178,6 +179,10 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
         type: Object,
         value: () => ({}),
       },
+      indicators: {
+        type: Array,
+        value: () => ([]),
+      },
       isReady: {
         type: Boolean,
         value: () => false,
@@ -190,6 +195,10 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
       _stateManager: {
         type: Object,
         inject: 'StateManager',
+      },
+      _indicatorManager: {
+        type: Object,
+        inject: 'IndicatorManager',
       },
       _fullscreenManager: {
         type: Object,
@@ -301,6 +310,7 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
     super.bindServices(iocKernel);
 
     iocKernel.bind('StateManager').toFunction(() => new StateManager(this, 'state', 'configuration')).inSingletonScope();
+    iocKernel.bind('IndicatorManager').toFunction(() => new IndicatorManager(this, 'indicators', 'configuration')).inSingletonScope();
     iocKernel.bind('UserPreferencesManager').toFunction(() => new UserPreferencesManager()).inSingletonScope();
     iocKernel.bind('ConfigurationValidator').toFunction(() => new ConfigurationValidator(configurationSchema)).inSingletonScope();
     iocKernel.bind('SynchronizationManager').toFunction(() => new SynchronizationManager(iocKernel.get('StateManager'))).inSingletonScope();

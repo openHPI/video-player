@@ -12,7 +12,7 @@ class VideoProgress extends BindingHelpersMixin(IocRequesterMixin(PolymerElement
       </style>
 
       <div class="progress_indicator">
-        <custom-progress id="progress__video_progress" max="[[_duration]]" value="[[_position]]" secondary-value="[[_bufferPosition]]" on-change="_handleChange" hover-box="[[ifThenElse(state.live, 'rel', 'abs')]]">
+        <custom-progress id="progress__video_progress" max="[[_duration]]" value="[[_position]]" secondary-value="[[_bufferPosition]]" on-change="_handleChange" hover-box="[[ifThenElse(state.live, 'rel', 'abs')]]" indicators="[[indicators]]">
         </custom-progress>
       </div>
     `;
@@ -23,6 +23,7 @@ class VideoProgress extends BindingHelpersMixin(IocRequesterMixin(PolymerElement
   static get properties() {
     return {
       state: Object,
+      indicators: Array,
       _stateManager: {
         type: Object,
         inject: 'StateManager',

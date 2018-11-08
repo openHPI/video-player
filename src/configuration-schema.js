@@ -250,7 +250,7 @@ export const configurationSchema = {
       validationCallback: {
         required: true,
         type: 'string',
-        description: 'Function that is called by the handler to validate user answers for the questions. It will be passed the question that is currently shown as first parameter. The second parameter depends on the question type. For text questions, this will be the text the user entered. For choice questions, the second parameter will be a list of all answer objects that are associated with this question and were selected by the user. The function should return an object that has two attributes, `isAnswerCorrect` and `correctAnswers`. The first, a boolean, indicates whether anything was wrong. The second, a list containing a subset of the answers stored with this question, is used to show the user where he made mistakes or to show him what possible answers could have been.',
+        description: 'Name of a global function that is called by the handler to validate user answers for the questions. It will be passed the question that is currently shown as first parameter. The second parameter depends on the question type. For text questions, this will be the text the user entered. For choice questions, the second parameter will be a list of all answer objects that are associated with this question and were selected by the user. The function should return an object that has two attributes, `isAnswerCorrect` and `correctAnswers`. The first, a boolean, indicates whether anything was wrong. The second, a list containing a subset of the answers stored with this question, is used to show the user where he made mistakes or to show him what possible answers could have been.',
       },
       questions: {
         type: 'array',
@@ -431,5 +431,15 @@ export const configurationSchema = {
     type: 'boolean',
     description: 'If disabled, the control bar icons are forced to be shown inline instead of being part of a separated mobile menu. This might cause the control bar content to overflow, if there are two much controls!',
     default: true,
+  },
+  noteApi: {
+    type: 'string',
+    description: 'Name of a global object that is used to communicate marker and note changes. See markers-and-notes.md for more information.',
+    default: '',
+  },
+  downloadUri: {
+    type: 'string',
+    description: 'Uri that can be used to download a file for the current video. If set, a download button will be shown which is has this uri set as target location. If you want to trigger a file download, make sure you have the content disposition on that url set correctly.',
+    default: '',
   },
 };

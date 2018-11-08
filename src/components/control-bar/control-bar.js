@@ -10,6 +10,8 @@ import './speed-control.js';
 import './playlist-chapter-list-switch.js';
 import './interactive-transcript-control.js';
 import './quiz-overlay-switch.js';
+import './download-button.js';
+import './add-note-button.js';
 import './quality-control.js';
 import './mute-control.js';
 import './stream-switch-control.js';
@@ -121,6 +123,16 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
         <template is="dom-if" if="[[hasQuestions]]">
           <quiz-overlay-switch state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></quiz-overlay-switch>
         </template>
+
+        <template is="dom-if" if="[[downloadUri]]">
+          <download-button download-uri="[[downloadUri]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></download-button>
+        </template>
+
+        <template is="dom-if" if="[[noteApi]]">
+          <add-note-button state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></add-note-button>
+        </template>
+
+
         <template is="dom-if" if="[[hasFallbackStream]]">
           <stream-switch-control state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></stream-switch-control>
         </template>
@@ -149,6 +161,8 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
       live: Object,
       hasChapters: Boolean,
       hasQuestions: Boolean,
+      downloadUri: String,
+      noteApi: String,
       hasFallbackStream: Boolean,
       previousVideo: Object,
       nextVideo: Object,
