@@ -434,7 +434,7 @@ export const configurationSchema = {
   },
   noteApi: {
     type: 'string',
-    description: 'Name of a global object that is used to communicate marker and note changes. See markers-and-notes.md for more information.',
+    description: 'Name of a global object that is used to communicate marker and note changes. See notes.md for more information.',
     default: '',
   },
   downloadUri: {
