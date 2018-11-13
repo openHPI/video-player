@@ -34,19 +34,19 @@
     <script>
       var highest_used_id = 2;
       var noteApi = {
-        load: function () {
+        load: function (callback) {
           console.log("Fake note api: Load called");
-          return [
+          callback([
             {id: 0, position: 100, text: "Note 1"},
             {id: 1, position: 350, text: ""},
             {id: 2, position: 600, text: "Note 2"},
-          ];
+          ]);
         },
-        add: function(position, text) {
+        add: function(position, text, callback) {
           console.log("Fake note api: Add called: position: " + position + ", text: " + text);
 
           highest_used_id += 1;
-          return highest_used_id;
+          callback(highest_used_id);
         },
         remove: function(id) {
           console.log("Fake note api: Remove called: id: " + id);
