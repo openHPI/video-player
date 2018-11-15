@@ -10,3 +10,5 @@ In order to enable this functionality, you have to set the configuration option 
 - `add(position, text, callback)` - Creates a note at the given `position` with the given `text` (may be empty). The callback should be called with the `id` of the new note.
 - `remove(id)` - Removes the note with the given id.
 - `setText(id, text)` - Changes the text of note `id` to `text`.
+
+`load` will be called on the api object when the player is created. If for any reason you can not provide the api until that point, you can use `videoPlayer.noteApiChanged()` afterwards to notify the player of a change. It will then reload all notes from the api.

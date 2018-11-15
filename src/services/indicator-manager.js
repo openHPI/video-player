@@ -105,10 +105,12 @@ export class IndicatorManager{
   }
 
   /**
-  * Loads indicators from the api. Works asynchronously.
-  * @returns {void}
-  */
+   * Loads indicators from the api. Works asynchronously.
+   * @returns {void}
+   */
   loadIndicators() {
+    this.videoPlayer.splice(this.indicatorsPath, 0);
+
     let callback = function(indicators) {
       for(let indicator of indicators) {
         this.videoPlayer.push(this.indicatorsPath, new Indicator(indicator.id, indicator.position, indicator.text));
@@ -116,5 +118,14 @@ export class IndicatorManager{
     }.bind(this);
 
     this.api.load(callback);
+  }
+
+  /**
+   * External interface. Note api was changed.
+   * @returns {void}
+   */
+  noteApiChanged() {
+    // Reload indicators from new api.
+    this.loadIndicators();
   }
 }
