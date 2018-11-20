@@ -56,7 +56,7 @@ export class IndicatorManager{
   }
 
   /**
-   * Gets the noteApi object from the window with the name given in the configuration
+   * Gets the noteApi object from the window with the name given in the configuration.
    * @return {Object} The api object.
    */
   get api() {
@@ -64,20 +64,23 @@ export class IndicatorManager{
   }
 
   /**
-   * Adds an indicator, which will then be shown in the video progress bar.
+   * Adds an indicator, which will then be shown in the video progress bar. Works asynchronously.
    * @param {number} position The position where the new indicator should be added.
    * @param {string} text The text of the new indicator. May be empty.
    * @param {boolean} setFocus Boolean value indicating whether the new indicator should receive input focus on creation.
    * @return {void}
    */
   addIndicator(position, text, setFocus = true) {
-    let id = this.api.add(position, text);
-    let indicator = new Indicator(id, position, text, setFocus);
-    this.videoPlayer.push(this.indicatorsPath, indicator);
+    let callback = function(newIndicatorId) {
+      let indicator = new Indicator(newIndicatorId, position, text, setFocus);
+      this.videoPlayer.push(this.indicatorsPath, indicator);
+    }.bind(this);
+
+    this.api.add(position, text, callback);
   }
 
   /**
-   * Removes an indicator by reference
+   * Removes an indicator by reference.
    * @param {Indicator} indicator The indicator to be removed.
    * @returns {void}
    */
@@ -102,13 +105,27 @@ export class IndicatorManager{
   }
 
   /**
-  * Loads indicators from the api
-  * @returns {void}
-  */
+   * Loads indicators from the api. Works asynchronously.
+   * @returns {void}
+   */
   loadIndicators() {
-    let indicators = this.api.load();
-    for(let indicator of indicators) {
-      this.videoPlayer.push(this.indicatorsPath, new Indicator(indicator.id, indicator.position, indicator.text));
-    }
+    this.videoPlayer.splice(this.indicatorsPath, 0);
+
+    let callback = function(indicators) {
+      for(let indicator of indicators) {
+        this.videoPlayer.push(this.indicatorsPath, new Indicator(indicator.id, indicator.position, indicator.text));
+      }
+    }.bind(this);
+
+    this.api.load(callback);
+  }
+
+  /**
+   * External interface. Note api was changed.
+   * @returns {void}
+   */
+  noteApiChanged() {
+    // Reload indicators from new api.
+    this.loadIndicators();
   }
 }

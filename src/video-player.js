@@ -302,6 +302,7 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
     // Clone configuration to reevaluate all observers
     this.configuration = Object.assign({}, this.configuration);
   }
+  noteApiChanged() { this._indicatorManager.noteApiChanged(); }
 
 
   /** Internal Methods */
