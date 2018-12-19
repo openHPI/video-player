@@ -140,7 +140,7 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
   }
 
   _getIsPosterVisible(playState, live, position, trimStart, trimEnd) {
-    if(!this.state.alreadyPlayed || playState === PLAY_STATES.FINISHED || playState === PLAY_STATES.NOPRELOAD) {
+    if(!this.state.alreadyPlayed || playState === PLAY_STATES.FINISHED) {
       return true;
     }
 
@@ -159,12 +159,6 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
     let promise;
     if (playState === PLAY_STATES.PLAYING) {
       promise = this.$.video.play();
-      
-      if(this._hlsClient.maxBufferSize === 100) {
-        this.preload = true;
-        //this._hlsClient.loadSource(this._hlsClient.url);
-        //this._hlsClient.startLoad();
-      }
     } else if(!this.$.video.paused && this.$.video.readyState > 2) {
       promise = this.$.video.pause();
     }
@@ -286,10 +280,8 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
           }
         }
       });
-
       this._hlsClient.loadSource(url);
       this._hlsClient.attachMedia(this.$.video);
-
     }
   }
 
