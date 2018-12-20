@@ -111,7 +111,7 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
       '_volumeChanged(state.volume)',
       '_mutedChanged(state.muted, props.muted)',
       '_captionLanguageTypeChanged(state.captionLanguage, state.captionType, _stateManager)',
-      '_qualityChanged(props, state.quality, _isRegistered)',
+      '_qualityChanged(props, preload, state.quality, _isRegistered)',
     ];
   }
 
@@ -211,7 +211,7 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
     }
   }
 
-  _qualityChanged(props, quality, isRegistered) {
+  _qualityChanged(props, preload, quality, isRegistered) {
     if(!isRegistered) {
       return;
     }
@@ -240,12 +240,21 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
       this.$.video.setAttribute('src', url);
       this.$.video.load();
     } else {
+
+      let usedBuffferSize;
+      if(preload) {
+        usedBuffferSize = 60*1000*1000;
+      } else {
+        usedBuffferSize = 1;
+      }
+
       // Create and configure new hls client for existing video element
       this._hlsClient = new Hls({
         nudgeMaxRetry: 20,
         fragLoadingMaxRetry: 20,
         levelLoadingMaxRetry: 20,
         manifestLoadingMaxRetry: 20,
+        maxBufferSize: usedBuffferSize,
       });
       this._hlsClient.on(Hls.Events.LEVEL_LOADED, this._handleHlsLevelLoaded.bind(this));
       this._hlsClient.on(Hls.Events.ERROR, (e, data) => {
