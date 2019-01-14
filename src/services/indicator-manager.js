@@ -126,6 +126,8 @@ export class IndicatorManager{
    */
   noteApiChanged() {
     // Reload indicators from new api.
-    this.loadIndicators();
+    if(this.api) {
+      this.loadIndicators();
+    }
   }
 }
