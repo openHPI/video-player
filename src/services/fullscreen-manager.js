@@ -55,7 +55,8 @@ export class FullscreenManager {
    */
   exitFullscreen() {
     if (document.exitFullscreen) {
-      document.exitFullscreen();
+      // Firefox likes to print a error message here. Prevent by providing own error handler.
+      document.exitFullscreen().catch(() => {});
     } else if (document.mozCancelFullScreen) {
       document.mozCancelFullScreen();
     } else if (document.webkitCancelFullScreen) {
