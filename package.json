@@ -42,7 +42,7 @@
   "dependencies": {
     "@polymer/polymer": "^3.0.0",
     "fontawesome-icon": "^1.0.4",
-    "hls.js": "^0.10.1"
+    "hls.js": "^0.12.2"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.47",
