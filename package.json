@@ -83,8 +83,7 @@
     "serve": "polymer serve",
     "bundle": "gulp bundle",
     "version": "node ./utils/update-version.js && git add src/constants.js",
-    "postversion": "git push && git push --tags && bash ./utils/github-pages.sh openHPI video-player",
-    "postinstall": "bash ./utils/build-hls-js.sh"
+    "postversion": "git push && git push --tags && bash ./utils/github-pages.sh openHPI video-player"
   },
   "resolutions": {
     "inherits": "2.0.3",
