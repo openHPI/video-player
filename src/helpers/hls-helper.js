@@ -1,4 +1,4 @@
-import 'hls.js/dist/hls.light.min.js';
+import 'hls.js/dist/hls.light.js';
 
 const nativeHlsSupport = document.createElement('video').canPlayType('application/x-mpegURL') !== '';
 const hlsJsSupport = Hls.isSupported();
