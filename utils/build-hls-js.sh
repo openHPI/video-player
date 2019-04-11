@@ -4,6 +4,6 @@ echo 'Rebuilding hls.js...'
 cd node_modules/hls.js
 npm install --silent
 node_modules/.bin/webpack --config-name debug --output-library-target window --display errors-only
-node_modules/.bin/webpack --config-name dist --output-library-target window --display errors-only
+#node_modules/.bin/webpack --config-name dist --output-library-target window --display errors-only
 node_modules/.bin/webpack --config-name light --output-library-target window --display errors-only
-node_modules/.bin/webpack --config-name light-dist --output-library-target window --display errors-only
+#node_modules/.bin/webpack --config-name light-dist --output-library-target window --display errors-only
