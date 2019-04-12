@@ -259,6 +259,8 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
       this._hlsClient.on(Hls.Events.LEVEL_LOADED, this._handleHlsLevelLoaded.bind(this));
       this._hlsClient.on(Hls.Events.ERROR, (e, data) => {
         // Reload manifest, if error occurred during loading
+        console.log('An hls.js error occured');
+        console.log(data);
         if(data.details === 'manifestLoadError') {
           setTimeout(() => {
             if(this._hlsClient.url === url) {
@@ -272,9 +274,11 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
         if (data.fatal) {
           switch(data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
+              console.log('fatal network error ... try to recover');
               this._hlsClient.startLoad();
               break;
             case Hls.ErrorTypes.MEDIA_ERROR:
+              console.log('fatal media error ... try to recover');
               this._hlsClient.recoverMediaError();
               break;
           }
