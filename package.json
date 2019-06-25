@@ -69,7 +69,7 @@
     "replace-in-file": "^3.4.4",
     "rollup-plugin-commonjs": "^8.4.1",
     "rollup-plugin-node-resolve": "^4.2.4",
-    "semver-regex": "^2.0.0",
+    "semver-regex": "^3.1.0",
     "url-polyfill": "^1.1.5",
     "wct-browser-legacy": "^1.0.2"
   },
