@@ -61,7 +61,7 @@
     "gulp-if": "^2.0.2",
     "gulp-insert": "^0.5.0",
     "gulp-rollup": "^2.16.2",
-    "gulp-uglify-es": "^0.1.11",
+    "gulp-uglify-es": "^2.0.0",
     "merge-stream": "^2.0.0",
     "node-glob": "^1.2.0",
     "polymer-build": "^3.1.4",
