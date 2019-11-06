@@ -45,8 +45,7 @@ const bundle = (options) => {
       },
       plugins: [
         rollupResolve({
-          module: false,
-          jsnext: true,
+          mainFields: ['module', 'jsnext:main']
         }),
         rollupCommonjs({
           namedExports: {
