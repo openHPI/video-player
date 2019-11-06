@@ -12,8 +12,6 @@ const rollup = require('gulp-rollup');
 const rollupCommonjs = require('rollup-plugin-commonjs');
 const rollupResolve = require('rollup-plugin-node-resolve');
 const PolymerProject = require('polymer-build').PolymerProject;
-const babelPresetES2015 = require('babel-preset-es2015');
-const babelPresetES2015NoModules = babelPresetES2015.buildPreset({}, {modules: false});
 
 
 const WEB_COMPONENTS_POLYFILL = require.resolve('@webcomponents/webcomponentsjs/webcomponents-bundle.js');
@@ -33,7 +31,7 @@ const bundle = (options) => {
   if(options.compile) {
     bundleStream = bundleStream
       .pipe(gulpif((file) => !ES5_FILES.includes(file.relative), babel({
-        presets: [babelPresetES2015NoModules],
+        presets: [['@babel/preset-env', {'modules': false}]]
       })));
   }
   bundleStream = bundleStream
