@@ -65,7 +65,13 @@ class CustomProgress extends BindingHelpersMixin(PolymerElement) {
       </style>
 
       <div id="container__progress_bar" class$="[[ifThenElse(border, '', '-no-border')]]">
-        <div id="container__progress" on-click="_handleClick" on-mouseover="_showHoverBox" on-mousemove="_updateHoverBoxPosition" on-mouseout="_hideHoverBox">
+        <div id="container__progress"
+          on-pointerdown="_handlePointerDown"
+          on-pointermove="_handlePointerMove"
+          on-pointerup="_handlePointerUp"
+          on-mouseover="_showHoverBox"
+          on-mousemove="_updateHoverBoxPosition"
+          on-mouseout="_hideHoverBox">
           <div id="div__primary_progress" class="progress-overlay" style$="width: [[_calcWidth(value, min, max)]]%;"></div>
           <div id="div__secondary_progress" class="progress-overlay" style$="width: [[_calcWidth(secondaryValue, min, max)]]%;"></div>
 
@@ -117,6 +123,10 @@ class CustomProgress extends BindingHelpersMixin(PolymerElement) {
         type: String,
         value: 0,
       },
+      _mousePressed: {
+        type: Boolean,
+        value: false,
+      },
     };
   }
 
@@ -124,9 +134,30 @@ class CustomProgress extends BindingHelpersMixin(PolymerElement) {
     return Math.min(Math.max(0, (value - min) / max * 100), 100);
   }
 
-  _handleClick(e) {
-    // Check if still within borders
+  _handlePointerDown(e) {
+    let container = this.shadowRoot.querySelector('#container__progress');
+    this._mousePressed = true;
+    container.setPointerCapture(e.pointerId);
+
     let clickedValue = this._getCursorPosition(e);
+    this._updateValueAndEmit(clickedValue);
+  }
+
+  _handlePointerUp(e) {
+    let container = this.shadowRoot.querySelector('#container__progress');
+    this._mousePressed = false;
+    container.releasePointerCapture(e.pointerId);
+  }
+
+  _handlePointerMove(e) {
+    if (this._mousePressed) {
+      let clickedValue = this._getCursorPosition(e);
+      this._updateValueAndEmit(clickedValue);
+    }
+  }
+
+  _updateValueAndEmit(clickedValue) {
+    // Check if still within borders
     if( clickedValue <= this.max) {
       this.value = clickedValue;
       this.dispatchEvent(new CustomEvent('change'));
