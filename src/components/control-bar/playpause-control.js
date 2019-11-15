@@ -18,9 +18,9 @@ class PlayPauseControl extends BindingHelpersMixin(IocRequesterMixin(PolymerElem
       </style>
 
       <div id="container__play_pause_control" class="user_controls">
-        <a id="button__play_pause" class="button" on-click="_handleClick" href="javascript:void(0)">
+        <button id="button__play_pause" class="button" tabindex="-1" on-mousedown="_handleMouseDown" on-click="_handleClick">
           <fontawesome-icon prefix="fas" name="[[iconName]]" fixed-width></fontawesome-icon>
-        </a>
+        </button>
       </div>
     `;
   }
@@ -56,6 +56,10 @@ class PlayPauseControl extends BindingHelpersMixin(IocRequesterMixin(PolymerElem
 
     if (playState === PLAY_STATES.FINISHED)
       this._analyticsManager.newEvent({verb: ANALYTICS_TOPICS.VIDEO_END});
+  }
+
+  _handleMouseDown(e) {
+    e.preventDefault();
   }
 
   _handleClick() {

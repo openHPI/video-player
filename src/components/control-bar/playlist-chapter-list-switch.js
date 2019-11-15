@@ -12,7 +12,11 @@ class PlaylistChapterListSwitch extends BindingHelpersMixin(IocRequesterMixin(Po
       </style>
 
       <div id="container__playlist_chapter_list_switch" class="user_controls">
-        <a id="button__chapter_list" class$="button [[ifNotThen(state.isChapterListShown, 'inactive')]]" on-click="_handleClick" href="javascript:void(0)">
+        <button
+          id="button__chapter_list"
+          class$="button [[ifNotThen(state.isChapterListShown, 'inactive')]]"
+          on-click="_handleClick"
+          on-mousedown="_handleMouseDown">
           <fontawesome-icon prefix="fas" name="list" fixed-width></fontawesome-icon>
         </a>
       </div>
@@ -38,6 +42,11 @@ class PlaylistChapterListSwitch extends BindingHelpersMixin(IocRequesterMixin(Po
   _handleClick() {
     this._analyticsManager.changeState('toggleIsChapterListShown', [], {verb: ANALYTICS_TOPICS.VIDEO_CHAPTER});
   }
+
+  _handleMouseDown(e) {
+    e.preventDefault();
+  }
+
 }
 
 window.customElements.define(PlaylistChapterListSwitch.is, PlaylistChapterListSwitch);

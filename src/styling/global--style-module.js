@@ -11,6 +11,19 @@ documentContainer.innerHTML = `<dom-module id="global--style-module">
       .-hidden {
         display: none !important;
       }
+
+      button {
+        outline: none;
+        border: none;
+        background: none;
+        color: inherit;
+
+        font-size: inherit;
+        font-family: inherit;
+        line-height: inherit;
+        margin: inherit;
+        padding: 0;
+      }
     </style>
   </template>
 </dom-module>`;
