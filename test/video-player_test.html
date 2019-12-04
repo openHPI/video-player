@@ -219,7 +219,7 @@
           assert.include(Array.from(videoPlayer.shadowRoot.querySelectorAll('playlist-chapter-list')[0].classList), '-hidden', 'chapter list is hidden by default');
           videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('playlist-chapter-list-switch')[0].shadowRoot.querySelectorAll('#button__chapter_list')[0].click();
           assert.notInclude(Array.from(videoPlayer.shadowRoot.querySelectorAll('playlist-chapter-list')[0].classList), '-hidden', 'chapter list is not hidden anymore after activating it');
-          videoPlayer.shadowRoot.querySelectorAll('playlist-chapter-list')[0].shadowRoot.querySelectorAll('#container__playlist_chapter_list .list_item.sublist_item a')[1].click();
+          videoPlayer.shadowRoot.querySelectorAll('playlist-chapter-list')[0].shadowRoot.querySelectorAll('#container__playlist_chapter_list .list_item.sublist_item button')[1].click();
           assert.equal(videoPlayer.state.position, 15, 'position value is at value of second chapter');
         });
 
