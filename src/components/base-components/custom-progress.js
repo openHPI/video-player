@@ -138,6 +138,7 @@ class CustomProgress extends BindingHelpersMixin(PolymerElement) {
     let container = this.shadowRoot.querySelector('#container__progress');
     this._mousePressed = true;
     container.setPointerCapture(e.pointerId);
+    this.dispatchEvent(new CustomEvent('drag'));
 
     let clickedValue = this._getCursorPosition(e);
     this._updateValueAndEmit(clickedValue);
@@ -147,6 +148,7 @@ class CustomProgress extends BindingHelpersMixin(PolymerElement) {
     let container = this.shadowRoot.querySelector('#container__progress');
     this._mousePressed = false;
     container.releasePointerCapture(e.pointerId);
+    this.dispatchEvent(new CustomEvent('drop', {detail: {position: this.value} }));
   }
 
   _handlePointerMove(e) {
