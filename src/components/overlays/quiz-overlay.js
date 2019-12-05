@@ -235,7 +235,7 @@ class QuizOverlay extends BindingHelpersMixin(IocRequesterMixin(LocalizationMixi
     this._addCurrentQuestionsForPosition(flooredPosition, this._lastProcessedPosition);
     this._lastProcessedPosition = flooredPosition;
 
-    if(this._isVisible) {
+    if(this._isVisible && this._stateManager) {
       this._stateManager.pause();
     }
   }

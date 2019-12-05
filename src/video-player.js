@@ -329,6 +329,13 @@ class VideoPlayer extends BindingHelpersMixin(IocRequesterMixin(IocProviderMixin
       if(startPosition) {
         this.configuration.initialState.position = startPosition;
       }
+
+      window.addEventListener("hashchange", () => {
+        let position = parseInt(UrlFragmentHelper.getParameter('t'));
+        if (position) {
+          this.seek(position);
+        }
+      }, false);
     }
 
     // Build state from provided intial state configuration and default values
