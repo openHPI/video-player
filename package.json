@@ -70,7 +70,7 @@
     "rollup-plugin-commonjs": "^8.4.1",
     "rollup-plugin-node-resolve": "^4.2.4",
     "semver-regex": "^3.1.0",
-    "url-polyfill": "^1.1.5",
+    "url-polyfill": "^1.1.10",
     "wct-browser-legacy": "^1.0.2"
   },
   "scripts": {
