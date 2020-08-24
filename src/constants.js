@@ -17,12 +17,6 @@ export const PLAY_STATES = {
 };
 
 /**
- * Contains the supported playback rates sorted ascending.
- * @type {Number[]}
- */
-export const PLAYBACK_RATES = [0.7, 1.0, 1.3, 1.5, 1.8, 2.0];
-
-/**
  * Contains the supported quality modes.
  * @type {Object.<string, string>}
  */
@@ -129,6 +123,7 @@ export const DEFAULT_CONFIGURATION = {
     questions: [],
   },
   initialState: {},
+  playbackRates: [0.7, 1.0, 1.3, 1.5, 1.8, 2.0],
   videoPreload: true,
   liveDvr: false,
   theme: 'dark-orange',

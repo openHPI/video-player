@@ -36,7 +36,7 @@ The player configuration is provided as JSON object:
 * **initialState** (object): The initial state the player has when loaded.
    * **playState** (string):`<["PLAYING","PAUSED"]>` (default: `"PAUSED"`)
    * **position** (number): Video position in seconds. (default: `0`)
-   * **playbackRate** (number):`<[0.7,1,1.3,1.5,1.8,2]>` (default: `1`)
+   * **playbackRate** (number): (default: `1`)
    * **quality** (string):`<["hls","hd","sd"]>` (default: `"best quality available"`)
    * **volume** (number):`<0...1>` (default: `1`)
    * **muted** (boolean): (default: `false`)
@@ -45,10 +45,11 @@ The player configuration is provided as JSON object:
    * **showCaptions** (boolean): Enables captions. Additionally, `captionLanguage` needs to be set. (default: `false`)
    * **showInteractiveTranscript** (boolean): Enables interactive transcript. Additionally, `captionLanguage` needs to be set. (default: `false`)
    * **resizerRatios** (array): The ratios of the resizers. Ratio is calculated by `leftVideo.width / rightVideo.width`. Per default, videos were aligned to have the same height.
+* **playbackRates** (array): The playback rates the user can choose from in the selection menu (default: `[0.7,1,1.3,1.5,1.8,2]`)
 * **userPreferences** (object): Override parts of the default/initial/saved state. Meant to be provided by the server based on the current user.
    * **playState** (string):`<["PLAYING","PAUSED"]>` (default: `"PAUSED"`)
    * **position** (number): Video position in seconds. (default: `0`)
-   * **playbackRate** (number):`<[0.7,1,1.3,1.5,1.8,2]>` (default: `1`)
+   * **playbackRate** (number): (default: `1`)
    * **quality** (string):`<["hls","hd","sd"]>` (default: `"best quality available"`)
    * **volume** (number):`<0...1>` (default: `1`)
    * **muted** (boolean): (default: `false`)

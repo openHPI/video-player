@@ -302,6 +302,8 @@ class SelectControl extends BindingHelpersMixin(PolymerElement) {
         }
       }
     }
+
+    return [];
   }
 
   _getSubLists(items, level = 0, parentIndex = null) {

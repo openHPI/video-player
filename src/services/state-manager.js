@@ -1,4 +1,4 @@
-import {PLAY_STATES, PLAYBACK_RATES, CAPTION_TYPES} from '../constants.js';
+import {PLAY_STATES, CAPTION_TYPES} from '../constants.js';
 
 export class StateManager {
   /**
@@ -238,10 +238,6 @@ export class StateManager {
    * @returns {void}
    */
   setPlaybackRate(playbackRate) {
-    if(!PLAYBACK_RATES.includes(playbackRate)) {
-      throw new RangeError(`Value must be in [${PLAYBACK_RATES.toString()}].`);
-    }
-
     if(!this.state.live) {
       this.setState('playbackRate', playbackRate);
     }

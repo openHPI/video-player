@@ -112,7 +112,7 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
           <interactive-transcript-control state="[[state]]" captions="[[captions]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></interactive-transcript-control>
         </template>
         <template is="dom-if" if="[[!state.live]]">
-          <speed-control state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></speed-control>
+          <speed-control playback-rates="[[playbackRates]]" state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></speed-control>
         </template>
         <template is="dom-if" if="[[hasItems(availableQualities, 2)]]">
           <quality-control state="[[state]]" qualities="[[availableQualities]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></quality-control>
@@ -143,7 +143,7 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
 
         <!-- Settings menu for mobile devices -->
         <template is="dom-if" if="[[mobileMenu]]">
-          <mobile-settings-menu state="[[state]]" class="hidden-for-desktop" caption-languages="[[captionLanguages]]" available-qualities="[[availableQualities]]" has-fallback-stream="[[hasFallbackStream]]" number-of-streams="[[numberOfStreams]]">
+          <mobile-settings-menu state="[[state]]" class="hidden-for-desktop" caption-languages="[[captionLanguages]]" playback-rates="[[playbackRates]]" available-qualities="[[availableQualities]]" has-fallback-stream="[[hasFallbackStream]]" number-of-streams="[[numberOfStreams]]">
           </mobile-settings-menu>
         </template>
 
@@ -170,6 +170,7 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
       availableQualities: Boolean,
       numberOfStreams: Number,
       mobileMenu: Boolean,
+      playbackRates: Array,
       liveDvr: Boolean,
       _stateManager: {
         type: Object,

@@ -40,6 +40,7 @@
           "sd" : "test-files/BigBuckBunny30s_fallback.mp4",
           "poster" : "test-files/poster_1.jpg"
         },
+        "playbackRates": [1.0, 1.1, 1.2, 1.3],
         "captions" : [
           {
             "language" : "de",
@@ -196,13 +197,11 @@
 
         test('testing speed control', () => {
           // This one is weird. We would want to do a CSS selector at the end with
-          // value "#dropdown__select [name=1.5x]", just like above, but apparently
-          // this is "not a valid selector". Instead we just hope those values
-          // never change and expect 1.5 to be the 3rd item.
-          // We test for the value '1.5x' beforehand.
-          assert.include(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('speed-control')[0].shadowRoot.querySelectorAll('select-control')[0].shadowRoot.querySelectorAll('#dropdown__select [name]')[2].innerText, '1.5x', 'workaround for small testing hack: \'1.5x\' should be the third item in the list');
+          // value "#dropdown__select [name=1.1x]", just like above, but apparently
+          // this is "not a valid selector".
+          assert.include(videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('speed-control')[0].shadowRoot.querySelectorAll('select-control')[0].shadowRoot.querySelectorAll('#dropdown__select [name]')[2].innerText, '1.1x', '\'1.1x\' should be the third item in the list');
           videoPlayer.shadowRoot.querySelectorAll('control-bar')[0].shadowRoot.querySelectorAll('speed-control')[0].shadowRoot.querySelectorAll('select-control')[0].shadowRoot.querySelectorAll('#dropdown__select [name]')[2].click();
-          assert.equal(videoPlayer.state.playbackRate, 1.5);
+          assert.equal(videoPlayer.state.playbackRate, 1.1);
         });
 
         test('testing quality control', () => {
