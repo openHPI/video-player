@@ -1,4 +1,4 @@
-import { ANALYTICS_TOPICS, PLAY_STATES } from '../../constants.js';
+import { ANALYTICS_TOPICS } from '../../constants.js';
 import { IocRequesterMixin } from '../../mixins/ioc-requester.js';
 import { BindingHelpersMixin } from '../../mixins/binding-helpers.js';
 import '../../styling/progress-container--style-module.js';
@@ -58,13 +58,13 @@ class VideoProgress extends BindingHelpersMixin(IocRequesterMixin(PolymerElement
     };
   }
 
-  _positionChanged(newValue, oldValue) {
+  _positionChanged(newValue) {
     if (this._insideDragOperation) {
       // Do not update the position of the custom progress bar if the user is dragging it.
-      return
+      return;
     }
 
-    this.set("_customProgressPosition", newValue);
+    this.set('_customProgressPosition', newValue);
   }
 
   _getPosition(position, trimStart, trimEnd, live, liveSync, liveStartPosition, livePosition) {
@@ -86,7 +86,7 @@ class VideoProgress extends BindingHelpersMixin(IocRequesterMixin(PolymerElement
       return trimEnd - trimStart;
   }
 
-  _handleDrag(e) {
+  _handleDrag() {
     this._insideDragOperation = true;
   }
 
