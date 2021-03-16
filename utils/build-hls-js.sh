@@ -2,7 +2,7 @@
 # Therefore, hls.js is rebuilt with output library target window to ensure it is globally available.
 echo 'Rebuilding hls.js...'
 cd node_modules/hls.js
-npm install --silent
+npm install --legacy-peer-deps --silent
 node_modules/.bin/webpack --config-name debug --output-library-target window --display errors-only
 #node_modules/.bin/webpack --config-name dist --output-library-target window --display errors-only
 node_modules/.bin/webpack --config-name light --output-library-target window --display errors-only
