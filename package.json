@@ -43,7 +43,7 @@
     "@polymer/polymer": "^3.4.1",
     "@webcomponents/shadycss": "^1.10.2",
     "fontawesome-icon": "^1.0.4",
-    "hls.js": "^0.12.4"
+    "hls.js": "^0.14.17"
   },
   "devDependencies": {
     "@polymer/iron-test-helpers": "^3.0.1",
