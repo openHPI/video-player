@@ -183,7 +183,15 @@ class VideoStream extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
       return;
     }
 
-    if(this.state.playState == PLAY_STATES.PAUSED || Math.abs(this.$.video.currentTime - position) > SEEK_DIFF_THRESHOLD) {
+    const position_changed = this.$.video.currentTime != position;
+    if(!position_changed) {
+      return false;
+    }
+
+    const seek_diff_threshold_met = Math.abs(this.$.video.currentTime - position) > SEEK_DIFF_THRESHOLD;
+    const paused = this.state.playState == PLAY_STATES.PAUSED;
+
+    if(paused || seek_diff_threshold_met) {
       this.$.video.currentTime = position;
       return true;
     }
