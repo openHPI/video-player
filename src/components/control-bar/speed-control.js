@@ -49,7 +49,7 @@ class SpeedControl extends BindingHelpersMixin(IocRequesterMixin(PolymerElement)
   }
 
   _getItems() {
-    return this.playbackRates
+    return Array.from(this.playbackRates)
       .sort()
       .reverse()
       .map(playbackRate => ({
