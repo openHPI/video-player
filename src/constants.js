@@ -199,6 +199,7 @@ export const USER_PREFERENCES_KEYS = [
   'showCaptions',
   'showInteractiveTranscript',
   'resizerRatios',
+  'isQuizOverlayEnabled',
 ];
 
 /**
