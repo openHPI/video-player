@@ -95,6 +95,11 @@ export const configurationSchema = {
     description: 'Contains a fallback stream that the user can switch to, i.e. a single stream source.',
     schema: streamSchema,
   },
+  framesPerSecond: {
+    type: 'number',
+    default: 25,
+    description: "Fps of the video. Used for skipping frame wise.",
+  },
   language: {
     type: 'string',
     default: 'en',

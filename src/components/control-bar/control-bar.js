@@ -241,6 +241,14 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
           this._analyticsManager.changeState('toggleMute', [], {verb: ANALYTICS_TOPICS.VIDEO_VOLUME_CHANGE});
           break;
 
+        case ',':
+          this._analyticsManager.changeState('skipFrames', [-1], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
+          break;
+
+        case '.':
+          this._analyticsManager.changeState('skipFrames', [1], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
+          break;
+
         case '>':
         case ':':
           this._analyticsManager.changeState('increasePlaybackRate', [], {verb: ANALYTICS_TOPICS.VIDEO_CHANGE_SPEED});

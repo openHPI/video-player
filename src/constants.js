@@ -114,6 +114,7 @@ export const DEFAULT_STATE = {
  */
 export const DEFAULT_CONFIGURATION = {
   streams: [],
+  framesPerSecond: 25,
   chapters: [],
   captions: [],
   slides: [],

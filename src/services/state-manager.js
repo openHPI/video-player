@@ -156,6 +156,16 @@ export class StateManager {
   }
 
   /**
+   * Skips a number of frames from the current position, assuming the fps provided in the configuration.
+   * @param  {number} frames The number of frames to skip.
+   * @returns {void}
+   */
+  skipFrames(frames) {
+    const seconds = frames / this.configuration.framesPerSecond;
+    this.skipSeconds(seconds);
+  }
+
+  /**
    * Sets the current buffer position of the videos.
    * @param {number} seconds The current buffer position in seconds.
    * @returns {void}
