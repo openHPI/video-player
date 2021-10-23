@@ -11,7 +11,6 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
       <style type="text/css" include="progress-container--style-module">
         .indicator {
           background-color: var(--font-color-on-accent-color);
-          cursor: pointer;
           position: absolute;
           border-left: 1px solid #000;
           border-right: 1px solid #000;
@@ -37,7 +36,6 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
           visibility: visible;
           opacity: 1;
           transition: opacity 0s linear;
-          cursor: pointer;
           z-index: 8;
         }
 
@@ -99,10 +97,12 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
         }
 
         .bubble a {
-          margin-left: 5px;
+          margin-left: 0.7em;
           float: right;
           flex: 1;
           flex-grow: 0;
+
+          cursor: pointer;
         }
 
         .bubble .show {
@@ -111,13 +111,13 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
 
       </style>
 
-      <div class$="indicatorTooltip [[_tooltipClass]]" style$="[[_calcPosition(indicator.position, min, max)]]" on-click="_handleClick">
-        <div class$="bubbleTriangle [[_triangleClass(indicator.position, min, max)]]"></div>
-        <div class$="bubble [[_bubbleClass(indicator.position, min, max)]]">
+      <div class$="indicatorTooltip [[_tooltipClass]]" style$="[[_calcPosition(indicator.position, min, max)]]" on-click="_handleClick" on-pointerdown="_stopPropagation">
+        <div class$="bubbleTriangle [[_triangleClass(indicator.position, min, max)]]" on-click="_stopPropagation"></div>
+        <div class$="bubble [[_bubbleClass(indicator.position, min, max)]]" on-click="_stopPropagation">
           <textarea class$="[[_getTextareaClass(_textareaShown)]]" rows="1" placeholder="[[ localize('indicator-block--note-text') ]]" on-input="_setTextareaHeight" on-keydown="_handleTextareaKeydown" on-change="_handleTextareaChange" on-blur="_handleTextareaBlur" on-click="_handleTextareaClick">[[ indicator.text ]]</textarea>
           <p class$="[[_getParagraphClass(_textareaShown)]]" on-click="_handleParagraphClick">[[ _getParagraphText(indicator.text, localize) ]]</p>
 
-          <a class="button" on-click="_handleDelete">
+          <a class="button" on-click="_handleDelete" title="Delete this note">
             <fontawesome-icon prefix="fas" name="trash"></fontawesome-icon>
           </a>
         </div>
@@ -157,6 +157,10 @@ class IndicatorBlock extends BindingHelpersMixin(IocRequesterMixin(LocalizationM
     return [
       '_indicatorChanged(indicator)',
     ];
+  }
+
+  _stopPropagation(e) {
+    e.stopPropagation();
   }
 
   _indicatorChanged(indicator) {
