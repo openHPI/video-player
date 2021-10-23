@@ -84,10 +84,6 @@ class SelectControl extends BindingHelpersMixin(PolymerElement) {
           font-weight: lighter;
         }
 
-        #container__select_control {
-          padding-right: 10px;
-        }
-
         #container__select_control.in-menu-entry {
           background-color: transparent;
         }
@@ -105,7 +101,7 @@ class SelectControl extends BindingHelpersMixin(PolymerElement) {
         .in-menu-entry #dropdown__select {
           display: flex;
         }
-        .in-menu-entry #button__select, .in-menu-entry #dropdown__select a {
+        .in-menu-entry #dropdown__select a {
           padding: 0 5px;
           color: white;
         }
@@ -114,20 +110,32 @@ class SelectControl extends BindingHelpersMixin(PolymerElement) {
           @apply --set-accent-color-background;
           @apply --set-font-color-on-accent-color;
         }
+
+        #inner_container__select_control button {
+          height: 100%;
+        }
       </style>
 
-      <div id="container__select_control" on-mouseover="_handleMouseOver" on-mouseout="_handleMouseOut" class$="user_controls [[ifNotThen(isInMobileMenu, 'dropdown')]] [[ifThen(isInMobileMenu, 'in-menu-entry')]]">
+      <div
+        id="container__select_control"
+        on-mouseover="_handleMouseOver"
+        on-mouseout="_handleMouseOut"
+        class$="user_controls [[ifNotThen(isInMobileMenu, 'dropdown')]] [[ifThen(isInMobileMenu, 'in-menu-entry')]]">
         <div id="inner_container__select_control">
-          <a id="button__select" class$="button [[ifThen(selectedItem.value, 'with-badge')]] [[ifNotThen(active, 'inactive')]]" badge-value$="[[_getBagdeValue(selectedItem)]]" href="javascript:void(0)" on-click="_handleClick">
+          <button
+            id="button__select"
+            class$="button [[ifThen(selectedItem.value, 'with-badge')]] [[ifNotThen(active, 'inactive')]]"
+            badge-value$="[[_getBagdeValue(selectedItem)]]"
+            on-click="_handleClick"
+            on-mousedown="_handleMouseDown">
             <fontawesome-icon prefix="[[iconPrefix]]" name="[[iconName]]" fixed-width></fontawesome-icon>
-          </a>
+          </button>
           <div id="dropdown__select" class$="dropdown-content-container [[ifNotThen(_isDropDownOpen, '-hidden')]]" on-mouseout="_handleDropdownMouseOut">
             <template is="dom-repeat" items="[[_sublists]]" as="sublist" index-as="sublistIndex">
               <div class$="dropdown-content [[_isSublistActiveThen(sublist, _navigationPath.*, 'active')]]" data-level$="[[sublist.level]]">
                 <template is="dom-repeat" items="[[sublist.items]]">
                   <a name="[[item.text]]"
                      class$="[[ifEqualsThen(item.value, selectedValue, 'selected')]] [[_isItemActiveThen(index, sublist.level, _navigationPath.*, _selectedPath.*, 'active')]]"
-                     href="javascript:void(0)"
                      data-level$="[[sublist.level]]"
                      on-click="_handleItemClick"
                      on-mouseover="_handleItemMouseOver">
@@ -224,6 +232,10 @@ class SelectControl extends BindingHelpersMixin(PolymerElement) {
     }
   }
 
+  _handleMouseDown(e) {
+    e.preventDefault();
+  }
+
   _handleItemMouseOver(e) {
     let index = e.model.index;
     let level = parseInt(e.currentTarget.dataset.level);
@@ -290,6 +302,8 @@ class SelectControl extends BindingHelpersMixin(PolymerElement) {
         }
       }
     }
+
+    return [];
   }
 
   _getSubLists(items, level = 0, parentIndex = null) {

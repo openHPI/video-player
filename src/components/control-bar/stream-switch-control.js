@@ -14,9 +14,9 @@ class streamSwitchControl extends BindingHelpersMixin(IocRequesterMixin(PolymerE
 
       <template is="dom-if" if="[[!isInMobileMenu]]">
         <div id="container__stream-switch_control" class="user_controls">
-          <a id="button__stream-switch" class="button" on-click="_handleClick" href="javascript:void(0)">
+          <button id="button__stream-switch" class="button" on-click="_handleClick" on-mousedown="_handleMouseDown">
             <fontawesome-icon prefix="[[iconPrefix]]" name="[[iconName]]" fixed-width></fontawesome-icon>
-          </a>
+          </button>
         </div>
       </template>
       <template is="dom-if" if="[[isInMobileMenu]]">
@@ -93,6 +93,11 @@ class streamSwitchControl extends BindingHelpersMixin(IocRequesterMixin(PolymerE
   _handleClick() {
     this._analyticsManager.changeState('toggleFallbackStream', [], {verb: ANALYTICS_TOPICS.VIDEO_DUAL_STREAM_CHANGE});
   }
+
+  _handleMouseDown(e) {
+    e.preventDefault();
+  }
+
 }
 
 window.customElements.define(streamSwitchControl.is, streamSwitchControl);

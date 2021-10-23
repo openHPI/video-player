@@ -12,7 +12,9 @@ class VideoProgress extends BindingHelpersMixin(IocRequesterMixin(PolymerElement
       </style>
 
       <div class="progress_indicator">
-        <custom-progress id="progress__video_progress" max="[[_duration]]" value="[[_position]]" secondary-value="[[_bufferPosition]]" on-change="_handleChange" hover-box="[[ifThenElse(state.live, 'rel', 'abs')]]" indicators="[[indicators]]">
+        <custom-progress id="progress__video_progress" max="[[_duration]]" value="[[_customProgressPosition]]" secondary-value="[[_bufferPosition]]"
+          on-change="_handleChange" on-drag="_handleDrag" on-drop="_handleDrop"
+          hover-box="[[ifThenElse(state.live, 'rel', 'abs')]]" indicators="[[indicators]]">
         </custom-progress>
       </div>
     `;
@@ -32,9 +34,14 @@ class VideoProgress extends BindingHelpersMixin(IocRequesterMixin(PolymerElement
         type: Object,
         inject: 'AnalyticsManager',
       },
+      _customProgressPosition: {
+        type: Number,
+        value: 0,
+      },
       _position: {
         type: Number,
         computed: '_getPosition(state.position, state.trimStart, state.trimEnd, state.live, state.liveSync, state.liveStartPosition, state.livePosition)',
+        observer: '_positionChanged',
       },
       _bufferPosition: {
         type: Number,
@@ -44,7 +51,20 @@ class VideoProgress extends BindingHelpersMixin(IocRequesterMixin(PolymerElement
         type: Number,
         computed: '_getDuration(state.duration, state.trimStart, state.trimEnd, state.live, state.liveStartPosition, state.livePosition)',
       },
+      _insideDragOperation: {
+        type: Boolean,
+        value: false,
+      },
     };
+  }
+
+  _positionChanged(newValue) {
+    if (this._insideDragOperation) {
+      // Do not update the position of the custom progress bar if the user is dragging it.
+      return;
+    }
+
+    this.set('_customProgressPosition', newValue);
   }
 
   _getPosition(position, trimStart, trimEnd, live, liveSync, liveStartPosition, livePosition) {
@@ -66,7 +86,24 @@ class VideoProgress extends BindingHelpersMixin(IocRequesterMixin(PolymerElement
       return trimEnd - trimStart;
   }
 
+  _handleDrag() {
+    this._insideDragOperation = true;
+  }
+
+  _handleDrop(e) {
+    this._insideDragOperation = false;
+    this._analyticsManager.changeState('setPosition', [e.detail.position], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
+  }
+
   _handleChange(e) {
+    if (this._insideDragOperation) {
+      // If the user is dragging, we do not want to update the video position
+      // on every frame. Otherwise, dragging the progress slides from start to
+      // end will go through all positions in the video and the browser will
+      // start caching all positions.
+      return;
+    }
+
     let position;
     if(this.state.live)
       position = this.state.liveStartPosition + e.target.value;

@@ -57,10 +57,10 @@ class PlaylistChapterList extends BindingHelpersMixin(IocRequesterMixin(PolymerE
                   <ul class="list sublist">
                     <template is="dom-repeat" items="[[_visibleChapters]]">
                       <li class$="list_item sublist_item [[ifEqualsThen(item, _activeChapter, 'active')]]">
-                        <a class="list_item__link" on-click="_handleChapterClick" href="javascript:void(0)">
+                        <button class="list_item__link" on-click="_handleChapterClick" on-mousedown="_handleMouseDown">
                           <fontawesome-icon class="list_item__caret" prefix="fas" name="caret-right" style$="visibility: [[ifEqualsThenElse(item, _activeChapter, 'visible', 'hidden')]]"></fontawesome-icon>
                           [[item.title]]
-                        </a>
+                        </button>
                       </li>
                     </template>
                   </ul>
@@ -72,10 +72,10 @@ class PlaylistChapterList extends BindingHelpersMixin(IocRequesterMixin(PolymerE
           <template is="dom-if" if="[[!_showPlaylist]]">
             <template is="dom-repeat" items="[[_visibleChapters]]">
               <li class$="list_item [[ifEqualsThen(item, _activeChapter, 'active')]]">
-                <a class="list_item__link" on-click="_handleChapterClick" href="javascript:void(0)">
+                <button class="list_item__link" on-click="_handleChapterClick" on-mousedown="_handleMouseDown">
                 <fontawesome-icon class="list_item__caret" prefix="fas" name="caret-right" style$="visibility: [[ifEqualsThenElse(item, _activeChapter, 'visible', 'hidden')]]"></fontawesome-icon>
                   [[item.title]]
-                </a>
+                </button>
               </li>
             </template>
           </template>
@@ -154,6 +154,10 @@ class PlaylistChapterList extends BindingHelpersMixin(IocRequesterMixin(PolymerE
     }
 
     this._analyticsManager.changeState('setPosition', [position], {verb: ANALYTICS_TOPICS.VIDEO_CHAPTER_SEEK});
+  }
+
+  _handleMouseDown(e) {
+    e.preventDefault();
   }
 
   _scrollToActivePlaylistItem() {

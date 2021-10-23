@@ -34,7 +34,7 @@ export class IocKernel {
    * @return {Boolean} A value determining whether the kernel can resolve the service request or not.
    */
   has(keyExpression) {
-    return this._bindings.hasOwnProperty(this._getKey(keyExpression));
+    return Object.prototype.hasOwnProperty.call(this._bindings, this._getKey(keyExpression));
   }
 
   /**

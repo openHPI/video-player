@@ -35,7 +35,6 @@ const stateSchema = {
   },
   playbackRate: {
     type: 'number',
-    options: [0.7, 1.0, 1.3, 1.5, 1.8, 2.0],
     default: 1,
   },
   quality: {
@@ -96,6 +95,11 @@ export const configurationSchema = {
     description: 'Contains a fallback stream that the user can switch to, i.e. a single stream source.',
     schema: streamSchema,
   },
+  framesPerSecond: {
+    type: 'number',
+    default: 25,
+    description: 'Fps of the video. Used for skipping frame wise.',
+  },
   language: {
     type: 'string',
     default: 'en',
@@ -105,6 +109,11 @@ export const configurationSchema = {
     type: 'object',
     description: 'The initial state the player has when loaded.',
     schema: stateSchema,
+  },
+  playbackRates: {
+    type: 'array',
+    default: [0.7, 1.0, 1.3, 1.5, 1.8, 2.0],
+    description: 'The playback rates the user can choose from in the selection menu',
   },
   userPreferences: {
     type: 'object',

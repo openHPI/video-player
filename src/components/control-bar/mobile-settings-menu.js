@@ -52,7 +52,7 @@ class MobileSettingsMenu extends BindingHelpersMixin(IocRequesterMixin(PolymerEl
               <interactive-transcript-control is-in-mobile-menu="true" state="[[state]]" languages="[[captionLanguages]]">
               </interactive-transcript-control>
             </template>
-            <speed-control is-in-mobile-menu="true" state="[[state]]"></speed-control>
+            <speed-control is-in-mobile-menu="true" playback-rates="[[playbackRates]]" state="[[state]]"></speed-control>
             <template is="dom-if" if="[[_hasMultipleQualities]]">
               <quality-control is-in-mobile-menu="true" state="[[state]]" qualities="[[availableQualities]]">
               </quality-control>
@@ -75,6 +75,7 @@ class MobileSettingsMenu extends BindingHelpersMixin(IocRequesterMixin(PolymerEl
       availableQualities: Boolean,
       hasFallbackStream: Boolean,
       numberOfStreams: Number,
+      playbackRates: Array,
       _isMobileSettingsMenuOpen: {
         type: Boolean,
         value: false,

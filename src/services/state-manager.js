@@ -1,4 +1,4 @@
-import {PLAY_STATES, PLAYBACK_RATES, CAPTION_TYPES} from '../constants.js';
+import {PLAY_STATES, CAPTION_TYPES} from '../constants.js';
 
 export class StateManager {
   /**
@@ -156,6 +156,16 @@ export class StateManager {
   }
 
   /**
+   * Skips a number of frames from the current position, assuming the fps provided in the configuration.
+   * @param  {number} frames The number of frames to skip.
+   * @returns {void}
+   */
+  skipFrames(frames) {
+    const seconds = frames / this.configuration.framesPerSecond;
+    this.skipSeconds(seconds);
+  }
+
+  /**
    * Sets the current buffer position of the videos.
    * @param {number} seconds The current buffer position in seconds.
    * @returns {void}
@@ -238,13 +248,45 @@ export class StateManager {
    * @returns {void}
    */
   setPlaybackRate(playbackRate) {
-    if(!PLAYBACK_RATES.includes(playbackRate)) {
-      throw new RangeError(`Value must be in [${PLAYBACK_RATES.toString()}].`);
-    }
-
     if(!this.state.live) {
       this.setState('playbackRate', playbackRate);
     }
+  }
+
+  /**
+   * Increases the playback rate of the video to the next entry in configuration.playbackRates.
+   * @returns {void}
+   */
+  increasePlaybackRate() {
+    this.switchToNextPlaybackRate(1);
+  }
+
+  /**
+   * Decreases the playback rate of the video to the next entry in configuration.playbackRates.
+   * @returns {void}
+   */
+  decreasePlaybackRate() {
+    this.switchToNextPlaybackRate(-1);
+  }
+
+  /**
+   * Sets the playback rate relatively to the currently selected playback rate.
+   * @param {number} offset The offset from the currently selected playback rate to be applied.
+   * @returns {void}
+   */
+  switchToNextPlaybackRate(offset) {
+    const playbackRates = Array.from(this.configuration.playbackRates).sort();
+
+    const distancesToCurrentRate = playbackRates.map(
+        el => Math.abs(el - this.state.playbackRate)
+    );
+
+    const currentIndex = distancesToCurrentRate.indexOf(Math.min(...distancesToCurrentRate));
+    const newIndex = currentIndex + offset;
+    const clampedNewIndex = Math.max(0, Math.min(playbackRates.length - 1, newIndex));
+    const newPlaybackRate = playbackRates[clampedNewIndex];
+
+    this.setPlaybackRate(newPlaybackRate);
   }
 
   /**

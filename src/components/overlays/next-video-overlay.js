@@ -77,7 +77,7 @@ class NextVideoOverlay extends BindingHelpersMixin(IocRequesterMixin(Localizatio
           <fontawesome-icon id="icon_spinner" prefix="fas" name="spinner" spin></fontawesome-icon>
           <span id="timer">[[_secondsToNextVideo]]</span>
         </div>
-        <a id="button__disable_next_video" class="button" on-click="_handleClick" href="javascript:void(0)">[[localize('general--cancel')]]</a>
+        <button id="button__disable_next_video" class="button" on-click="_handleClick" on-mousedown="_handleMouseDown">[[localize('general--cancel')]]</a>
       </div>
     `;
   }
@@ -131,6 +131,10 @@ class NextVideoOverlay extends BindingHelpersMixin(IocRequesterMixin(Localizatio
   _handleClick(){
     this._clearTimer();
     this._isEnabled = false;
+  }
+
+  _handleMouseDown(e) {
+    e.preventDefault();
   }
 
   _playStateChanged(playState) {

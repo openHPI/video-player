@@ -15,9 +15,9 @@ class MuteControl extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
       </style>
 
       <div id="container__mute_control" class="user_controls">
-        <a id="button__mute" class="button" on-click="_handleClick" href="javascript:void(0)">
+        <button id="button__mute" class="button" on-click="_handleClick" on-mousedown="_handleMouseDown">
           <fontawesome-icon prefix="fas" name="[[ifThenElse(_isMuted, 'volume-off', 'volume-up')]]" fixed-width></fontawesome-icon>
-        </a>
+        </button>
       </div>
     `;
   }
@@ -49,6 +49,11 @@ class MuteControl extends BindingHelpersMixin(IocRequesterMixin(PolymerElement))
   _handleClick() {
     this._analyticsManager.changeState('toggleMute', [], {verb: ANALYTICS_TOPICS.VIDEO_VOLUME_CHANGE});
   }
+
+  _handleMouseDown(e) {
+    e.preventDefault();
+  }
+
 }
 
 window.customElements.define(MuteControl.is, MuteControl);

@@ -1,4 +1,4 @@
-import { ANALYTICS_TOPICS, PLAYBACK_RATES } from '../../constants.js';
+import { ANALYTICS_TOPICS } from '../../constants.js';
 import { IocRequesterMixin } from '../../mixins/ioc-requester.js';
 import { BindingHelpersMixin } from '../../mixins/binding-helpers.js';
 import '../../styling/control-bar--style-module.js';
@@ -28,6 +28,7 @@ class SpeedControl extends BindingHelpersMixin(IocRequesterMixin(PolymerElement)
   static get properties() {
     return {
       state: Object,
+      playbackRates: Array,
       isInMobileMenu: {
         type: Boolean,
         value: false,
@@ -48,7 +49,7 @@ class SpeedControl extends BindingHelpersMixin(IocRequesterMixin(PolymerElement)
   }
 
   _getItems() {
-    return PLAYBACK_RATES
+    return Array.from(this.playbackRates)
       .sort()
       .reverse()
       .map(playbackRate => ({

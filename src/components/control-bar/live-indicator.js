@@ -25,10 +25,10 @@ class LiveIndicator extends BindingHelpersMixin(IocRequesterMixin(LocalizationMi
       </style>
 
       <div id="container__live_indicator" class="user_controls">
-        <a id="span__live_indicator" href="javascript:void(0)" class$="[[ifNotThen(state.liveSync, 'inactive')]]" on-click="_handleClick">
+        <button id="span__live_indicator" class$="[[ifNotThen(state.liveSync, 'inactive')]]" on-click="_handleClick" on-mousedown="_handleMouseDown">
           <fontawesome-icon prefix="fas" name="circle" fixed-width></fontawesome-icon>
           [[localize('live-indicator--label')]]
-        </a>
+        </button>
       </div>
     `;
   }
@@ -51,6 +51,11 @@ class LiveIndicator extends BindingHelpersMixin(IocRequesterMixin(LocalizationMi
       this._analyticsManager.changeState('play', [], {verb: ANALYTICS_TOPICS.PLAY});
     }
   }
+
+  _handleMouseDown(e) {
+    e.preventDefault();
+  }
 }
+
 
 window.customElements.define(LiveIndicator.is, LiveIndicator);

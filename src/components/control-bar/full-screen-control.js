@@ -15,9 +15,9 @@ class FullscreenControl extends BindingHelpersMixin(IocRequesterMixin(PolymerEle
       </style>
 
       <div id="container__fullscreen_control" class="user_controls">
-        <a id="button__fullscreen" class="button" on-click="handleClick" href="javascript:void(0)">
+        <button id="button__fullscreen" class="button" on-click="handleClick" on-mousedown="handleMouseDown">
           <fontawesome-icon prefix="fas" name="[[ifThenElse(state.fullscreen, 'compress', 'expand')]]" fixed-width></fontawesome-icon>
-        </a>
+        </button>
       </div>
     `;
   }
@@ -40,6 +40,10 @@ class FullscreenControl extends BindingHelpersMixin(IocRequesterMixin(PolymerEle
 
   handleClick() {
     this._analyticsManager.changeState('toggleFullscreen', [], {verb: ANALYTICS_TOPICS.VIDEO_FULLSCREEN});
+  }
+
+  handleMouseDown(e) {
+    e.preventDefault();
   }
 }
 

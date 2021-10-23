@@ -10,18 +10,6 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/jumbotron.css" rel="stylesheet">
 
-    <!-- IE Polyfills -->
-    <script>
-      if(!('ActiveXObject' in window)) {
-        document.write('<!--');
-      }
-    </script>
-    <script src="../node_modules/url-polyfill/url-polyfill.min.js"></script>
-    <script src="../node_modules/babel-polyfill/dist/polyfill.min.js"></script>
-    <!-- DO NOT REMOVE -->
-
-    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-
     <script crossorigin="anonymous" type="module" src="../video-player.js"></script>
 
     <style>
@@ -513,7 +501,8 @@
             }
           },
           "noteApi": "noteApi",
-          "downloadUri": "/this/is/the/download/URI"
+          "downloadUri": "/this/is/the/download/URI",
+          "positionInUrlFragment": true
         }'>
       </video-player>
       <!-- Example row of columns -->

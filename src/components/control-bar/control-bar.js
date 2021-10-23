@@ -22,6 +22,7 @@ import './mobile-settings-menu.js';
 import { PolymerElement, html } from '@polymer/polymer';
 
 const SKIP_SECONDS = 15;
+const VOLUME_STEP = 0.05;
 const TEXT_ELEMENT_TAG_NAMES = ['INPUT', 'TEXTAREA'];
 
 class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) {
@@ -112,7 +113,7 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
           <interactive-transcript-control state="[[state]]" captions="[[captions]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></interactive-transcript-control>
         </template>
         <template is="dom-if" if="[[!state.live]]">
-          <speed-control state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></speed-control>
+          <speed-control playback-rates="[[playbackRates]]" state="[[state]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></speed-control>
         </template>
         <template is="dom-if" if="[[hasItems(availableQualities, 2)]]">
           <quality-control state="[[state]]" qualities="[[availableQualities]]" class$="[[ifThen(mobileMenu, 'hidden-for-mobile')]]"></quality-control>
@@ -143,7 +144,7 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
 
         <!-- Settings menu for mobile devices -->
         <template is="dom-if" if="[[mobileMenu]]">
-          <mobile-settings-menu state="[[state]]" class="hidden-for-desktop" caption-languages="[[captionLanguages]]" available-qualities="[[availableQualities]]" has-fallback-stream="[[hasFallbackStream]]" number-of-streams="[[numberOfStreams]]">
+          <mobile-settings-menu state="[[state]]" class="hidden-for-desktop" caption-languages="[[captionLanguages]]" playback-rates="[[playbackRates]]" available-qualities="[[availableQualities]]" has-fallback-stream="[[hasFallbackStream]]" number-of-streams="[[numberOfStreams]]">
           </mobile-settings-menu>
         </template>
 
@@ -170,6 +171,7 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
       availableQualities: Boolean,
       numberOfStreams: Number,
       mobileMenu: Boolean,
+      playbackRates: Array,
       liveDvr: Boolean,
       _stateManager: {
         type: Object,
@@ -205,21 +207,69 @@ class ControlBar extends IocRequesterMixin(BindingHelpersMixin(PolymerElement)) 
         return;
       }
 
-      if (e.key === 'ArrowRight' || e.key === 'Right') {
-        this._analyticsManager.changeState('skipSeconds', [SKIP_SECONDS], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
-      } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
-        this._analyticsManager.changeState('skipSeconds', [-SKIP_SECONDS], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
-      } else if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'p') {
-        this._analyticsManager.changeState('togglePlayPause', [], {verb: ANALYTICS_TOPICS.PLAY_PAUSE});
-      } else if (e.key === 'f') {
-        // In IE, fullscreen cannot be enabled by keyboard events.
-        // Therefore, fullscreen is only enabled in other browsers.
-        // However, disabling fullscreen works in IE.
-        if(!('ActiveXObject' in window) || this.state.fullscreen) {
-          this._analyticsManager.changeState('toggleFullscreen', [], {verb: ANALYTICS_TOPICS.VIDEO_FULLSCREEN});
+      switch(e.key) {
+        case 'ArrowRight':
+        case 'Right':
+          this._analyticsManager.changeState('skipSeconds', [SKIP_SECONDS], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
+          break;
+
+        case 'ArrowLeft':
+        case 'Left':
+          this._analyticsManager.changeState('skipSeconds', [-SKIP_SECONDS], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
+          break;
+
+        case 'ArrowUp':
+        case 'Up': {
+          const newVolume = Math.min(1, Math.max(0, this.state.volume + VOLUME_STEP));
+          this._analyticsManager.changeState('setVolume', [newVolume], {verb: ANALYTICS_TOPICS.VIDEO_VOLUME_CHANGE});
+          break;
         }
-      } else {
-        return;
+
+        case 'ArrowDown':
+        case 'Down': {
+          const newVolume = Math.min(1, Math.max(0, this.state.volume - VOLUME_STEP));
+          this._analyticsManager.changeState('setVolume', [newVolume], {verb: ANALYTICS_TOPICS.VIDEO_VOLUME_CHANGE});
+          break;
+        }
+
+        case ' ':
+        case 'Spacebar':
+          this._analyticsManager.changeState('togglePlayPause', [], {verb: ANALYTICS_TOPICS.PLAY_PAUSE});
+          break;
+
+        case 'm':
+          this._analyticsManager.changeState('toggleMute', [], {verb: ANALYTICS_TOPICS.VIDEO_VOLUME_CHANGE});
+          break;
+
+        case ',':
+          this._analyticsManager.changeState('skipFrames', [-1], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
+          break;
+
+        case '.':
+          this._analyticsManager.changeState('skipFrames', [1], {verb: ANALYTICS_TOPICS.VIDEO_SEEK});
+          break;
+
+        case '>':
+        case ':':
+          this._analyticsManager.changeState('increasePlaybackRate', [], {verb: ANALYTICS_TOPICS.VIDEO_CHANGE_SPEED});
+          break;
+
+        case '<':
+        case ';':
+          this._analyticsManager.changeState('decreasePlaybackRate', [], {verb: ANALYTICS_TOPICS.VIDEO_CHANGE_SPEED});
+          break;
+
+        case 'f':
+          // In IE, fullscreen cannot be enabled by keyboard events.
+          // Therefore, fullscreen is only enabled in other browsers.
+          // However, disabling fullscreen works in IE.
+          if(!('ActiveXObject' in window) || this.state.fullscreen) {
+            this._analyticsManager.changeState('toggleFullscreen', [], {verb: ANALYTICS_TOPICS.VIDEO_FULLSCREEN});
+          }
+          break;
+
+        default:
+          return;
       }
 
       // Make sure the user doesn't trigger anything else with their
