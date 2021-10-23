@@ -43,13 +43,14 @@
     "@polymer/polymer": "^3.4.1",
     "@webcomponents/shadycss": "^1.10.2",
     "fontawesome-icon": "^1.0.4",
-    "hls.js": "^0.14.17"
+    "hls.js": "^1.0.11"
   },
   "devDependencies": {
     "@polymer/iron-test-helpers": "^3.0.1",
     "@rollup/plugin-node-resolve": "^13.0.6",
     "eslint": "^8.1.0",
     "eslint-plugin-html": "^6.1.2",
+    "hls.js": "^1.0.11",
     "polymer-cli": "^1.9.11",
     "replace-in-file": "^6.2.0",
     "rollup": "^2.41.5",

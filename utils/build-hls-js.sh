@@ -7,10 +7,10 @@ npm install --legacy-peer-deps --silent
 
 # For some reason, they decided to not include their build config in their npm packages anymore
 # see https://github.com/video-dev/hls.js/commit/083322b49e3c09ae35a33e553fe79343cf9e68dd
-wget -nc https://raw.githubusercontent.com/video-dev/hls.js/v0.14.17/webpack.config.js
+wget -nc https://raw.githubusercontent.com/video-dev/hls.js/v1.0.11/webpack.config.js
+sed -i "s/'umd'/'window'/g" webpack.config.js
 
-npx webpack --config-name debug --output-library-target window --display errors-only
-npx webpack --config-name light --output-library-target window --display errors-only
+npx webpack --stats errors-only --env debug light
 
 tail -n +2 dist/hls.js > temp
 cat temp > dist/hls.js
