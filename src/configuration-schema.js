@@ -98,7 +98,7 @@ export const configurationSchema = {
   framesPerSecond: {
     type: 'number',
     default: 25,
-    description: "Fps of the video. Used for skipping frame wise.",
+    description: 'Fps of the video. Used for skipping frame wise.',
   },
   language: {
     type: 'string',
